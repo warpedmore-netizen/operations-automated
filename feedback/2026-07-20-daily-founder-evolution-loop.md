@@ -59,3 +59,10 @@ The retained operational and methodology feedback is recorded in [Demand-led aut
 Jamie clarified that the loop must not behave as one question in and one answer out. Human judgement and AI analysis should challenge each other through reverse cases, reframing, contrary evidence and transfer to other settings until the reasoning converges, remains context-dependent or reaches an explicit disagreement.
 
 The refinement is retained in [Mutual challenge and convergence](2026-07-20-mutual-challenge-and-convergence.md).
+
+## Completed founder responses
+
+| Response | Challenge mode | Topic | Result |
+|---|---|---|---|
+| 1 of 7 | Initial proposition | Replacing an entire first-line service desk with AI agents | Approved method broadly aligned; demand-led sequence and workforce-capability clarification candidates retained |
+| 2 of 7 | Reverse test | Removing ceremonial human review from a bounded automated work type | Contextual convergence on automated execution with human ownership; assurance independence and resilience-at-scale remain open |

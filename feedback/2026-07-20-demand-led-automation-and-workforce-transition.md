@@ -71,3 +71,9 @@ If the requirement remains useful across those cases, prepare a separate methodo
 ## Retained lesson
 
 Start with value, demand and evidence; segment the work; select proportionate opportunities; develop people alongside the capability; and use measured gains to create the capacity for further improvement.
+
+## Reverse-test result
+
+The first reverse test challenged whether routine human approval should remain when it has become ceremonial. Jamie accepted fully automated execution for a bounded work type while retaining human ownership, assurance, capability and resilience.
+
+The resulting feedback and remaining challenges are recorded in [Human assurance, capability and resilience after automation](2026-07-20-human-assurance-capability-and-resilience.md).

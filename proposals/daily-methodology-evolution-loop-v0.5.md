@@ -40,6 +40,15 @@ It is read-only and instructed to:
 - Avoid confidential information and restricted services
 - Make no repository or methodology change during the scheduled run
 
+## Early pilot evidence
+
+Two manual founder responses have exercised the proposed loop:
+
+1. An initial AI service-desk scenario produced useful value, demand, evidence, segmentation, staged-automation and workforce-capability reasoning.
+2. A reverse test challenged ceremonial human approval and changed “never completely replace” into a more precise distinction between automated execution and continuing human ownership, assurance, capability and resilience.
+
+The second exchange also retained genuine disagreement and uncertainty about AI-on-AI assurance, silent failures and manual recovery at automated scale. This is early support for iterative mutual challenge, but it does not satisfy the proposed seven-response review.
+
 ## Controlled response workflow
 
 After Jamie responds, AI:
