@@ -20,7 +20,7 @@ From the repository root:
 npm run governance:start
 ```
 
-Open `http://127.0.0.1:4174`. The seeded dataset is loaded in memory each time the server starts. Use **Reset demo** to restore it in the browser.
+Open `http://127.0.0.1:4174`. The server creates `data/state.json` on first use and preserves governed actions across browser and server restarts. Use **Reset demo** to restore the fictional baseline.
 
 ## Test
 
@@ -39,7 +39,7 @@ npm run governance:test
 
 ## Architecture
 
-The first milestone follows the repository's existing local-first, no-dependency architecture: browser UI, domain service, generated Markdown views and mocked adapters. The in-memory canonical state is serialised to browser storage for demonstration only. The service layer is isolated so a later implementation can adopt TypeScript, React and Prisma/SQLite without changing governance rules. See [architecture.md](docs/architecture.md).
+The current milestone follows the repository's existing local-first, no-dependency architecture: browser UI, HTTP application service, atomic file persistence, domain service, generated Markdown views and mocked adapters. The service layer is isolated so a later implementation can adopt TypeScript, React and Prisma/SQLite without changing governance rules. See [architecture.md](docs/architecture.md).
 
 ## Seed data
 
@@ -47,4 +47,4 @@ Seed records are created by `seed.mjs`; there is no import of regulatory or comp
 
 ## Important limitations
 
-Single-user browser storage is not durable, authenticated or suitable for confidential evidence. Hashes are illustrative. Approval identity is user-entered and therefore demonstrative, not strong authentication. Generated documents include approved records only.
+The local state file is restart-safe but is not a multi-user database, authenticated, tamper-evident or suitable for confidential evidence. Hashes are illustrative. Approval identity is user-entered and therefore demonstrative, not strong authentication. Generated documents include approved records only.

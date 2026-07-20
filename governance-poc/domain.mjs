@@ -6,6 +6,7 @@ export function audit(state, actor, action, objectType, objectId, reason, previo
 }
 
 export function acceptCandidateFinding(input, actor) {
+  if (!actor?.trim()) throw new Error("A named human reviewer is required");
   const state = clone(input);
   const finding = state.findings.find(item => item.id === "FIND-IM-008");
   if (!finding) throw new Error("Finding not found");
@@ -18,6 +19,7 @@ export function acceptCandidateFinding(input, actor) {
 }
 
 export function createProposal(input, actor) {
+  if (!actor?.trim()) throw new Error("A named human requester is required");
   const state = clone(input);
   const finding = state.findings.find(item => item.id === "FIND-IM-008");
   if (finding?.status !== "accepted") throw new Error("A human must accept the finding first");
@@ -29,7 +31,7 @@ export function createProposal(input, actor) {
   return state;
 }
 
-export function decideProposal(input, actor, decision, comments = "") {
+export function decideProposal(input, actor, decision, comments = "", role = "Human reviewer") {
   if (!actor?.trim() || actor.toLowerCase().includes("ai")) throw new Error("A named human approver is required; AI cannot approve");
   if (!["approved", "rejected", "changes-requested"].includes(decision)) throw new Error("Invalid decision");
   const state = clone(input);
@@ -37,12 +39,14 @@ export function decideProposal(input, actor, decision, comments = "") {
   if (!proposal) throw new Error("Proposal not found");
   proposal.approvalStatus = decision;
   proposal.approvedAt = decision === "approved" ? now() : null;
-  state.approvals.push({ id: `APR-IM-${String(state.approvals.length + 1).padStart(3, "0")}`, objectType: "ChangeProposal", objectId: proposal.id, approver: actor, role: "Human reviewer", decision, comments, decidedAt: now() });
+  if (!role?.trim()) throw new Error("The human reviewer's role is required");
+  state.approvals.push({ id: `APR-IM-${String(state.approvals.length + 1).padStart(3, "0")}`, objectType: "ChangeProposal", objectId: proposal.id, approver: actor, role, decision, comments, decidedAt: now() });
   audit(state, actor, `proposal-${decision}`, "ChangeProposal", proposal.id, comments || "Human governance decision");
   return state;
 }
 
 export function createRelease(input, actor) {
+  if (!actor?.trim() || actor.toLowerCase().includes("ai")) throw new Error("A named human release operator is required; AI cannot release");
   const state = clone(input);
   const proposal = state.changeProposals.find(item => item.id === "CHG-IM-024");
   if (proposal?.approvalStatus !== "approved") throw new Error("A release cannot include an unapproved proposal");

@@ -10,7 +10,8 @@ owner: Jamie Peppard
 - `domain.mjs`: governance invariants, workflow, graph analysis, document generation and provider/adapter contracts.
 - `app.mjs`: thin browser interaction layer.
 - `server.mjs`: local static host.
-- browser local storage: disposable demonstration persistence.
+- local HTTP API: server-side execution of governed actions.
+- atomic JSON state file: restart-safe demonstration persistence with serialised writes.
 
 This follows the repository's established local-first, dependency-free architecture and creates no external connection. It is a modular monolith, not a production architecture.
 
