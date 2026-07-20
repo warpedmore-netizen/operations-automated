@@ -1,7 +1,7 @@
 ---
 id: OA-PRINCIPLE-001
 title: TIGIPI
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 ---

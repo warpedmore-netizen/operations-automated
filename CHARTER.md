@@ -1,7 +1,7 @@
 ---
 id: OA-CHARTER-001
 title: Operations Automated Founder Charter
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 approval_required: true

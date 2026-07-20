@@ -1,7 +1,7 @@
 ---
 id: OA-PRINCIPLE-003
 title: User-defined Value
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 ---

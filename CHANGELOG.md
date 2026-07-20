@@ -2,6 +2,17 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## 0.3 - Working method
+
+- Approved by Jamie Peppard for internal piloting on 2026-07-20.
+- Defined an AI-led, human-controlled repository workflow with explicit approval boundaries.
+- Clarified that `main` is controlled project memory and artefact status determines governance state.
+- Added a practical user-defined value-matrix template.
+- Added a learning-review template that retains lessons, decisions and improvements.
+- Integrated both working artefacts into the OPERATE lifecycle.
+- Added a plain-language starting route for practitioners.
+- Added a living roadmap from methodology foundation to a validated, private working product.
+
 ## 0.2 - Foundation proposal
 
 - Defined user value as the basis for deciding what “better” means.
