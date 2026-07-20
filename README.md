@@ -27,7 +27,9 @@ See the [project roadmap](ROADMAP.md) for the current position, next phase and h
 
 The proposed [OPERATE Workspace MVP](app/README.md) turns the methodology into a local-first guided application with visible next actions, human approval gates, retained evidence and portable exports.
 
-Its [product definition and revenue hypothesis](product/MVP.md) remain proposed. The MVP is not deployed or approved for external use.
+> **Application status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
+
+Its [product definition and revenue hypothesis](product/MVP.md) are approved only as the basis for private validation. Pricing, publication and commercial activity remain unapproved.
 
 ## Repository control
 

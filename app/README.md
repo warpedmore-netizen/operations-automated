@@ -2,6 +2,8 @@
 
 This is a private, local-first application prototype for applying the approved Operations Automated methodology.
 
+> **Status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
+
 ## Use it
 
 Open `index.html` in a modern browser. The application has no external dependencies and stores the current workspace in that browser only.

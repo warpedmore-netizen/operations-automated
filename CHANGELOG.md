@@ -2,8 +2,9 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## Application MVP 0.1 - proposal
+## Application MVP 0.1 - private test
 
+- Approved by Jamie Peppard for private testing on 2026-07-20.
 - Added a private, local-first OPERATE workspace with no external dependencies or connections.
 - Added a governed next-action engine covering all seven OPERATE stages.
 - Added named human approval gates with automatic invalidation after affected evidence changes.
