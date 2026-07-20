@@ -10,6 +10,7 @@ All material changes to Operations Automated will be recorded here.
 - Added a learning-review template that retains lessons, decisions and improvements.
 - Integrated both working artefacts into the OPERATE lifecycle.
 - Added a plain-language starting route for practitioners.
+- Added a living roadmap from methodology foundation to a validated, private working product.
 
 ## 0.2 - Foundation proposal
 

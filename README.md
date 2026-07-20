@@ -21,6 +21,8 @@ This repository is the controlled source for the methodology, its principles, go
 3. Use a [learning review](templates/learning-review.md) after a failure or unexpected outcome.
 4. Retain the resulting lesson, decision or improvement in the controlled repository or relevant operational system.
 
+See the [project roadmap](ROADMAP.md) for the current position, next phase and human decision points.
+
 ## Repository control
 
 - `main` is the current controlled internal project memory and may contain artefacts at different governance states.
