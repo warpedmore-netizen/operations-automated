@@ -7,6 +7,8 @@ The methodology is intended for individuals, teams and organisations. It conside
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
 > **Approved baseline:** v0.4 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
+>
+> **Current proposal:** v0.5 establishes a daily founder challenge, traceable feedback and plain-English methodology assurance loop. Its repository integration remains proposed until Jamie Peppard decides it.
 
 ## How the system fits together
 
@@ -40,6 +42,14 @@ The internal-validation route is:
 4. Process useful changes through the controlled evolution system.
 
 See the [roadmap](ROADMAP.md) for the workstreams, milestones and human decision points.
+
+## Daily methodology challenge
+
+An active Codex automation sends Jamie one methodology challenge each day at 08:00 UK time. It reads the approved repository, reviews current public operational discussion, applies Operations Automated provisionally and gives Jamie a concrete response to critique in 5, 10 or 20 minutes.
+
+The scheduled check-in is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology.
+
+Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
 
 ## Application experiment
 

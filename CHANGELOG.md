@@ -2,6 +2,16 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## 0.5 - Daily founder methodology evolution loop (proposed)
+
+- Added founder-initiated and AI-initiated routes for challenging the approved methodology.
+- Activated a read-only Codex check-in at 08:00 UK time with one evidence-backed scenario, a provisional Operations Automated answer and a 5-, 10- or 20-minute founder response.
+- Added a controlled disposition for no change, clarification, more evidence, material proposal and urgent review.
+- Added a plain-English methodology assurance pack for founder decisions.
+- Added repository instructions so future Codex tasks follow the same feedback, proposal and approval boundary.
+- Proposed reviewing the cadence after seven completed founder responses.
+- External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
+
 ## 0.4 - Complete methodology architecture and evolution system
 
 - Approved by Jamie Peppard on 2026-07-20 for internal validation; not approved for external publication.

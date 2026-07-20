@@ -1,8 +1,8 @@
 ---
 id: OA-GOV-001
 title: Methodology Governance
-status: approved
-version: 0.3
+status: proposed
+version: 0.4
 owner: Jamie Peppard
 ---
 
@@ -67,6 +67,21 @@ For each material proposal, AI should give Jamie a plain-language summary of:
 Jamie may approve, request revision or reject the proposal without needing to edit repository files or operate developer tooling. An approval must be explicit and recorded in the conversation, pull request or a decision record. Silence, continued discussion, technical readiness and a successful automated check do not constitute approval.
 
 AI may carry out an approved merge when Jamie explicitly authorises it. External publication remains a separate decision and must not be inferred from approval for internal use.
+
+## Methodology change assurance
+
+Before Jamie decides a material methodology proposal, AI should provide a plain-English assurance pack containing:
+
+- The decision required and AI recommendation
+- The triggering feedback and founder intent
+- The current approved meaning and proposed meaning
+- Evidence, limitations, disagreement and strongest alternative
+- Affected principles, lenses, readiness positions, stages, outputs, templates and delivery products
+- Duplication, contradiction, dependency, authority and boundary checks
+- Trade-offs, residual risk, validation and review trigger
+- The exact approval boundary and what remains unapproved
+
+Jamie should be able to understand the decision without reading code or a raw diff. The underlying evidence, files and pull request remain available for traceability.
 
 ## Initial authority matrix
 

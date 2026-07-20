@@ -1,8 +1,8 @@
 ---
 id: OA-EVOLUTION-001
 title: Methodology Evolution System
-status: approved
-version: 0.1
+status: proposed
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-20
 ---
@@ -59,6 +59,15 @@ The first working version requires no additional product or connection:
 8. AI merges only after explicit authorisation and records the release.
 
 This is the current methodology-evolution MVP. It should be used while the methodology is being developed so that the project learns about its own update process in practice.
+
+## Founder challenge and feedback
+
+The proposed [founder challenge and feedback loop](founder-challenge-loop.md) adds two regular entry routes:
+
+- Jamie asks an operational question and critiques the answer produced by the approved methodology.
+- A read-only daily automation researches one current scenario, provides a provisional methodology response and asks Jamie for a short judgement.
+
+Both routes use the same capture, triage, proposal, assurance, approval and outcome-review controls. A response is feedback rather than approval, and not every response should create a methodology change.
 
 ## Feedback record
 
