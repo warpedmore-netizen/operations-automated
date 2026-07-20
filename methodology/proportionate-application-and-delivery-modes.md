@@ -11,7 +11,7 @@ date: 2026-07-20
 
 Operations Automated uses one methodology while adapting the depth and form of its response to the user's question, context, consequence and desired level of engagement.
 
-This proposed module extends the approved [methodology output contract](output-contract.md). It remains proposed pending the founder pilot boundary test and Jamie Peppard's explicit decision.
+This proposed module extends the approved [methodology output contract](output-contract.md). The first founder checkpoint has tested its initial boundary, but the module remains proposed pending Jamie Peppard's explicit decision.
 
 ## One method, different depths
 
@@ -28,7 +28,7 @@ Tailoring must not:
 
 ## Mode 1: Ask
 
-The user asks an operational question in ordinary language and receives an immediate, proportionate answer.
+The user asks an operational question in ordinary language and receives immediate, proportionate guidance. The guidance may be an answer when the question is sufficiently supported, or a structured route towards an answer when it is not.
 
 Examples include:
 
@@ -39,18 +39,27 @@ Examples include:
 
 The system applies the relevant methodology behind the response rather than asking the user to complete every lens or OPERATE stage.
 
+### Ask-mode answerability gate
+
+Before answering the substance of the question, determine whether the available information is sufficient for the type and consequence of the decision.
+
+- If it is sufficient, provide a proportionate answer with reasoning, limitations and the required human control point.
+- If it is insufficient, do not manufacture a yes, no or implementation verdict. Explain why the question cannot yet be determined and provide the smallest useful structure, evidence request or reframed questions needed to progress.
+
 ### Minimum ask-mode output
 
-1. **Direct answer:** the most useful provisional response available now.
-2. **Current understanding:** the outcome, scope and people affected as understood.
-3. **Reasoning used:** the material value, demand, work, dependency, risk, evidence, readiness or authority considerations.
-4. **Evidence discipline:** what is recorded, supplied judgement, AI inference or assumption.
-5. **Limitations:** what has not been assessed and why that matters.
-6. **Recommendation:** the proportionate next action, including retaining the current approach where appropriate.
-7. **Control point:** who must decide, validate or accept consequence.
-8. **Continuation:** what a deeper assessment would add and how to begin it without losing the current record.
+1. **Answerability:** whether the substantive question can responsibly be determined from the available information.
+2. **Current understanding:** the intended outcome, decision, scope and people affected as understood.
+3. **Useful guidance:** the direct answer where justified, or the most important structure and partial findings where it is not.
+4. **Reasoning used:** the material value, demand, work, dependency, risk, evidence, readiness or authority considerations.
+5. **Evidence discipline:** what is recorded, supplied judgement, AI inference or assumption.
+6. **Missing information:** only the evidence or questions that could materially change the conclusion, with an explanation of why each matters.
+7. **Limitations:** what has not been assessed and why the user should not treat the interaction as a realised assessment or approval.
+8. **Next action:** what the user can do themselves, ask next or continue through a deeper assessment.
+9. **Control point:** who must decide, validate or accept consequence.
+10. **Continuation:** how to begin deeper work without losing the current record.
 
-The answer should be concise for a simple question and expand only where consequence or uncertainty requires it.
+The response should be concise for a simple question and expand only where consequence or uncertainty requires it. Questions support the guidance; they are not the complete output by themselves.
 
 ## Mode 2: Assess or project
 
@@ -80,7 +89,7 @@ An ask-mode answer may become an assessment or project when:
 - Automation or AI will receive consequential authority
 - Implementation, assurance or retained evidence is required
 
-The original question, answer, assumptions and caveats should become the starting record for the project. Do not require the user to repeat information without a reason.
+The original question, guided response, any justified answer, assumptions and caveats should become the starting record for the project. Do not require the user to repeat information without a reason.
 
 A project may also return temporarily to ask mode for a bounded decision, explanation or challenge while preserving the wider record.
 
@@ -97,7 +106,7 @@ Consider:
 - Authority required
 - Whether the output will inform advice, approval or execution
 
-User preference influences depth but does not make a light-touch answer sufficient for every decision. Where a short response cannot support safe or defensible action, the system should provide what can responsibly be said, explain the gap and route the user towards deeper assessment or specialist authority.
+User preference influences depth but does not make a light-touch interaction sufficient for every decision. Where the available information cannot support a safe or defensible answer, the system should say that the substantive question cannot yet be determined, provide the smallest useful decision structure and route the user towards further questions, deeper assessment or specialist authority.
 
 ## Specific caveats
 
@@ -119,7 +128,7 @@ A future delivery product should provide:
 
 - A visible **Ask a question** entry route
 - A visible **Start an assessment or project** entry route
-- A way to continue an answer as a retained project
+- A way to continue a question, guided response and any answer as a retained project
 - Clear indication of methodology version, analysis depth and limitations
 - Progressive outputs rather than input forms alone
 - Human control before consequential decisions or actions

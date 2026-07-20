@@ -29,7 +29,7 @@ Version 0.4 records the corrected methodology boundary and the decision to devel
 
 Version 0.5 now proposes the operating rhythm for that evolution: an active read-only daily founder challenge at 08:00 UK time, founder-initiated questions, structured feedback disposition and a plain-English assurance pack before material approval.
 
-Six of the proposed seven founder responses are complete. Their first coherent amalgamation is retained in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md), including initial [connected work, risk and control](methodology/connected-work-risk-and-control.md) and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md). None of these artefacts is approved.
+The first seven-response checkpoint is complete. Its coherent amalgamation is retained in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md), including initial [connected work, risk and control](methodology/connected-work-risk-and-control.md) and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md). Jamie's decision is supported by the proposed [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md). None of these artefacts is approved.
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 

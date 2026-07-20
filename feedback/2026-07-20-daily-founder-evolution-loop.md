@@ -78,3 +78,10 @@ The refinement is retained in [Mutual challenge and convergence](2026-07-20-mutu
 | 4 of 7 | Transfer and authority | Criticality in a small organisation without formal operational resilience | Criticality reframed around material harm; portable good practice and consequence-based authority retained; local-to-organisational governance remains open |
 | 5 of 7 | Authority and connected work | An authorised party rejects a resilience control for an open risk | Reframed as risk-management failure; rejected treatment remains linked to the open risk; initial case-to-risk and decision-record model drafted |
 | 6 of 7 | Boundary and delivery depth | Whether every user must complete the same methodology workflow | One consistent method with ask and assessment/project delivery modes retained; high-consequence light-answer boundary remains open |
+| 7 of 7 | Answerability boundary | Whether Ask mode should answer a high-consequence question without sufficient information | Direct-answer assumption rejected; Ask mode first tests answerability and returns guided question framing when a verdict is unsupported |
+
+## First checkpoint result
+
+The initial seven-response checkpoint is complete. The responses produced a coherent proposed synthesis and two working methodology modules while retaining material uncertainty and disagreement.
+
+The review does not end the daily cycle or validate external usefulness. Jamie's decision is supported by the [v0.5 first-checkpoint assurance pack](../proposals/v0.5-first-checkpoint-assurance-pack.md).

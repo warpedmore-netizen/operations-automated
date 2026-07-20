@@ -1,19 +1,19 @@
 ---
 id: OA-CHANGE-006
-title: Initial Founder Pilot Methodology Synthesis
+title: Founder Pilot First-checkpoint Methodology Synthesis
 status: proposed
 owner: Jamie Peppard
 date: 2026-07-20
 approval_required: true
 ---
 
-# Initial founder pilot methodology synthesis v0.5
+# Founder pilot first-checkpoint methodology synthesis v0.5
 
 ## Purpose and status
 
-This document is the first amalgamation of the operational reasoning produced through the founder challenge pilot. It connects the first six completed responses to the approved v0.4 architecture and identifies the smallest coherent methodology guidance they support.
+This document amalgamates the operational reasoning produced through the first founder challenge checkpoint. It connects seven completed responses to the approved v0.4 architecture and identifies the smallest coherent methodology guidance they support.
 
-It is an initial synthesis rather than a completed release or assurance pack. The seven-response pilot review has not been reached. All new meaning in this document and the linked module remains **proposed** until Jamie Peppard explicitly approves it.
+The first checkpoint is complete, but this is not a completed methodology or externally validated release. All new meaning in this document and the linked modules remains **proposed** until Jamie Peppard explicitly approves it.
 
 ## Evidence considered
 
@@ -25,6 +25,7 @@ It is an initial synthesis rather than a completed release or assurance pack. Th
 | 4 | Criticality without formal resilience | Assess criticality through potential material harm and essential outcomes; borrow strong practices without imposing one structure; define authority by consequence | Initial authority pattern requiring further testing |
 | 5 | Authorised party rejects a control | Treat rejection as a treatment decision rather than risk closure; retain ownership, residual resilience, decision evidence and connected work records | Initial connected-work module drafted |
 | 6 | Every user completes the same workflow | Keep one methodology while tailoring answer depth through immediate ask and structured assessment/project modes | Initial delivery-modes module drafted; high-consequence boundary remains open |
+| 7 | Ask mode answers a high-consequence question | Test answerability before substance; where information is insufficient, guide the user with a reframed decision and minimum material questions rather than manufacture a verdict | Delivery-modes module refined; real-user threshold testing remains open |
 
 ## Integrated methodology position
 
@@ -76,13 +77,17 @@ Track end-to-end outcomes and unintended effects. Use capacity released by succe
 
 ### 12. Keep the method consistent and tailor the depth
 
-Allow a user to ask an operational question and receive a useful methodology-based answer immediately, or begin a structured consultancy-style assessment or project. The lighter answer should show its evidence, assumptions, limitations and escalation conditions. A deeper project should continue from the same record rather than require the user to start again.
+Allow a user to ask an operational question and receive useful methodology-based guidance immediately, or begin a structured consultancy-style assessment or project. A deeper project should continue from the same record rather than require the user to start again.
+
+### 13. Make the question answerable before forcing an answer
+
+Ask mode should determine whether the available information supports the substantive answer. When it does not, explain the gap, reframe the decision, provide the smallest useful structure and ask only the questions that could materially change the conclusion. Do not disguise an unrealised assessment as a confident verdict.
 
 ## Initial module produced
 
 The proposed [Connected work, risk and control](../methodology/connected-work-risk-and-control.md) module translates responses four and five into usable guidance. It is deliberately connected to the existing operational lenses and OPERATE rather than creating a parallel methodology.
 
-The proposed [Proportionate application and delivery modes](../methodology/proportionate-application-and-delivery-modes.md) module translates response six into ask and assessment/project experiences backed by the same methodology.
+The proposed [Proportionate application and delivery modes](../methodology/proportionate-application-and-delivery-modes.md) module translates responses six and seven into ask and assessment/project experiences backed by the same methodology.
 
 ## What the synthesis does not yet prove
 
@@ -91,17 +96,17 @@ The proposed [Proportionate application and delivery modes](../methodology/propo
 - Which measures best detect silent harm or absent feedback
 - How the case, incident, request, problem and risk relationships should adapt outside service operations
 - Where a routine work-log entry becomes a separate material decision record
-- Whether a user-requested quick answer may recommend action when the consequence is high or specialist authority is required
+- How users experience the Ask-mode answerability threshold and whether its questions remain proportionate
 - Whether users other than Jamie find the integrated guidance understandable and useful
 - That the methodology or any delivery product has commercial demand or willingness to pay
 
 ## Recommended next validation
 
-1. Use the seventh response to test whether ask mode may recommend action for a high-consequence question without sufficient assessment or specialist authority.
-2. Complete the first seven-response review while continuing the daily and ad-hoc challenge routes afterwards.
+1. Use the [first-checkpoint assurance pack](v0.5-first-checkpoint-assurance-pack.md) for Jamie's explicit v0.5 internal-validation decision.
+2. Continue the daily and ad-hoc challenge routes after the checkpoint.
 3. Retain demand-and-capability transfer, assurance independence and silent failure as continuing challenge topics rather than treating the first review as methodology completion.
-4. Run at least two non-confidential facilitated operational cases with different scopes after the first review.
-5. Prepare one plain-English assurance pack that compares approved v0.4 meaning with the coherent v0.5 proposal before Jamie decides it.
+4. Run at least two non-confidential facilitated operational cases with different scopes.
+5. Test Ask-mode question framing and continuation into a project with users other than Jamie before rebuilding the application.
 
 ## Recommendation
 

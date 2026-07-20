@@ -43,7 +43,7 @@ It is read-only and instructed to:
 
 ## Early pilot evidence
 
-Six manual founder responses have exercised the proposed loop:
+Seven manual founder responses have exercised the proposed loop:
 
 1. An initial AI service-desk scenario produced useful value, demand, evidence, segmentation, staged-automation and workforce-capability reasoning.
 2. A reverse test challenged ceremonial human approval and changed “never completely replace” into a more precise distinction between automated execution and continuing human ownership, assurance, capability and resilience.
@@ -51,8 +51,19 @@ Six manual founder responses have exercised the proposed loop:
 4. A transfer test reframed criticality around material harm to customers, third parties and others rather than internal or financial importance alone. It distinguished non-negotiable reasoning from adaptable implementation and retained a consequence-based authority pattern for further testing.
 5. An authority test established that rejecting a resilience control does not close the underlying risk. It connected cases, requests, incidents, problems, risks, controls and material decisions while retaining proportionality and local terminology as open validation questions.
 6. A boundary test established one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode. It retained specific caveats and continuation between modes while leaving high-consequence light answers for the next test.
+7. An answerability test rejected the assumption that Ask mode must always answer. Where material information is missing, the useful output is a clear information boundary, reframed decision, proportionate structure and the smallest questions needed to progress.
 
-The exchanges have retained genuine disagreement and uncertainty about high-consequence light answers, AI-on-AI assurance, silent failures, record proportionality and how the connected work model transfers outside service operations. The initial evidence is amalgamated in the [founder pilot methodology synthesis](founder-pilot-initial-synthesis-v0.5.md), but it does not satisfy the proposed seven-response review.
+The first checkpoint is complete. The exchanges retain genuine disagreement and uncertainty about AI-on-AI assurance, silent failures, record proportionality, answerability thresholds in practice and how the connected work model transfers outside service operations. The evidence is amalgamated in the [founder pilot methodology synthesis](founder-pilot-initial-synthesis-v0.5.md) and assessed in the [v0.5 first-checkpoint assurance pack](v0.5-first-checkpoint-assurance-pack.md).
+
+## First checkpoint review
+
+- **Usefulness and breadth:** The sequence produced material corrections across value, demand, workforce capability, assurance, resilience, criticality, risk, connected records and delivery behaviour.
+- **Mutual challenge:** Jamie changed several AI propositions; AI retained open issues rather than treating every answer as universal agreement.
+- **Response burden:** Jamie chose to continue the exercise and requested an indefinite schedule, but actual response time and fatigue have not been measured consistently.
+- **Change yield:** The foundational phase produced a high number of clarification candidates and two proposed modules. This may reflect genuine early discovery but creates a risk of changing too much from one founder's evidence.
+- **Source and user limitation:** Public guidance informed several tests, but the methodology modules have not been used by an independent practitioner or in a live facilitated operational case.
+- **Delivery reliability:** Scheduled and ad-hoc routes are defined; local delivery still depends on Jamie's computer and the desktop app being available.
+- **Recommendation:** Approve with conditions for continued internal validation, retain external publication and product deployment as unapproved, and review after two facilitated cases.
 
 ## Controlled response workflow
 

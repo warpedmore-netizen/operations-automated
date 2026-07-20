@@ -21,15 +21,18 @@ All material changes to Operations Automated will be recorded here.
 - Retained a distinction between non-negotiable reasoning and adaptable implementation, with a consequence-based authority pattern for further testing.
 - Recorded that rejection or deferral of a control does not close its underlying risk and must remain connected to ownership, resilience and review.
 - Drafted a proposed connected model for cases, requests, incidents, problems, risks, controls, decisions and learning.
-- Amalgamated the first five founder responses into an initial proposed methodology synthesis.
+- Amalgamated the first seven founder responses into a proposed first-checkpoint methodology synthesis.
 - Added a proposed commercial validation strategy joining free guidance, paid knowledge products, facilitated evidence and a later applied workspace.
 - Made the ad-hoc founder challenge instruction explicit while retaining the daily 08:00 UK schedule.
 - Clarified that the daily schedule continues indefinitely and that seven responses are the first review checkpoint rather than an end date.
 - Expanded challenge selection across the whole methodology, evolution, delivery, product and commercial system, prioritising the most decision-relevant unresolved concept.
 - Proposed one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode.
 - Required proportionate answers to expose their evidence, assumptions, limitations and route to deeper assessment.
-- Preserved a user's initial question and answer as the starting record when continuing into a project.
-- Proposed reviewing the cadence after seven completed founder responses.
+- Preserved a user's initial question, guided response and any justified answer as the starting record when continuing into a project.
+- Completed the first seven-response founder challenge checkpoint and prepared its plain-English assurance pack.
+- Replaced Ask mode's assumed direct answer with an answerability gate and guided question-framing output.
+- Required unsupported questions to be reframed with the smallest material evidence and questions needed to progress.
+- Reviewed the first cadence checkpoint after seven completed founder responses while retaining the indefinite cycle.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 
 ## 0.4 - Complete methodology architecture and evolution system
