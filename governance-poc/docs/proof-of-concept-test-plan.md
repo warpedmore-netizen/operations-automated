@@ -21,7 +21,7 @@ This plan uses only fictional demonstration information. It does not test regula
 3. Answer document-specific follow-up questions produced from remaining gaps.
 4. Review proposed obligations, policy statements, controls, responsibilities, procedure steps and evidence requirements.
 5. Accept, amend or reject every candidate.
-6. inspect the connected object graph and generated policy/procedure.
+6. Assemble accepted candidates and inspect the connected draft graph and generated policy/procedure, confirming both remain unapproved.
 7. Run the fictional prolonged-outage scenario.
 8. Convert observations into findings and propose controlled changes.
 9. Confirm the suggested change class, or escalate it.

@@ -40,7 +40,7 @@ export function createSeed() {
     publicationMappings: [], remoteDocuments: [], publicationChecks: [],
     approvalRings: [{ level: 1, key: "administrative", name: "Owner" }, { level: 2, key: "minor", name: "Team" }, { level: 3, key: "material", name: "Governance forum" }, { level: 4, key: "fundamental", name: "Executive or Board" }],
     authorityRoles: [{ role: "Contributor", downgradeTransitions: [] }, { role: "Document Owner", downgradeTransitions: ["minor:administrative"] }, { role: "Governance Chair", downgradeTransitions: ["material:minor"] }, { role: "Executive Sponsor", downgradeTransitions: ["fundamental:material"] }],
-    intakes: [], intakeQuestions: [], intakeCandidates: [], changeAssessments: [],
+    intakes: [], intakeQuestions: [], intakeCandidates: [], changeAssessments: [], draftObjects: [], draftLinks: [], draftDocuments: [],
     auditEvents: [{ id: "AUD-IM-001", actor: "Demo seed", action: "baseline-released", objectType: "Release", objectId: "REL-IM-001", timestamp: "2026-06-01T09:00:00Z", previousValue: null, newValue: "1.0", reason: "Create fictional demonstration baseline" }]
   };
 }

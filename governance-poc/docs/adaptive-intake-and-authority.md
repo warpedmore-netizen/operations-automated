@@ -18,6 +18,8 @@ Every intake asks a small baseline covering owner, purpose, approval authority, 
 
 Extraction produces suggested policy statements, procedure steps or document sections with provenance and confidence. A named human accepts, amends or rejects each candidate before it can become controlled content.
 
+For guided creation, the first deterministic authoring provider converts the completed baseline into candidate role assignments, policy statements, controls, procedure steps and evidence requirements. Every candidate retains the question IDs that produced it. Only reviewed and accepted candidates can be assembled into a connected draft graph and generated preview; that preview remains explicitly unapproved.
+
 ## Proportionate authority
 
 Default rings are Owner, Team, Governance forum and Executive or Board. Organisations may later rename and configure them. Any role may escalate a recommendation. Downgrading is allowed only for an explicitly configured role transition, requires justification and creates an audit event. Approval, notification and acknowledgement are separate obligations derived from the selected change class.

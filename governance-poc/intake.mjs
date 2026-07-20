@@ -72,6 +72,51 @@ export function reviewCandidate(input, candidateId, decision, actor, amendedText
   return state;
 }
 
+function answersFor(state, intakeId) { return Object.fromEntries(state.intakeQuestions.filter(item => item.intakeId === intakeId && item.status === "answered").map(item => [item.key, item.answer])); }
+
+export function generateGuidedCandidates(input, intakeId, actor) {
+  const state = clone(input); const intake = state.intakes?.find(item => item.id === intakeId);
+  if (!intake || intake.intakeRoute !== "new" || !actor?.trim()) throw new Error("A guided intake and named human operator are required");
+  const questions = state.intakeQuestions.filter(item => item.intakeId === intakeId);
+  const unansweredBaseline = questions.filter(item => item.reason === "required-governance-baseline" && item.status !== "answered");
+  if (unansweredBaseline.length) throw new Error("Answer every required governance question before generating candidates");
+  if (state.intakeCandidates.some(item => item.intakeId === intakeId)) return state;
+  const answers = answersFor(state, intakeId); const sourceQuestionIds = questions.filter(item => item.status === "answered").map(item => item.id);
+  const suggestions = [
+    { objectType: "RoleAssignment", text: `${answers.owner} owns the ${intake.title} and its operational meaning.`, fields: { owner: answers.owner, responsibility: `Own ${intake.title}` } },
+    { objectType: "PolicyStatement", text: `${answers.owner} must ensure that ${answers.purpose}`, fields: { mandatoryLevel: "mandatory", owner: answers.owner, rationale: answers.purpose } },
+    { objectType: "Control", text: `The document and its supporting evidence must be reviewed ${answers.reviewCycle}.`, fields: { owner: answers.owner, frequency: answers.reviewCycle, objective: answers.purpose } },
+    { objectType: "ProcedureStep", text: `Record evidence of the governed activity and route material changes to ${answers.approvalAuthority}.`, fields: { sequence: 1, owner: answers.owner } },
+    { objectType: "EvidenceRequirement", text: `Retain the approval decision, effective date ${answers.effectiveDate}, and evidence under classification ${answers.classification}.`, fields: { classification: answers.classification, effectiveDate: answers.effectiveDate } }
+  ];
+  for (const suggestion of suggestions) state.intakeCandidates.push({ id: `CAND-${String(state.intakeCandidates.length + 1).padStart(3, "0")}`, intakeId, ...suggestion, confidence: "medium", status: "suggested", provenance: { organisation: "Northstar Digital Services", questionIds: sourceQuestionIds, documentType: intake.documentType }, generatedBy: "mock-guided-author-v1", reviewDecision: null });
+  intake.status = "candidate-review"; audit(state, actor, "guided-candidates-generated", "DocumentIntake", intakeId, "Suggestions generated from answered questions; human review required");
+  return state;
+}
+
+const prefixes = { RoleAssignment: "ROLE", PolicyStatement: "POL", Control: "CTRL", ProcedureStep: "STEP", EvidenceRequirement: "EVIDREQ", DocumentSection: "SECTION" };
+
+export function buildDraftGraph(input, intakeId, actor) {
+  const state = clone(input); const intake = state.intakes?.find(item => item.id === intakeId); const candidates = state.intakeCandidates?.filter(item => item.intakeId === intakeId) ?? [];
+  if (!intake || !actor?.trim()) throw new Error("A document intake and named human builder are required");
+  if (!candidates.length || candidates.some(item => item.status === "suggested")) throw new Error("Review every candidate before building the draft graph");
+  const accepted = candidates.filter(item => item.status === "accepted");
+  if (!accepted.length) throw new Error("At least one candidate must be accepted");
+  state.draftObjects ??= []; state.draftLinks ??= []; state.draftDocuments ??= [];
+  const created = accepted.map(candidate => {
+    const prefix = prefixes[candidate.objectType] ?? "OBJ"; const id = `${prefix}-DRAFT-${String(state.draftObjects.length + 1).padStart(3, "0")}`;
+    const object = { id, intakeId, objectType: candidate.objectType, title: candidate.objectType, text: candidate.text, fields: candidate.fields ?? {}, status: "draft", sourceCandidateId: candidate.id, provenance: clone(candidate.provenance), createdBy: actor, createdAt: now() };
+    state.draftObjects.push(object); return object;
+  });
+  const policy = created.find(item => item.objectType === "PolicyStatement"), control = created.find(item => item.objectType === "Control"), role = created.find(item => item.objectType === "RoleAssignment"), step = created.find(item => item.objectType === "ProcedureStep"), evidence = created.find(item => item.objectType === "EvidenceRequirement");
+  const connect = (from, to, type) => { if (from && to) state.draftLinks.push({ from: from.id, to: to.id, type, status: "draft", intakeId }); };
+  connect(role, policy, "owns"); connect(control, policy, "expressed-through"); connect(control, step, "implemented-by"); connect(step, evidence, "produces");
+  const preview = `# ${intake.title}\n\n- Organisation: Northstar Digital Services\n- Document type: ${intake.documentType}\n- Status: draft — not approved\n- Owner: ${answersFor(state, intakeId).owner}\n\n${created.map(item => `## ${item.objectType}\n\n${item.text}`).join("\n\n")}\n`;
+  state.draftDocuments.push({ id: `DOC-DRAFT-${String(state.draftDocuments.length + 1).padStart(3, "0")}`, intakeId, title: intake.title, documentType: intake.documentType, status: "draft", objectIds: created.map(item => item.id), preview, generatedAt: now() });
+  intake.status = "draft-assembled"; audit(state, actor, "connected-draft-assembled", "DocumentIntake", intakeId, `${created.length} accepted candidates assembled; remains unapproved`);
+  return state;
+}
+
 export function recommendChangeClass({ changedFields = [], description = "" }) {
   const signal = `${changedFields.join(" ")} ${description}`.toLowerCase();
   if (/purpose|risk appetite|regulatory interpretation|operating model/.test(signal)) return "fundamental";

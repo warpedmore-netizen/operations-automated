@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { createSeed } from "../seed.mjs";
-import { answerIntakeQuestion, classifyChange, createIntake, intakeProfiles, recommendChangeClass, reviewCandidate } from "../intake.mjs";
+import { answerIntakeQuestion, buildDraftGraph, classifyChange, createIntake, generateGuidedCandidates, intakeProfiles, recommendChangeClass, reviewCandidate } from "../intake.mjs";
 
 test("intake adapters retain different source structures and references", () => {
   assert.equal(intakeProfiles.word.structure, "headings-paragraphs-tables");
@@ -69,4 +69,33 @@ test("classification produces proportionate approval and notification rules", ()
   const assessment = state.changeAssessments[0];
   assert.equal(assessment.approvalRing, "Executive or Board");
   assert.ok(assessment.notificationRules.some(item => item.audience === "Executive forum" && item.action === "approve"));
+});
+
+function answeredGuidedIntake() {
+  let state = createIntake(createSeed(), { intakeRoute: "new", documentType: "policy", title: "Northstar Incident Management Policy", actor: "Jamie" });
+  const answers = ["Incident Management Owner", "maintain safe and coordinated incident response", "Governance Forum", "annually and after material incidents", "2026-08-01", "internal"];
+  for (let index = 0; index < answers.length; index += 1) state = answerIntakeQuestion(state, `Q-${String(index + 1).padStart(3, "0")}`, answers[index], "Jamie");
+  return state;
+}
+
+test("guided answers become traceable suggestions rather than approved content", () => {
+  let state = answeredGuidedIntake();
+  state = generateGuidedCandidates(state, "INTAKE-001", "Jamie");
+  assert.deepEqual(state.intakeCandidates.map(item => item.objectType), ["RoleAssignment", "PolicyStatement", "Control", "ProcedureStep", "EvidenceRequirement"]);
+  assert.ok(state.intakeCandidates.every(item => item.status === "suggested"));
+  assert.ok(state.intakeCandidates.every(item => item.provenance.questionIds.length === 6));
+  assert.equal(state.draftObjects.length, 0);
+});
+
+test("only reviewed and accepted candidates assemble into a connected unapproved draft", () => {
+  let state = generateGuidedCandidates(answeredGuidedIntake(), "INTAKE-001", "Jamie");
+  assert.throws(() => buildDraftGraph(state, "INTAKE-001", "Jamie"), /Review every candidate/);
+  for (const candidate of state.intakeCandidates) state = reviewCandidate(state, candidate.id, "accepted", "Jamie");
+  state = buildDraftGraph(state, "INTAKE-001", "Jamie");
+  assert.equal(state.draftObjects.length, 5);
+  assert.ok(state.draftObjects.every(item => item.status === "draft"));
+  assert.ok(state.draftLinks.some(item => item.type === "implemented-by"));
+  assert.match(state.draftDocuments[0].preview, /Northstar Digital Services/);
+  assert.match(state.draftDocuments[0].preview, /Status: draft — not approved/);
+  assert.ok(state.auditEvents.some(item => item.action === "connected-draft-assembled"));
 });
