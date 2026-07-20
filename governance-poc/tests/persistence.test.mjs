@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { GovernanceStore } from "../store.mjs";
 import { createGovernanceServer } from "../server.mjs";
+import { createSeed } from "../seed.mjs";
 
 async function temporaryState(run) {
   const directory = await mkdtemp(join(tmpdir(), "oa-governance-"));
@@ -20,6 +21,16 @@ test("governed actions survive store reconstruction", () => temporaryState(async
   assert.equal(restored.findings[0].status, "accepted");
   assert.equal(restored.auditEvents.at(-1).actor, "Test reviewer");
   assert.equal(JSON.parse(await readFile(path, "utf8")).findings[0].status, "accepted");
+}));
+
+test("older local state gains new configuration without losing its history", () => temporaryState(async path => {
+  const legacy = { ...createSeed(), auditEvents: [{ id: "AUD-LEGACY", actor: "Earlier milestone" }] };
+  delete legacy.approvalRings; delete legacy.authorityRoles; delete legacy.intakes;
+  await new GovernanceStore(path).write(legacy);
+  const migrated = await new GovernanceStore(path).read();
+  assert.equal(migrated.auditEvents[0].id, "AUD-LEGACY");
+  assert.equal(migrated.approvalRings.length, 4);
+  assert.ok(Array.isArray(migrated.intakes));
 }));
 
 test("HTTP API persists the complete human-governed release workflow", () => temporaryState(async statePath => {

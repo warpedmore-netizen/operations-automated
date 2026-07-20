@@ -31,6 +31,7 @@ npm run governance:test
 ## Demonstrate the vertical slice
 
 1. Open **Traceability** and inspect `OBL-IM-004` and its linked control, policy, procedure, test, evidence and finding.
+1. Open **Document intake** and create a Word, Google Docs, Confluence, text or guided intake. Review the required and gap-driven questions, then accept, amend or reject extracted candidate objects.
 2. Open **Scenario** and review the delayed Risk and Compliance notification.
 3. Open **Finding** and accept the AI-labelled candidate as a human reviewer.
 4. Open **Change proposal**, create the proposal, inspect the wording diff and record a human approval.
@@ -43,6 +44,8 @@ npm run governance:test
 The current milestone follows the repository's existing local-first, no-dependency architecture: browser UI, HTTP application service, atomic file persistence, domain service, generated Markdown views and mocked adapters. The service layer is isolated so a later implementation can adopt TypeScript, React and Prisma/SQLite without changing governance rules. See [architecture.md](docs/architecture.md).
 
 Publication is platform-neutral. The core owns eligibility, deterministic generation, mappings, hashes, comparison, drift and conflict handling. Confluence and Notion adapters declare and translate their different hierarchy, content, permission and concurrency models. See [publication-adapters.md](docs/publication-adapters.md).
+
+Adaptive intake and proportionate authority are described in [adaptive-intake-and-authority.md](docs/adaptive-intake-and-authority.md). The proof models one user while preserving the future distinction between escalation, restricted downgrade, approval, notification and acknowledgement.
 
 ## Seed data
 
