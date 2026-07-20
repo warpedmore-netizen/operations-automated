@@ -80,3 +80,9 @@ The next counter-test should examine an automated operation whose scale makes co
 ## Retained lesson
 
 Remove ceremonial human clicks, not human ownership. Build trained assurance, improvement and recovery capability around the automated work, with controls proportionate to consequence and reversibility.
+
+## Resilience counter-test result
+
+Jamie clarified that minimum critical outcomes, service criticality, impact tolerance, escalation timing and fallback design are defined by management and relevant stakeholders through proportionate business continuity or operational-resilience decisions.
+
+The resulting convergence, AI interpretation correction and remaining transfer test are recorded in [Proportionate resilience and contextual challenge](2026-07-20-proportionate-resilience-and-contextual-challenge.md).

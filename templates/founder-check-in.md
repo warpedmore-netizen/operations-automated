@@ -41,6 +41,7 @@ What might the methodology's response have missed, oversimplified or made imprac
 
 ## Counter-test
 
+- **Strongest reasonable contextual interpretation:**
 - **Assumption, conclusion or earlier answer being challenged:**
 - **What has been reversed or changed:**
 - **What evidence would weaken the current conclusion:**

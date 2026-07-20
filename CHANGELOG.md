@@ -15,6 +15,8 @@ All material changes to Operations Automated will be recorded here.
 - Added controls so fatigue, silence and performative disagreement are not mistaken for convergence.
 - Retained contextual convergence on fully automated execution of a bounded work type with continuing human ownership, assurance, capability and resilience.
 - Recorded remaining challenges concerning independent assurance, silent failure, expert concentration and recovery at automated scale.
+- Retained convergence on business-defined minimum outcomes, impact tolerances and proportionate fallback design.
+- Added a challenge safeguard requiring the strongest reasonable contextual interpretation rather than a literal version of conversational shorthand.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 

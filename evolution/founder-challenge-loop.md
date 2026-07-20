@@ -47,6 +47,8 @@ The loop is not limited to one question and one answer. Where a conclusion could
 
 AI should challenge its own earlier answer as readily as Jamie's answer. It should not create debate for performance or continue until Jamie agrees through exhaustion. Jamie may pause or stop without that becoming evidence.
 
+Before selecting a counter-test, AI should reconstruct the strongest reasonable contextual meaning of Jamie's answer. It should not convert conversational shorthand or a general example into an extreme universal claim merely because that version is easier to challenge.
+
 ## Route 2: AI-initiated daily challenge
 
 An active local Codex automation named `Daily methodology challenge` runs each day at 08:00 UK local time for the Operations Automated project.
