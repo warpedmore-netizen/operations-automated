@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A private, governed OPERATE workspace for operational problem solving.">
+  <title>OPERATE Workspace</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to workspace</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">OA</span>
+      <div>
+        <strong>OPERATE Workspace</strong>
+        <span>Private MVP · Methodology v0.3</span>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="privacy-pill"><span aria-hidden="true">●</span> Local only</span>
+      <button class="button button-quiet" type="button" data-action="copy-brief">Copy AI brief</button>
+      <button class="button button-quiet" type="button" data-action="export-json">Export JSON</button>
+      <button class="button button-primary" type="button" data-action="export-markdown">Export record</button>
+    </div>
+  </header>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="OPERATE progress">
+      <div class="sidebar-intro">
+        <span class="eyebrow">Current workspace</span>
+        <h1 id="sidebar-title">Untitled problem</h1>
+        <p id="sidebar-owner">Owner not recorded</p>
+      </div>
+
+      <div class="progress-block">
+        <div class="progress-label"><span>Governed readiness</span><strong id="progress-value">0%</strong></div>
+        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
+      </div>
+
+      <nav>
+        <ol class="stage-list" id="stage-list"></ol>
+      </nav>
+
+      <div class="sidebar-boundary">
+        <strong>Human-controlled</strong>
+        <p>The engine can guide and check. It cannot approve, publish or act beyond recorded authority.</p>
+      </div>
+    </aside>
+
+    <main id="workspace" class="workspace">
+      <section class="next-action" aria-labelledby="next-action-title">
+        <div>
+          <span class="eyebrow">Next governed action</span>
+          <h2 id="next-action-title">Define the problem and ownership</h2>
+          <p id="next-action-detail">Complete the project context before progressing.</p>
+        </div>
+        <span class="control-badge" id="control-badge">AI can assist</span>
+      </section>
+
+      <section class="intro-panel">
+        <div>
+          <span class="eyebrow">The working principle</span>
+          <h2>Turn a messy problem into a governed next move.</h2>
+        </div>
+        <p>Define value first, make decisions visible, keep people where consequence matters and retain what the work teaches you.</p>
+      </section>
+
+      <section class="panel" aria-labelledby="project-heading">
+        <div class="panel-heading">
+          <div><span class="step-number">01</span><h2 id="project-heading">Frame the work</h2></div>
+          <p>Describe the problem in ordinary language. No process map or technical specification is required.</p>
+        </div>
+        <div class="form-grid form-grid-two">
+          <label class="field field-wide">
+            <span>Workspace title</span>
+            <input data-bind="project.title" type="text" placeholder="For example: Reduce avoidable customer handoffs" autocomplete="off">
+          </label>
+          <label class="field field-wide">
+            <span>Problem or opportunity</span>
+            <textarea data-bind="project.problem" rows="4" placeholder="What is happening, and why is it worth examining?"></textarea>
+          </label>
+          <label class="field">
+            <span>People affected</span>
+            <input data-bind="project.peopleAffected" type="text" placeholder="Customers, colleagues, suppliers…" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Operational owner</span>
+            <input data-bind="project.owner" type="text" placeholder="Named person or accountable role" autocomplete="off">
+          </label>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="value-heading">
+        <div class="panel-heading">
+          <div><span class="step-number">02</span><h2 id="value-heading">Define what better means</h2></div>
+          <p>Cost and speed are not automatically the priority. Record the value proposition and the authority to resolve trade-offs.</p>
+        </div>
+        <div class="form-grid form-grid-two">
+          <label class="field field-wide">
+            <span>Value proposition</span>
+            <textarea data-bind="value.proposition" rows="3" placeholder="Who benefits, and what meaningful change should they experience?"></textarea>
+          </label>
+          <label class="field">
+            <span>Desired outcome</span>
+            <textarea data-bind="value.desiredOutcome" rows="3" placeholder="The observable result you want"></textarea>
+          </label>
+          <label class="field">
+            <span>Primary beneficiary</span>
+            <textarea data-bind="value.beneficiary" rows="3" placeholder="Who receives the value?"></textarea>
+          </label>
+          <label class="field">
+            <span>Forms of value</span>
+            <textarea data-bind="value.formsOfValue" rows="3" placeholder="Safety, quality, confidence, time, cost…"></textarea>
+          </label>
+          <label class="field">
+            <span>Priority order</span>
+            <textarea data-bind="value.priorities" rows="3" placeholder="What matters most when outcomes conflict?"></textarea>
+          </label>
+          <label class="field">
+            <span>Minimum acceptable outcome</span>
+            <textarea data-bind="value.minimumOutcome" rows="3" placeholder="What must every suitable option achieve?"></textarea>
+          </label>
+          <label class="field">
+            <span>Constraints and obligations</span>
+            <textarea data-bind="value.constraints" rows="3" placeholder="Legal, safety, ethical, human and practical boundaries"></textarea>
+          </label>
+          <label class="field field-wide">
+            <span>Decision authority</span>
+            <input data-bind="value.decisionAuthority" type="text" placeholder="Who is authorised to choose when outcomes conflict?" autocomplete="off">
+          </label>
+        </div>
+      </section>
+
+      <section class="panel stage-panel" aria-labelledby="stage-heading">
+        <div class="panel-heading">
+          <div><span class="step-number">03</span><h2 id="stage-heading">Work the current stage</h2></div>
+          <p id="stage-purpose"></p>
+        </div>
+
+        <div class="stage-question">
+          <span class="eyebrow" id="stage-name">Observe</span>
+          <blockquote id="stage-question">What actually happens?</blockquote>
+          <ul id="stage-prompts"></ul>
+        </div>
+
+        <div class="form-grid form-grid-two">
+          <label class="field field-wide">
+            <span>Evidence and observations</span>
+            <textarea id="stage-evidence" rows="5" placeholder="Record facts, sources, exceptions and uncertainty"></textarea>
+          </label>
+          <label class="field field-wide">
+            <span>Decision or conclusion</span>
+            <textarea id="stage-decision" rows="4" placeholder="What is decided, ruled out or carried forward?"></textarea>
+          </label>
+          <label class="field field-wide">
+            <span>Owner of the outcome</span>
+            <input id="stage-owner" type="text" placeholder="Named person or accountable role" autocomplete="off">
+          </label>
+        </div>
+
+        <div id="approval-panel" class="approval-panel" hidden></div>
+
+        <div class="stage-actions">
+          <button class="button button-quiet" type="button" data-action="record-stage">Record stage update</button>
+          <button class="button button-primary" type="button" data-action="advance-stage" id="advance-button">Move forward</button>
+        </div>
+      </section>
+
+      <section class="evidence-grid">
+        <article class="panel compact-panel" aria-labelledby="governance-heading">
+          <div class="panel-heading compact-heading"><div><span class="step-number">04</span><h2 id="governance-heading">Governance record</h2></div></div>
+          <div id="approval-list" class="approval-list"></div>
+        </article>
+
+        <article class="panel compact-panel" aria-labelledby="activity-heading">
+          <div class="panel-heading compact-heading"><div><span class="step-number">05</span><h2 id="activity-heading">Recent activity</h2></div></div>
+          <ol id="activity-list" class="activity-list"></ol>
+        </article>
+      </section>
+
+      <section class="data-boundary">
+        <div>
+          <strong>Your browser holds this workspace.</strong>
+          <p>It is not synchronised or sent to an external service. Do not enter confidential or regulated information.</p>
+        </div>
+        <div class="boundary-actions">
+          <label class="button button-quiet file-button">Import JSON<input id="import-file" type="file" accept="application/json,.json"></label>
+          <button class="button button-danger" type="button" data-action="new-workspace">Start a new workspace</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="engine.js"></script>
+  <script src="storage.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

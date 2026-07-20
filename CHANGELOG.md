@@ -2,6 +2,15 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Application MVP 0.1 - proposal
+
+- Added a private, local-first OPERATE workspace with no external dependencies or connections.
+- Added a governed next-action engine covering all seven OPERATE stages.
+- Added named human approval gates with automatic invalidation after affected evidence changes.
+- Added local persistence, activity history, Markdown and JSON export, JSON import and a Codex-ready AI brief.
+- Added a product definition, validation criteria and provisional recurring-revenue strategy.
+- Added automated governance, export, import-contract and interface checks.
+
 ## 0.3 - Working method
 
 - Approved by Jamie Peppard for internal piloting on 2026-07-20.
