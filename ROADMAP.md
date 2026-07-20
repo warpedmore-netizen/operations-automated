@@ -1,8 +1,8 @@
 ---
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
-status: approved
-version: 0.3
+status: proposed
+version: 0.5
 owner: Jamie Peppard
 last_updated: 2026-07-20
 ---
@@ -19,13 +19,17 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Version 0.4 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
+Version 0.5 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
 Jamie also clarified that OPERATE is the improvement cycle inside the methodology, not the complete methodology. The complete system must cover operational basics, connected operating lenses, work types, cross-team dependencies, risk, controls, data, people, technology, automation, AI readiness, agentic readiness, implementation and continuing evolution.
 
 Version 0.4 records the corrected methodology boundary and the decision to develop methodology, evolution and facilitated delivery in tandem.
+
+Version 0.5 establishes the operating rhythm for that evolution: an active read-only daily founder challenge at 08:00 UK time, founder-initiated questions, structured feedback disposition and a plain-English assurance pack before material approval.
+
+The first seven-response checkpoint is complete. Its coherent amalgamation, [connected work, risk and control](methodology/connected-work-risk-and-control.md), and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md) are approved as working internal guidance under the conditions in the [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md).
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
@@ -57,11 +61,14 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Select the first real, non-confidential operational case and validate the provisional value order in context.
-2. Run the case through Codex, returning outputs in line with the output contract.
-3. Use the case and self-assessment to select the first detailed methodology guidance rather than attempting every specialist module without evidence.
-4. Record confusion, gaps and outcomes as methodology feedback.
-5. Use the evolution system to prepare the next controlled proposal.
+1. Run the daily founder challenge and allow Jamie to initiate questions at any time.
+2. Give Jamie a provisional Operations Automated answer to critique rather than only asking for analysis.
+3. Retain each material response with an explicit no-change, clarification, more-evidence, material-proposal or urgent-review disposition.
+4. Use a plain-English assurance pack for each material proposal.
+5. Review the usefulness, breadth, response burden and change yield after seven completed responses.
+6. Continue the daily cycle after that checkpoint, selecting the most decision-relevant unresolved concept across methodology, evolution, delivery, product and commercial design.
+7. Use the resulting evidence to prioritise detailed methodology guidance and future feedback channels.
+8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before rebuilding the application.
 
 ## Application decision
 
@@ -75,7 +82,7 @@ Jamie does not need to edit files, design the application or operate GitHub manu
 
 During internal validation Jamie provides operational context, confirms value and constraints, and makes decisions where authority or consequence matters. AI leads assessment, repository work, output production and proposal execution.
 
-The next founder input is selection of one real, non-confidential operational case. AI should then lead the case rather than asking Jamie to design the method or product journey.
+Jamie's next participation is a short response to a daily challenge or a question posed to the methodology. Jamie may skip a check-in and should not need to design the method, repository change or product journey.
 
 ## Connections and technology
 

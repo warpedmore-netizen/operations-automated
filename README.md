@@ -6,7 +6,9 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** v0.4 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
+> **Approved baseline:** v0.5 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
+>
+> **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
 
 ## How the system fits together
 
@@ -17,6 +19,8 @@ This repository is the controlled source for the methodology, its principles, go
 | [Readiness path](methodology/readiness-path.md) | Evidence-led progression from operational basics to automation, AI and agents | Approved for internal validation |
 | [OPERATE](methodology/operate-overview.md) | The improvement and implementation cycle within the wider methodology | Approved for internal validation |
 | [Output contract](methodology/output-contract.md) | The useful analysis, decisions and artefacts a user must receive | Approved for internal validation |
+| [Connected work, risk and control](methodology/connected-work-risk-and-control.md) | Proportionate links between demand, work, causes, risk, decisions, controls and learning | Approved for internal validation |
+| [Proportionate application and delivery modes](methodology/proportionate-application-and-delivery-modes.md) | Ask and assessment/project experiences using one consistent method | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 
@@ -40,6 +44,26 @@ The internal-validation route is:
 4. Process useful changes through the controlled evolution system.
 
 See the [roadmap](ROADMAP.md) for the workstreams, milestones and human decision points.
+
+## Daily methodology challenge
+
+An active Codex automation sends Jamie one methodology challenge each day at 08:00 UK time. It reads the approved repository, reviews current public operational discussion, applies Operations Automated provisionally and gives Jamie a concrete response to critique in 5, 10 or 20 minutes.
+
+The automation has no planned end date. Seven completed responses are the first quality and synthesis review, not the end of the challenge cycle. It continues until Jamie explicitly pauses, changes or stops it.
+
+The scheduled check-in is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology.
+
+During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop app must be running and this repository must be available at the scheduled time. Results appear in **Scheduled** and can be answered later. Jamie can request a manual check-in whenever a local run is missed.
+
+Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
+
+For a direct ad-hoc check-in, Jamie can simply say: **“Give me another methodology challenge.”** AI should review the retained evidence, avoid repeating a completed test and continue the same controlled feedback loop.
+
+Scheduled and ad-hoc questions may challenge the whole Operations Automated system: its purpose, principles, methodology, work types, readiness, governance, evolution, delivery, product and commercial hypotheses. AI should choose the most decision-relevant unresolved conceptual question, not rotate topics merely for variety.
+
+Answers are not accepted uncritically. AI may reverse an assumption, introduce contrary evidence, transfer the reasoning to another setting or test failure and authority. Jamie may challenge the AI's interpretation in return. Agreement is retained only when the reasoning survives proportionate testing; fatigue or silence is not agreement.
+
+The first seven responses are amalgamated in the approved internal [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md) records Jamie's conditional internal-validation decision. The daily cycle continues regardless of that checkpoint.
 
 ## Application experiment
 
