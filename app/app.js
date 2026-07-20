@@ -82,6 +82,23 @@
     badge.classList.toggle("human", assessment.control.includes("Human"));
   }
 
+  function renderApprovalPanel(assessment) {
+    const approvalPanel = byId("approval-panel");
+    if (!assessment.gateLabel) {
+      approvalPanel.hidden = true;
+      approvalPanel.innerHTML = "";
+      return;
+    }
+
+    const approval = workspace.approvals[assessment.stage.id];
+    approvalPanel.hidden = false;
+    approvalPanel.innerHTML = approval?.approved
+      ? `<h3>Human approval recorded</h3><p>${escapeHtml(approval.label)} — ${escapeHtml(approval.approvedBy)} on ${escapeHtml(formatDate(approval.approvedAt))}.</p><button class="button button-danger" type="button" data-action="revoke-approval">Remove approval</button>`
+      : assessment.recordMissing.length
+        ? `<h3>Human control point pending</h3><p>Complete the stage evidence, decision and owner before asking a human to ${escapeHtml(assessment.gateLabel.toLowerCase())}.</p>`
+        : `<h3>Human control point</h3><p>${escapeHtml(assessment.gateLabel)}. AI cannot make this decision.</p><div class="approval-controls"><label class="field"><span>Authorised human</span><input id="approval-name" type="text" placeholder="Name of the person approving" autocomplete="off"></label><button class="button button-primary" type="button" data-action="approve-stage">Record approval</button></div>`;
+  }
+
   function renderStage(assessment) {
     const stage = assessment.stage;
     const record = workspace.stages[stage.id];
@@ -93,19 +110,7 @@
     byId("stage-decision").value = record.decision;
     byId("stage-owner").value = record.owner;
 
-    const approvalPanel = byId("approval-panel");
-    if (!assessment.gateLabel) {
-      approvalPanel.hidden = true;
-      approvalPanel.innerHTML = "";
-    } else {
-      const approval = workspace.approvals[stage.id];
-      approvalPanel.hidden = false;
-      approvalPanel.innerHTML = approval?.approved
-        ? `<h3>Human approval recorded</h3><p>${escapeHtml(approval.label)} — ${escapeHtml(approval.approvedBy)} on ${escapeHtml(formatDate(approval.approvedAt))}.</p><button class="button button-danger" type="button" data-action="revoke-approval">Remove approval</button>`
-        : assessment.recordMissing.length
-          ? `<h3>Human control point pending</h3><p>Complete the stage evidence, decision and owner before asking a human to ${escapeHtml(assessment.gateLabel.toLowerCase())}.</p>`
-          : `<h3>Human control point</h3><p>${escapeHtml(assessment.gateLabel)}. AI cannot make this decision.</p><div class="approval-controls"><label class="field"><span>Authorised human</span><input id="approval-name" type="text" placeholder="Name of the person approving" autocomplete="off"></label><button class="button button-primary" type="button" data-action="approve-stage">Record approval</button></div>`;
-    }
+    renderApprovalPanel(assessment);
 
     const advanceButton = byId("advance-button");
     advanceButton.disabled = !assessment.canAdvance;
@@ -188,17 +193,22 @@
     byId(id).addEventListener("input", () => {
       const stage = workspace.currentStage;
       const field = id.replace("stage-", "");
+      const beforeAssessment = engine.assessWorkspace(workspace);
       const approvalWasRecorded = Boolean(workspace.approvals[stage]);
       workspace = engine.invalidateFromStage(workspace, stage, `${engine.STAGES.find((item) => item.id === stage).name} evidence changed; approval requires review`);
       workspace.stages[stage][field] = byId(id).value;
       workspace.updatedAt = new Date().toISOString();
       persist();
       const assessment = engine.assessWorkspace(workspace);
-      if (approvalWasRecorded) render();
-      else {
-        renderSidebar(assessment);
-        renderNextAction(assessment);
-        byId("advance-button").disabled = !assessment.canAdvance;
+      const gateReadinessChanged = Boolean(assessment.gateLabel)
+        && (beforeAssessment.recordMissing.length === 0) !== (assessment.recordMissing.length === 0);
+      renderSidebar(assessment);
+      renderNextAction(assessment);
+      byId("advance-button").disabled = !assessment.canAdvance;
+      if (approvalWasRecorded || gateReadinessChanged) {
+        renderApprovalPanel(assessment);
+        renderGovernance();
+        renderActivity();
       }
     });
   }
