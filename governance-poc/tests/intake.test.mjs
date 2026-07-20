@@ -7,7 +7,18 @@ test("intake adapters retain different source structures and references", () => 
   assert.equal(intakeProfiles.word.structure, "headings-paragraphs-tables");
   assert.equal(intakeProfiles.googleDocs.reference, "document-id");
   assert.equal(intakeProfiles.confluence.reference, "page-id");
+  assert.equal(intakeProfiles.notion.structure, "workspace-parent-page-properties-blocks");
   assert.equal(intakeProfiles.guided.input, "answers");
+});
+
+test("document type, starting route and source platform remain separate", () => {
+  const created = createIntake(createSeed(), { intakeRoute: "new", documentType: "policy", title: "Incident Policy", actor: "Jamie" });
+  assert.equal(created.intakes[0].documentType, "policy");
+  assert.equal(created.intakes[0].sourceType, "guided");
+  assert.equal(created.intakeQuestions.some(item => item.key === "sourceContent"), false);
+  const imported = createIntake(createSeed(), { intakeRoute: "existing", documentType: "procedure", sourceType: "notion", title: "Escalation", reference: "notion-page-id", actor: "Jamie" });
+  assert.equal(imported.intakes[0].documentType, "procedure");
+  assert.equal(imported.intakes[0].sourceType, "notion");
 });
 
 test("document intake combines required and gap-driven questions", () => {

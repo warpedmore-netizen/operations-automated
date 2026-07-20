@@ -8,6 +8,7 @@ export const intakeProfiles = {
   word: { input: "file", reference: "filename", structure: "headings-paragraphs-tables", status: "mock-extractor", futureRequirement: "DOCX parser" },
   googleDocs: { input: "remote-reference", reference: "document-id", structure: "tabs-headings-paragraphs-tables", status: "mock-connector", futureRequirement: "authorised Google Docs connection" },
   confluence: { input: "remote-reference", reference: "page-id", structure: "space-ancestors-page-body", status: "mock-connector", futureRequirement: "authorised Confluence connection" },
+  notion: { input: "remote-reference", reference: "page-id", structure: "workspace-parent-page-properties-blocks", status: "mock-connector", futureRequirement: "authorised Notion connection" },
   text: { input: "direct", reference: "optional", structure: "plain-text-lines", status: "available", futureRequirement: null },
   guided: { input: "answers", reference: "none", structure: "question-set", status: "available", futureRequirement: null }
 };
@@ -32,22 +33,24 @@ function candidateRecords(content) {
   return records;
 }
 
-export function createIntake(input, { sourceType, title, reference = "", content = "", actor }) {
+export function createIntake(input, { intakeRoute = "existing", documentType = "other", sourceType, title, reference = "", content = "", actor }) {
   const state = clone(input);
   if (!actor?.trim() || !title?.trim()) throw new Error("A named owner and document title are required");
-  const profile = intakeProfiles[sourceType];
+  if (!['new', 'existing'].includes(intakeRoute)) throw new Error("Choose whether to create or import a document");
+  const effectiveSourceType = intakeRoute === "new" ? "guided" : sourceType;
+  const profile = intakeProfiles[effectiveSourceType];
   if (!profile) throw new Error("Unsupported intake source");
-  if (profile.input === "remote-reference" && !reference.trim()) throw new Error(`${sourceType} requires a document reference`);
+  if (profile.input === "remote-reference" && !reference.trim()) throw new Error(`${effectiveSourceType} requires a document reference`);
   if (profile.input === "file" && !reference.trim()) throw new Error("Word intake requires the source filename");
   state.intakes ??= []; state.intakeQuestions ??= []; state.intakeCandidates ??= [];
   const id = `INTAKE-${String(state.intakes.length + 1).padStart(3, "0")}`;
-  state.intakes.push({ id, sourceType, title, reference, sourceProfile: clone(profile), contentBoundary: content ? "fictional demonstration text supplied" : "no content retrieved in mock mode", createdBy: actor, createdAt: now(), status: "questions-required" });
+  state.intakes.push({ id, intakeRoute, documentType, sourceType: effectiveSourceType, title, reference, sourceProfile: clone(profile), contentBoundary: content ? "fictional demonstration text supplied" : intakeRoute === "new" ? "content will be created through guided answers" : "no content retrieved in mock mode", createdBy: actor, createdAt: now(), status: "questions-required" });
   for (const [key, question] of universalQuestions) state.intakeQuestions.push({ id: `Q-${String(state.intakeQuestions.length + 1).padStart(3, "0")}`, intakeId: id, key, question, reason: "required-governance-baseline", status: "open", answer: null });
-  if (!content.trim()) state.intakeQuestions.push({ id: `Q-${String(state.intakeQuestions.length + 1).padStart(3, "0")}`, intakeId: id, key: "sourceContent", question: `Provide or authorise retrieval of the ${sourceType} content.`, reason: "source-content-unavailable", status: "open", answer: null });
+  if (!content.trim() && intakeRoute === "existing") state.intakeQuestions.push({ id: `Q-${String(state.intakeQuestions.length + 1).padStart(3, "0")}`, intakeId: id, key: "sourceContent", question: `Provide or authorise retrieval of the ${effectiveSourceType} content.`, reason: "source-content-unavailable", status: "open", answer: null });
   if (/\bshould\b/i.test(content)) state.intakeQuestions.push({ id: `Q-${String(state.intakeQuestions.length + 1).padStart(3, "0")}`, intakeId: id, key: "mandatoryMeaning", question: "Does ‘should’ express discretion or a mandatory expectation?", reason: "ambiguous-mandatory-language", status: "open", answer: null });
   if (!/evidence|record|log/i.test(content) && content.trim()) state.intakeQuestions.push({ id: `Q-${String(state.intakeQuestions.length + 1).padStart(3, "0")}`, intakeId: id, key: "evidence", question: "What evidence demonstrates that these requirements were followed?", reason: "evidence-not-visible", status: "open", answer: null });
-  for (const candidate of candidateRecords(content)) state.intakeCandidates.push({ id: `CAND-${String(state.intakeCandidates.length + 1).padStart(3, "0")}`, intakeId: id, ...candidate, status: "suggested", provenance: { sourceType, reference, title }, generatedBy: "mock-smart-extractor-v1", reviewDecision: null });
-  audit(state, actor, "document-intake-created", "DocumentIntake", id, `${sourceType} intake created; suggestions require human review`);
+  for (const candidate of candidateRecords(content)) state.intakeCandidates.push({ id: `CAND-${String(state.intakeCandidates.length + 1).padStart(3, "0")}`, intakeId: id, ...candidate, status: "suggested", provenance: { intakeRoute, documentType, sourceType: effectiveSourceType, reference, title }, generatedBy: "mock-smart-extractor-v1", reviewDecision: null });
+  audit(state, actor, "document-intake-created", "DocumentIntake", id, `${documentType} via ${effectiveSourceType}; suggestions require human review`);
   return state;
 }
 

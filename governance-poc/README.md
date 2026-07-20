@@ -47,6 +47,8 @@ Publication is platform-neutral. The core owns eligibility, deterministic genera
 
 Adaptive intake and proportionate authority are described in [adaptive-intake-and-authority.md](docs/adaptive-intake-and-authority.md). The proof models one user while preserving the future distinction between escalation, restricted downgrade, approval, notification and acknowledgement.
 
+The complete fictional validation route is recorded in [proof-of-concept-test-plan.md](docs/proof-of-concept-test-plan.md).
+
 ## Seed data
 
 Seed records are created by `seed.mjs`; there is no import of regulatory or company data. Every external-source example is visibly marked fictional.
