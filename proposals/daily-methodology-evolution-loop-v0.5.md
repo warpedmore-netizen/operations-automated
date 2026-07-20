@@ -42,13 +42,14 @@ It is read-only and instructed to:
 
 ## Early pilot evidence
 
-Three manual founder responses have exercised the proposed loop:
+Four manual founder responses have exercised the proposed loop:
 
 1. An initial AI service-desk scenario produced useful value, demand, evidence, segmentation, staged-automation and workforce-capability reasoning.
 2. A reverse test challenged ceremonial human approval and changed “never completely replace” into a more precise distinction between automated execution and continuing human ownership, assurance, capability and resilience.
 3. A failure-and-recovery test converged on business-defined minimum outcomes, impact tolerances and proportionate fallback design. It also corrected an AI tendency to challenge a literal version of conversational shorthand rather than Jamie's stronger contextual meaning.
+4. A transfer test reframed criticality around material harm to customers, third parties and others rather than internal or financial importance alone. It distinguished non-negotiable reasoning from adaptable implementation and retained a consequence-based authority pattern for further testing.
 
-The exchanges have retained genuine disagreement and uncertainty about AI-on-AI assurance, silent failures and what happens when no credible continuity function defines the required inputs. This is early support for iterative mutual challenge, but it does not satisfy the proposed seven-response review.
+The exchanges have retained genuine disagreement and uncertainty about AI-on-AI assurance, silent failures, local-to-organisational governance and rejected risk concerns. This is early support for iterative mutual challenge, but it does not satisfy the proposed seven-response review.
 
 ## Controlled response workflow
 

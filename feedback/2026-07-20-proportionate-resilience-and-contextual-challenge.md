@@ -79,3 +79,9 @@ Do not propose a universal resilience measure. Retain a candidate readiness rule
 ## Retained lesson
 
 The business defines what must continue and for how long, within applicable obligations. Operations Automated makes that definition visible, connects it to the proposed design and tests whether the operation can actually sustain it.
+
+## Transfer-test result
+
+Jamie reframed the scenario: the criticality assessment was defective because it excluded potential material harm to customers and third parties. Strong external practices can inform a proportionate method without prescribing the same regulated structure for every user.
+
+The resulting feedback and authority clarification candidate are recorded in [Criticality guidance and proportionate authority](2026-07-20-criticality-guidance-and-proportionate-authority.md).
