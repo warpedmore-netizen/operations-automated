@@ -2,8 +2,9 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## 0.3 - Working-method proposal
+## 0.3 - Working method
 
+- Approved by Jamie Peppard for internal piloting on 2026-07-20.
 - Defined an AI-led, human-controlled repository workflow with explicit approval boundaries.
 - Clarified that `main` is controlled project memory and artefact status determines governance state.
 - Added a practical user-defined value-matrix template.

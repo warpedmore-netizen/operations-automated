@@ -1,7 +1,7 @@
 ---
 id: OA-GOV-001
 title: Methodology Governance
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 ---

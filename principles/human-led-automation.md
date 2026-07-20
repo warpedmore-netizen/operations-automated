@@ -1,7 +1,7 @@
 ---
 id: OA-PRINCIPLE-002
 title: Human-led Automation
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 ---

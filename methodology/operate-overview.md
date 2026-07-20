@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-001
 title: OPERATE Overview
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 ---

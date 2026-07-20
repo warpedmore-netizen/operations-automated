@@ -1,7 +1,7 @@
 ---
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 last_updated: 2026-07-20

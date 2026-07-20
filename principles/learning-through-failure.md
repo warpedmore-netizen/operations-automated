@@ -1,7 +1,7 @@
 ---
 id: OA-PRINCIPLE-004
 title: Learning through Failure
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 ---

@@ -4,7 +4,7 @@ Operations Automated is developing **OPERATE**: a living, human-led methodology 
 
 This repository is the controlled source for the methodology, its principles, governance, tools and future product model.
 
-> **Status:** Foundation v0.3 is a working proposal. It is not approved for external publication.
+> **Status:** Foundation v0.3 is approved for internal piloting. It is not approved for external publication.
 
 ## Core concepts
 
