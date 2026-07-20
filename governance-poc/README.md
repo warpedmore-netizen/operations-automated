@@ -1,0 +1,50 @@
+---
+id: OA-POC-OGC-001
+title: Operational Governance as Code proof of concept
+status: proposed
+version: 0.1.0
+owner: Jamie Peppard
+---
+
+# Operational Governance as Code
+
+This standalone, fictional proof of concept is a service built from Operations Automated methodology principles. It helps users develop and maintain living operational documentation by treating connected governance records as the source of truth and documents as generated views. Those records can become a governed knowledge base for later AI-assisted monitoring, analysis and control. It demonstrates one Incident Management chain from a fictional obligation through controls, policy and procedure to scenario evidence, finding, human-approved change, immutable version and controlled release.
+
+It is demonstration software, not a methodology update, regulatory advice, a compliance determination or an approved Operations Automated product. It contains no real organisation, customer or incident data. Findings from developing and using the service may enter the separate governed methodology-evolution loop as evidence; they never update the methodology automatically.
+
+## Run
+
+From the repository root:
+
+```powershell
+npm run governance:start
+```
+
+Open `http://127.0.0.1:4174`. The seeded dataset is loaded in memory each time the server starts. Use **Reset demo** to restore it in the browser.
+
+## Test
+
+```powershell
+npm run governance:test
+```
+
+## Demonstrate the vertical slice
+
+1. Open **Traceability** and inspect `OBL-IM-004` and its linked control, policy, procedure, test, evidence and finding.
+2. Open **Scenario** and review the delayed Risk and Compliance notification.
+3. Open **Finding** and accept the AI-labelled candidate as a human reviewer.
+4. Open **Change proposal**, create the proposal, inspect the wording diff and record a human approval.
+5. Open **Release**, create release `REL-IM-002` and view the regenerated policy, procedure and release notes.
+6. Open **Audit log** to inspect the complete sequence and **Versions** to confirm the approved previous wording remains available.
+
+## Architecture
+
+The first milestone follows the repository's existing local-first, no-dependency architecture: browser UI, domain service, generated Markdown views and mocked adapters. The in-memory canonical state is serialised to browser storage for demonstration only. The service layer is isolated so a later implementation can adopt TypeScript, React and Prisma/SQLite without changing governance rules. See [architecture.md](docs/architecture.md).
+
+## Seed data
+
+Seed records are created by `seed.mjs`; there is no import of regulatory or company data. Every external-source example is visibly marked fictional.
+
+## Important limitations
+
+Single-user browser storage is not durable, authenticated or suitable for confidential evidence. Hashes are illustrative. Approval identity is user-entered and therefore demonstrative, not strong authentication. Generated documents include approved records only.

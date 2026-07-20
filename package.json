@@ -5,6 +5,8 @@
   "description": "A controlled Operations Automated methodology repository and private delivery experiment.",
   "scripts": {
     "start": "node app/server.mjs",
-    "test": "node --test app/tests/*.test.js"
+    "test": "node --test app/tests/*.test.js governance-poc/tests/*.test.mjs",
+    "governance:start": "node governance-poc/server.mjs",
+    "governance:test": "node --test governance-poc/tests/*.test.mjs"
   }
 }
