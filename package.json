@@ -1,0 +1,10 @@
+{
+  "name": "operations-automated",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A governed OPERATE workspace for AI-led, human-controlled operational improvement.",
+  "scripts": {
+    "start": "node app/server.mjs",
+    "test": "node --test app/tests/*.test.js"
+  }
+}

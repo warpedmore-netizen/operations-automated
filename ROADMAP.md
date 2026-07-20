@@ -2,7 +2,7 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: approved
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 last_updated: 2026-07-20
 ---
@@ -26,9 +26,13 @@ This is a hypothesis to validate, not an approved commitment to a particular tec
 
 ## Current position
 
-Foundation v0.2 is recorded on `main`. Foundation v0.3 is under review and adds the working templates and governance needed to begin practical pilots.
+Foundation v0.3 is approved for internal piloting and recorded on `main`. It provides the working templates, governance and roadmap needed for practical validation.
 
-There is no deployed application, external integration or live user service yet. The project is moving from methodology foundation into validation.
+Pilot 1 has been completed as a separate proposal. It tests the workflow for turning Jamie's plain-language direction into a controlled methodology change and identifies clearer milestone handoffs as the main improvement.
+
+A bounded private application MVP is now under review. It implements a local governed workspace so method and product learning can proceed together. This is a direction change from waiting for both method pilots before beginning software, but it does not approve external deployment, connections or commercial activity.
+
+There is no deployed application, external integration or live user service yet. The project is validating the methodology and the private product workflow in parallel.
 
 ## Delivery phases
 
@@ -41,23 +45,24 @@ There is no deployed application, external integration or live user service yet.
 | 5. Live pilot | Use the product on several real cases | Usage evidence, failures, retained learning and prioritised improvements | Decide whether to continue, redesign or prepare wider use |
 | 6. Publication and evolution | Prepare for use beyond the private pilot | Publication controls, guidance, support model and versioned releases | Explicitly approve external publication |
 
+The private MVP is a bounded learning instrument started before the final product-definition phase is complete. Evidence from its use may change or reject its design without creating a commitment to deploy it.
+
 ## Immediate plan
 
-1. Review and decide Foundation v0.3.
-2. Run the first method pilot on the Operations Automated change workflow itself: turning a plain-language outcome into a controlled methodology change.
-3. Run a second pilot on one real, non-confidential operational problem chosen by Jamie.
-4. Record what was useful, confusing, missing or unnecessarily heavy.
-5. Propose Foundation v0.4 with pilot findings and an evidence-based minimum viable product definition.
+1. Review Pilot 1 and the private application MVP.
+2. Use the MVP to run a second pilot on one real, non-confidential operational problem chosen by Jamie.
+3. Record what was useful, confusing, missing or unnecessarily heavy across the method and application.
+4. Propose Foundation v0.4 with the combined evidence, a secure AI-connection decision and a researched commercial-validation plan.
 
 ## What Jamie needs to do now
 
-Jamie needs only to approve, revise or reject Foundation v0.3. No technical action or service connection is required.
+Jamie needs only to confirm whether the Pilot 1 account and private MVP are suitable for continued validation. No technical action or service connection is required.
 
-After v0.3, Jamie will be asked for one real, non-confidential problem for the second pilot. AI will lead the questions and produce the working artefacts.
+Jamie will then be asked for one real, non-confidential problem for the second pilot. AI will lead the questions and use the MVP to produce the working artefacts.
 
 ## Connections and technology
 
-Do not connect external services or choose a deployment platform before the pilots establish what the product must do and what information it must handle. When a connection becomes useful, AI should explain the purpose, information exchanged, permissions, risks, cost and credible alternatives before asking Jamie to authorise it.
+Do not connect external services or approve a deployment platform before the private MVP and pilots establish what the product must do and what information it must handle. When a connection becomes useful, AI should explain the purpose, information exchanged, permissions, risks, cost and credible alternatives before asking Jamie to authorise it.
 
 ## Initial success measures
 

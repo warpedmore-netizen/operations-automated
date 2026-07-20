@@ -23,6 +23,14 @@ This repository is the controlled source for the methodology, its principles, go
 
 See the [project roadmap](ROADMAP.md) for the current position, next phase and human decision points.
 
+## Private application MVP
+
+The proposed [OPERATE Workspace MVP](app/README.md) turns the methodology into a local-first guided application with visible next actions, human approval gates, retained evidence and portable exports.
+
+> **Application status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
+
+Its [product definition and revenue hypothesis](product/MVP.md) are approved only as the basis for private validation. Pricing, publication and commercial activity remain unapproved.
+
 ## Repository control
 
 - `main` is the current controlled internal project memory and may contain artefacts at different governance states.
