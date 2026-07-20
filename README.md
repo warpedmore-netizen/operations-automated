@@ -12,6 +12,8 @@ This repository is the controlled source for the methodology, its principles, go
 >
 > **Current proposal:** v0.6 tests whether useful guidance should include a proportionate [self-guided decision aid](methodology/actionable-decision-aids.md) when it would help the user progress independently. It is not approved.
 
+The proposed [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now. It does not approve the listed proposals.
+
 ## How the system fits together
 
 | Component | Purpose | Status |

@@ -33,6 +33,8 @@ The first seven-response checkpoint is complete. Its coherent amalgamation, [con
 
 The first facilitated v0.5 case found that correct guidance and questions may still be insufficient if the user has no practical way to apply them. Version 0.6 therefore proposes [actionable and self-guided decision aids](methodology/actionable-decision-aids.md), beginning with a category-first refund workbook and requiring independent-user and second-case testing before approval.
 
+Jamie's review found the comprehensive workbook too complicated for the original question. The proposal now requires the shortest usable aid first and retains deeper tools as optional progressive disclosure. The [current priority and outstanding-work register](PROJECT-PRIORITIES.md) records the consolidated position.
+
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
 ## Three workstreams developed in tandem

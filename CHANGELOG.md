@@ -8,6 +8,8 @@ All material changes to Operations Automated will be recorded here.
 - Added a proposed output module covering proportionate checklists, worksheets, formulae, worked examples, decision records and controlled action plans.
 - Added a draft category-first decision-aid template with transparent, user-weighted pilot calculations and separate authority, minimum-outcome and recovery gates.
 - Produced a Google Sheets-ready refund decision-aid prototype and retained its example results and limitations.
+- Recorded that the comprehensive workbook was too complicated for the initial need and added a simplicity-first, progressive-disclosure requirement.
+- Added a proposed MoSCoW priority and outstanding-work register covering methodology, prototypes, product, connections and commercial work.
 - Required independent-user and materially different second-case testing before any v0.6 approval recommendation.
 - Application rebuilding, external publication and Google Drive or other new connections remain unapproved.
 

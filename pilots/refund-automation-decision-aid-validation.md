@@ -36,6 +36,8 @@ Jamie considered the response and questions useful. The material criticism was t
 
 The proposed improvement was to provide a formula, template, Google Sheet or other appropriate working aid. Categorisation should occur before improvement and scoring so materially different work is not combined.
 
+Jamie's subsequent review found the five-sheet workbook too comprehensive and complicated for the original question. Its user guide did not remove the burden created by its size. The prototype is therefore retained as a possible deeper assessment tool and as evidence that more content does not automatically create more value.
+
 ## Prototype
 
 A Google Sheets-ready workbook named `Operations-Automated-Refund-Decision-Aid.xlsx` was produced with:
@@ -74,7 +76,8 @@ The example demonstrates that a high exploration score does not override a faile
 - Whether the default weights and thresholds improve real decisions
 - Whether a spreadsheet is proportionate for other Ask-mode questions
 - Whether users prefer a workbook, interactive tool, document or another artefact
+- Whether a short guide or lightweight worksheet can preserve the useful logic without the workbook's burden
 
 ## Next test
 
-Give the workbook to a person who did not help create it. Observe where they hesitate, what they misunderstand, whether the results alter their reasoning and whether the decision record is usable. Do not treat completion or a high score as approval.
+First create a substantially simpler first-use aid with a plain user guide and optional route to the comprehensive workbook. Test the simplified aid with a person who did not help create it. Observe where they hesitate, what they misunderstand and whether it changes their reasoning. Do not treat completion or a high score as approval.

@@ -42,6 +42,18 @@ Do not turn every question into a spreadsheet or long template. Select the form 
 
 A short answer may be sufficient for a simple, well-supported question. A checklist may be better than a formula. A worksheet becomes useful when the user needs to organise several categories, inputs, trade-offs or controls.
 
+## Complexity budget and progressive disclosure
+
+The initial output should be the shortest form that lets the user make meaningful progress. Complexity must earn its place through the decision, evidence or retained work it enables.
+
+Use progressive disclosure:
+
+1. **Immediate:** concise guidance and one simple action or aid.
+2. **Optional structure:** a lightweight checklist, worksheet or example the user can use independently.
+3. **Deeper work:** a comprehensive workbook, assessment or retained project only when the user chooses it or the consequence requires it.
+
+Every artefact needs a plain user guide, but instructions do not make an oversized artefact proportionate. Avoid long forms, dense scoring and multiple sheets where a short table or checklist can deliver the required value.
+
 ## Categorise before calculating
 
 Where work types differ materially, categorise them before scoring or recommending improvement.
@@ -73,7 +85,7 @@ User-defined weights do not remove applicable legal, safety, ethical, human, fin
 
 ## Minimum self-guided package
 
-Where Operations Automated produces a reusable aid, include proportionately:
+Where Operations Automated produces a reusable aid, include proportionately and without turning the list into compulsory paperwork:
 
 1. What decision or outcome the aid supports.
 2. How to use it in plain language.

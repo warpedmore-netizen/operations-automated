@@ -13,13 +13,13 @@ approval_required: true
 
 Clarify that a useful Operations Automated response should provide a proportionate way for the user to apply its guidance when a repeatable structure can help them progress independently.
 
-Add proposed guidance for selecting and producing checklists, worksheets, transparent formulae, worked examples, decision records and controlled action plans. Retain categorisation before scoring, visible user-defined value, evidence discipline and separate authority or obligation gates.
+Add proposed guidance for selecting and producing the shortest useful checklist, worksheet, transparent formula, worked example, decision record or controlled action plan. Require progressive disclosure so comprehensive tools are optional depth rather than the default. Retain categorisation before scoring, visible user-defined value, evidence discipline and separate authority or obligation gates.
 
 ## Reason
 
 The first facilitated v0.5 case showed that a correct Ask response can still feel like AI conversation if it returns only analysis and questions. Jamie's review was that value includes giving the user something they can use to work out the answer without having to return until they want further analysis or challenge.
 
-The evidence and prototype are retained in [Self-guided decision aids as useful output](../feedback/2026-07-20-self-guided-decision-aids.md) and [Refund automation decision-aid validation](../pilots/refund-automation-decision-aid-validation.md).
+The evidence, comprehensive prototype and founder simplicity correction are retained in [Self-guided decision aids as useful output](../feedback/2026-07-20-self-guided-decision-aids.md) and [Refund automation decision-aid validation](../pilots/refund-automation-decision-aid-validation.md).
 
 ## Affected material
 
@@ -37,8 +37,8 @@ The approved v0.5 artefacts remain unchanged by this proposal. The new module an
 - **Assumption:** A reusable artefact creates more value than a strong conversational answer for a material subset of questions.
 - **Evidence strength:** Strong founder intent and one working prototype; no independent user evidence.
 - **Strongest alternative:** Improve the prose response and provide a short checklist without creating a separate module or calculation.
-- **Potential downside:** Formulae and polished templates may create false confidence, extra effort or a misleading appearance of objectivity.
-- **Control:** Select the smallest useful form, expose assumptions and weights, categorise before calculating, retain gates outside the score and test with an independent user.
+- **Potential downside:** Formulae and polished templates may create false confidence, extra effort, an oppressive user experience or a misleading appearance of objectivity.
+- **Control:** Start with the shortest usable aid, offer deeper tools progressively, expose assumptions and weights, categorise before calculating, retain gates outside the score and test with an independent user.
 
 ## Human and automation responsibilities
 
@@ -54,14 +54,15 @@ AI may select, draft, populate and explain an aid using authorised information. 
 
 ## Recommended validation
 
-1. Test the refund workbook with a person who did not help design it.
+1. Replace the comprehensive first-use workbook with a short guide or lightweight worksheet and retain the workbook only as optional depth.
 2. Apply the same principle to a materially different case where a checklist or document may be better than a spreadsheet.
-3. Compare completion effort, understanding, decision quality and the need for facilitation.
-4. Revise or reject the proposed module before any v0.6 approval decision.
+3. Test a simplified aid with a person who did not help design it.
+4. Compare completion effort, understanding, decision quality and the need for facilitation.
+5. Revise or reject the proposed module before any v0.6 approval decision.
 
 ## Recommendation
 
-Continue internal testing. Do not approve v0.6 from one founder-reviewed spreadsheet. Use the second facilitated case and one independent-user test to determine whether the module is useful, excessive or too formula-led.
+Continue internal testing. Do not approve v0.6 from one founder-reviewed spreadsheet. Simplify first, then use the second facilitated case and one independent-user test to determine whether the module creates value without unnecessary burden.
 
 ## Jamie's decision
 

@@ -60,12 +60,24 @@ A Google Sheets-ready workbook was created for the refund case. It contains:
 
 The formula and thresholds are pilot hypotheses, not universal methodology rules.
 
+## Simplicity correction after review
+
+Jamie reviewed the workbook and found it too comprehensive and complicated for the original Ask-mode need. Although it contained instructions, its size and density made the output feel oppressive rather than simple and immediately useful.
+
+The stronger interpretation is progressive disclosure:
+
+1. Return the shortest useful answer and a simple first-use aid.
+2. Include a plain explanation of how to use it.
+3. Offer the comprehensive workbook only when the user needs deeper comparison, retained evidence or a controlled project.
+
+A user guide does not compensate for disproportionate complexity. The artefact itself must match the question and the user's available time.
+
 ## Disposition
 
 **Material clarification proposed for v0.6.**
 
-Extend useful guidance with a self-guided decision aid when a repeatable structure would materially increase the user's ability to progress. Keep artefact selection proportionate and prevent calculation from replacing evidence or authorised judgement.
+Extend useful guidance with the smallest self-guided decision aid that materially increases the user's ability to progress. Use progressive disclosure, keep deeper tools optional and prevent calculation from replacing evidence or authorised judgement.
 
 ## Review trigger
 
-Test whether another person can use the workbook without facilitation, whether its categories and rating language are understandable, and whether it improves a decision rather than merely making it look more formal.
+First produce a substantially simpler aid. Then test whether another person can use it without facilitation, whether its language is understandable and whether it improves a decision rather than merely making it look more formal.
