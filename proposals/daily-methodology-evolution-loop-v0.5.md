@@ -13,7 +13,7 @@ approval_required: true
 
 Make regular founder challenge and feedback the next Operations Automated internal-validation mechanism.
 
-Support both founder-initiated operational questions and an AI-initiated daily check-in. Use iterative mutual challenge rather than a one-question, one-answer exchange. Require a provisional methodology response, structured feedback disposition and a plain-English assurance pack before any material change is approved.
+Support both founder-initiated operational questions and an AI-initiated daily check-in. Continue the cycle indefinitely unless Jamie explicitly changes it, with seven responses serving as the first review and synthesis checkpoint. Use iterative mutual challenge rather than a one-question, one-answer exchange. Require a provisional methodology response, structured feedback disposition and a plain-English assurance pack before any material change is approved.
 
 ## Reason
 
@@ -32,7 +32,8 @@ The local pilot requires Jamie's computer to be powered on, the ChatGPT desktop 
 It is read-only and instructed to:
 
 - Read the approved repository
-- Rotate across operational and methodology topics
+- Select the most decision-relevant unresolved concept across methodology, evolution, delivery, product and commercial design
+- Rotate across topics as a breadth control rather than an end in itself
 - Research accessible public discussion from a balanced source mix
 - Provide a provisional Operations Automated response and possible blind spot
 - Ask one primary and no more than two optional questions
@@ -99,7 +100,7 @@ Recommended. It creates regular learning while allowing no-change decisions, cla
 
 ## Risks and controls
 
-- **Question fatigue:** one focused question, visible response time, optional skipping and review after seven completed responses.
+- **Question fatigue:** one focused question, visible response time, optional skipping, an initial review after seven completed responses and periodic review thereafter.
 - **Trend chasing:** source diversity, evidence-strength labels and no assumption that popularity equals truth.
 - **Repetition:** review retained topics and rotate across methodology facets.
 - **AI confirmation bias:** show possible blind spots, contrary evidence and strongest alternatives.
@@ -122,12 +123,13 @@ Recommended. It creates regular learning while allowing no-change decisions, cla
 - Material feedback is traceable to a disposition and, where justified, an assurance pack and decision.
 - Assurance packs let Jamie explain what will change and what remains controlled.
 - The cadence can be changed when evidence shows daily is not useful.
+- Review checkpoints improve or redirect the continuing cycle; they do not stop it automatically.
 - Scheduled and manual check-ins are both usable while the local delivery constraint is evaluated.
 
 ## Decisions requested from Jamie
 
 1. Adopt the founder challenge and feedback loop as the v0.5 internal-validation mechanism?
-2. Confirm that the active local 08:00 UK daily schedule should continue while the first seven completed responses are evaluated, understanding that Jamie's computer and the ChatGPT desktop app must be running at the scheduled time?
+2. Confirm that the active local 08:00 UK daily schedule should continue indefinitely, with seven responses as its first review checkpoint, understanding that Jamie's computer and the ChatGPT desktop app must be running at the scheduled time?
 3. Approve the read-only public-source boundary and no-contact rule for daily research?
 4. Require the proposed assurance pack before material methodology approval?
 5. Keep external feedback forms, private social-media access, analytics and messaging connections as separate future decisions?

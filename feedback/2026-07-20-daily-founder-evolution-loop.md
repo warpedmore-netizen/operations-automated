@@ -40,6 +40,14 @@ Jamie does not want the next step to depend on finding one external operational 
 - **External channels:** Not approved. Public sources may inform research, but the automation may not contact people, log into restricted services or collect confidential information.
 - **Review trigger:** Seven completed founder responses or earlier if the questions are repetitive, burdensome, misleading or unsafe.
 
+## Continuing-cadence clarification
+
+Jamie clarified that the seven-response point is an initial review and synthesis checkpoint, not the end of the scheduled task. The daily challenge should continue indefinitely unless Jamie explicitly pauses, changes or stops it.
+
+Questions should range across the complete methodology, governance, evolution system, delivery, product and commercial design. The selection rule is the most decision-relevant unresolved conceptual question, with topic rotation used to prevent blind spots rather than to create artificial variety.
+
+The complete clarification is retained in [Continuous whole-system methodology challenge](2026-07-20-continuous-whole-system-challenge.md).
+
 ## Local delivery clarification
 
 The first explanation that the check-in would arrive "through Codex" was not sufficiently precise for a non-developer.

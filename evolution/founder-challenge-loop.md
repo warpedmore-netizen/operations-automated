@@ -147,6 +147,10 @@ The assurance pack should link to the draft pull request but must not require Ja
 
 The automation runs daily, but methodology changes follow evidence rather than a daily release schedule.
 
+The recurrence is indefinite unless Jamie explicitly pauses, changes or stops it. Seven completed founder responses are the first review and baseline-synthesis checkpoint, not a termination condition. Further review checkpoints should be set from observed quality, burden, coverage and change yield.
+
+Challenges may examine the entire Operations Automated system, including principles, methodology content, specialist modules, governance, evolution, delivery, product design, publication and commercial hypotheses. Select the most decision-relevant unresolved conceptual question at the time; topic rotation is a breadth control rather than the primary selection rule.
+
 Review the loop after seven completed founder responses. Assess:
 
 - Whether the questions are useful and varied
@@ -159,4 +163,4 @@ Review the loop after seven completed founder responses. Assess:
 - Whether local delivery is reliable and accessible enough
 - Whether challenges improve conclusions without creating fatigue or performative disagreement
 
-Changing the schedule, adding external feedback channels or connecting a notification service is a separate governed decision.
+After each review, continue, change or stop the cadence through an explicit decision. Adding external feedback channels or connecting a notification service remains a separate governed decision.

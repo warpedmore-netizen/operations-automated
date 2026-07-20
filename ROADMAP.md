@@ -66,8 +66,9 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 3. Retain each material response with an explicit no-change, clarification, more-evidence, material-proposal or urgent-review disposition.
 4. Use a plain-English assurance pack for each material proposal.
 5. Review the usefulness, breadth, response burden and change yield after seven completed responses.
-6. Use the resulting evidence to prioritise detailed methodology guidance and future feedback channels.
-7. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before rebuilding the application.
+6. Continue the daily cycle after that checkpoint, selecting the most decision-relevant unresolved concept across methodology, evolution, delivery, product and commercial design.
+7. Use the resulting evidence to prioritise detailed methodology guidance and future feedback channels.
+8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before rebuilding the application.
 
 ## Application decision
 

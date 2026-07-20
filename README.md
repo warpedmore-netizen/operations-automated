@@ -47,6 +47,8 @@ See the [roadmap](ROADMAP.md) for the workstreams, milestones and human decision
 
 An active Codex automation sends Jamie one methodology challenge each day at 08:00 UK time. It reads the approved repository, reviews current public operational discussion, applies Operations Automated provisionally and gives Jamie a concrete response to critique in 5, 10 or 20 minutes.
 
+The automation has no planned end date. Seven completed responses are the first quality and synthesis review, not the end of the challenge cycle. It continues until Jamie explicitly pauses, changes or stops it.
+
 The scheduled check-in is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology.
 
 During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop app must be running and this repository must be available at the scheduled time. Results appear in **Scheduled** and can be answered later. Jamie can request a manual check-in whenever a local run is missed.
@@ -54,6 +56,8 @@ During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop
 Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
 
 For a direct ad-hoc check-in, Jamie can simply say: **“Give me another methodology challenge.”** AI should review the retained evidence, avoid repeating a completed test and continue the same controlled feedback loop.
+
+Scheduled and ad-hoc questions may challenge the whole Operations Automated system: its purpose, principles, methodology, work types, readiness, governance, evolution, delivery, product and commercial hypotheses. AI should choose the most decision-relevant unresolved conceptual question, not rotate topics merely for variety.
 
 Answers are not accepted uncritically. AI may reverse an assumption, introduce contrary evidence, transfer the reasoning to another setting or test failure and authority. Jamie may challenge the AI's interpretation in return. Agreement is retained only when the reasoning survives proportionate testing; fatigue or silence is not agreement.
 

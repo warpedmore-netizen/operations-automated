@@ -24,6 +24,8 @@ All material changes to Operations Automated will be recorded here.
 - Amalgamated the first five founder responses into an initial proposed methodology synthesis.
 - Added a proposed commercial validation strategy joining free guidance, paid knowledge products, facilitated evidence and a later applied workspace.
 - Made the ad-hoc founder challenge instruction explicit while retaining the daily 08:00 UK schedule.
+- Clarified that the daily schedule continues indefinitely and that seven responses are the first review checkpoint rather than an end date.
+- Expanded challenge selection across the whole methodology, evolution, delivery, product and commercial system, prioritising the most decision-relevant unresolved concept.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 

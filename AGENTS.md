@@ -42,6 +42,9 @@ Do not mistake silence, short replies, repetition, deference or fatigue for conv
 ## Daily check-in quality
 
 - One focused challenge is preferable to a list of weak questions.
+- Choose the most decision-relevant unresolved conceptual question across the complete methodology, evolution, delivery, product and commercial system.
+- Treat topic rotation as a breadth control, not a reason to avoid the most important current uncertainty.
+- Seven completed responses are the first review checkpoint, not the end of the continuing challenge cycle.
 - State whether the response should take 5, 10 or 20 minutes.
 - Use current public evidence from more than one kind of source where practical; distinguish anecdote, practitioner opinion, research and authoritative guidance.
 - Do not treat forum popularity or confident AI output as proof.
