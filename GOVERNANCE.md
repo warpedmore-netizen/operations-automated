@@ -2,7 +2,7 @@
 id: OA-GOV-001
 title: Methodology Governance
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 ---
 
@@ -32,6 +32,23 @@ owner: Jamie Peppard
 8. Version the change and update the changelog.
 9. Monitor the outcome and trigger further review where needed.
 
+## AI-led, human-controlled workflow
+
+Jamie defines the problem, desired outcome, constraints and authority boundaries. AI may then manage the routine repository work needed to develop a proposal, including creating a branch, drafting content, checking consistency, committing changes, pushing the branch and opening a draft pull request.
+
+For each material proposal, AI should give Jamie a plain-language summary of:
+
+- What outcome the change is intended to create
+- What changed and why
+- Which checks were performed
+- What choices, risks or inconsistencies require a human decision
+
+Jamie may approve, request revision or reject the proposal without needing to edit repository files or operate developer tooling. An approval must be explicit and recorded in the conversation, pull request or a decision record. Silence, continued discussion and technical readiness do not constitute approval.
+
+AI may carry out an approved merge when Jamie explicitly authorises it. External publication remains a separate decision and must not be inferred from approval for internal use.
+
+Merging a change records it in the controlled project memory. It does not by itself change an artefact's governance state; any change to `approved` or `published` must be explicitly authorised and recorded.
+
 ## Initial authority matrix
 
 | Action | AI or automation | Jamie approval |
@@ -41,7 +58,10 @@ owner: Jamie Peppard
 | Ask questions and summarise | Allowed | No |
 | Draft a methodology change | Allowed | No |
 | Run consistency checks | Allowed | No |
+| Manage branches, commits and draft pull requests | Allowed | No |
 | Change authoritative meaning | Propose only | Yes |
+| Change an artefact to Approved or Published | Execute only after explicit authorisation | Yes |
+| Merge a reviewed proposal | Execute only after explicit authorisation | Yes |
 | Publish externally | Not autonomous | Yes |
 | Contact users or customers | Not autonomous | Yes |
 | Spend money | Not autonomous | Yes |
