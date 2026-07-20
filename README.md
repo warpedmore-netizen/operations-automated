@@ -53,6 +53,8 @@ During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop
 
 Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
 
+Answers are not accepted uncritically. AI may reverse an assumption, introduce contrary evidence, transfer the reasoning to another setting or test failure and authority. Jamie may challenge the AI's interpretation in return. Agreement is retained only when the reasoning survives proportionate testing; fatigue or silence is not agreement.
+
 ## Application experiment
 
 The [OPERATE Workspace MVP 0.1](app/README.md) remains approved only for private testing and is not deployed or approved for external use.

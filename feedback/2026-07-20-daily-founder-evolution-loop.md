@@ -53,3 +53,9 @@ Cloud execution, mobile notification, email and messaging delivery remain separa
 Jamie completed the first manual check-in using a hypothetical AI service-desk scenario. The format produced a useful response covering value, demand, data, work segmentation, staged automation, workforce capability and continuing measurement.
 
 The retained operational and methodology feedback is recorded in [Demand-led automation and workforce transition](2026-07-20-demand-led-automation-and-workforce-transition.md).
+
+## Mutual challenge refinement
+
+Jamie clarified that the loop must not behave as one question in and one answer out. Human judgement and AI analysis should challenge each other through reverse cases, reframing, contrary evidence and transfer to other settings until the reasoning converges, remains context-dependent or reaches an explicit disagreement.
+
+The refinement is retained in [Mutual challenge and convergence](2026-07-20-mutual-challenge-and-convergence.md).

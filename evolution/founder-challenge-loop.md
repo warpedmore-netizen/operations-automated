@@ -2,7 +2,7 @@
 id: OA-EVOLUTION-002
 title: Founder Challenge and Feedback Loop
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-20
 ---
@@ -33,6 +33,19 @@ AI should return:
 - A short statement of what this case tests in the methodology
 
 Jamie then explains what is correct, wrong, incomplete or impractical. Jamie's reply is operational judgement and methodology feedback, not approval of a change.
+
+## Mutual challenge sequence
+
+The loop is not limited to one question and one answer. Where a conclusion could materially affect methodology meaning, AI should:
+
+1. Present its understanding of Jamie's answer.
+2. State what changed in its own assessment.
+3. Identify assumptions, uncertainty and any point it does not yet accept.
+4. Run one proportionate counter-test using a reversed assumption, boundary case, different setting or stakeholder, contrary evidence, longer time horizon, failure scenario or authority question.
+5. Ask Jamie one focused follow-up.
+6. Record whether the result is convergence, contextual agreement, unresolved disagreement or a need for more evidence.
+
+AI should challenge its own earlier answer as readily as Jamie's answer. It should not create debate for performance or continue until Jamie agrees through exhaustion. Jamie may pause or stop without that becoming evidence.
 
 ## Route 2: AI-initiated daily challenge
 
@@ -77,11 +90,12 @@ The check-in should contain:
 3. **Public signal:** what current evidence or discussion suggests and how reliable it is.
 4. **Provisional Operations Automated response:** how the approved method currently handles the case.
 5. **Possible blind spot:** what the response may have missed or oversimplified.
-6. **One primary question:** the judgement Jamie is best placed to provide.
-7. **Optional follow-ups:** no more than two.
-8. **Response time:** 5, 10 or 20 minutes.
-9. **Next step:** how Jamie's answer will enter the controlled feedback process.
-10. **Sources:** direct links.
+6. **Challenge mode:** initial proposition, reverse, boundary, transfer, stakeholder, contrary evidence, time horizon, failure or authority.
+7. **One primary question:** the judgement Jamie is best placed to provide.
+8. **Optional follow-ups:** no more than two.
+9. **Response time:** 5, 10 or 20 minutes.
+10. **Next step:** how Jamie's answer will enter the controlled feedback process.
+11. **Sources:** direct links.
 
 Jamie may skip a check-in, answer briefly, disagree with the premise or ask for a different topic. A missing response is not an approval, rejection or negative signal.
 
@@ -104,6 +118,8 @@ AI then records a proportionate feedback item and assigns one disposition:
 | Urgent review | The signal concerns possible legal, safety, security, ethical or authority failure | Escalate promptly; do not wait for batching |
 
 Not every daily answer should create a pull request. The objective is retained learning and coherent improvement, not change volume.
+
+Where a material assumption remains untested, the initial disposition may be provisional. Complete one useful challenge pass before treating agreement as convergence or preparing a consequential change.
 
 ## Methodology assurance pack
 
@@ -139,5 +155,6 @@ Review the loop after seven completed founder responses. Assess:
 - Whether assurance packs make decisions easier
 - Whether daily remains the right cadence
 - Whether local delivery is reliable and accessible enough
+- Whether challenges improve conclusions without creating fatigue or performative disagreement
 
 Changing the schedule, adding external feedback channels or connecting a notification service is a separate governed decision.

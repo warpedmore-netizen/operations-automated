@@ -12,6 +12,9 @@ date: YYYY-MM-DD
 
 Describe one realistic, non-confidential operational scenario or tension.
 
+- **Challenge mode:** Initial / Reverse / Boundary / Transfer / Stakeholder / Contrary evidence / Time horizon / Failure / Authority
+- **Earlier proposition being tested, if any:**
+
 ## Why it matters to Operations Automated
 
 - **Methodology element being tested:**
@@ -36,6 +39,12 @@ Describe one realistic, non-confidential operational scenario or tension.
 
 What might the methodology's response have missed, oversimplified or made impractical?
 
+## Counter-test
+
+- **Assumption, conclusion or earlier answer being challenged:**
+- **What has been reversed or changed:**
+- **What evidence would weaken the current conclusion:**
+
 ## Jamie's question
 
 - **Primary question:**
@@ -47,7 +56,7 @@ Reply in ordinary language. Do not include confidential employer, client or thir
 
 ## What happens after the reply
 
-AI will separate the operational judgement from methodology feedback, record any material signal and state whether it recommends no change, clarification, more evidence or a formal proposal. No methodology change is approved by answering this check-in.
+AI will separate the operational judgement from methodology feedback, challenge both its own interpretation and Jamie's assumptions where useful, and record convergence, disagreement or uncertainty. It will then state whether it recommends no change, clarification, more evidence or a formal proposal. No methodology change is approved by answering this check-in.
 
 ## Sources
 

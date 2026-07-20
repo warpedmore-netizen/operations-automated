@@ -27,12 +27,16 @@ Follow the approved evolution process and the current [founder challenge loop](e
 1. Acknowledge the operational substance of Jamie's answer in plain language.
 2. Separate the operational insight from feedback about the methodology.
 3. Retain material feedback with source, boundary, evidence, inference and affected content.
-4. State the disposition: no method change, clarification, accumulate evidence, or propose change now.
-5. If change is justified, inspect the complete repository, create a separate branch, draft the smallest coherent change and run proportionate checks.
-6. Prepare a plain-English assurance pack showing current meaning, proposed meaning, evidence, alternatives, dependencies, risks, checks and the exact decision required.
-7. Open a draft pull request for material change.
-8. Merge or change an artefact to approved only after Jamie explicitly authorises it.
-9. Retain rejection, deferral and no-change reasoning so the same issue is not repeatedly reopened without new evidence.
+4. Treat Jamie's answer and the AI interpretation as hypotheses. Use a proportionate reverse, boundary, transfer, stakeholder, contrary-evidence, time-horizon, failure or authority test where it could change the conclusion.
+5. State where Jamie's answer changed the AI assessment, where AI still disagrees and what remains uncertain. Do not manufacture disagreement merely to appear challenging.
+6. State the disposition: no method change, clarification, accumulate evidence, or propose change now.
+7. If change is justified, inspect the complete repository, create a separate branch, draft the smallest coherent change and run proportionate checks.
+8. Prepare a plain-English assurance pack showing current meaning, proposed meaning, evidence, alternatives, dependencies, risks, checks and the exact decision required.
+9. Open a draft pull request for material change.
+10. Merge or change an artefact to approved only after Jamie explicitly authorises it.
+11. Retain rejection, deferral and no-change reasoning so the same issue is not repeatedly reopened without new evidence.
+
+Do not mistake silence, short replies, repetition, deference or fatigue for convergence. Convergence means the reasoning has survived relevant challenge, or that any remaining disagreement and context are understood.
 
 ## Daily check-in quality
 

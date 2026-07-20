@@ -11,6 +11,8 @@ All material changes to Operations Automated will be recorded here.
 - Added repository instructions so future Codex tasks follow the same feedback, proposal and approval boundary.
 - Clarified that the local pilot requires Jamie's computer and the ChatGPT desktop app at run time, with a manual check-in fallback.
 - Retained the first manual validation response on demand-led automation and workforce transition without treating it as an approved methodology change.
+- Expanded the proposed loop from one-question, one-answer feedback into mutual challenge using reverse, boundary, transfer, stakeholder, contrary-evidence, time-horizon, failure and authority tests.
+- Added controls so fatigue, silence and performative disagreement are not mistaken for convergence.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 
