@@ -23,6 +23,8 @@ This repository is the controlled source for the methodology, its principles, go
 
 See the [project roadmap](ROADMAP.md) for the current position, next phase and human decision points.
 
+Evidence from practical application is retained in [method pilots](pilots/README.md).
+
 ## Repository control
 
 - `main` is the current controlled internal project memory and may contain artefacts at different governance states.

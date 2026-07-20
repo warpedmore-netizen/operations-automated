@@ -2,6 +2,13 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Pilot 1 - Plain-language change workflow proposal
+
+- Applied OPERATE to the AI-led, human-controlled methodology-change workflow.
+- Retained a value matrix, complete lifecycle record and learning review.
+- Identified user-visible project context and milestone handoffs as product requirements.
+- Recommended a second real-problem pilot before defining product technology or connections.
+
 ## 0.3 - Working method
 
 - Approved by Jamie Peppard for internal piloting on 2026-07-20.

@@ -1,8 +1,8 @@
 ---
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
-status: approved
-version: 0.1
+status: proposed
+version: 0.2
 owner: Jamie Peppard
 last_updated: 2026-07-20
 ---
@@ -26,9 +26,11 @@ This is a hypothesis to validate, not an approved commitment to a particular tec
 
 ## Current position
 
-Foundation v0.2 is recorded on `main`. Foundation v0.3 is under review and adds the working templates and governance needed to begin practical pilots.
+Foundation v0.3 is approved for internal piloting and recorded on `main`. It provides the working templates, governance and roadmap needed for practical validation.
 
-There is no deployed application, external integration or live user service yet. The project is moving from methodology foundation into validation.
+The first method pilot has been completed and is under review. It tests the workflow for turning Jamie's plain-language direction into a controlled methodology change and identifies clearer milestone handoffs as the main improvement.
+
+There is no deployed application, external integration or live user service yet. The project is now in method validation.
 
 ## Delivery phases
 
@@ -43,17 +45,16 @@ There is no deployed application, external integration or live user service yet.
 
 ## Immediate plan
 
-1. Review and decide Foundation v0.3.
-2. Run the first method pilot on the Operations Automated change workflow itself: turning a plain-language outcome into a controlled methodology change.
-3. Run a second pilot on one real, non-confidential operational problem chosen by Jamie.
-4. Record what was useful, confusing, missing or unnecessarily heavy.
-5. Propose Foundation v0.4 with pilot findings and an evidence-based minimum viable product definition.
+1. Review Pilot 1 and retain its accepted learning.
+2. Run a second pilot on one real, non-confidential operational problem chosen by Jamie.
+3. Record what was useful, confusing, missing or unnecessarily heavy across both pilots.
+4. Propose Foundation v0.4 with the combined pilot findings and an evidence-based minimum viable product definition.
 
 ## What Jamie needs to do now
 
-Jamie needs only to approve, revise or reject Foundation v0.3. No technical action or service connection is required.
+Jamie needs only to confirm whether Pilot 1's account and recommendation are suitable for continued validation. No technical action or service connection is required.
 
-After v0.3, Jamie will be asked for one real, non-confidential problem for the second pilot. AI will lead the questions and produce the working artefacts.
+Jamie will then be asked for one real, non-confidential problem for the second pilot. AI will lead the questions and produce the working artefacts.
 
 ## Connections and technology
 
