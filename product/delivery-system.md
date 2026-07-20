@@ -1,7 +1,7 @@
 ---
 id: OA-PRODUCT-002
 title: Operations Automated Delivery System
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20
@@ -19,12 +19,12 @@ The approved private OPERATE Workspace MVP 0.1 demonstrated that a local record,
 
 The result can feel like a form asking the user to perform the methodology themselves. A copied prompt is not an adequate substitute for a product returning analysis in context.
 
-This proposal therefore recommends:
+The v0.4 internal-validation decision therefore:
 
-- Parking the current application as a retained learning experiment
-- Preserving its code and evidence without treating it as the target product
-- Not merging the unapproved progressive-interface experiment into `main`
-- Validating the complete methodology and output contract before rebuilding a user interface
+- Parks the current application as a retained learning experiment
+- Preserves its code and evidence without treating it as the target product
+- Keeps the unapproved progressive-interface experiment out of `main`
+- Requires validation of the complete methodology and output contract before rebuilding a user interface
 
 Parking is not deletion. Workspace records, approval gates, version visibility, exports and grouped work may later support a product once they are attached to genuine analysis and a validated user journey.
 
@@ -85,4 +85,4 @@ Only then define the smallest product that improves delivery without removing th
 
 Commercial options remain hypotheses. A later delivery ladder may include open guidance, paid individual analysis, team workspaces, business licences and optional enablement. Research into users, demand, willingness to pay, support cost and distribution should follow evidence that the methodology creates repeatable value.
 
-No pricing, external publication, sales activity, hosting or external connection is approved by this proposal.
+No pricing, external publication, sales activity, hosting or external connection is approved by the v0.4 internal-validation decision.

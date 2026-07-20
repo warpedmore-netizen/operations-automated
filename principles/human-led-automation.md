@@ -1,7 +1,7 @@
 ---
 id: OA-PRINCIPLE-002
 title: Human-led Automation, AI and Agents
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 ---

@@ -1,7 +1,7 @@
 ---
 id: OA-GOV-001
 title: Methodology Governance
-status: proposed
+status: approved
 version: 0.3
 owner: Jamie Peppard
 ---
@@ -37,7 +37,7 @@ The state belongs to the artefact, not merely to the branch or repository. Techn
 11. Distribute only to authorised delivery surfaces and audiences.
 12. Monitor the outcome and trigger further review where needed.
 
-The proposed [methodology evolution system](evolution/methodology-evolution-system.md) defines how these steps can become progressively more automated without weakening human authority.
+The [methodology evolution system](evolution/methodology-evolution-system.md) defines how these steps can become progressively more automated without weakening human authority.
 
 ## AI-led, human-controlled workflow
 

@@ -1,7 +1,7 @@
 ---
 id: OA-CHANGE-004
 title: Define the complete methodology architecture and evolution system
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
 approval_required: true
@@ -119,7 +119,7 @@ The detailed priority of specialist modules should be decided from the self-asse
 
 ## Jamie's decision
 
-- **Decision:** Pending
+- **Decision:** Approved for internal validation and authorised for merge through PR #6
 - **Approver:** Jamie Peppard
-- **Date:**
-- **Conditions or requested changes:**
+- **Date:** 2026-07-20
+- **Conditions or requested changes:** The readiness positions remain working language for validation. The current application is parked as retained learning. This decision does not approve external publication, deployment, analytics, new connections, spending or delegation of founder authority.

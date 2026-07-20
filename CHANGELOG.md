@@ -2,7 +2,9 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## 0.4 - Complete methodology architecture and evolution system (proposed)
+## 0.4 - Complete methodology architecture and evolution system
+
+- Approved by Jamie Peppard on 2026-07-20 for internal validation; not approved for external publication.
 
 - Defined Operations Automated as the complete methodology and OPERATE as its improvement and implementation cycle.
 - Added connected operational lenses covering value, people, demand, work types, flow, dependencies, authority, risk, information, technology, performance and learning.
@@ -10,11 +12,11 @@ All material changes to Operations Automated will be recorded here.
 - Added a methodology output contract requiring useful findings, uncertainty, options, recommendations, human decisions and retained artefacts throughout delivery.
 - Added an AI-managed, human-controlled methodology evolution system and working feedback record.
 - Added an operational assessment for facilitated internal pilots.
-- Added a provisional self-assessment of Operations Automated and traced the founder feedback that triggered v0.4 through the proposed evolution workflow.
-- Proposed parking the current application as a retained learning experiment until the methodology and user outputs are validated.
+- Added a provisional self-assessment of Operations Automated and traced the founder feedback that triggered v0.4 through the evolution workflow.
+- Parked the current application as a retained learning experiment until the methodology and user outputs are validated.
 - Replaced the sequential application-centred roadmap with tandem methodology, evolution and delivery workstreams.
 - Retained Jamie Peppard's approval over methodology meaning, consequential connections, release and external publication.
-- Status remains proposed; Foundation v0.3 and Application MVP 0.1 remain the approved internal baselines until an explicit decision is recorded.
+- Parked Application MVP 0.1 as retained private-test learning while preserving its code and evidence.
 
 ## Application MVP 0.1 - private test
 

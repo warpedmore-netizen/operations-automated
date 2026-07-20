@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-004
 title: Operational Readiness Path
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20

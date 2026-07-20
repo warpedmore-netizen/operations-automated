@@ -1,7 +1,7 @@
 ---
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
-status: proposed
+status: approved
 version: 0.3
 owner: Jamie Peppard
 last_updated: 2026-07-20
@@ -19,15 +19,15 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Foundation v0.3 remains the approved baseline for internal piloting.
+Version 0.4 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
 Jamie also clarified that OPERATE is the improvement cycle inside the methodology, not the complete methodology. The complete system must cover operational basics, connected operating lenses, work types, cross-team dependencies, risk, controls, data, people, technology, automation, AI readiness, agentic readiness, implementation and continuing evolution.
 
-Version 0.4 is the proposed correction. It does not change the approved baseline until Jamie explicitly approves it.
+Version 0.4 records the corrected methodology boundary and the decision to develop methodology, evolution and facilitated delivery in tandem.
 
-A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has now applied the proposed method to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
+A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
 ## Three workstreams developed in tandem
 
@@ -53,19 +53,19 @@ Commercial validation follows evidence from these workstreams; it does not deter
 
 The methodology and evolution loop continue throughout every milestone. Evidence may cause a return to an earlier milestone or a decision not to build a product.
 
+Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 through PR #6.
+
 ## Immediate plan
 
-1. Review the proposed v0.4 architecture, provisional self-assessment and explicit decisions.
-2. Validate or correct the inferred value order and readiness findings.
-3. Complete v0.4 as the first feedback-to-decision evolution cycle.
-4. Use the self-assessment to select the first detailed methodology guidance rather than attempting every specialist module without evidence.
-5. Run the first facilitated operational case through Codex, returning outputs in line with the output contract.
-6. Record confusion, gaps and outcomes as methodology feedback.
-7. Use the evolution system to prepare the next controlled proposal.
+1. Select the first real, non-confidential operational case and validate the provisional value order in context.
+2. Run the case through Codex, returning outputs in line with the output contract.
+3. Use the case and self-assessment to select the first detailed methodology guidance rather than attempting every specialist module without evidence.
+4. Record confusion, gaps and outcomes as methodology feedback.
+5. Use the evolution system to prepare the next controlled proposal.
 
 ## Application decision
 
-The v0.4 proposal recommends parking the existing application and preserving it as a learning experiment. Do not continue interface development or merge the separate progressive-interface branch unless later evidence identifies a component worth retaining.
+The v0.4 decision parks the existing application and preserves it as a learning experiment. Do not continue interface development or merge the separate progressive-interface branch unless later evidence identifies a component worth retaining.
 
 Product work should resume from validated user outputs, not from the current page structure.
 
@@ -73,13 +73,9 @@ Product work should resume from validated user outputs, not from the current pag
 
 Jamie does not need to edit files, design the application or operate GitHub manually.
 
-At the architecture milestone Jamie needs to:
+During internal validation Jamie provides operational context, confirms value and constraints, and makes decisions where authority or consequence matters. AI leads assessment, repository work, output production and proposal execution.
 
-- Confirm whether the proposed scope reflects the intended methodology
-- Decide any disputed naming or authority boundaries
-- Approve, revise or reject the proposal
-
-After approval, Jamie will be asked for operational context and judgement while AI leads the assessment, repository work and proposal execution.
+The next founder input is selection of one real, non-confidential operational case. AI should then lead the case rather than asking Jamie to design the method or product journey.
 
 ## Connections and technology
 

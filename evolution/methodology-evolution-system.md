@@ -1,7 +1,7 @@
 ---
 id: OA-EVOLUTION-001
 title: Methodology Evolution System
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20
@@ -90,7 +90,7 @@ Jamie should receive a short notification or review containing:
 - Automated checks completed
 - The precise decision or direction required
 
-The notification channel may later be mobile, email, Teams or an in-product approval inbox. No external connection is authorised by this proposal.
+The notification channel may later be mobile, email, Teams or an in-product approval inbox. No external connection is authorised by the v0.4 internal-validation decision.
 
 ## Future controlled capabilities
 
@@ -128,9 +128,9 @@ Each connection requires an explicit decision covering purpose, information exch
 - Failed or confusing changes can be identified and corrected.
 - Automation reduces administration without weakening human authority.
 
-## Decisions not made by this proposal
+## Decisions not made by v0.4 approval
 
-This proposal does not approve:
+The v0.4 internal-validation decision does not approve:
 
 - An external feedback or notification connection
 - Collection of identifiable product analytics

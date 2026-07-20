@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-001
 title: OPERATE Improvement and Implementation Cycle
-status: proposed
+status: approved
 version: 0.3
 owner: Jamie Peppard
 ---

@@ -1,7 +1,7 @@
 ---
 id: OA-FEEDBACK-001
 title: Methodology scope and delivery-output gap
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
 ---
@@ -31,13 +31,13 @@ date: 2026-07-20
 - **Frequency or related signals:** The absence of useful outputs and unclear project direction were raised repeatedly during private testing.
 - **Consequence or urgency:** High. Continuing the existing route could build the wrong product against an incomplete methodology.
 - **Related records:** [Provisional Operations Automated self-assessment](../pilots/operations-automated-self-assessment-001.md) and [v0.4 change proposal](../proposals/methodology-architecture-v0.4.md).
-- **Recommended next action:** Review and decide the v0.4 proposal before further application development.
-- **Owner and review date:** Jamie Peppard; review during draft PR #6.
+- **Recommended next action:** Implement the approved v0.4 internal-validation route and test it through a facilitated operational case before further application development.
+- **Owner and review date:** Jamie Peppard; reviewed and approved for internal validation through PR #6 on 2026-07-20.
 
 ## Disposition
 
-- **State:** Proposed.
-- **Resulting proposal:** v0.4 complete methodology architecture, evolution system and delivery reset in draft PR #6.
+- **State:** Approved for internal validation.
+- **Resulting proposal:** v0.4 complete methodology architecture, evolution system and delivery reset, approved by Jamie Peppard on 2026-07-20.
 - **Reasoning:** The signal affects the project's purpose and architecture rather than a single interface defect. The methodology, evolution mechanism and delivery outputs must be corrected together.
-- **Release or retained location:** Controlled repository branch `codex/methodology-architecture-v0.4` and [draft pull request #6](https://github.com/warpedmore-netizen/operations-automated/pull/6).
-- **Outcome review trigger:** Jamie's decision, completion of the first evolution cycle and evidence from the first facilitated operational case.
+- **Release or retained location:** Controlled repository history and [pull request #6](https://github.com/warpedmore-netizen/operations-automated/pull/6).
+- **Outcome review trigger:** Completion of the first evolution cycle and evidence from the first facilitated operational case.

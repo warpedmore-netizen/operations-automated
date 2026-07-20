@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-002
 title: Operations Automated Methodology Architecture
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20
@@ -109,6 +109,6 @@ Operations Automated must not:
 - Allow AI or agents to acquire authority merely because a technical capability exists
 - Turn operational improvement into paperwork without a useful decision or change
 
-## Proposed status
+## Internal-validation status
 
-This architecture is proposed for internal development and piloting. Its component names, readiness path and module boundaries require validation through real, non-confidential cases and Jamie Peppard's approval before they become authoritative.
+This architecture was approved by Jamie Peppard on 2026-07-20 as the basis for internal development and validation. Its component names, readiness path and module boundaries remain working language that should be tested through real, non-confidential cases before external publication.

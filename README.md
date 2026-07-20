@@ -6,21 +6,19 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** Foundation v0.3 is approved for internal piloting. It is not approved for external publication.
->
-> **Current proposal:** v0.4 proposes the complete methodology architecture, an AI-managed and human-controlled evolution system, and a reset of the product direction. It remains proposed until Jamie Peppard explicitly approves it.
+> **Approved baseline:** v0.4 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
 
-## How the proposed system fits together
+## How the system fits together
 
 | Component | Purpose | Status |
 |---|---|---|
-| [Operations Automated methodology](methodology/operations-automated-overview.md) | The complete system for understanding, managing and improving operations | Proposed |
-| [Operational lenses](methodology/operational-lenses.md) | Connected views across value, people, work, flow, authority, risk, information, technology and learning | Proposed |
-| [Readiness path](methodology/readiness-path.md) | Evidence-led progression from operational basics to automation, AI and agents | Proposed |
-| [OPERATE](methodology/operate-overview.md) | The improvement and implementation cycle within the wider methodology | Proposed revision; approved baseline retained in Git history |
-| [Output contract](methodology/output-contract.md) | The useful analysis, decisions and artefacts a user must receive | Proposed |
-| [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Proposed |
-| [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Proposed |
+| [Operations Automated methodology](methodology/operations-automated-overview.md) | The complete system for understanding, managing and improving operations | Approved for internal validation |
+| [Operational lenses](methodology/operational-lenses.md) | Connected views across value, people, work, flow, authority, risk, information, technology and learning | Approved for internal validation |
+| [Readiness path](methodology/readiness-path.md) | Evidence-led progression from operational basics to automation, AI and agents | Approved for internal validation |
+| [OPERATE](methodology/operate-overview.md) | The improvement and implementation cycle within the wider methodology | Approved for internal validation |
+| [Output contract](methodology/output-contract.md) | The useful analysis, decisions and artefacts a user must receive | Approved for internal validation |
+| [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
+| [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 
@@ -34,21 +32,20 @@ OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve.
 
 ## Current route
 
-Until v0.4 is decided, the approved v0.3 baseline remains authoritative. The proposed validation route is:
+The internal-validation route is:
 
-1. Review the [v0.4 change proposal](proposals/methodology-architecture-v0.4.md).
-2. Review the [provisional Operations Automated self-assessment](pilots/operations-automated-self-assessment-001.md), created using the [operational assessment](templates/operational-assessment.md).
-3. Run facilitated, non-confidential cases using AI to return analysis and governed next actions.
-4. Record method problems with the [methodology feedback template](templates/methodology-feedback.md).
-5. Process useful changes through the controlled evolution system.
+1. Use the [provisional Operations Automated self-assessment](pilots/operations-automated-self-assessment-001.md), created using the [operational assessment](templates/operational-assessment.md), to choose the first detailed guidance.
+2. Run facilitated, non-confidential cases using AI to return analysis and governed next actions.
+3. Record method problems with the [methodology feedback template](templates/methodology-feedback.md).
+4. Process useful changes through the controlled evolution system.
 
-See the [proposed roadmap](ROADMAP.md) for the workstreams, milestones and human decision points.
+See the [roadmap](ROADMAP.md) for the workstreams, milestones and human decision points.
 
 ## Application experiment
 
 The [OPERATE Workspace MVP 0.1](app/README.md) remains approved only for private testing and is not deployed or approved for external use.
 
-Private testing demonstrated useful record, approval and export mechanics but also showed that the application mainly reorganises user input rather than returning genuine AI analysis. The v0.4 proposal recommends parking it as a retained learning experiment while the methodology and output model are validated. Its code is not deleted, and the unapproved interface experiment remains preserved on its separate branch.
+Private testing demonstrated useful record, approval and export mechanics but also showed that the application mainly reorganises user input rather than returning genuine AI analysis. The v0.4 decision parks it as a retained learning experiment while the methodology and output model are validated. Its code is not deleted, and the unapproved interface experiment remains preserved on its separate branch.
 
 ## Repository control
 

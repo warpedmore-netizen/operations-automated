@@ -4,7 +4,7 @@ This is a private, local-first application prototype for applying the approved O
 
 > **Status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
 
-> **Proposed direction:** The v0.4 methodology architecture proposes parking this application as a retained learning experiment. Private testing showed that its record and approval mechanics work, but it does not return in-context AI analysis. This proposal does not change the application's approved private-test status unless Jamie Peppard explicitly approves it.
+> **Internal-validation direction:** v0.4 parks this application as a retained learning experiment. Private testing showed that its record and approval mechanics work, but it does not return in-context AI analysis. Its code and private-test evidence remain available, while further interface development is paused.
 
 ## Use it
 
