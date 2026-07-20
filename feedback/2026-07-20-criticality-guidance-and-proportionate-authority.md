@@ -90,3 +90,9 @@ The pattern should define authority by consequence rather than prescribe job tit
 ## Retained lesson
 
 Criticality follows potential material harm and essential outcomes, not only profit or the label attached to a process. Use strong external practices as adaptable guidance, and send consequential decisions to the authority appropriate to their impact.
+
+## Rejected-risk test result
+
+Jamie reframed the authority test through ordinary risk management: a rejected resilience control does not close the underlying risk. The risk remains recorded, owned and governed, while Operations Automated connects the operational work to residual resilience and exposes a missing or ineffective risk process.
+
+The resulting work-record and risk-control model is retained in [Risk records and connected operational work](2026-07-20-risk-records-and-connected-operational-work.md).

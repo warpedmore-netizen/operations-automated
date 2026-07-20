@@ -19,6 +19,11 @@ All material changes to Operations Automated will be recorded here.
 - Added a challenge safeguard requiring the strongest reasonable contextual interpretation rather than a literal version of conversational shorthand.
 - Reframed criticality around potential material harm and essential outcomes rather than internal or financial importance alone.
 - Retained a distinction between non-negotiable reasoning and adaptable implementation, with a consequence-based authority pattern for further testing.
+- Recorded that rejection or deferral of a control does not close its underlying risk and must remain connected to ownership, resilience and review.
+- Drafted a proposed connected model for cases, requests, incidents, problems, risks, controls, decisions and learning.
+- Amalgamated the first five founder responses into an initial proposed methodology synthesis.
+- Added a proposed commercial validation strategy joining free guidance, paid knowledge products, facilitated evidence and a later applied workspace.
+- Made the ad-hoc founder challenge instruction explicit while retaining the daily 08:00 UK schedule.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 

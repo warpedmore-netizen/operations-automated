@@ -29,6 +29,8 @@ Version 0.4 records the corrected methodology boundary and the decision to devel
 
 Version 0.5 now proposes the operating rhythm for that evolution: an active read-only daily founder challenge at 08:00 UK time, founder-initiated questions, structured feedback disposition and a plain-English assurance pack before material approval.
 
+Five of the proposed seven founder responses are complete. Their first coherent amalgamation is retained in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md), including an initial [connected work, risk and control](methodology/connected-work-risk-and-control.md) module. Neither artefact is approved.
+
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
 ## Three workstreams developed in tandem
@@ -65,6 +67,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 4. Use a plain-English assurance pack for each material proposal.
 5. Review the usefulness, breadth, response burden and change yield after seven completed responses.
 6. Use the resulting evidence to prioritise detailed methodology guidance and future feedback channels.
+7. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before rebuilding the application.
 
 ## Application decision
 
