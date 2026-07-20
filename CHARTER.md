@@ -2,7 +2,7 @@
 id: OA-CHARTER-001
 title: Operations Automated Founder Charter
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 approval_required: true
 ---
@@ -43,7 +43,9 @@ Operations Automated will provide an understandable system that combines evidenc
 9. Controls should support safe work, not ceremonial compliance.
 10. Test exceptions and failure, not only the happy path.
 11. Measure outcomes rather than activity for its own sake.
-12. Everything evolves, including this methodology.
+12. Define value before deciding what “better” means.
+13. Make failure safe enough to reveal useful learning quickly.
+14. Everything evolves, including this methodology.
 
 ## Human responsibility
 

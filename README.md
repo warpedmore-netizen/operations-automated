@@ -4,7 +4,7 @@ Operations Automated is developing **OPERATE**: a living, human-led methodology 
 
 This repository is the controlled source for the methodology, its principles, governance, tools and future product model.
 
-> **Status:** Foundation v0.1 is a working proposal. It is not approved for external publication.
+> **Status:** Foundation v0.2 is a working proposal. It is not approved for external publication.
 
 ## Core concepts
 
@@ -17,6 +17,6 @@ This repository is the controlled source for the methodology, its principles, go
 - `main` represents the latest approved internal version.
 - Material changes should be proposed through a branch and pull request.
 - Jamie Peppard retains final approval during the founder-controlled phase.
-- No Kroo confidential information, documents, data or proprietary artefacts belong in this repository.
+- Confidential employer, client or third-party information, data and proprietary artefacts do not belong in this repository.
 
 See [CHARTER.md](CHARTER.md), [GOVERNANCE.md](GOVERNANCE.md) and the [OPERATE overview](methodology/operate-overview.md).
