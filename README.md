@@ -9,6 +9,8 @@ This repository is the controlled source for the methodology, its principles, go
 > **Approved baseline:** v0.5 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
 >
 > **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
+>
+> **Current proposal:** v0.6 tests whether useful guidance should include a proportionate [self-guided decision aid](methodology/actionable-decision-aids.md) when it would help the user progress independently. It is not approved.
 
 ## How the system fits together
 
