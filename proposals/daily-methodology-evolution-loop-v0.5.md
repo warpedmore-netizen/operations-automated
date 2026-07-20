@@ -43,15 +43,16 @@ It is read-only and instructed to:
 
 ## Early pilot evidence
 
-Five manual founder responses have exercised the proposed loop:
+Six manual founder responses have exercised the proposed loop:
 
 1. An initial AI service-desk scenario produced useful value, demand, evidence, segmentation, staged-automation and workforce-capability reasoning.
 2. A reverse test challenged ceremonial human approval and changed “never completely replace” into a more precise distinction between automated execution and continuing human ownership, assurance, capability and resilience.
 3. A failure-and-recovery test converged on business-defined minimum outcomes, impact tolerances and proportionate fallback design. It also corrected an AI tendency to challenge a literal version of conversational shorthand rather than Jamie's stronger contextual meaning.
 4. A transfer test reframed criticality around material harm to customers, third parties and others rather than internal or financial importance alone. It distinguished non-negotiable reasoning from adaptable implementation and retained a consequence-based authority pattern for further testing.
 5. An authority test established that rejecting a resilience control does not close the underlying risk. It connected cases, requests, incidents, problems, risks, controls and material decisions while retaining proportionality and local terminology as open validation questions.
+6. A boundary test established one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode. It retained specific caveats and continuation between modes while leaving high-consequence light answers for the next test.
 
-The exchanges have retained genuine disagreement and uncertainty about AI-on-AI assurance, silent failures, record proportionality and how the connected work model transfers outside service operations. The initial evidence is amalgamated in the [founder pilot methodology synthesis](founder-pilot-initial-synthesis-v0.5.md), but it does not satisfy the proposed seven-response review.
+The exchanges have retained genuine disagreement and uncertainty about high-consequence light answers, AI-on-AI assurance, silent failures, record proportionality and how the connected work model transfers outside service operations. The initial evidence is amalgamated in the [founder pilot methodology synthesis](founder-pilot-initial-synthesis-v0.5.md), but it does not satisfy the proposed seven-response review.
 
 ## Controlled response workflow
 

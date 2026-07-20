@@ -26,6 +26,9 @@ All material changes to Operations Automated will be recorded here.
 - Made the ad-hoc founder challenge instruction explicit while retaining the daily 08:00 UK schedule.
 - Clarified that the daily schedule continues indefinitely and that seven responses are the first review checkpoint rather than an end date.
 - Expanded challenge selection across the whole methodology, evolution, delivery, product and commercial system, prioritising the most decision-relevant unresolved concept.
+- Proposed one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode.
+- Required proportionate answers to expose their evidence, assumptions, limitations and route to deeper assessment.
+- Preserved a user's initial question and answer as the starting record when continuing into a project.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 

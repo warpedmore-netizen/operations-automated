@@ -61,7 +61,7 @@ Scheduled and ad-hoc questions may challenge the whole Operations Automated syst
 
 Answers are not accepted uncritically. AI may reverse an assumption, introduce contrary evidence, transfer the reasoning to another setting or test failure and authority. Jamie may challenge the AI's interpretation in return. Agreement is retained only when the reasoning survives proportionate testing; fatigue or silence is not agreement.
 
-The first five responses are amalgamated in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The seven-response review and Jamie's approval decision remain outstanding.
+The first six responses are amalgamated in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The seven-response review and Jamie's approval decision remain outstanding.
 
 ## Application experiment
 

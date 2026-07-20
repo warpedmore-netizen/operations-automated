@@ -1,0 +1,127 @@
+---
+id: OA-METHOD-007
+title: Proportionate Application and Delivery Modes
+status: proposed
+version: 0.1
+owner: Jamie Peppard
+date: 2026-07-20
+---
+
+# Proportionate application and delivery modes
+
+Operations Automated uses one methodology while adapting the depth and form of its response to the user's question, context, consequence and desired level of engagement.
+
+This proposed module extends the approved [methodology output contract](output-contract.md). It remains proposed pending the founder pilot boundary test and Jamie Peppard's explicit decision.
+
+## One method, different depths
+
+The principles, operational lenses, readiness reasoning and OPERATE cycle remain available in every delivery mode. Proportionality determines which elements are material, how much evidence is required and how the result is presented.
+
+Tailoring must not:
+
+- Change an inconvenient principle
+- Hide material risk, uncertainty or affected people
+- Treat the user's preferred answer as evidence
+- Present a partial response as a complete assessment
+- Remove applicable legal, safety, ethical, human or specialist obligations
+- Infer authority or approval from the request
+
+## Mode 1: Ask
+
+The user asks an operational question in ordinary language and receives an immediate, proportionate answer.
+
+Examples include:
+
+- “Should we automate this activity?”
+- “Why are these requests taking so long?”
+- “What should I improve first?”
+- “Does this risk need escalating?”
+
+The system applies the relevant methodology behind the response rather than asking the user to complete every lens or OPERATE stage.
+
+### Minimum ask-mode output
+
+1. **Direct answer:** the most useful provisional response available now.
+2. **Current understanding:** the outcome, scope and people affected as understood.
+3. **Reasoning used:** the material value, demand, work, dependency, risk, evidence, readiness or authority considerations.
+4. **Evidence discipline:** what is recorded, supplied judgement, AI inference or assumption.
+5. **Limitations:** what has not been assessed and why that matters.
+6. **Recommendation:** the proportionate next action, including retaining the current approach where appropriate.
+7. **Control point:** who must decide, validate or accept consequence.
+8. **Continuation:** what a deeper assessment would add and how to begin it without losing the current record.
+
+The answer should be concise for a simple question and expand only where consequence or uncertainty requires it.
+
+## Mode 2: Assess or project
+
+The user requests a structured, consultancy-style application of Operations Automated to an activity, case, process, service, function or operating system.
+
+The system should:
+
+- Establish a proportionate value matrix, boundary and authority model
+- Build a connected operational picture across the material lenses
+- Examine evidence quality, demand, work types, flow, dependencies, people, risk, controls, information and technology
+- Produce an evidence-based readiness profile where automation, AI or agents are relevant
+- Use OPERATE to prioritise, redesign, implement, test and retain improvement
+- Return the artefacts required by the output contract
+- Retain decisions, risks, ownership, measures, recovery and review triggers
+
+The user may work through several conversations or sessions. The product should orient them to the current decision and visible output rather than forcing a page-by-page methodology exercise.
+
+## Moving between modes
+
+An ask-mode answer may become an assessment or project when:
+
+- The user requests deeper analysis
+- Material evidence is missing or contradictory
+- Several teams, services or dependencies are affected
+- The decision is difficult to reverse
+- Potential harm or obligation is material
+- Automation or AI will receive consequential authority
+- Implementation, assurance or retained evidence is required
+
+The original question, answer, assumptions and caveats should become the starting record for the project. Do not require the user to repeat information without a reason.
+
+A project may also return temporarily to ask mode for a bounded decision, explanation or challenge while preserving the wider record.
+
+## Selecting depth
+
+Consider:
+
+- Desired outcome and user request
+- Value and people affected
+- Consequence and reversibility
+- Uncertainty and evidence quality
+- Operational scope and dependencies
+- Applicable obligations
+- Authority required
+- Whether the output will inform advice, approval or execution
+
+User preference influences depth but does not make a light-touch answer sufficient for every decision. Where a short response cannot support safe or defensible action, the system should provide what can responsibly be said, explain the gap and route the user towards deeper assessment or specialist authority.
+
+## Specific caveats
+
+Use caveats to make the information boundary visible, not to avoid responsibility for the quality of the response.
+
+A proportionate caveat should say, where relevant:
+
+- “This is a provisional operational view based on the information supplied, not a complete assessment.”
+- Which important evidence or operational lenses remain unexamined
+- Which recommendation depends on an assumption
+- What would make the answer materially different
+- Whether legal, financial, safety, security, medical or other specialist advice is required
+
+Do not imply professional certification, regulatory compliance or assurance that has not been performed.
+
+## Product behaviour
+
+A future delivery product should provide:
+
+- A visible **Ask a question** entry route
+- A visible **Start an assessment or project** entry route
+- A way to continue an answer as a retained project
+- Clear indication of methodology version, analysis depth and limitations
+- Progressive outputs rather than input forms alone
+- Human control before consequential decisions or actions
+
+The distinction is between delivery depth, not between a “real” and “lite” methodology.

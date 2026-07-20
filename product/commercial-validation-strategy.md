@@ -20,6 +20,17 @@ The commercial model should support two connected products:
 
 These should form one value ladder rather than two unrelated offers. The guide teaches and proves the method; the applied product reduces the effort required to use it repeatedly.
 
+## Two delivery experiences
+
+The same commercial product may expose two connected experiences:
+
+1. **Ask:** a user asks a question and receives an immediate, proportionate Operations Automated answer with evidence, assumptions, limitations and a next action.
+2. **Assessment or project:** the user requests consultancy-style depth, retained evidence, connected operational outputs and an implementation route.
+
+An ask-mode answer should be able to become the first record in a paid assessment or retained workspace. This creates a natural value transition without making the quick answer deliberately incomplete or requiring the user to repeat their context.
+
+The commercial distinction is depth, continuity and retained application—not access to different methodology principles.
+
 ## Current market signal
 
 The signal is credible but commercial fit is not yet validated.
@@ -67,6 +78,7 @@ Do not market to “every individual and every business” initially. The method
 | Offer | User outcome | Revenue role | Initial price hypothesis |
 |---|---|---|---|
 | Open diagnostic and selected guidance | Understand the current operational problem and receive one useful next action | Trust, audience and qualified demand | Free |
+| Proportionate ask experience | Receive a methodology-based answer and understand whether deeper work is justified | Product discovery, trust and potential conversion | Free allowance or low-cost test after validation |
 | Focused guide | Apply one job-to-be-done, such as identifying AI-ready work or connecting cases to risk | Low-support first purchase | Test £39–£79 one-off |
 | Practitioner toolkit | Use the method with templates, worked examples, facilitation prompts and updates | Higher-value knowledge product | Test £149–£299 one-off or annual edition |
 | Founding-user facilitated assessment | Receive an applied assessment and help validate the method | Evidence and case development; not passive | Test £500–£1,500 per bounded case |
