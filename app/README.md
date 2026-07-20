@@ -4,6 +4,8 @@ This is a private, local-first application prototype for applying the approved O
 
 > **Status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
 
+> **Internal-validation direction:** v0.4 parks this application as a retained learning experiment. Private testing showed that its record and approval mechanics work, but it does not return in-context AI analysis. Its code and private-test evidence remain available, while further interface development is paused.
+
 ## Use it
 
 Open `index.html` in a modern browser. The application has no external dependencies and stores the current workspace in that browser only.

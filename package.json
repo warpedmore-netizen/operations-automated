@@ -2,7 +2,7 @@
   "name": "operations-automated",
   "version": "0.1.0",
   "private": true,
-  "description": "A governed OPERATE workspace for AI-led, human-controlled operational improvement.",
+  "description": "A controlled Operations Automated methodology repository and private delivery experiment.",
   "scripts": {
     "start": "node app/server.mjs",
     "test": "node --test app/tests/*.test.js"

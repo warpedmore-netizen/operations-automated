@@ -1,58 +1,110 @@
 ---
 id: OA-METHOD-001
-title: OPERATE Overview
+title: OPERATE Improvement and Implementation Cycle
 status: approved
-version: 0.2
+version: 0.3
 owner: Jamie Peppard
 ---
 
 # OPERATE
 
-OPERATE is a living operations methodology for understanding work, improving flow, controlling risk and applying automation intelligently.
+OPERATE is the improvement and implementation cycle within the wider [Operations Automated methodology](operations-automated-overview.md). It is not the complete methodology or a demand to force every operational question through seven pages.
 
-| Stage | Purpose | Primary question |
-|---|---|---|
-| Observe | Understand real work and its context | What actually happens? |
-| Prioritise | Select work using user-defined value, impact, effort and risk | What matters most? |
-| Examine | Understand causes, dependencies, decisions and friction | Why does it work this way? |
-| Redesign | Simplify and improve the intended flow | What should happen? |
-| Automate | Apply proportionate technology with human control | What should machines handle? |
-| Test | Prove the change under normal and adverse conditions | Does it work in reality? |
-| Evolve | Measure, retain learning and begin the next cycle | What have we learned and kept? |
+Use OPERATE to move from observed reality to a tested and retained improvement. The change may be operational clarification, process improvement, a new control, a redesigned service, conventional automation, AI assistance or a bounded agentic capability.
 
-## The human core
+| Stage | Purpose | Primary question | Minimum useful output |
+|---|---|---|---|
+| Observe | Understand real work, value and context | What actually happens? | Connected current-state findings, evidence quality, exceptions and gaps |
+| Prioritise | Select what should be addressed and why | What matters most? | Ranked opportunities, trade-offs, dependencies and authorised priority decision |
+| Examine | Understand causes, decisions and system behaviour | Why does it work this way? | Cause and dependency assessment separating evidence from hypotheses |
+| Redesign | Define a better operational outcome and route | What should happen? | Target operating design, options, impacts, controls and transition needs |
+| Automate | Decide what technology, AI or agents should and should not handle | What should machines handle? | Delegation decision, human-control model and implementation plan |
+| Test | Prove the change under normal, exceptional and adverse conditions | Does it work in reality? | Test evidence, failure and recovery results, residual risk and recommendation |
+| Evolve | Retain learning and adapt the operation | What have we learned and kept? | Retained lesson, decision or improvement, measures and review trigger |
 
-Every stage is guided by:
+## Before beginning
 
-- **Purpose:** who the operation helps and what outcome it creates.
-- **Knowledge:** context and exceptions known by the people doing the work.
-- **Judgement:** reason applied where rules and data are insufficient.
-- **Empathy:** consideration for people delivering, receiving or affected by the work.
-- **Leadership:** visible ownership of decisions, risk and consequence.
+Establish proportionately:
 
-## Standard output from each cycle
+- The operation, activity or system being considered
+- Purpose, desired outcome, beneficiaries and value priorities
+- People affected and operational owner
+- Decision and risk authority
+- Known obligations, boundaries and evidence limitations
 
-An OPERATE cycle should create only the evidence needed for a decision and delivery. Depending on scope, this may include:
+Use the [operational lenses](operational-lenses.md) to avoid improving one process step while overlooking demand, people, dependencies, risk, information or technology elsewhere in the system.
 
-- Agreed purpose, value proposition and proportionate value matrix
-- Current-state evidence
-- Prioritisation decision
-- Causes, dependencies and judgement points
-- Redesigned flow
-- Automation decision and human-control model
-- Test evidence
-- Measures, retained learning and review triggers
+Use the [readiness path](readiness-path.md) when the change may introduce or expand automation, AI or agents.
 
-## Core working artefacts
+## Roles through the cycle
 
-OPERATE begins with a [value matrix](../templates/value-matrix.md). Start it during Observe and use it during Prioritise to establish the desired outcome, beneficiary, forms of value, priorities, minimum outcomes, constraints and decision authority. Revise it when evidence changes, but do not change priorities silently.
+AI may organise evidence, identify patterns, challenge assumptions, compare options, draft designs, recommend tests and prepare authorised implementation work.
 
-Use a [learning review](../templates/learning-review.md) during Test or Evolve after a failure, unexpected outcome or invalidated assumption. The review should preserve evidence and turn the experience into a retained lesson, decision or improvement.
+People provide operational context, purpose, user-defined value, judgement, empathy, accountability, risk acceptance and approval of consequential decisions.
 
-Both artefacts are prompts for proportionate thinking rather than mandatory paperwork. A small, reversible change may need only a few lines; consequential work requires enough evidence for the authorised human to make and defend the decision.
+AI must distinguish recorded evidence from its inferences and must not treat a stage transition as human approval.
 
-## Proportionality
+## Stage guidance
 
-OPERATE is not a demand to complete every activity at maximum depth. The approach should be proportionate to the value, risk, complexity and consequence of the work.
+### Observe
 
-The office milk order does not require predictive intelligence and a quarterly steering committee.
+Understand real work rather than relying only on the documented process. Examine the relevant operational lenses, affected people, normal work, exceptions, failures, workarounds and evidence quality.
+
+Return a useful current-state assessment even when information is incomplete. State what is known, inferred and still required.
+
+### Prioritise
+
+Compare problems and opportunities using the value matrix, impact, evidence, effort, dependencies, risk, reversibility and urgency. Expose conflicts rather than hiding them inside a single score.
+
+The authorised human decides material value priorities and which opportunity proceeds.
+
+### Examine
+
+Investigate why the current outcomes occur. Consider conditions, incentives, demand, handovers, decision rules, knowledge, capacity, controls, systems and cross-team dependencies.
+
+Separate observed causes from plausible hypotheses and propose the smallest useful investigation where evidence remains weak.
+
+### Redesign
+
+Simplify the intended operation and design normal, exceptional, escalation and recovery routes. Show how the proposed change affects the connected operational lenses and compare credible alternatives, including retaining human delivery.
+
+The authorised human approves a consequential target design and its trade-offs.
+
+### Automate
+
+Decide the justified level of technology. The correct outcome may be no automation, conventional automation, AI assistance or a bounded agent.
+
+Define task and goal boundaries, human responsibilities, decision authority, data and knowledge access, permissions, controls, monitoring, evaluation, failure signals, recovery and ownership before implementation.
+
+The authorised human approves consequential delegation and connections.
+
+### Test
+
+Test the change against intended value and under normal, exceptional, adverse and degraded conditions. Include users who do not share the designer's knowledge. Observe unintended consequences and exercise rollback or recovery where proportionate.
+
+The authorised human accepts, rejects or conditions the outcome and residual risk.
+
+### Evolve
+
+Retain at least one lesson, decision or improvement, or record why no further change is justified. Update the operational assessment, measures, ownership, documentation and review triggers.
+
+Feedback about the methodology itself enters the methodology evolution system rather than silently changing approved guidance.
+
+## Movement is not one-way
+
+Return to an earlier stage when:
+
+- Evidence changes the value or priority
+- A cause remains untested
+- No redesign meets the minimum outcomes
+- Readiness gaps make the proposed delegation unsafe
+- Testing reveals failure, harm or an invalid assumption
+- Conditions or obligations change
+
+Stages may be combined for a small, reversible change, but the reasoning and human control points must remain visible.
+
+## Output and proportionality
+
+Every stage should conform to the [methodology output contract](output-contract.md). Questions and templates support a decision; they are not valuable completion in themselves.
+
+The office milk order does not require predictive intelligence and a quarterly steering committee. A cross-team agent with access to customer data and the ability to act requires substantially more evidence, testing, authority and recovery.
