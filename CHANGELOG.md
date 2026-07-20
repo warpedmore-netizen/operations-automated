@@ -9,6 +9,8 @@ All material changes to Operations Automated will be recorded here.
 - Added a controlled disposition for no change, clarification, more evidence, material proposal and urgent review.
 - Added a plain-English methodology assurance pack for founder decisions.
 - Added repository instructions so future Codex tasks follow the same feedback, proposal and approval boundary.
+- Clarified that the local pilot requires Jamie's computer and the ChatGPT desktop app at run time, with a manual check-in fallback.
+- Retained the first manual validation response on demand-led automation and workforce transition without treating it as an approved methodology change.
 - Proposed reviewing the cadence after seven completed founder responses.
 - External feedback channels, private social-media access, analytics, messaging connections and automatic methodology approval remain unapproved.
 

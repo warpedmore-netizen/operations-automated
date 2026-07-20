@@ -49,6 +49,8 @@ An active Codex automation sends Jamie one methodology challenge each day at 08:
 
 The scheduled check-in is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology.
 
+During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop app must be running and this repository must be available at the scheduled time. Results appear in **Scheduled** and can be answered later. Jamie can request a manual check-in whenever a local run is missed.
+
 Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
 
 ## Application experiment

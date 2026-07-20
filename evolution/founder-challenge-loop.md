@@ -38,6 +38,10 @@ Jamie then explains what is correct, wrong, incomplete or impractical. Jamie's r
 
 An active local Codex automation named `Daily methodology challenge` runs each day at 08:00 UK local time for the Operations Automated project.
 
+Because the pilot reads a repository stored on Jamie's computer, the computer must be powered on, the ChatGPT desktop app must be running and the project must remain available on disk at the scheduled time. Completed runs appear in the app's **Scheduled** inbox and may be answered later.
+
+If the computer or app is unavailable, the local run is not guaranteed to take place or catch up. Jamie may request a manual check-in at any later time. A missed run or response has no approval, rejection or performance meaning.
+
 The scheduled task is read-only. It may:
 
 - Read the current approved repository
@@ -134,5 +138,6 @@ Review the loop after seven completed founder responses. Assess:
 - How often feedback produces no change, clarification or material proposals
 - Whether assurance packs make decisions easier
 - Whether daily remains the right cadence
+- Whether local delivery is reliable and accessible enough
 
 Changing the schedule, adding external feedback channels or connecting a notification service is a separate governed decision.

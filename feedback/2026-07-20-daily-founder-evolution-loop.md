@@ -39,3 +39,17 @@ Jamie does not want the next step to depend on finding one external operational 
 - **Repository integration:** Proposed through v0.5.
 - **External channels:** Not approved. Public sources may inform research, but the automation may not contact people, log into restricted services or collect confidential information.
 - **Review trigger:** Seven completed founder responses or earlier if the questions are repetitive, burdensome, misleading or unsafe.
+
+## Local delivery clarification
+
+The first explanation that the check-in would arrive "through Codex" was not sufficiently precise for a non-developer.
+
+The local pilot requires Jamie's computer to be powered on, the ChatGPT desktop app to be running and the repository to be available at the scheduled time. Results appear in **Scheduled** and may be answered later. A missed local run is not guaranteed to catch up, so Jamie may request a manual check-in at any time.
+
+Cloud execution, mobile notification, email and messaging delivery remain separate future options because they require an accessible methodology source, an external connection or both.
+
+## First manual validation
+
+Jamie completed the first manual check-in using a hypothetical AI service-desk scenario. The format produced a useful response covering value, demand, data, work segmentation, staged automation, workforce capability and continuing measurement.
+
+The retained operational and methodology feedback is recorded in [Demand-led automation and workforce transition](2026-07-20-demand-led-automation-and-workforce-transition.md).

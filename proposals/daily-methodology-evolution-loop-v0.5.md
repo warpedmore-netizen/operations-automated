@@ -27,6 +27,8 @@ The triggering feedback is retained in the [daily founder evolution-loop record]
 
 An active local Codex automation named `Daily methodology challenge` now runs daily at 08:00 UK time.
 
+The local pilot requires Jamie's computer to be powered on, the ChatGPT desktop app to be running and the repository to be available at the scheduled time. Its results appear in **Scheduled** and can be answered later. Jamie can request the same check-in manually after a missed run.
+
 It is read-only and instructed to:
 
 - Read the approved repository
@@ -89,6 +91,7 @@ Recommended. It creates regular learning while allowing no-change decisions, cla
 - **Change volume:** not every answer creates a proposal; retain no-change and more-evidence dispositions.
 - **Authority drift:** scheduled task is read-only; Jamie explicitly approves material meaning and merge.
 - **Confidentiality:** public sources only and no request for confidential operational examples.
+- **Local delivery dependency:** state the computer and app requirement plainly, allow manual catch-up and assess cloud or messaging delivery separately.
 
 ## Success measures
 
@@ -99,11 +102,12 @@ Recommended. It creates regular learning while allowing no-change decisions, cla
 - Material feedback is traceable to a disposition and, where justified, an assurance pack and decision.
 - Assurance packs let Jamie explain what will change and what remains controlled.
 - The cadence can be changed when evidence shows daily is not useful.
+- Scheduled and manual check-ins are both usable while the local delivery constraint is evaluated.
 
 ## Decisions requested from Jamie
 
 1. Adopt the founder challenge and feedback loop as the v0.5 internal-validation mechanism?
-2. Confirm that the active 08:00 UK daily schedule should continue while the first seven completed responses are evaluated?
+2. Confirm that the active local 08:00 UK daily schedule should continue while the first seven completed responses are evaluated, understanding that Jamie's computer and the ChatGPT desktop app must be running at the scheduled time?
 3. Approve the read-only public-source boundary and no-contact rule for daily research?
 4. Require the proposed assurance pack before material methodology approval?
 5. Keep external feedback forms, private social-media access, analytics and messaging connections as separate future decisions?
