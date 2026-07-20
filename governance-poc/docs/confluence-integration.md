@@ -4,5 +4,5 @@ owner: Jamie Peppard
 ---
 # Confluence integration
 
-The mock adapter logs an intended publish and blocks content without an approved-status marker. A real adapter should retrieve and compare the controlled page, require an approved release, publish idempotently, retain page ID/version and content hash, and audit success or failure. Credentials, space permissions, conflict handling, rollback and information classification require explicit approval before connection.
+The mock adapter now maps a generated document to a page beneath a configured space and parent, translates approved content into a storage-page payload, retains the page version and content hash, detects drift and blocks an overwrite after the remote version changes. A real adapter should perform those operations idempotently and audit success or failure. Credentials, space permissions, conflict handling, rollback and information classification require explicit approval before connection.
 

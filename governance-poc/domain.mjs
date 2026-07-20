@@ -94,7 +94,7 @@ export function generateDocuments(state) {
   const approvedPolicies = state.policyStatements.filter(item => item.status === "approved");
   const approvedProcedures = state.procedures.filter(item => item.status === "approved");
   const released = state.releases.at(-1);
-  const header = (title, version, status, owner, related) => `# ${title}\n\n- Document owner: ${owner}\n- Version: ${version}\n- Approval status: ${status}\n- Effective date: ${released.effectiveDate}\n- Review date: 2027-02-01\n- Related objects: ${related.join(", ")}\n- Generated: ${now()}\n\n> Generated view. Structured approved records are canonical. Fictional demonstration content; not regulatory advice.\n`;
+  const header = (title, version, status, owner, related) => `# ${title}\n\n- Document owner: ${owner}\n- Version: ${version}\n- Approval status: ${status}\n- Effective date: ${released.effectiveDate}\n- Review date: 2027-02-01\n- Related objects: ${related.join(", ")}\n- Generated: ${released.publishedAt}\n\n> Generated view. Structured approved records are canonical. Fictional demonstration content; not regulatory advice.\n`;
   return {
     policy: header("Incident Management Policy", released.version, "approved", "Incident Management Owner", approvedPolicies.map(x => x.id)) + approvedPolicies.map(x => `\n## ${x.section} ${x.heading}\n\n${x.text}\n`).join("") + `\n## Change history\n\n- ${released.version}: ${released.releaseNotes}\n`,
     procedure: header("Incident Management Procedure", released.version, "approved", "Incident Management Owner", approvedProcedures.map(x => x.id)) + approvedProcedures.map(x => `\n## ${x.title}\n\n${Array.isArray(x.steps) ? x.steps.join("\n") : x.steps}\n`).join(""),

@@ -16,3 +16,5 @@ owner: Jamie Peppard
 - Dates are fixed demo dates where repeatability helps; generated timestamps reflect runtime.
 - Release `1.0` is seeded so the workflow demonstrates supersession into `1.1`.
 - A material product decision, deployment, external publication or live integration still requires Jamie's explicit approval.
+- Confluence and Notion are first adapter tests, not privileged canonical stores or permanent limits on supported knowledge tools.
+- Document platforms and action systems need different contracts: publishing a controlled view is not the same operation as creating or synchronising remediation work.

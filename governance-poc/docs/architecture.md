@@ -12,6 +12,8 @@ owner: Jamie Peppard
 - `server.mjs`: local static host.
 - local HTTP API: server-side execution of governed actions.
 - atomic JSON state file: restart-safe demonstration persistence with serialised writes.
+- platform-neutral publication service: mapping, approved-release eligibility, deterministic rendering, hashing, comparison, drift and conflict handling.
+- capability-aware adapters: platform-specific hierarchy, content translation, permissions and concurrency tokens remain below the common contract.
 
 This follows the repository's established local-first, dependency-free architecture and creates no external connection. It is a modular monolith, not a production architecture.
 

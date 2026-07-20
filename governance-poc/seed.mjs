@@ -33,6 +33,11 @@ export function createSeed() {
     links: [
       { from: "REG-DEMO-001", to: "OBL-IM-004", type: "contains" }, { from: "OBL-IM-004", to: "CTRL-IM-012", type: "supported-by" }, { from: "CTRL-IM-012", to: "POL-IM-003", type: "expressed-through" }, { from: "CTRL-IM-012", to: "PROC-IM-007", type: "implemented-by" }, { from: "POL-IM-003", to: "PROC-IM-007", type: "implemented-by" }, { from: "CTRL-IM-012", to: "TEST-IM-014", type: "tested-by" }, { from: "TEST-IM-014", to: "OBS-IM-021", type: "produced" }, { from: "OBS-IM-021", to: "FIND-IM-008", type: "analysed-as" }, { from: "TEST-IM-014", to: "EVID-IM-031", type: "supported-by" }
     ],
+    publicationTargets: [
+      { id: "PUB-CONF-001", platform: "confluence", name: "Mock Confluence controlled space", containerId: "SPACE-DEMO", parentId: "PAGE-GOVERNANCE", status: "mock-connected", capabilities: { hierarchy: "space-and-parent-page", contentModel: "storage-page-body", concurrencyToken: "version-number", requiredCapabilities: ["read-page", "write-page"], supportsAtomicBodyUpdate: true, permissionBoundary: "page and space permissions" } },
+      { id: "PUB-NOTION-001", platform: "notion", name: "Mock Notion operations workspace", containerId: "WORKSPACE-DEMO", parentId: "PAGE-OPERATIONS", status: "mock-connected", capabilities: { hierarchy: "workspace-parent-page-or-data-source", contentModel: "page-properties-and-blocks", concurrencyToken: "last-edited-time", requiredCapabilities: ["read-content", "update-content", "insert-content"], supportsAtomicBodyUpdate: false, permissionBoundary: "connection capability and shared page ancestry" } }
+    ],
+    publicationMappings: [], remoteDocuments: [], publicationChecks: [],
     auditEvents: [{ id: "AUD-IM-001", actor: "Demo seed", action: "baseline-released", objectType: "Release", objectId: "REL-IM-001", timestamp: "2026-06-01T09:00:00Z", previousValue: null, newValue: "1.0", reason: "Create fictional demonstration baseline" }]
   };
 }

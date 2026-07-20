@@ -36,10 +36,13 @@ npm run governance:test
 4. Open **Change proposal**, create the proposal, inspect the wording diff and record a human approval.
 5. Open **Release**, create release `REL-IM-002` and view the regenerated policy, procedure and release notes.
 6. Open **Audit log** to inspect the complete sequence and **Versions** to confirm the approved previous wording remains available.
+7. Open **Integrations**, map the policy to either mock Confluence or mock Notion, publish it, check that it is in sync, simulate an external edit and confirm drift is detected and controlled overwrite is blocked.
 
 ## Architecture
 
 The current milestone follows the repository's existing local-first, no-dependency architecture: browser UI, HTTP application service, atomic file persistence, domain service, generated Markdown views and mocked adapters. The service layer is isolated so a later implementation can adopt TypeScript, React and Prisma/SQLite without changing governance rules. See [architecture.md](docs/architecture.md).
+
+Publication is platform-neutral. The core owns eligibility, deterministic generation, mappings, hashes, comparison, drift and conflict handling. Confluence and Notion adapters declare and translate their different hierarchy, content, permission and concurrency models. See [publication-adapters.md](docs/publication-adapters.md).
 
 ## Seed data
 
