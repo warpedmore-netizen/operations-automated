@@ -21,6 +21,8 @@ Private use exposed that the project had narrowed the methodology to the seven O
 
 The current application can retain information and approval records, but it does not provide in-context AI analysis. The user is therefore asked to supply much of the diagnosis, cause analysis and decision content, while the interface mainly reorganises what was entered. This created confusion about what the user receives, what the method covers and why the application should be used.
 
+The triggering signal is retained in the [methodology scope and delivery-output feedback record](../feedback/2026-07-20-methodology-scope-and-delivery-gap.md). A [provisional self-assessment](../pilots/operations-automated-self-assessment-001.md) applies the proposed architecture to Operations Automated itself without treating it as approved.
+
 Jamie clarified that the intended methodology must:
 
 - Improve operations as a connected whole, not only individual processes
@@ -90,11 +92,14 @@ Controls include proportionality, modular guidance, explicit evidence, named aut
 
 ## Proposed validation
 
-1. Use the operational assessment template on Operations Automated itself.
-2. Run at least two real, non-confidential cases with different scopes or work types.
-3. Record where the lenses, readiness path and outputs are useful, missing or excessive.
-4. Process that feedback through the proposed evolution system.
-5. Decide whether the architecture is ready for internal approval and whether a new product definition is justified.
+1. Review the provisional Operations Automated self-assessment and validate or correct its inferred value order and findings.
+2. Complete this proposal as the first full feedback-to-decision evolution cycle.
+3. Run at least two real, non-confidential cases with different scopes or work types.
+4. Record where the lenses, readiness path and outputs are useful, missing or excessive.
+5. Process that feedback through the proposed evolution system.
+6. Decide whether the architecture is ready for continuing internal use and whether a new product definition is justified.
+
+The self-assessment has already identified that architecture alone is not a complete methodology. Detailed guidance remains to be developed from evidence, and the current application and notification connections should remain deferred.
 
 ## Recommendation
 

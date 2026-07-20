@@ -37,7 +37,7 @@ OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve.
 Until v0.4 is decided, the approved v0.3 baseline remains authoritative. The proposed validation route is:
 
 1. Review the [v0.4 change proposal](proposals/methodology-architecture-v0.4.md).
-2. Apply the proposed method to Operations Automated itself using the [operational assessment](templates/operational-assessment.md).
+2. Review the [provisional Operations Automated self-assessment](pilots/operations-automated-self-assessment-001.md), created using the [operational assessment](templates/operational-assessment.md).
 3. Run facilitated, non-confidential cases using AI to return analysis and governed next actions.
 4. Record method problems with the [methodology feedback template](templates/methodology-feedback.md).
 5. Process useful changes through the controlled evolution system.

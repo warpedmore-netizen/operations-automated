@@ -27,6 +27,8 @@ Jamie also clarified that OPERATE is the improvement cycle inside the methodolog
 
 Version 0.4 is the proposed correction. It does not change the approved baseline until Jamie explicitly approves it.
 
+A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has now applied the proposed method to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -53,12 +55,13 @@ The methodology and evolution loop continue throughout every milestone. Evidence
 
 ## Immediate plan
 
-1. Review the proposed v0.4 architecture and explicit decisions.
-2. If approved, apply the operational assessment to Operations Automated itself.
-3. Use the result to select the first detailed methodology modules rather than attempting to write every specialist module without evidence.
-4. Run the first facilitated operational case through Codex, returning outputs in line with the output contract.
-5. Record confusion, gaps and outcomes as methodology feedback.
-6. Use the evolution system to prepare the next controlled proposal.
+1. Review the proposed v0.4 architecture, provisional self-assessment and explicit decisions.
+2. Validate or correct the inferred value order and readiness findings.
+3. Complete v0.4 as the first feedback-to-decision evolution cycle.
+4. Use the self-assessment to select the first detailed methodology guidance rather than attempting every specialist module without evidence.
+5. Run the first facilitated operational case through Codex, returning outputs in line with the output contract.
+6. Record confusion, gaps and outcomes as methodology feedback.
+7. Use the evolution system to prepare the next controlled proposal.
 
 ## Application decision
 
