@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-006
 title: Connected Work, Risk and Control
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20
@@ -9,9 +9,9 @@ date: 2026-07-20
 
 # Connected work, risk and control
 
-This proposed module helps an individual, team or organisation connect operational demand, work, causes, uncertainty, decisions and improvement without forcing every setting into the same terminology or governance structure.
+This module helps an individual, team or organisation connect operational demand, work, causes, uncertainty, decisions and improvement without forcing every setting into the same terminology or governance structure.
 
-It supplements the approved [operational lenses](operational-lenses.md), [readiness path](readiness-path.md) and [OPERATE cycle](operate-overview.md). It remains proposed pending further internal validation and Jamie Peppard's explicit decision.
+It supplements the approved [operational lenses](operational-lenses.md), [readiness path](readiness-path.md) and [OPERATE cycle](operate-overview.md). It is approved as working guidance for internal validation; terminology and record depth remain subject to case evidence.
 
 ## Start outside-in
 

@@ -1,7 +1,7 @@
 ---
 id: OA-CHANGE-005
 title: Establish the daily founder methodology evolution loop
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
 approval_required: true
@@ -148,7 +148,7 @@ Recommended. It creates regular learning while allowing no-change decisions, cla
 
 ## Jamie's decision
 
-- **Decision:** Pending
+- **Decision:** Approved with conditions for internal validation and authorised for merge through PR #7
 - **Approver:** Jamie Peppard
-- **Date:**
-- **Conditions or requested changes:**
+- **Date:** 2026-07-20
+- **Conditions or requested changes:** Continue the daily and ad-hoc challenge indefinitely; retain the read-only public-source and no-contact boundaries; use assurance packs for material changes; run two non-confidential facilitated cases; test Ask mode with users other than Jamie; keep external feedback, private social-media access, analytics, messaging, publication and deployment subject to separate approval.

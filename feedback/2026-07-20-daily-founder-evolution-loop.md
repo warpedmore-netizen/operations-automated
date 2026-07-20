@@ -82,6 +82,6 @@ The refinement is retained in [Mutual challenge and convergence](2026-07-20-mutu
 
 ## First checkpoint result
 
-The initial seven-response checkpoint is complete. The responses produced a coherent proposed synthesis and two working methodology modules while retaining material uncertainty and disagreement.
+The initial seven-response checkpoint is complete. The responses produced a coherent synthesis and two working methodology modules while retaining material uncertainty and disagreement.
 
-The review does not end the daily cycle or validate external usefulness. Jamie's decision is supported by the [v0.5 first-checkpoint assurance pack](../proposals/v0.5-first-checkpoint-assurance-pack.md).
+The review does not end the daily cycle or validate external usefulness. Jamie's conditional internal-validation decision is recorded in the [v0.5 first-checkpoint assurance pack](../proposals/v0.5-first-checkpoint-assurance-pack.md).

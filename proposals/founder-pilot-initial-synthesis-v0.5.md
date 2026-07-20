@@ -1,7 +1,7 @@
 ---
 id: OA-CHANGE-006
 title: Founder Pilot First-checkpoint Methodology Synthesis
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
 approval_required: true
@@ -13,7 +13,7 @@ approval_required: true
 
 This document amalgamates the operational reasoning produced through the first founder challenge checkpoint. It connects seven completed responses to the approved v0.4 architecture and identifies the smallest coherent methodology guidance they support.
 
-The first checkpoint is complete, but this is not a completed methodology or externally validated release. All new meaning in this document and the linked modules remains **proposed** until Jamie Peppard explicitly approves it.
+The first checkpoint is complete. Jamie Peppard approved this synthesis and the linked modules as working guidance for internal validation on 2026-07-20. This is not a completed methodology or externally validated release.
 
 ## Evidence considered
 
@@ -29,7 +29,7 @@ The first checkpoint is complete, but this is not a completed methodology or ext
 
 ## Integrated methodology position
 
-The pilot currently supports the following proposed operating logic.
+The pilot supports the following working internal operating logic.
 
 ### 1. Define value and boundaries
 
@@ -83,11 +83,11 @@ Allow a user to ask an operational question and receive useful methodology-based
 
 Ask mode should determine whether the available information supports the substantive answer. When it does not, explain the gap, reframe the decision, provide the smallest useful structure and ask only the questions that could materially change the conclusion. Do not disguise an unrealised assessment as a confident verdict.
 
-## Initial module produced
+## Initial modules produced
 
-The proposed [Connected work, risk and control](../methodology/connected-work-risk-and-control.md) module translates responses four and five into usable guidance. It is deliberately connected to the existing operational lenses and OPERATE rather than creating a parallel methodology.
+The approved internal [Connected work, risk and control](../methodology/connected-work-risk-and-control.md) module translates responses four and five into usable guidance. It is deliberately connected to the existing operational lenses and OPERATE rather than creating a parallel methodology.
 
-The proposed [Proportionate application and delivery modes](../methodology/proportionate-application-and-delivery-modes.md) module translates responses six and seven into ask and assessment/project experiences backed by the same methodology.
+The approved internal [Proportionate application and delivery modes](../methodology/proportionate-application-and-delivery-modes.md) module translates responses six and seven into ask and assessment/project experiences backed by the same methodology.
 
 ## What the synthesis does not yet prove
 
@@ -110,4 +110,4 @@ The proposed [Proportionate application and delivery modes](../methodology/propo
 
 ## Recommendation
 
-Retain this synthesis as the working proposed methodology draft. Do not approve individual observations piecemeal, rebuild the application or publish the methodology externally until the remaining tests and assurance review are complete.
+Retain this synthesis as working internal guidance under the v0.5 conditions. Do not treat it as external validation, approve individual observations beyond the integrated guidance, rebuild the application or publish the methodology externally until the remaining tests and a further assurance review are complete.

@@ -2,7 +2,7 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.4
+version: 0.5
 owner: Jamie Peppard
 last_updated: 2026-07-20
 ---
@@ -19,7 +19,7 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Version 0.4 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
+Version 0.5 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
@@ -27,9 +27,9 @@ Jamie also clarified that OPERATE is the improvement cycle inside the methodolog
 
 Version 0.4 records the corrected methodology boundary and the decision to develop methodology, evolution and facilitated delivery in tandem.
 
-Version 0.5 now proposes the operating rhythm for that evolution: an active read-only daily founder challenge at 08:00 UK time, founder-initiated questions, structured feedback disposition and a plain-English assurance pack before material approval.
+Version 0.5 establishes the operating rhythm for that evolution: an active read-only daily founder challenge at 08:00 UK time, founder-initiated questions, structured feedback disposition and a plain-English assurance pack before material approval.
 
-The first seven-response checkpoint is complete. Its coherent amalgamation is retained in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md), including initial [connected work, risk and control](methodology/connected-work-risk-and-control.md) and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md). Jamie's decision is supported by the proposed [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md). None of these artefacts is approved.
+The first seven-response checkpoint is complete. Its coherent amalgamation, [connected work, risk and control](methodology/connected-work-risk-and-control.md), and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md) are approved as working internal guidance under the conditions in the [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md).
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 

@@ -6,9 +6,9 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** v0.4 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
+> **Approved baseline:** v0.5 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
 >
-> **Current proposal:** v0.5 establishes a daily founder challenge, traceable feedback and plain-English methodology assurance loop. Its repository integration remains proposed until Jamie Peppard decides it.
+> **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
 
 ## How the system fits together
 
@@ -19,6 +19,8 @@ This repository is the controlled source for the methodology, its principles, go
 | [Readiness path](methodology/readiness-path.md) | Evidence-led progression from operational basics to automation, AI and agents | Approved for internal validation |
 | [OPERATE](methodology/operate-overview.md) | The improvement and implementation cycle within the wider methodology | Approved for internal validation |
 | [Output contract](methodology/output-contract.md) | The useful analysis, decisions and artefacts a user must receive | Approved for internal validation |
+| [Connected work, risk and control](methodology/connected-work-risk-and-control.md) | Proportionate links between demand, work, causes, risk, decisions, controls and learning | Approved for internal validation |
+| [Proportionate application and delivery modes](methodology/proportionate-application-and-delivery-modes.md) | Ask and assessment/project experiences using one consistent method | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 
@@ -61,7 +63,7 @@ Scheduled and ad-hoc questions may challenge the whole Operations Automated syst
 
 Answers are not accepted uncritically. AI may reverse an assumption, introduce contrary evidence, transfer the reasoning to another setting or test failure and authority. Jamie may challenge the AI's interpretation in return. Agreement is retained only when the reasoning survives proportionate testing; fatigue or silence is not agreement.
 
-The first seven responses are amalgamated in the proposed [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The checkpoint is complete and Jamie's decision is supported by the proposed [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md). The daily cycle continues regardless of that checkpoint.
+The first seven responses are amalgamated in the approved internal [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md) records Jamie's conditional internal-validation decision. The daily cycle continues regardless of that checkpoint.
 
 ## Application experiment
 

@@ -2,7 +2,9 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## 0.5 - Daily founder methodology evolution loop (proposed)
+## 0.5 - Daily founder methodology evolution loop
+
+- Approved by Jamie Peppard on 2026-07-20 for internal validation and authorised for merge through PR #7; not approved for external publication.
 
 - Added founder-initiated and AI-initiated routes for challenging the approved methodology.
 - Activated a read-only Codex check-in at 08:00 UK time with one evidence-backed scenario, a provisional Operations Automated answer and a 5-, 10- or 20-minute founder response.
@@ -11,7 +13,7 @@ All material changes to Operations Automated will be recorded here.
 - Added repository instructions so future Codex tasks follow the same feedback, proposal and approval boundary.
 - Clarified that the local pilot requires Jamie's computer and the ChatGPT desktop app at run time, with a manual check-in fallback.
 - Retained the first manual validation response on demand-led automation and workforce transition without treating it as an approved methodology change.
-- Expanded the proposed loop from one-question, one-answer feedback into mutual challenge using reverse, boundary, transfer, stakeholder, contrary-evidence, time-horizon, failure and authority tests.
+- Expanded the loop from one-question, one-answer feedback into mutual challenge using reverse, boundary, transfer, stakeholder, contrary-evidence, time-horizon, failure and authority tests.
 - Added controls so fatigue, silence and performative disagreement are not mistaken for convergence.
 - Retained contextual convergence on fully automated execution of a bounded work type with continuing human ownership, assurance, capability and resilience.
 - Recorded remaining challenges concerning independent assurance, silent failure, expert concentration and recovery at automated scale.
@@ -20,13 +22,13 @@ All material changes to Operations Automated will be recorded here.
 - Reframed criticality around potential material harm and essential outcomes rather than internal or financial importance alone.
 - Retained a distinction between non-negotiable reasoning and adaptable implementation, with a consequence-based authority pattern for further testing.
 - Recorded that rejection or deferral of a control does not close its underlying risk and must remain connected to ownership, resilience and review.
-- Drafted a proposed connected model for cases, requests, incidents, problems, risks, controls, decisions and learning.
-- Amalgamated the first seven founder responses into a proposed first-checkpoint methodology synthesis.
+- Added working internal guidance connecting cases, requests, incidents, problems, risks, controls, decisions and learning.
+- Amalgamated the first seven founder responses into an approved internal first-checkpoint methodology synthesis.
 - Added a proposed commercial validation strategy joining free guidance, paid knowledge products, facilitated evidence and a later applied workspace.
 - Made the ad-hoc founder challenge instruction explicit while retaining the daily 08:00 UK schedule.
 - Clarified that the daily schedule continues indefinitely and that seven responses are the first review checkpoint rather than an end date.
 - Expanded challenge selection across the whole methodology, evolution, delivery, product and commercial system, prioritising the most decision-relevant unresolved concept.
-- Proposed one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode.
+- Established one consistent methodology delivered through an immediate ask mode or a structured assessment/project mode.
 - Required proportionate answers to expose their evidence, assumptions, limitations and route to deeper assessment.
 - Preserved a user's initial question, guided response and any justified answer as the starting record when continuing into a project.
 - Completed the first seven-response founder challenge checkpoint and prepared its plain-English assurance pack.

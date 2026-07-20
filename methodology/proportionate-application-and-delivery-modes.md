@@ -1,7 +1,7 @@
 ---
 id: OA-METHOD-007
 title: Proportionate Application and Delivery Modes
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-20
@@ -11,7 +11,7 @@ date: 2026-07-20
 
 Operations Automated uses one methodology while adapting the depth and form of its response to the user's question, context, consequence and desired level of engagement.
 
-This proposed module extends the approved [methodology output contract](output-contract.md). The first founder checkpoint has tested its initial boundary, but the module remains proposed pending Jamie Peppard's explicit decision.
+This module extends the approved [methodology output contract](output-contract.md). It is approved as working guidance for internal validation; Ask-mode answerability and project conversion remain subject to real-user testing.
 
 ## One method, different depths
 
