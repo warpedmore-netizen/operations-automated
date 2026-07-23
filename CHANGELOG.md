@@ -2,6 +2,25 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## 0.6 - Actionable delivery and governed collaboration
+
+- Approved by Jamie Peppard on 2026-07-23 for internal validation and authorised for merge through PR #9; not approved for external publication.
+
+- Retained the first facilitated v0.5 case and the founder's criticism that useful guidance should include a way to apply it independently where appropriate.
+- Added an output module covering proportionate checklists, worksheets, formulae, worked examples, decision records and controlled action plans.
+- Added a draft category-first decision-aid template with transparent, user-weighted pilot calculations and separate authority, minimum-outcome and recovery gates.
+- Produced a Google Sheets-ready refund decision-aid prototype and retained its example results and limitations.
+- Recorded that the comprehensive workbook was too complicated for the initial need and added a simplicity-first, progressive-disclosure requirement.
+- Added a proposed MoSCoW priority and outstanding-work register covering methodology, prototypes, product, connections and commercial work.
+- Added an activation-and-first-use module so completion includes the user's route to the first useful action.
+- Added a Human-AI Collaboration Method covering contextual reconstruction, analysis, representation, mutual challenge, memory boundaries, recovery and retained learning.
+- Added a concise current-methodology synthesis and visual map connecting the approved baseline, its extensions and founder-feedback coverage.
+- Resolved duplicate draft artefact identifiers before consolidation.
+- Corrected evolution-system and founder-challenge status metadata to match Jamie's recorded v0.4 and v0.5 internal-validation approvals.
+- Required independent-user and materially different second-case testing as post-approval review conditions.
+- Added the v0.6 assurance pack and retained independent-user, second-case, activation and collaboration testing as post-approval review conditions.
+- Application rebuilding, external publication and Google Drive or other new connections remain unapproved.
+
 ## 0.5 - Daily founder methodology evolution loop
 
 - Approved by Jamie Peppard on 2026-07-20 for internal validation and authorised for merge through PR #7; not approved for external publication.

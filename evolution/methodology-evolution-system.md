@@ -1,10 +1,12 @@
 ---
 id: OA-EVOLUTION-001
 title: Methodology Evolution System
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 date: 2026-07-20
+approval_date: 2026-07-20
+approval_scope: internal validation
 ---
 
 # Methodology evolution system
