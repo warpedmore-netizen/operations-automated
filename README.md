@@ -6,15 +6,15 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** v0.5 was approved by Jamie Peppard on 2026-07-20 for internal validation. It is not approved for external publication.
+> **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
 >
 > **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
 >
-> **Current proposal:** v0.6 tests whether useful guidance should include a proportionate [self-guided decision aid](methodology/actionable-decision-aids.md) when it would help the user progress independently. It is not approved.
+> **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 
-Start with the proposed [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
+Start with the [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
 
-The latest feedback also proposes an [activation and first-use](methodology/activation-and-first-use.md) completion test and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). Neither is approved. The proposed [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
+The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
 ## How the system fits together
 
@@ -27,9 +27,9 @@ The latest feedback also proposes an [activation and first-use](methodology/acti
 | [Output contract](methodology/output-contract.md) | The useful analysis, decisions and artefacts a user must receive | Approved for internal validation |
 | [Connected work, risk and control](methodology/connected-work-risk-and-control.md) | Proportionate links between demand, work, causes, risk, decisions, controls and learning | Approved for internal validation |
 | [Proportionate application and delivery modes](methodology/proportionate-application-and-delivery-modes.md) | Ask and assessment/project experiences using one consistent method | Approved for internal validation |
-| [Actionable and self-guided decision aids](methodology/actionable-decision-aids.md) | The smallest practical aid that helps a user progress independently | Proposed |
-| [Human-AI Collaboration Method](methodology/human-ai-collaboration.md) | How AI understands, analyses, represents, challenges, recovers and learns with a person | Proposed |
-| [Activation and first use](methodology/activation-and-first-use.md) | Evidence that the intended user can reach and begin using a deliverable | Proposed |
+| [Actionable and self-guided decision aids](methodology/actionable-decision-aids.md) | The smallest practical aid that helps a user progress independently | Approved for internal validation |
+| [Human-AI Collaboration Method](methodology/human-ai-collaboration.md) | How AI understands, analyses, represents, challenges, recovers and learns with a person | Approved for internal validation |
+| [Activation and first use](methodology/activation-and-first-use.md) | Evidence that the intended user can reach and begin using a deliverable | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 

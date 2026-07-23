@@ -1,22 +1,24 @@
 ---
 id: OA-CHANGE-008
 title: Establish a governed Human-AI Collaboration Method
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-23
 approval_required: true
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Establish a governed Human-AI Collaboration Method
 
 ## Proposed change
 
-Create the [Human-AI Collaboration Method](../methodology/human-ai-collaboration.md) as a proposed cross-cutting component of Operations Automated and begin provisional founder-led use immediately.
+Create the [Human-AI Collaboration Method](../methodology/human-ai-collaboration.md) as a cross-cutting component of Operations Automated and begin founder-led internal validation immediately.
 
 The method governs how AI understands user context, analyses evidence, chooses a representation, challenges assumptions, delivers useful outputs, recovers from interaction failure, uses memory and turns feedback into traceable improvement.
 
-This proposal does not change the approved v0.5 baseline by itself.
+This approved change extends the v0.5 baseline for internal validation only and remains subject to its recorded conditions.
 
 ## Reason
 
@@ -113,7 +115,7 @@ The proposed method can be reversed by ceasing pilot use and retaining the evide
 
 ## Recommendation
 
-Use version 0.1 immediately as a proposed founder-collaboration pilot. Improve it through traceable evidence rather than waiting for theoretical completion.
+Use the method immediately for founder-led internal validation. Improve it through traceable evidence rather than waiting for theoretical completion.
 
 After the first seven meaningful interactions, prepare a synthesis covering:
 
@@ -128,7 +130,7 @@ This is a review checkpoint, not a termination condition.
 
 ## Approval
 
-- **Decision:** Pending
+- **Decision:** Approved for internal validation and authorised for merge through PR #9
 - **Approver:** Jamie Peppard
-- **Date:** Pending
-- **Conditions:** Proposed pilot use does not authorise external publication, hidden profiling, collection of confidential information or automatic approval of methodology changes.
+- **Date:** 2026-07-23
+- **Conditions:** Internal validation does not authorise external publication, hidden profiling, collection of confidential information or automatic approval of methodology changes. Review after seven materially different interactions or an earlier material failure.

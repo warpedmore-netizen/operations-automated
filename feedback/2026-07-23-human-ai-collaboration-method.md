@@ -1,9 +1,11 @@
 ---
 id: OA-FEEDBACK-2026-07-23-002
 title: Govern human-AI collaboration as an evolving operational method
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-23
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Methodology feedback
@@ -36,8 +38,8 @@ date: 2026-07-23
 
 ## Disposition
 
-- **State:** Proposed
+- **State:** Approved for internal validation through v0.6
 - **Resulting proposal or decision:** [Propose a Human-AI Collaboration Method](../proposals/human-ai-collaboration-method-v0.1.md)
 - **Reasoning:** Collaboration is part of the operational delivery system. It should therefore have explicit purpose, principles, evidence, controls, recovery and evolution rather than depend on hidden model behaviour or informal preference memory.
-- **Release or retained location:** Feedback, proposal and proposed method retained in the controlled repository; no approved baseline changed
+- **Release or retained location:** Feedback, proposal and approved working method retained in the v0.6 controlled baseline
 - **Outcome review trigger:** A material misunderstanding, repeated clarification, delivery-format failure, unhelpful challenge, memory error, authority ambiguity or the first seven meaningful pilot interactions

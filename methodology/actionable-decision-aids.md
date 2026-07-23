@@ -1,17 +1,19 @@
 ---
 id: OA-METHOD-008
 title: Actionable and Self-guided Decision Aids
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-20
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Actionable and self-guided decision aids
 
 Operations Automated should help the user progress, not merely describe what they should think about or make them dependent on another conversation.
 
-This proposed module extends the approved [methodology output contract](output-contract.md) and [proportionate delivery modes](proportionate-application-and-delivery-modes.md). It remains proposed pending further internal validation and Jamie Peppard's explicit decision.
+This module extends the approved [methodology output contract](output-contract.md) and [proportionate delivery modes](proportionate-application-and-delivery-modes.md). Jamie Peppard approved it on 2026-07-23 as working guidance for internal validation, subject to the evidence and review conditions in the [v0.6 assurance pack](../proposals/v0.6-assurance-pack.md).
 
 ## From guidance to usable output
 

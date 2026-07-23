@@ -1,18 +1,20 @@
 ---
 id: OA-METHOD-010
 title: Activation and First Use
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 approval_required: true
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Activation and first use
 
 ## Purpose and status
 
-This proposed module closes the gap between producing a deliverable and the user receiving value from it. It remains proposed pending validation and Jamie Peppard's explicit decision.
+This module closes the gap between producing a deliverable and the user receiving value from it. Jamie Peppard approved it on 2026-07-23 as working guidance for internal validation, subject to testing across an executable and a workflow-dependent non-executable delivery.
 
 A deliverable is not complete merely because it has been built, tested in isolation or accompanied by instructions. Completion requires proportionate evidence that the intended user can reach it, activate it and complete the first useful action in the environment where value is expected.
 
@@ -74,7 +76,7 @@ Activation does not authorise:
 
 ## Validation
 
-Apply this proposed module to:
+Apply this module to:
 
 1. the next executable local deliverable; and
 2. one non-executable artefact whose value depends on import, publication or a workflow step.

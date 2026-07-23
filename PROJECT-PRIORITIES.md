@@ -2,7 +2,7 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.2
+version: 0.3
 owner: Jamie Peppard
 last_updated: 2026-07-23
 ---
@@ -11,9 +11,8 @@ last_updated: 2026-07-23
 
 ## Current agreed position
 
-- **Approved baseline:** v0.5 for internal validation only.
-- **Active methodology proposal:** v0.6 actionable decision aids in draft PR #9; not approved or authorised for merge.
-- **Latest proposed additions:** activation and first use, the Human-AI Collaboration Method, and the current visual synthesis; none is approved.
+- **Approved baseline:** v0.6 for internal validation only, approved by Jamie Peppard on 2026-07-23 and authorised for merge through PR #9.
+- **Approved v0.6 additions:** actionable decision aids, activation and first use, the Human-AI Collaboration Method, and the current visual synthesis.
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
@@ -32,8 +31,8 @@ These are required to preserve the intended method or unblock the next justified
 6. **Keep evidence, uncertainty, obligations and human authority visible.** A score or AI recommendation cannot create evidence, approval, safety or compliance.
 7. **Complete a second materially different, non-confidential facilitated case.** Select the smallest useful output from the need rather than assuming another spreadsheet.
 8. **Simplify the first-case output before treating it as validated.** Retain the comprehensive workbook as a deeper prototype; produce and test a short first-use version.
-9. **Use an assurance pack and explicit Jamie decision before approving or merging v0.6.** One founder-reviewed prototype is insufficient.
-10. **Resolve the three open draft PRs deliberately.** Do not merge PR #3, #8 or #9 merely because the work is technically complete.
+9. **Use an assurance pack and explicit Jamie decision for every material release.** The v0.6 decision is recorded; future approvals require the same visible boundary.
+10. **Resolve remaining draft PRs deliberately.** PRs #3 and #8 are outside the v0.6 approval and must not be merged merely because the work is technically complete.
 11. **Prove activation and first use.** A created artefact is incomplete until its intended user can reach and begin using it, or the blocker and recovery route are explicit.
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
 
@@ -90,7 +89,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 |---|---|---|---|
 | Case 1 output | Replace the comprehensive first-use workbook with a short guide or lightweight worksheet; retain the workbook as optional depth | Not implemented; workbook judged too comprehensive | Jamie reviews the simplified version only when capacity permits |
 | Case 2 | Run a materially different non-confidential operational case and select the appropriate output form | Not started | Founder critique after AI produces the case output |
-| v0.6 methodology | Validate, revise and assure the proposed actionable-decision-aids module | Draft PR #9 open; not approved | Second case and independent-user evidence, then assurance decision |
+| v0.6 methodology | Validate the approved working guidance and review it against observed outcomes | Approved for internal validation with conditions | Second case, independent-user, activation and collaboration evidence |
 | Independent usability | Test whether another person can use a simplified aid without facilitation | Not started | Permissioned, non-confidential internal test |
 | Daily evolution | Continue whole-system methodology challenges and retain material learning | Approved and active locally; dependent on desktop availability and capacity | Jamie may pause, resume or change cadence |
 | Old Pilot 1 | Decide whether PR #3 contains unique evidence worth retaining, has been superseded, or should be closed | Draft PR #3 open; likely overlaps later v0.4/v0.5 work | Explicit keep, supersede or close decision |
@@ -108,17 +107,17 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | External publication | Define IP, release, versioning, disclaimers, distribution and update model | Not started and not approved | Jamie's separate publication decision |
 | Deployment and payments | Select hosting, AI provider, database, payment service and support model | Not started and not approved | Security, cost and commercial evidence first |
 | Success evidence | Define and collect measures for user value, outcome improvement, repeat use, support burden and failure | Measures proposed; no live evidence system | Include in future cases and product specification |
-| Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Proposed module added; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
+| Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
 | Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
 
 ## Next sequence when work resumes
 
-1. Use and observe the proposed Human-AI Collaboration Method during current work.
+1. Use and observe the approved Human-AI Collaboration Method during internal validation.
 2. Produce the shortest useful version of the first-case aid, with a plain user guide.
 3. Run the second facilitated case using a materially different problem.
 4. Test a simplified aid and activation path with someone who did not design them.
-5. Review the proposed components with an assurance pack; approve, revise, defer or reject each explicitly.
+5. Review the approved v0.6 components after the validation evidence; retain, revise or withdraw them explicitly.
 6. Triage PR #3 and PR #8 against the validated product need.
 7. Define the smallest product only from the outputs that repeatedly created value.
 

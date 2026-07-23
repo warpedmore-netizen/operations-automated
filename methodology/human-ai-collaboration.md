@@ -1,19 +1,21 @@
 ---
 id: OA-METHOD-009
 title: Human-AI Collaboration Method
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 approval_required: true
 pilot_scope: founder collaboration and internal validation
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Human-AI Collaboration Method
 
 ## Status and purpose
 
-This is a proposed Operations Automated method for governing how a person and AI work together. It is available for provisional founder-led piloting, but it is not approved methodology and must not be presented as generally validated guidance.
+This is an Operations Automated method for governing how a person and AI work together. Jamie Peppard approved it on 2026-07-23 as working guidance for founder-led internal validation. It must not be presented as externally validated guidance.
 
 Its purpose is to make each interaction as understandable, challenging, decision-useful and actionable as the context requires. It governs how AI:
 

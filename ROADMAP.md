@@ -19,7 +19,7 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Version 0.5 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-20; it is not approved for external publication.
+Version 0.6 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-23; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
@@ -31,16 +31,16 @@ Version 0.5 establishes the operating rhythm for that evolution: an active read-
 
 The first seven-response checkpoint is complete. Its coherent amalgamation, [connected work, risk and control](methodology/connected-work-risk-and-control.md), and [proportionate delivery modes](methodology/proportionate-application-and-delivery-modes.md) are approved as working internal guidance under the conditions in the [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md).
 
-The first facilitated v0.5 case found that correct guidance and questions may still be insufficient if the user has no practical way to apply them. Version 0.6 therefore proposes [actionable and self-guided decision aids](methodology/actionable-decision-aids.md), beginning with a category-first refund workbook and requiring independent-user and second-case testing before approval.
+The first facilitated v0.5 case found that correct guidance and questions may still be insufficient if the user has no practical way to apply them. Version 0.6 adds [actionable and self-guided decision aids](methodology/actionable-decision-aids.md), beginning with a category-first refund workbook and retaining independent-user and second-case testing as approval conditions.
 
-Jamie's review found the comprehensive workbook too complicated for the original question. The proposal now requires the shortest usable aid first and retains deeper tools as optional progressive disclosure. The [current priority and outstanding-work register](PROJECT-PRIORITIES.md) records the consolidated position.
+Jamie's review found the comprehensive workbook too complicated for the original question. The approved guidance now requires the shortest usable aid first and retains deeper tools as optional progressive disclosure. The [current priority and outstanding-work register](PROJECT-PRIORITIES.md) records the consolidated position.
 
-Two later delivery failures add proposed cross-cutting requirements:
+Two later delivery failures add approved internal-validation requirements:
 
 - [Activation and first use](methodology/activation-and-first-use.md) requires evidence that the intended user can reach, activate and begin using a deliverable rather than treating construction and instructions as completion.
 - The [Human-AI Collaboration Method](methodology/human-ai-collaboration.md) governs how AI reconstructs meaning, analyses, selects a representation, challenges, recovers from misunderstanding, uses memory and retains interaction learning.
 
-The [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) now provides one simple view of the approved baseline, proposed extensions, feedback coverage and remaining evidence gaps. These additions remain proposed.
+The [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) now provides one simple view of the approved baseline, feedback coverage and remaining evidence gaps. The [v0.6 assurance pack](proposals/v0.6-assurance-pack.md) records the approval, conditions and unapproved boundaries.
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
@@ -72,13 +72,13 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Use the proposed Human-AI Collaboration Method during daily and ad-hoc work and retain material failures or corrections.
+1. Use the approved Human-AI Collaboration Method during daily and ad-hoc internal validation and retain material failures or corrections.
 2. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet.
 3. Run a materially different second facilitated case and select its output from the need.
 4. Validate activation and first use on one executable and one workflow-dependent non-executable delivery.
 5. Test a simplified aid with someone who did not design it.
 6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
-7. Use the evidence to decide v0.6, the collaboration and activation proposals, and the smallest justified product.
+7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision

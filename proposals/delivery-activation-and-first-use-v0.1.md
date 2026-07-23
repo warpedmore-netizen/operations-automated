@@ -1,10 +1,12 @@
 ---
 id: OA-CHANGE-009
 title: Delivery activation and first-use requirement
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-23
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Delivery activation and first-use requirement
@@ -15,7 +17,7 @@ A deliverable is not complete merely because it has been created, tested in isol
 
 ## Proposed methodology changes
 
-Add the proposed [Activation and first use](../methodology/activation-and-first-use.md) module as the working implementation of this requirement.
+Add the [Activation and first use](../methodology/activation-and-first-use.md) module as the working implementation of this requirement.
 
 Add the following requirement to the methodology output contract:
 
@@ -45,9 +47,9 @@ Keep activation outside the methodology and treat it as implementation support. 
 - Leaving services running may be inappropriate where cost, security or persistence boundaries apply.
 - The requirement must therefore be proportionate: verify directly where authorised, otherwise disclose the unverified boundary and provide a tested recovery route.
 
-## Required human decision
+## Human decision
 
-Jamie Peppard must approve, amend, defer or reject incorporation into the next controlled methodology version. This proposal does not alter the approved baseline by itself.
+Jamie Peppard approved incorporation for internal validation on 2026-07-23 and authorised merge through PR #9. This does not approve external publication or production deployment.
 
 ## Recommended validation
 
@@ -57,3 +59,10 @@ Apply the proposed requirement to:
 2. a non-executable artefact whose value depends on an import, publication or workflow step.
 
 Record whether the user reached the first useful action without unplanned troubleshooting.
+
+## Approval
+
+- **Decision:** Approved for internal validation and authorised for merge through PR #9
+- **Approver:** Jamie Peppard
+- **Date:** 2026-07-23
+- **Conditions:** Validate one executable and one workflow-dependent non-executable delivery; retain proportionality, permission, security and recovery boundaries.

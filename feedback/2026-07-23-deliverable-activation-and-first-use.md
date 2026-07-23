@@ -1,9 +1,11 @@
 ---
 id: OA-FEEDBACK-2026-07-23-001
 title: A deliverable is incomplete until the user can activate and use it
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-23
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Methodology feedback
@@ -36,8 +38,8 @@ date: 2026-07-23
 
 ## Disposition
 
-- **State:** Proposed
+- **State:** Approved for internal validation through v0.6
 - **Resulting proposal or decision:** [Delivery activation and first-use requirement](../proposals/delivery-activation-and-first-use-v0.1.md)
 - **Reasoning:** User value occurs only when the intended user can reach and operate the result. Instructions are evidence only after they have been tested in the user's actual environment or a faithfully equivalent one.
-- **Release or retained location:** Feedback and proposal retained in the controlled repository; no approved baseline changed
+- **Release or retained location:** Feedback and approved working module retained in the v0.6 controlled baseline
 - **Outcome review trigger:** The next executable deliverable and the next workflow-dependent non-executable artefact should record whether activation and first useful action succeeded without unplanned user troubleshooting

@@ -1,9 +1,11 @@
 ---
 id: OA-FEEDBACK-012
 title: Self-guided Decision Aids as Useful Output
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Self-guided decision aids as useful output
@@ -74,7 +76,7 @@ A user guide does not compensate for disproportionate complexity. The artefact i
 
 ## Disposition
 
-**Material clarification proposed for v0.6.**
+**Approved as v0.6 working guidance for internal validation.**
 
 Extend useful guidance with the smallest self-guided decision aid that materially increases the user's ability to progress. Use progressive disclosure, keep deeper tools optional and prevent calculation from replacing evidence or authorised judgement.
 

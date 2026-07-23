@@ -1,10 +1,12 @@
 ---
 id: OA-CHANGE-007
 title: Add Actionable and Self-guided Decision Aids
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-20
 approval_required: true
+approval_date: 2026-07-23
+approval_scope: internal validation
 ---
 
 # Actionable and self-guided decision aids v0.6 proposal
@@ -58,15 +60,15 @@ AI may select, draft, populate and explain an aid using authorised information. 
 2. Apply the same principle to a materially different case where a checklist or document may be better than a spreadsheet.
 3. Test a simplified aid with a person who did not help design it.
 4. Compare completion effort, understanding, decision quality and the need for facilitation.
-5. Revise or reject the proposed module before any v0.6 approval decision.
+5. Review the approved working module after the validation evidence and revise, retain or withdraw it as justified.
 
 ## Recommendation
 
-Continue internal testing. Do not approve v0.6 from one founder-reviewed spreadsheet. Simplify first, then use the second facilitated case and one independent-user test to determine whether the module creates value without unnecessary burden.
+Approve for internal validation with conditions. Simplify first, then use the second facilitated case and one independent-user test to determine whether the module creates value without unnecessary burden.
 
 ## Jamie's decision
 
-- **Decision:** Pending
+- **Decision:** Approved for internal validation and authorised for merge through PR #9
 - **Approver:** Jamie Peppard
-- **Date:**
-- **Conditions or requested changes:**
+- **Date:** 2026-07-23
+- **Conditions or requested changes:** Retain simplicity and progressive disclosure; run the second facilitated case; independently test a simplified aid; preserve human authority, evidence gates and the external-publication boundary.
