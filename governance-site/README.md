@@ -1,8 +1,10 @@
-# Northstar Governance Lab
+# Operations Automated — Connected Governance
 
-Deployable external-testing surface for the Operations Automated governance-as-code proof of concept.
+Deployable external-testing surface for the Operations Automated connected-governance proof of concept.
 
-The lab starts with an organisation's operating context and existing documentation, proposes a proportionate route, records human dispositions, assembles candidate governance components, and retains an audit trail. Five fictional organisations make it possible to test the approach without company data.
+The service starts with an organisation's operating context and existing documentation, proposes a proportionate route, records human dispositions, assembles candidate governance components, and retains an audit trail. Five fictional organisations make it possible to test the approach without company data.
+
+The complete product, connector-selection, multi-tenant and AI-provider scope is in [`docs/product-scope-and-enablement.md`](docs/product-scope-and-enablement.md).
 
 ## Release boundaries
 

@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Northstar Governance Lab",
+  title: "Operations Automated — Connected Governance",
   description:
-    "Build, connect, test and maintain living operational governance.",
+    "Connect operational knowledge, build proportionate governance and keep every decision traceable.",
   openGraph: {
-    title: "Northstar Governance Lab",
-    description: "Build, connect, test and maintain living operational governance.",
+    title: "Operations Automated — Connected Governance",
+    description: "Connect operational knowledge, build proportionate governance and keep every decision traceable.",
     images: [{ url: "/governance-network.png", width: 1664, height: 922 }],
   },
   icons: {

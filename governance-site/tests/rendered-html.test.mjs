@@ -5,7 +5,7 @@ import test from "node:test";
 const root = new URL("../", import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), "utf8");
 
-test("the external governance lab compiles to a deployable worker", () => {
+test("the connected governance service compiles to a deployable worker", () => {
   assert.equal(existsSync(new URL("dist/server/index.js", root)), true);
   assert.equal(existsSync(new URL("dist/client", root)), true);
 });
@@ -15,19 +15,19 @@ test("the main shell exposes the complete external testing journey", () => {
   const page = read("app/page.tsx");
   const lab = read("app/GovernanceLab.tsx");
 
-  assert.match(layout, /Northstar Governance Lab/);
+  assert.match(layout, /Operations Automated — Connected Governance/);
   assert.match(page, /GovernanceLab/);
   for (const label of [
     "Organisation",
     "Inventory",
     "Recommendations",
     "Governance package",
-    "Connectors",
+    "Sources",
     "Audit",
     "Confluence",
     "Notion",
-    "Google Docs",
-    "Word",
+    "Google Drive & Docs",
+    "Microsoft 365",
   ]) {
     assert.match(lab, new RegExp(label));
   }
