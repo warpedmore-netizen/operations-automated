@@ -10,6 +10,11 @@ All material changes to Operations Automated will be recorded here.
 - Produced a Google Sheets-ready refund decision-aid prototype and retained its example results and limitations.
 - Recorded that the comprehensive workbook was too complicated for the initial need and added a simplicity-first, progressive-disclosure requirement.
 - Added a proposed MoSCoW priority and outstanding-work register covering methodology, prototypes, product, connections and commercial work.
+- Added a proposed activation-and-first-use module so completion includes the user's route to the first useful action.
+- Added a proposed Human-AI Collaboration Method covering contextual reconstruction, analysis, representation, mutual challenge, memory boundaries, recovery and retained learning.
+- Added a concise current-methodology synthesis and visual map connecting the approved baseline, proposed extensions and founder-feedback coverage.
+- Resolved duplicate draft artefact identifiers before consolidation.
+- Corrected evolution-system and founder-challenge status metadata to match Jamie's recorded v0.4 and v0.5 internal-validation approvals.
 - Required independent-user and materially different second-case testing before any v0.6 approval recommendation.
 - Application rebuilding, external publication and Google Drive or other new connections remain unapproved.
 

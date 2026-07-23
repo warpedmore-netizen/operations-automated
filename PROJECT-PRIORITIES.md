@@ -2,9 +2,9 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
-last_updated: 2026-07-20
+last_updated: 2026-07-23
 ---
 
 # Current MoSCoW priorities and outstanding work
@@ -13,6 +13,7 @@ last_updated: 2026-07-20
 
 - **Approved baseline:** v0.5 for internal validation only.
 - **Active methodology proposal:** v0.6 actionable decision aids in draft PR #9; not approved or authorised for merge.
+- **Latest proposed additions:** activation and first use, the Human-AI Collaboration Method, and the current visual synthesis; none is approved.
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
@@ -33,6 +34,8 @@ These are required to preserve the intended method or unblock the next justified
 8. **Simplify the first-case output before treating it as validated.** Retain the comprehensive workbook as a deeper prototype; produce and test a short first-use version.
 9. **Use an assurance pack and explicit Jamie decision before approving or merging v0.6.** One founder-reviewed prototype is insufficient.
 10. **Resolve the three open draft PRs deliberately.** Do not merge PR #3, #8 or #9 merely because the work is technically complete.
+11. **Prove activation and first use.** A created artefact is incomplete until its intended user can reach and begin using it, or the blocker and recovery route are explicit.
+12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
 
 ## Should
 
@@ -48,6 +51,8 @@ These materially improve usefulness, validation or control but do not all block 
 8. Define the smallest product journey only after repeated outputs prove useful: Ask, optional deeper assessment, retained evidence and human decision.
 9. Validate one narrow buyer, problem and paid outcome before building a commercial product.
 10. Keep versions, sources, assumptions and approval states visible in every reusable artefact.
+11. Pilot the proposed collaboration method across different tasks, formats, disagreements and control points.
+12. Measure first-use success rather than relying only on construction tests.
 
 ## Could
 
@@ -103,16 +108,20 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | External publication | Define IP, release, versioning, disclaimers, distribution and update model | Not started and not approved | Jamie's separate publication decision |
 | Deployment and payments | Select hosting, AI provider, database, payment service and support model | Not started and not approved | Security, cost and commercial evidence first |
 | Success evidence | Define and collect measures for user value, outcome improvement, repeat use, support burden and failure | Measures proposed; no live evidence system | Include in future cases and product specification |
+| Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Proposed module added; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
+| Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
+| Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
 
 ## Next sequence when work resumes
 
-1. Produce the shortest useful version of the first-case aid, with a plain user guide.
-2. Run the second facilitated case using a materially different problem.
-3. Test at least one simplified aid with a person who did not design it.
-4. Review v0.6 with an assurance pack; approve, revise, defer or reject it.
-5. Triage PR #3 and PR #8 against the validated product need.
-6. Define the smallest product only from the outputs that repeatedly created value.
+1. Use and observe the proposed Human-AI Collaboration Method during current work.
+2. Produce the shortest useful version of the first-case aid, with a plain user guide.
+3. Run the second facilitated case using a materially different problem.
+4. Test a simplified aid and activation path with someone who did not design them.
+5. Review the proposed components with an assurance pack; approve, revise, defer or reject each explicitly.
+6. Triage PR #3 and PR #8 against the validated product need.
+7. Define the smallest product only from the outputs that repeatedly created value.
 
-## Capacity note
+## Cadence note
 
-Jamie has paused substantive work because of limited weekly AI credits. The local daily automation has not been changed by this record and remains active unless Jamie explicitly pauses or changes it.
+The local daily automation remains active unless Jamie explicitly pauses or changes it. Missed or unanswered check-ins have no approval, rejection or performance meaning.

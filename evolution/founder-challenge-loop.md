@@ -1,10 +1,12 @@
 ---
 id: OA-EVOLUTION-002
 title: Founder Challenge and Feedback Loop
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 date: 2026-07-20
+approval_date: 2026-07-20
+approval_scope: internal validation
 ---
 
 # Founder challenge and feedback loop
