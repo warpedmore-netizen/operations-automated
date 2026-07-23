@@ -2,9 +2,9 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.5
+version: 0.6
 owner: Jamie Peppard
-last_updated: 2026-07-20
+last_updated: 2026-07-23
 ---
 
 # Operations Automated Roadmap
@@ -34,6 +34,13 @@ The first seven-response checkpoint is complete. Its coherent amalgamation, [con
 The first facilitated v0.5 case found that correct guidance and questions may still be insufficient if the user has no practical way to apply them. Version 0.6 therefore proposes [actionable and self-guided decision aids](methodology/actionable-decision-aids.md), beginning with a category-first refund workbook and requiring independent-user and second-case testing before approval.
 
 Jamie's review found the comprehensive workbook too complicated for the original question. The proposal now requires the shortest usable aid first and retains deeper tools as optional progressive disclosure. The [current priority and outstanding-work register](PROJECT-PRIORITIES.md) records the consolidated position.
+
+Two later delivery failures add proposed cross-cutting requirements:
+
+- [Activation and first use](methodology/activation-and-first-use.md) requires evidence that the intended user can reach, activate and begin using a deliverable rather than treating construction and instructions as completion.
+- The [Human-AI Collaboration Method](methodology/human-ai-collaboration.md) governs how AI reconstructs meaning, analyses, selects a representation, challenges, recovers from misunderstanding, uses memory and retains interaction learning.
+
+The [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) now provides one simple view of the approved baseline, proposed extensions, feedback coverage and remaining evidence gaps. These additions remain proposed.
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
@@ -65,18 +72,18 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Run the daily founder challenge and allow Jamie to initiate questions at any time.
-2. Give Jamie a provisional Operations Automated answer to critique rather than only asking for analysis.
-3. Retain each material response with an explicit no-change, clarification, more-evidence, material-proposal or urgent-review disposition.
-4. Use a plain-English assurance pack for each material proposal.
-5. Review the usefulness, breadth, response burden and change yield after seven completed responses.
-6. Continue the daily cycle after that checkpoint, selecting the most decision-relevant unresolved concept across methodology, evolution, delivery, product and commercial design.
-7. Use the resulting evidence to prioritise detailed methodology guidance and future feedback channels.
-8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before rebuilding the application.
+1. Use the proposed Human-AI Collaboration Method during daily and ad-hoc work and retain material failures or corrections.
+2. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet.
+3. Run a materially different second facilitated case and select its output from the need.
+4. Validate activation and first use on one executable and one workflow-dependent non-executable delivery.
+5. Test a simplified aid with someone who did not design it.
+6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
+7. Use the evidence to decide v0.6, the collaboration and activation proposals, and the smallest justified product.
+8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision
 
-The v0.4 decision parks the existing application and preserves it as a learning experiment. Do not continue interface development or merge the separate progressive-interface branch unless later evidence identifies a component worth retaining.
+The v0.4 decision parks the original application and preserves it as a learning experiment. Later governance-workbench and connected-service prototypes are additional evidence, not an approved production direction. Do not merge, deploy or commercialise them merely because they have been built.
 
 Product work should resume from validated user outputs, not from the current page structure.
 
