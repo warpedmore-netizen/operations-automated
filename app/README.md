@@ -1,41 +1,47 @@
-# OPERATE Workspace MVP
+# Operations Automated Workbench
 
-This is a private, local-first application prototype for applying the approved Operations Automated methodology.
+Status: private local MVP; deployment is not authorised.
 
-> **Status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
+The Workbench is a conversation-first interface for non-confidential Operations Automated project material. It stores conversations, structured feedback, usage records and audit events in a local SQLite database. Repository grounding retrieves small heading-level excerpts and preserves each source path, front-matter status, version and content hash.
 
-> **Internal-validation direction:** v0.4 parks this application as a retained learning experiment. Private testing showed that its record and approval mechanics work, but it does not return in-context AI analysis. Its code and private-test evidence remain available, while further interface development is paused.
+## Start on Windows
 
-## Use it
-
-Open `index.html` in a modern browser. The application has no external dependencies and stores the current workspace in that browser only.
-
-For local development, run:
+From the repository root, right-click `Start-Workbench.ps1` and choose **Run with PowerShell**, or run:
 
 ```powershell
-npm start
+.\Start-Workbench.ps1
 ```
 
-Then open `http://127.0.0.1:4173`.
+The starter locates an available Node.js runtime, starts the service, waits for it and verifies the local API before reporting the address. Open `http://127.0.0.1:4173`.
+
+The direct `npm start` command remains available for environments where Node.js and npm are already on `PATH`.
+
+## Provider setup
+
+The application works without an API key: local history, context preview, repository retrieval, feedback, proposal packets, exports, settings and the usage ledger remain available. Offline responses are clearly labelled and make no AI claim.
+
+For provider-backed responses, copy `.env.example` to `.env` outside source control, set `OPENAI_API_KEY`, and assign model IDs to the capability-tier environment variables. The key is read only by the server and is never returned to the browser, logged, stored in SQLite or included in exports.
+
+The local server does not automatically load `.env`; set the variables in the PowerShell session or use your existing secret-loading mechanism before `npm start`.
+
+## Implemented MVP boundary
+
+- Typed conversations with pre-send context preview
+- Local SQLite persistence and restart recovery
+- Status-aware, heading-level repository retrieval
+- Capability-tier routing and configurable cost gates
+- Offline-safe responses and optional server-side OpenAI Responses API route
+- Structured feedback dispositions and governed proposal packets
+- Markdown export, usage ledger and audit records
+- Push-to-record browser capture with editable review surface
+- No automatic approval, publication, merge or repository content write
+
+File extraction, provider transcription/translation, retained image analysis and explicit image generation are intentionally left behind explicit server boundaries for a later increment. The interface never sends an attachment merely because it was selected.
 
 ## Privacy boundary
 
-- No data is sent to a server or external service by the application.
-- Browser storage is not an approved repository for confidential or regulated information.
-- Use only non-confidential pilot information.
-- Exported files inherit the sensitivity of the information entered into them.
-
-## AI-assisted use
-
-The **Copy AI brief** action creates a structured prompt containing the current problem, value matrix, OPERATE stage and governance boundary. It can be given to Codex for assistance.
-
-The MVP deliberately does not embed an AI provider or store an API key. A secure in-product AI connection requires a separate data, security, cost and authority decision.
-
-## Current limitations
-
-- One workspace per browser
-- No accounts or collaboration
-- No cloud backup or synchronisation
-- No external integrations
-- No automated operational execution
-- Methodology configuration is bundled with the application version
+- Use non-confidential project material only.
+- Local database, uploads, attachments and audio are excluded from Git.
+- Audio is not retained by the current implementation.
+- No analytics or telemetry are included.
+- Provider retention and data controls require separate review before confidential or external use.

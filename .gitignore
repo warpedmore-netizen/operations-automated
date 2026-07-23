@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+app/local-data/
+app/uploads/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.webm
+*.wav
+*.mp3
+.pnpm-store/

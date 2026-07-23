@@ -1,299 +1,162 @@
-(function runApplication(engine, storageApi) {
-  "use strict";
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+const state = { conversation: null, preview: null, pending: null, settings: null, apiConfigured: false, attachment: null, recording: null };
 
-  if (!engine || !storageApi) throw new Error("OPERATE application dependencies did not load");
+async function request(path, options = {}) {
+  const response = await fetch(path, { headers: { "Content-Type": "application/json", ...(options.headers || {}) }, ...options });
+  const value = await response.json().catch(() => ({}));
+  if (!response.ok) throw Object.assign(new Error(value.error || "Request failed."), { status: response.status, value });
+  return value;
+}
 
-  const byId = (id) => document.getElementById(id);
-  const stored = storageApi.load(window.localStorage);
-  let workspace;
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
+}
+
+function markdown(value) {
+  return escapeHtml(value).replace(/^### (.+)$/gm, "<h4>$1</h4>").replace(/^## (.+)$/gm, "<h3>$1</h3>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li>.*<\/li>\n?)+/g, "<ul>$&</ul>").replace(/\n\n/g, "</p><p>").replace(/\n/g, "<br>");
+}
+
+function toast(message, error = false) {
+  const element = $("#toast"); element.textContent = message; element.classList.toggle("error", error); element.classList.add("visible");
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => element.classList.remove("visible"), 3000);
+}
+
+async function ensureConversation() {
+  if (state.conversation) return state.conversation;
+  const value = await request("/api/conversations", { method: "POST", body: JSON.stringify({ workspace: $("#workspace").value, title: "New conversation" }) });
+  state.conversation = value.conversation; return state.conversation;
+}
+
+function renderConversation() {
+  const messages = state.conversation?.messages || [];
+  $("#welcome").hidden = messages.length > 0;
+  $("#conversation-title").textContent = state.conversation?.title || "New conversation";
+  $("#messages").innerHTML = messages.map((message) => {
+    const sources = message.metadata?.sources || [];
+    return `<article class="message ${message.role}">
+      <div class="message-role">${message.role === "user" ? "You" : "OA"}</div>
+      <div class="message-body">${message.role === "assistant" ? markdown(message.working_text) : `<p>${escapeHtml(message.working_text)}</p>`}
+      ${sources.length ? `<details><summary>${sources.length} repository source${sources.length === 1 ? "" : "s"}</summary>${sources.map((s) => `<p><code>${escapeHtml(s.path)}</code> · ${escapeHtml(s.status)}</p>`).join("")}</details>` : ""}
+      ${message.role === "assistant" ? feedbackControls(message.id) : ""}</div></article>`;
+  }).join("");
+  $("#messages").scrollTop = $("#messages").scrollHeight;
+}
+
+function feedbackControls(messageId) {
+  return `<div class="feedback-controls" data-message="${messageId}">
+    ${["Useful", "Correct interpretation", "Challenge conclusion", "Add evidence", "Needs clarification", "Record methodology feedback"].map((label) => `<button data-feedback="${label.toLowerCase().replaceAll(" ", "-")}">${label}</button>`).join("")}
+    <button class="packet-button" data-feedback="create-proposal-packet">Create proposal packet</button>
+  </div>`;
+}
+
+function renderPreview(preview, target = "panel") {
+  const sources = preview.sources || [];
+  if (target === "panel") {
+    $("#context-empty").hidden = true; $("#context-content").hidden = false;
+    $("#classification").textContent = preview.classification;
+    $("#route-tier").textContent = `Tier ${preview.route.tier}`;
+    $("#context-size").textContent = `~${preview.estimatedContextTokens.toLocaleString()} tokens`;
+    $("#estimated-cost").textContent = `£${preview.estimatedCost.toFixed(4)}`;
+    $("#route-reason").textContent = preview.route.reason;
+    $("#source-count").textContent = `${sources.length} selected`;
+    $("#sources").innerHTML = sources.map((source) => `<article><div><strong>${escapeHtml(source.path.split("/").at(-1))}</strong><span class="${source.status === "approved" ? "approved" : "proposed"}">${escapeHtml(source.status)}</span></div><code>${escapeHtml(source.path)}</code><p>${escapeHtml(source.reason)}</p></article>`).join("") || "<p>No relevant source selected.</p>";
+  } else {
+    $("#dialog-preview").innerHTML = `<div class="preview-grid"><div><span>Workspace</span><strong>${escapeHtml(preview.workspace)}</strong></div><div><span>Capability</span><strong>Tier ${preview.route.tier}</strong></div><div><span>Estimated context</span><strong>~${preview.estimatedContextTokens.toLocaleString()} tokens</strong></div><div><span>Estimated cost</span><strong>£${preview.estimatedCost.toFixed(4)}</strong></div></div><p class="warning-note">${preview.route.confirmationRequired ? "Confirmation is required because this route is consequential or exceeds the warning threshold." : "This request is within the configured warning threshold."}</p><h3>Context policy</h3><p>${escapeHtml(preview.contextPolicy)}</p><h3>Selected sources</h3>${sources.map((s) => `<p><code>${escapeHtml(s.path)}</code> · ${escapeHtml(s.status)}</p>`).join("") || "<p>No repository source selected.</p>"}`;
+  }
+}
+
+async function previewAndSend(text) {
+  const conversation = await ensureConversation();
+  const payload = { conversationId: conversation.id, text, workspace: $("#workspace").value, outputType: $("#output-type").value };
+  state.pending = payload;
+  state.preview = await request("/api/context/preview", { method: "POST", body: JSON.stringify(payload) });
+  renderPreview(state.preview); renderPreview(state.preview, "dialog");
+  $("#preview-dialog").showModal();
+}
+
+async function sendPending() {
+  const payload = { ...state.pending, confirmed: true };
+  $("#preview-dialog").close(); $("#confirm-send").disabled = true;
   try {
-    workspace = stored ? engine.normaliseWorkspace(stored) : engine.createWorkspace();
-  } catch {
-    workspace = engine.createWorkspace();
+    await request(`/api/conversations/${state.conversation.id}/messages`, { method: "POST", body: JSON.stringify({ workingText: payload.text, originalText: payload.text, role: "user", metadata: state.attachment ? { attachment: state.attachment } : {} }) });
+    const result = await request("/api/respond", { method: "POST", body: JSON.stringify(payload) });
+    state.conversation = (await request(`/api/conversations/${state.conversation.id}`)).conversation;
+    renderConversation(); toast(result.usage.status === "offline" ? "Saved and grounded locally; no provider call was made." : "Response completed and usage recorded.");
+    $("#input").value = ""; state.attachment = null; $("#attachment-name").textContent = "";
+  } catch (error) { toast(error.message, true); }
+  finally { $("#confirm-send").disabled = false; }
+}
+
+async function recordFeedback(button) {
+  const container = button.closest("[data-message]");
+  const disposition = button.dataset.feedback;
+  if (disposition === "create-proposal-packet") {
+    const feedback = await request("/api/feedback", { method: "POST", body: JSON.stringify({ conversationId: state.conversation.id, messageId: container.dataset.message, disposition: "proposal-requested", wording: "Create a governed proposal packet" }) });
+    const result = await request(`/api/feedback/${feedback.feedback.id}/proposal-packet`, { method: "POST", body: "{}" });
+    $("#packet-output").innerHTML = markdown(result.packet); switchView("packets"); toast("Proposal packet created. It remains unapproved.");
+    return;
   }
+  await request("/api/feedback", { method: "POST", body: JSON.stringify({ conversationId: state.conversation.id, messageId: container.dataset.message, disposition, wording: disposition }) });
+  button.classList.add("selected"); toast("Feedback recorded. No approval was created.");
+}
 
-  let toastTimer;
+function switchView(name) {
+  $$(".view").forEach((view) => view.hidden = view.id !== `${name}-view`);
+  $$(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === name));
+  if (name === "usage") loadUsage();
+}
 
-  function getPath(object, path) {
-    return path.split(".").reduce((value, key) => value?.[key], object);
+async function loadUsage() {
+  const value = await request("/api/usage");
+  $("#usage-summary").innerHTML = `<div class="usage-total"><span>Total estimated API cost</span><strong>£${value.totalEstimatedCost.toFixed(4)}</strong></div>${value.records.map((record) => `<div class="usage-row"><span>${escapeHtml(record.provider)} · ${escapeHtml(record.status)}</span><span>${record.input_tokens.toLocaleString()} in / ${record.output_tokens.toLocaleString()} out</span><strong>£${Number(record.estimated_cost).toFixed(4)}</strong></div>`).join("") || "<p>No requests recorded yet.</p>"}`;
+}
+
+async function init() {
+  const config = await request("/api/settings"); state.settings = config.settings; state.apiConfigured = config.apiConfigured;
+  $("#api-state").textContent = config.apiConfigured ? "● Provider configured" : "○ Offline-ready";
+  for (const [key, value] of Object.entries(config.settings)) {
+    const field = $(`[name="${key}"]`); if (field) field.type === "checkbox" ? field.checked = Boolean(value) : field.value = value;
   }
+  const list = await request("/api/conversations");
+  if (list.conversations[0]) state.conversation = (await request(`/api/conversations/${list.conversations[0].id}`)).conversation;
+  renderConversation();
+}
 
-  function setPath(object, path, value) {
-    const parts = path.split(".");
-    const final = parts.pop();
-    const target = parts.reduce((current, key) => current[key], object);
-    target[final] = value;
-    workspace.updatedAt = new Date().toISOString();
-  }
-
-  function persist() {
-    const saved = storageApi.save(window.localStorage, workspace);
-    if (!saved) showToast("This browser could not save the workspace.", true);
-  }
-
-  function showToast(message, error = false) {
-    const toast = byId("toast");
-    toast.textContent = message;
-    toast.classList.toggle("error", error);
-    toast.classList.add("visible");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("visible"), 2800);
-  }
-
-  function formatDate(value) {
-    if (!value) return "";
-    return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
-    })[character]);
-  }
-
-  function renderBindings() {
-    for (const element of document.querySelectorAll("[data-bind]")) {
-      if (document.activeElement !== element) element.value = getPath(workspace, element.dataset.bind) ?? "";
-    }
-  }
-
-  function renderSidebar(assessment) {
-    byId("sidebar-title").textContent = workspace.project.title || "Untitled problem";
-    byId("sidebar-owner").textContent = workspace.project.owner ? `Owned by ${workspace.project.owner}` : "Owner not recorded";
-    byId("progress-value").textContent = `${assessment.progress}%`;
-    byId("progress-bar").style.width = `${assessment.progress}%`;
-
-    byId("stage-list").innerHTML = engine.STAGES.map((stage, index) => {
-      const state = index < assessment.stageIndex ? "past" : index === assessment.stageIndex ? "current" : "future";
-      const label = state === "past" ? "Done" : state === "current" ? "Now" : "";
-      return `<li class="stage-item ${state}" ${state === "current" ? 'aria-current="step"' : ""}>
-        <span class="stage-number">${String(index + 1).padStart(2, "0")}</span>
-        <span>${stage.name}</span>
-        <span class="stage-state">${label}</span>
-      </li>`;
-    }).join("");
-  }
-
-  function renderNextAction(assessment) {
-    byId("next-action-title").textContent = assessment.nextAction;
-    byId("next-action-detail").textContent = assessment.detail;
-    const badge = byId("control-badge");
-    badge.textContent = assessment.control;
-    badge.classList.toggle("human", assessment.control.includes("Human"));
-  }
-
-  function renderApprovalPanel(assessment) {
-    const approvalPanel = byId("approval-panel");
-    if (!assessment.gateLabel) {
-      approvalPanel.hidden = true;
-      approvalPanel.innerHTML = "";
-      return;
-    }
-
-    const approval = workspace.approvals[assessment.stage.id];
-    approvalPanel.hidden = false;
-    approvalPanel.innerHTML = approval?.approved
-      ? `<h3>Human approval recorded</h3><p>${escapeHtml(approval.label)} — ${escapeHtml(approval.approvedBy)} on ${escapeHtml(formatDate(approval.approvedAt))}.</p><button class="button button-danger" type="button" data-action="revoke-approval">Remove approval</button>`
-      : assessment.recordMissing.length
-        ? `<h3>Human control point pending</h3><p>Complete the stage evidence, decision and owner before asking a human to ${escapeHtml(assessment.gateLabel.toLowerCase())}.</p>`
-        : `<h3>Human control point</h3><p>${escapeHtml(assessment.gateLabel)}. AI cannot make this decision.</p><div class="approval-controls"><label class="field"><span>Authorised human</span><input id="approval-name" type="text" placeholder="Name of the person approving" autocomplete="off"></label><button class="button button-primary" type="button" data-action="approve-stage">Record approval</button></div>`;
-  }
-
-  function renderStage(assessment) {
-    const stage = assessment.stage;
-    const record = workspace.stages[stage.id];
-    byId("stage-name").textContent = stage.name;
-    byId("stage-question").textContent = stage.question;
-    byId("stage-purpose").textContent = stage.purpose;
-    byId("stage-prompts").innerHTML = assessment.prompts.map((prompt) => `<li>${escapeHtml(prompt)}</li>`).join("");
-    byId("stage-evidence").value = record.evidence;
-    byId("stage-decision").value = record.decision;
-    byId("stage-owner").value = record.owner;
-
-    renderApprovalPanel(assessment);
-
-    const advanceButton = byId("advance-button");
-    advanceButton.disabled = !assessment.canAdvance;
-    advanceButton.textContent = assessment.stageIndex === engine.STAGES.length - 1 ? "Complete cycle" : `Move to ${engine.STAGES[assessment.stageIndex + 1].name}`;
-  }
-
-  function renderGovernance() {
-    byId("approval-list").innerHTML = Object.entries(engine.APPROVAL_GATES).map(([stageId, label]) => {
-      const approval = workspace.approvals[stageId];
-      return `<div class="approval-record"><div><strong>${escapeHtml(label)}</strong><span>${approval?.approved ? `${escapeHtml(approval.approvedBy)} · ${escapeHtml(formatDate(approval.approvedAt))}` : "Awaiting the relevant stage"}</span></div><span class="approval-state ${approval?.approved ? "approved" : "pending"}">${approval?.approved ? "Approved" : "Pending"}</span></div>`;
-    }).join("");
-  }
-
-  function renderActivity() {
-    const events = workspace.activity.slice(-6).reverse();
-    byId("activity-list").innerHTML = events.map((event) => `<li><strong>${escapeHtml(event.message)}</strong><span>${escapeHtml(formatDate(event.at))}</span></li>`).join("");
-  }
-
-  function render() {
-    const assessment = engine.assessWorkspace(workspace);
-    renderBindings();
-    renderSidebar(assessment);
-    renderNextAction(assessment);
-    renderStage(assessment);
-    renderGovernance();
-    renderActivity();
-  }
-
-  function download(filename, content, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function slug(value) {
-    return (value || "operate-workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "operate-workspace";
-  }
-
-  async function copyAiBrief() {
-    const brief = engine.buildAiBrief(workspace);
-    try {
-      await navigator.clipboard.writeText(brief);
-      showToast("AI brief copied. Paste it into Codex when you want assistance.");
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = brief;
-      document.body.append(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-      showToast("AI brief copied.");
-    }
-  }
-
-  document.addEventListener("input", (event) => {
-    const binding = event.target.dataset?.bind;
-    if (binding) {
-      const before = `${workspace.currentStage}:${Object.keys(workspace.approvals).sort().join(",")}`;
-      setPath(workspace, binding, event.target.value);
-      const reviewStage = binding.startsWith("project.") ? "observe" : "prioritise";
-      workspace = engine.invalidateFromStage(workspace, reviewStage, `${binding.startsWith("project.") ? "Project context" : "Value matrix"} changed; affected approvals require review`);
-      persist();
-      const assessment = engine.assessWorkspace(workspace);
-      const after = `${workspace.currentStage}:${Object.keys(workspace.approvals).sort().join(",")}`;
-      if (before !== after) render();
-      else {
-        renderSidebar(assessment);
-        renderNextAction(assessment);
-      }
-    }
-  });
-
-  for (const id of ["stage-evidence", "stage-decision", "stage-owner"]) {
-    byId(id).addEventListener("input", () => {
-      const stage = workspace.currentStage;
-      const field = id.replace("stage-", "");
-      const beforeAssessment = engine.assessWorkspace(workspace);
-      const approvalWasRecorded = Boolean(workspace.approvals[stage]);
-      workspace = engine.invalidateFromStage(workspace, stage, `${engine.STAGES.find((item) => item.id === stage).name} evidence changed; approval requires review`);
-      workspace.stages[stage][field] = byId(id).value;
-      workspace.updatedAt = new Date().toISOString();
-      persist();
-      const assessment = engine.assessWorkspace(workspace);
-      const gateReadinessChanged = Boolean(assessment.gateLabel)
-        && (beforeAssessment.recordMissing.length === 0) !== (assessment.recordMissing.length === 0);
-      renderSidebar(assessment);
-      renderNextAction(assessment);
-      byId("advance-button").disabled = !assessment.canAdvance;
-      if (approvalWasRecorded || gateReadinessChanged) {
-        renderApprovalPanel(assessment);
-        renderGovernance();
-        renderActivity();
-      }
-    });
-  }
-
-  document.addEventListener("click", async (event) => {
-    const action = event.target.closest("[data-action]")?.dataset.action;
-    if (!action) return;
-
-    if (action === "record-stage") {
-      workspace = engine.normaliseWorkspace(workspace);
-      workspace.activity.push({ at: new Date().toISOString(), type: "stage-recorded", message: `${engine.assessWorkspace(workspace).stage.name} record updated` });
-      persist();
-      render();
-      showToast("Stage evidence retained in this browser.");
-    }
-
-    if (action === "approve-stage") {
-      try {
-        workspace = engine.setApproval(workspace, workspace.currentStage, byId("approval-name")?.value ?? "");
-        persist();
-        render();
-        showToast("Human approval recorded.");
-      } catch (error) {
-        showToast(error.message, true);
-      }
-    }
-
-    if (action === "revoke-approval") {
-      if (window.confirm("Remove this human approval? The workspace may no longer be able to progress.")) {
-        workspace = engine.revokeApproval(workspace, workspace.currentStage);
-        persist();
-        render();
-        showToast("Approval removed.");
-      }
-    }
-
-    if (action === "advance-stage") {
-      const result = engine.advanceStage(workspace);
-      if (!result.advanced) return showToast(result.reason, true);
-      workspace = result.workspace;
-      persist();
-      render();
-      showToast(workspace.status === "complete" ? "OPERATE cycle completed." : `Moved to ${engine.assessWorkspace(workspace).stage.name}.`);
-      document.querySelector(".stage-panel").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (action === "copy-brief") await copyAiBrief();
-
-    if (action === "export-json") {
-      download(`${slug(workspace.project.title)}.json`, `${JSON.stringify(workspace, null, 2)}\n`, "application/json");
-      showToast("JSON workspace exported.");
-    }
-
-    if (action === "export-markdown") {
-      download(`${slug(workspace.project.title)}.md`, engine.exportMarkdown(workspace), "text/markdown");
-      showToast("Governed record exported as Markdown.");
-    }
-
-    if (action === "new-workspace") {
-      if (window.confirm("Start a new workspace? Export the current record first if you need to retain it.")) {
-        storageApi.clear(window.localStorage);
-        workspace = engine.createWorkspace();
-        persist();
-        render();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        showToast("New private workspace created.");
-      }
-    }
-  });
-
-  byId("import-file").addEventListener("change", async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      workspace = engine.normaliseWorkspace(JSON.parse(await file.text()));
-      persist();
-      render();
-      showToast("Workspace imported.");
-    } catch {
-      showToast("That file is not a valid OPERATE workspace.", true);
-    } finally {
-      event.target.value = "";
-    }
-  });
-
-  render();
-  persist();
-})(window.OPERATEEngine, window.OPERATEStorage);
+$("#composer").addEventListener("submit", async (event) => { event.preventDefault(); const text = $("#input").value.trim(); if (!text) return; try { await previewAndSend(text); } catch (error) { toast(error.message, true); } });
+$("#confirm-send").addEventListener("click", (event) => { event.preventDefault(); sendPending(); });
+$("#messages").addEventListener("click", (event) => { const button = event.target.closest("[data-feedback]"); if (button) recordFeedback(button).catch((error) => toast(error.message, true)); });
+$$("[data-starter]").forEach((button) => button.addEventListener("click", () => { $("#input").value = button.dataset.starter; $("#input").focus(); }));
+$$(".nav-item").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+$("#new-conversation").addEventListener("click", async () => { state.conversation = null; await ensureConversation(); renderConversation(); switchView("conversation"); });
+$("#workspace").addEventListener("change", () => { $("#workspace-label").textContent = $("#workspace").selectedOptions[0].textContent; });
+$("#settings-form").addEventListener("submit", async (event) => {
+  event.preventDefault(); const data = Object.fromEntries(new FormData(event.target));
+  for (const key of ["monthlySoftBudget", "monthlyHardBudget", "perRequestWarningThreshold", "perRequestHardCeiling", "maximumRetrievedContext"]) data[key] = Number(data[key]);
+  data.advancedReasoningEnabled = event.target.advancedReasoningEnabled.checked;
+  try { state.settings = (await request("/api/settings", { method: "PATCH", body: JSON.stringify(data) })).settings; toast("Local spending and routing controls saved."); } catch (error) { toast(error.message, true); }
+});
+$("#export-button").addEventListener("click", async () => {
+  if (!state.conversation) return toast("There is no conversation to export.", true);
+  const value = await request("/api/export", { method: "POST", body: JSON.stringify({ conversationId: state.conversation.id, format: "markdown" }) });
+  const blob = new Blob([value.markdown], { type: "text/markdown" }); const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob); link.download = `${state.conversation.title.replace(/\W+/g, "-").toLowerCase() || "conversation"}.md`; link.click(); URL.revokeObjectURL(link.href);
+});
+$("#attach").addEventListener("click", () => $("#file-input").click());
+$("#file-input").addEventListener("change", () => { const file = $("#file-input").files[0]; if (!file) return; state.attachment = { filename: file.name, size: file.size, type: file.type }; $("#attachment-name").textContent = file.name; toast("Attachment metadata staged. Content upload is reserved for the next increment."); });
+$("#record").addEventListener("click", async () => {
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast("Voice capture is not available in this browser.", true);
+  if (state.recording) { state.recording.stop(); return; }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); const chunks = [];
+    const recorder = new MediaRecorder(stream); state.recording = recorder; $("#record").classList.add("recording"); $("#record").textContent = "■";
+    recorder.ondataavailable = (event) => chunks.push(event.data);
+    recorder.onstop = () => { stream.getTracks().forEach((track) => track.stop()); state.recording = null; $("#record").classList.remove("recording"); $("#record").textContent = "●"; $("#capture-review").hidden = false; $("#transcript").value = ""; $("#transcript").placeholder = "Audio captured. Transcription requires an API provider; type or paste the reviewed transcript here."; $("#language-label").textContent = "Detected language: pending transcription"; };
+    recorder.start();
+  } catch { toast("Microphone access was not granted.", true); }
+});
+$("#discard-transcript").addEventListener("click", () => { $("#capture-review").hidden = true; $("#transcript").value = ""; });
+$("#use-transcript").addEventListener("click", () => { $("#input").value = $("#transcript").value; $("#capture-review").hidden = true; $("#input").focus(); });
+init().catch((error) => toast(error.message, true));
