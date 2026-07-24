@@ -25,6 +25,8 @@ This authorises preparation and validation of the product change. It does not ap
 - Branch, pull request, commit, version and validation references
 - Founder-only release confirmation
 - Repository reindexing and implementation receipts
+- Plain-English founder review and direct GitHub access
+- Focused challenges for principles, AI suitability, manual work and delivery capability
 - Tests, proposal, decision record, changelog and documentation
 
 ## Repository method
@@ -33,8 +35,8 @@ This authorises preparation and validation of the product change. It does not ap
 - Target branch: `main`
 - Pull request state: draft
 - Direct main edits: prohibited
-- Draft pull request: pending creation
-- Preparation commit: pending
+- Draft pull request: https://github.com/warpedmore-netizen/operations-automated/pull/12
+- Initial preparation commit: `de43da8a05ac37e4eb369111c221e89783725d7e`
 
 ## Version impact
 
@@ -44,7 +46,9 @@ This authorises preparation and validation of the product change. It does not ap
 
 ## Validation
 
-The draft pull request must retain the complete automated test results and demonstrate every control requested in the originating instruction.
+- 37 Workbench and governance tests passed on the clean branch from the current `main`.
+- The live Workbench reported build `0.6.0`, approved baseline `0.6` and 19 approved indexed documents.
+- The proposed Human-AI Collaboration v0.3 amendment was excluded from the approved-document set.
 
 ## Release decision
 
