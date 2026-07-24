@@ -12,7 +12,7 @@ This repository is the controlled source for the methodology, its principles, go
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 >
-> **Proposed v0.7:** An outside-in operating rule, adaptable minimum structure, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md) are proposed for Jamie's review. They are not approved and do not make the outlined practice areas complete or externally publishable.
+> **Proposed v0.7:** An outside-in operating rule, a journey-to-operational-value-system sequence, adaptable minimum structure, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md) are proposed for Jamie's review. They are not approved and do not make the outlined practice areas complete or externally publishable.
 
 Start with the [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
 

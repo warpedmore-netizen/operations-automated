@@ -27,7 +27,10 @@ This chapter helps a reader understand how work really happens as a connected sy
 
 - System purpose, boundary and operating context
 - Outside-in customer, service user or stakeholder journeys
+- The movement from the journey into the operational value system
 - Operational injection points that support each journey step
+- Products, services and processes as operational contexts rather than assumed starting points
+- Required outcomes, minimum outcomes and MoSCoW scope where useful
 - Nine connected operational lenses
 - People, experience and human judgement
 - Demand, work types, variation and exceptions
@@ -51,6 +54,8 @@ This chapter helps a reader understand how work really happens as a connected sy
 
 - A connected current-state operational picture
 - An outside-in journey showing visible experience and supporting operational injection points
+- An end-to-end operational value-system map beginning with the first operational event
+- Required outcomes, exclusions and minimum-outcome gates
 - Demand and work-type profile
 - Flow and dependency map
 - Ownership, decision and knowledge view
@@ -88,6 +93,7 @@ This chapter helps a reader understand how work really happens as a connected sy
 
 - No detailed discovery or observation guide exists for work-as-done.
 - Demand analysis, capacity, queue, hand-off and flow methods remain high level.
+- The journey-to-operation sequence and use of MoSCoW or alternative prioritisation methods require case testing.
 - The proposed interface template has not yet been tested with an independent user or materially different cases.
 - Detailed journey-mapping guidance and varied customer, physical-operation and supplier-network examples remain missing.
 - The connected-work model identifies record relationships but does not yet provide complete practice lifecycles.

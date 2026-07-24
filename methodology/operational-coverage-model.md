@@ -70,9 +70,40 @@ Internal functions and process steps support the journey; the journey should not
 
 “Customer first” does not mean “customer only”. The method must expose consequences for employees, other users, suppliers, communities and future customers. It must also retain applicable legal, safety, ethical, resilience, accessibility and human obligations. A pleasing front-stage experience is not successful if it depends on hidden harm or an operation that cannot recover.
 
+## Move from the journey into the operation
+
+Outside-in discovery establishes **why** improvement matters and **where** to investigate. It does not replace operational design. Once the primary journey, intended outcome and likely point of friction are understood, move one level inward and examine the operational value system that must deliver and sustain them.
+
+Start at the first operational event created by the person's need or by the service, product or process. Follow what the operation must do from beginning to end, including the outcomes that must occur even when the normal route fails. Make visible:
+
+- the demand entering the operation and materially different work types;
+- the work, decisions, information, communication and hand-offs required;
+- the people, knowledge, assets, technology and suppliers that enable delivery;
+- the outcomes that **must**, **should**, **could** and **will not** be pursued in the current scope;
+- minimum outcomes and obligations that remain gates rather than optional priorities;
+- normal, exceptional, escalated, degraded and recovery routes;
+- measures that show consistency, not only average or headline performance; and
+- the point at which feedback changes an operational, product, service or risk decision.
+
+MoSCoW is one useful way to make scope and priority explicit. It does not make every “Must” valid, remove the need for evidence or permit applicable obligations to be labelled “Won't”. Other methods may be more suitable where priority depends on value, consequence, readiness, sequence, cost of delay or another contextual factor.
+
+Operations is where a promise becomes a repeatable outcome and where much of a product's or service's value is realised and sustained. A capable, consistent operation creates capacity for new products, features and improvements. When operational performance falls below the required level, the effects can spread into customer harm, regulatory exposure, cost, rework, workforce pressure, delayed change and reduced confidence. Product or project completion is therefore not evidence of value until the operational outcome can be delivered and observed in use.
+
+Use this sequence:
+
+1. Follow the primary journey and define the value and outcome sought.
+2. Locate the bottleneck, failed outcome, unmet need or improvement opportunity.
+3. Define the operational boundary and start from the first event in the work.
+4. State the required outcomes, priorities, minimum outcomes and exclusions.
+5. Map the end-to-end operational value system and test variation, failure and recovery.
+6. Add only the enabling, direction, assurance and cross-functional interfaces needed to make the outcome work safely and consistently.
+7. Observe the result and feed learning back into the operation, product, service and methodology.
+
 ## Minimum useful structure
 
 Operations Automated may reuse useful practices, language or tools from Lean, ITIL, IT4IT and other established approaches where they help the user understand and improve the operation. It does not require wholesale adoption, claim compliance or treat any framework as doctrine.
+
+Methods are a toolkit, not competing identities. Select and combine them according to the problem, context, work type, desired outcome, evidence, consequence and capability of the people using them. For example, a journey map may identify the experience, Lean techniques may expose flow and waste, MoSCoW may clarify the current scope, and an established service, quality, risk or project practice may supply deeper specialist structure. Record why a method or tool was chosen, adapt it where necessary and do not combine techniques merely to appear comprehensive.
 
 Start with the minimum explicit structure that makes purpose, work, ownership, authority, evidence, feedback and recovery understandable. Then:
 
@@ -124,13 +155,14 @@ This is a methodology-depth snapshot, not an operational maturity result. “Usa
 ## How to use the model
 
 1. Identify the primary customer, service user, stakeholder or beneficiary and follow their journey to the intended outcome.
-2. Define the operation, boundaries, affected people, minimum outcomes and authority.
-3. Locate the operational injection points and capabilities that could materially affect the journey and outcome.
-4. Record why each selected capability is relevant and why any consequential capability is excluded.
-5. Check the available methodology coverage and its evidence boundary.
-6. Use available guidance where it is sufficient; use an appropriate specialist method or authorised expert where it is not.
-7. Retain gaps, interfaces, decisions, feedback routes and the next proportionate action.
-8. Feed repeated or consequential guidance gaps into the methodology evolution system.
+2. Locate the bottleneck, failed outcome, unmet need or improvement opportunity.
+3. Move into the operation: define its boundary, first event, affected people, work types, required outcomes, minimum outcomes and authority.
+4. Map the end-to-end operational value system and the injection points and capabilities that could materially affect the journey and outcome.
+5. Record why each selected capability is relevant and why any consequential capability is excluded.
+6. Check the available methodology coverage and its evidence boundary.
+7. Use and combine available guidance where it is sufficient; use an appropriate specialist method or authorised expert where it is not.
+8. Retain gaps, interfaces, decisions, feedback routes and the next proportionate action.
+9. Feed repeated or consequential guidance gaps into the methodology evolution system.
 
 Do not complete every capability at maximum depth for every question. Proportionality changes the amount of work, not whether a material dependency, obligation or affected person may be ignored.
 
@@ -212,6 +244,8 @@ Change and evolution capabilities move an operation from current reality to a re
 No operational capability works alone. Use the proposed [cross-functional interface model](cross-functional-interfaces.md) to define why an interface exists, when it is triggered, what information or decisions move in each direction, who has authority and when escalation is required.
 
 The named interfaces are capabilities and responsibilities, not assumed departments. A small organisation may have one person carrying several responsibilities, use an external adviser or combine a record and decision meeting. Combining roles does not remove the need to expose a conflict of interest, missing competence or decision beyond that person's authority.
+
+Operations Automated applies to the operational work within any function and to the interfaces that affect an end-to-end operational outcome. It does not attempt to govern the whole professional practice of People, Finance, Legal, Risk, Technology or another specialist capability. Those capabilities may use the same improvement principles for their own operational work while retaining their own professional authority, standards and governance.
 
 ## Proportionality for individuals and small organisations
 

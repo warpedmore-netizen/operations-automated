@@ -20,6 +20,7 @@ Choose the shortest route that can create a responsible, useful outcome. A quick
 
 - What is Operations Automated and what is OPERATE's place within it?
 - Who is the primary customer, service user, stakeholder or beneficiary, and what journey or outcome matters to them?
+- Once that journey is understood, what operational value system must deliver and sustain the outcome?
 - Can the current question be answered proportionately from the available information?
 - Should the reader use a quick question, full assessment, implementation or governance route?
 - What useful output should appear before more information is requested?
@@ -51,6 +52,7 @@ The absence of complete information is not a reason to return nothing. State wha
 - The selected route and why it is proportionate
 - A plain-English current understanding
 - The outside-in starting journey and material operational injection points, where relevant
+- The first operational event, required outcomes and end-to-end operational value system, where a fuller understanding is needed
 - Immediate useful guidance or a partial assessment
 - Important evidence, inference, assumptions and gaps
 - The next action and human control point

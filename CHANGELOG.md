@@ -7,10 +7,13 @@ All material changes to Operations Automated will be recorded here.
 - Recorded founder feedback that the methodology has a sound conceptual core but remains too light in practical use cases, detailed operational guidance and explicit links with non-operating capabilities.
 - Added a proposed operational coverage model covering core value flow, enabling capabilities, direction and assurance, and change and evolution.
 - Added an outside-in starting rule: follow the primary customer, service user or stakeholder journey before designing the operational capabilities and interfaces that support it.
+- Added a journey-to-operational-value-system sequence: use the primary journey to establish why and where to improve, then start from the first operational event and map how the required outcomes are delivered and sustained.
+- Clarified that established methods are a selectable toolkit: journey mapping, Lean techniques, MoSCoW and specialist practices may be combined where suitable, with the choice and boundaries made explicit.
 - Added a minimum-structure rule that adopts and adapts useful practices without making any framework doctrine, and develops more structure where weak understanding or control intersects with material value or consequence.
 - Added receiver-centred feedback loops designed around the person's effort, accessibility, form and channel, with authorised automation for capture, routing and synthesis but retained human authority over consequential change.
 - Added a proposed completeness scale so every capability can be shown honestly as Identified, Outlined, Usable, Validated or Publishable.
 - Added a proposed cross-functional interface model covering strategy, finance, people, legal, risk, compliance, security, privacy, data, technology, product, change, procurement, suppliers, customer relationships, audit, quality, facilities, health and safety, and sustainability.
+- Clarified that the interface model applies to operational work and end-to-end outcomes rather than governing whole specialist functions, and that disproportionate control friction should be recorded and escalated without overriding obligations or risk authority.
 - Added a numbered, book-like reader guide with routes for quick questions, full assessments, implementation, and governance and review.
 - Added a broad use-case catalogue, including individual, service, physical-operation, low-volume/high-consequence, supplier, resilience, audit, automation, AI and agentic scenarios.
 - Added a common authoring standard for future practice guides and a draft operational coverage-and-interface template.

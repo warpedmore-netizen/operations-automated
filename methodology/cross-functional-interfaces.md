@@ -19,6 +19,12 @@ The interface names below describe capabilities and responsibilities, not a requ
 
 Operations Automated does not decide that an interface requires a department or committee. It requires the relevant purpose, exchange, authority, dependency and failure route to be understood proportionately.
 
+## Scope boundary
+
+This model governs the interface with an operational outcome, not the whole of another profession or department. It does not prescribe how People manages employment practice, how Finance runs accounting, how Legal interprets law or how Risk sets the organisation's risk framework.
+
+Any of those capabilities may also contain operational work of its own. That work can use Operations Automated to understand and improve its journeys, services and processes. When the capability is supporting another operation, however, this model is concerned only with what the end-to-end outcome needs from the interface, what the specialist capability needs in return, who has authority and how failure is handled.
+
 ## Why interfaces matter
 
 An operation may appear locally successful while transferring cost, delay, risk or harm elsewhere. Common interface failures include:
@@ -85,6 +91,8 @@ Map where each moves or changes. Include normal, exceptional, escalated and degr
 
 Use the catalogue below and the operational coverage model. Record the person, service, supplier or automated capability that currently represents each material responsibility.
 
+Add interfaces because the journey and operational value system require them, not because every named function must be consulted. The amount of engagement should match the consequence, obligation, uncertainty and dependency.
+
 ### 4. Define the two-way exchange
 
 State what Operations needs from the interface and what the interface needs from Operations. Include definitions, evidence quality, timing, confidentiality and acknowledgement.
@@ -147,6 +155,10 @@ Use outcome, delay, rework, failure, dispute, user-experience and feedback evide
 - **Outputs to Operations:** risk record, obligation interpretation, control or treatment requirements, monitoring, acceptance decision, escalation and review trigger.
 - **Authority:** risk owners and designated acceptance authorities decide within their mandate; Operations may identify and treat risk but cannot invent acceptance.
 - **Escalate when:** potential harm is material, appetite is exceeded, no credible owner exists, evidence is concealed, a required control fails or treatment remains unresolved.
+
+Risk and compliance should help the operation recognise material exposure early, make consequence understandable and design proportionate treatment before major remediation is needed. They should not be used as an unexplained approval barrier or as a substitute for operational ownership.
+
+If a control, evidence request or review is disproportionate to the stated exposure, repeatedly late or blocks a required outcome, record the delay, pressure and secondary risk it creates. Reframe the requirement with the relevant specialist and escalate the trade-off to the authorised decision-maker. Delivery pressure does not remove an applicable obligation or allow Operations to accept risk outside its authority; proportionality must itself be reasoned and recorded.
 
 ### Security, privacy, identity and access
 

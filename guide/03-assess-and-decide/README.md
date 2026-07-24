@@ -30,6 +30,7 @@ This chapter turns operational understanding into a proportionate assessment, pr
 - Readiness as a profile rather than a universal maturity score
 - Recorded fact, user judgement, AI inference, assumption and recommendation
 - Category-first comparison where work types differ materially
+- MoSCoW for transparent scope where useful, without treating it as a universal prioritisation method
 - Prioritisation by value, consequence, evidence, effort, dependency, urgency and reversibility
 - Options, trade-offs and credible no-change alternatives
 - Decision authority, risk acceptance and retained reasoning
@@ -51,6 +52,7 @@ This chapter turns operational understanding into a proportionate assessment, pr
 - A journey-led view of which operational capabilities need improvement and why
 - Evidence-based readiness profile by relevant work type
 - Prioritised opportunities with visible trade-offs
+- Must, Should, Could and Won't outcomes for the current scope where that representation helps
 - Missing evidence and smallest useful investigation
 - Recommended target outcome or decision
 - Retained decision, conditions and review trigger
@@ -83,7 +85,7 @@ This chapter turns operational understanding into a proportionate assessment, pr
 
 - Assessment depth and evidence thresholds need testing across different consequences and sectors.
 - No approved confidence or evidence-quality scale exists.
-- Prioritisation and sensitivity guidance remains incomplete.
+- Prioritisation, method-selection and sensitivity guidance remains incomplete.
 - Readiness profiles need more worked examples, especially where different work types occupy different positions.
 - Links between assessment, investment governance and portfolio selection need deeper guidance.
 - A concise independent-user assessment guide has not been validated.

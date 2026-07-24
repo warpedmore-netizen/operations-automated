@@ -38,8 +38,11 @@ Use the [operational coverage model](../methodology/operational-coverage-model.m
 - **Primary customer, service user, stakeholder or beneficiary:**
 - **Their trigger, request, click, interaction or journey:**
 - **Experience and outcome they need:**
+- **Bottleneck, failed outcome, unmet need or opportunity:**
 - **Other people or parties affected:**
 - **Problem or opportunity:**
+- **Operational context:** Product / service / process / function / other
+- **First operational event:**
 - **Intended outcome and beneficiaries:**
 - **Minimum acceptable outcome:**
 - **Scale:** Individual / team / organisation / network
@@ -61,6 +64,25 @@ For a focused question, record only the capabilities and interfaces that could m
 |  |  |  |  |  |
 |  |  |  |  |  |
 |  |  |  |  |  |
+
+### Optional scope priorities
+
+Use this only when MoSCoW makes the current scope easier to understand. “Must” means essential to the intended or minimum outcome, not merely strongly preferred. Applicable obligations cannot be made optional by classification.
+
+| Priority | Outcome, requirement or exclusion | Why | Evidence, authority or obligation | Review trigger |
+|---|---|---|---|---|
+| Must |  |  |  |  |
+| Should |  |  |  |  |
+| Could |  |  |  |  |
+| Won't for this scope |  |  |  |  |
+
+### Operational value-system sequence
+
+| Stage from first operational event to outcome | Demand or work type | Work, decision, information or communication | Required outcome | Enabler or interface | Variation, failure or recovery | Evidence or measure |
+|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
 
 ## 3. Full coverage map (optional depth)
 

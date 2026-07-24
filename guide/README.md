@@ -21,7 +21,7 @@ The guide does not duplicate, approve or replace methodology content. Each chapt
 |---:|---|---|
 | 00 | [Start here](00-start-here/README.md) | Choose the shortest route that fits the question, consequence and desired depth |
 | 01 | [Foundations](01-foundations/README.md) | Understand purpose, outside-in value, minimum structure, feedback, obligations and human authority |
-| 02 | [Understand the operation](02-understand-the-operation/README.md) | Follow the primary journey and see its supporting people, demand, work, decisions and dependencies |
+| 02 | [Understand the operation](02-understand-the-operation/README.md) | Follow the primary journey, then map the operational value system that must deliver and sustain its outcome |
 | 03 | [Assess and decide](03-assess-and-decide/README.md) | Form an evidence-based assessment, readiness profile and governed decision |
 | 04 | [Improve and implement](04-improve-and-implement/README.md) | Move from observed reality to a tested, usable and retained improvement |
 | 05 | [Operational practice guides](05-operational-practice-guides/README.md) | Find the operational discipline and cross-functional linkage relevant to the work |
@@ -39,7 +39,7 @@ The numbers are reading-order keys, not versions or mandatory methodology stages
 | Need | Route | Stop or deepen when |
 |---|---|---|
 | **Ask a quick question** | Start here → apply only the material operational lenses → use the answerability gate → return a direct provisional answer or the smallest useful aid → show the human control point | Stop when the user can act safely and proportionately; deepen when evidence, consequence, dependencies or authority require assessment |
-| **Run a full assessment** | Foundations → follow the primary journey → understand its operational injection points → assess and decide → relevant practice guides → produce the retained assessment and recommendation | Continue into implementation only after the target outcome, affected people, trade-offs and authority are explicit |
+| **Run a full assessment** | Foundations → follow the primary journey → locate the point of investigation → map the operational value system and injection points → assess and decide → relevant practice guides → produce the retained assessment and recommendation | Continue into implementation only after the target outcome, affected people, trade-offs and authority are explicit |
 | **Implement an improvement** | Begin from an authorised outcome → improve and implement → use the minimum useful structure and relevant guidance → test → activate → gather feedback → measure and evolve | Return to understanding or redesign if evidence, readiness, feedback, testing or first use invalidates the design |
 | **Govern or review work** | Governance and assurance → inspect evidence, status and authority → use the appropriate decision, assurance or learning record → release or retain the disposition → observe outcomes | No material meaning, risk acceptance, publication or consequential authority changes without the authorised human decision |
 
@@ -50,7 +50,8 @@ flowchart TD
     S["00 Start here"] --> F["01 Foundations"]
     F --> U["02 Understand the operation"]
     J["Primary customer, service user or stakeholder journey"] --> U
-    U --> A["03 Assess and decide"]
+    U --> O["Operational value system from first event to sustained outcome"]
+    O --> A["03 Assess and decide"]
     A --> I["04 Improve and implement"]
     I --> D["08 Delivery and adoption"]
     D --> L["Receiver-centred feedback, measure, review and learn"]

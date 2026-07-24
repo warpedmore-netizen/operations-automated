@@ -40,6 +40,8 @@ These are required to preserve the intended method or unblock the next justified
 14. **Provide a normal reading order and routes by need.** The methodology should work as a short sequential guide and a modular reference library; users should not need to understand the repository structure.
 15. **Begin outside-in.** Follow the primary customer, service user or stakeholder journey before designing the operational work, capabilities and interfaces that support it; then expose effects on every other materially affected person and obligation.
 16. **Use minimum adaptable structure and receiver-centred feedback.** Make purpose, work, authority, evidence, recovery and improvement understandable without unnecessary bureaucracy, and make feedback easy in a form and channel that work for the person.
+17. **Move from the journey into the operational value system.** Once the need and point of investigation are understood, start with the first operational event, map what must happen to deliver and sustain the outcome, and add proportionate interfaces without claiming control over whole specialist functions.
+18. **Select and combine methods for the situation.** Use tools such as journey mapping, Lean techniques, MoSCoW and specialist practices where they add clarity or control; explain the choice and do not treat any framework as a competing identity or universal answer.
 
 ## Should
 

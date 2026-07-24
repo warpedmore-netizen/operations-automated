@@ -24,15 +24,16 @@ Jamie Peppard retains approval authority.
 
 Develop Operations Automated as a reader-ordered guide system around its existing principles, operational lenses, readiness path, OPERATE cycle, output contract and evolution system.
 
-The proposed architecture adds seven connected elements:
+The proposed architecture adds eight connected elements:
 
 1. An outside-in starting principle based on the primary customer, service user or stakeholder journey
-2. A comprehensive operational coverage catalogue
-3. A cross-functional interface model
-4. A numbered book and page tree
-5. A structured use-case catalogue
-6. A common standard for detailed guides
-7. A visible coverage-and-depth scale
+2. A journey-to-operational-value-system sequence
+3. A comprehensive operational coverage catalogue
+4. A cross-functional interface model
+5. A numbered book and page tree
+6. A structured use-case catalogue
+7. A common standard for detailed guides
+8. A visible coverage-and-depth scale
 
 The purpose is to make the methodology understandable as a whole, reveal what is still missing and provide a controlled route from concise first use to deeper operational guidance.
 
@@ -42,7 +43,7 @@ Jamie considers the existing methodology content useful but too light for the in
 
 The repository is governed and traceable, but it is not yet organised in the normal order a person would read and apply a methodology. A new reader should not need to understand the project's development history or GitHub structure before they can use it.
 
-The retained feedback is recorded in [Methodology Depth, Operational Coverage and Reader Structure](../feedback/2026-07-23-methodology-depth-and-reader-structure.md).
+The retained feedback is recorded in [Methodology Depth, Operational Coverage and Reader Structure](../feedback/2026-07-23-methodology-depth-and-reader-structure.md) and [Move from the Primary Journey into the Operational Value System](../feedback/2026-07-24-journey-to-operational-value-system.md).
 
 ## Desired outcomes
 
@@ -54,6 +55,8 @@ The change should allow a reader to:
 - Identify which guidance exists, how deep it is and what remains missing
 - Understand material upstream, downstream and cross-functional interfaces
 - Trace the primary person's journey before designing internal work and identify the operational injection points that support it
+- Move from that journey into the operational value system, beginning with the first operational event and the outcomes that must be sustained
+- Select and combine appropriate methods for the context without treating one framework as universally correct
 - Select guidance by ordinary-language need or use case
 - Receive a short usable route without losing access to deeper reference guidance
 - Start with minimum useful structure, reuse practices that fit and evolve them through observed outcomes
@@ -67,6 +70,8 @@ The proposal covers:
 - Information architecture for the methodology corpus
 - A high-level catalogue of operational capabilities and interfaces
 - Outside-in journey design and operational injection points
+- The journey-to-operation sequence and explicit required outcomes
+- Proportionate selection and combination of methods, including MoSCoW where useful
 - Minimum useful structure and adopt-adapt-evolve guidance
 - Receiver-centred, progressively automated feedback loops
 - A consistent schema for future guides
@@ -84,6 +89,7 @@ This proposal does not:
 - Reproduce proprietary framework content
 - Claim compliance, equivalence, accreditation or certification
 - Prescribe one operating model for every organisation
+- Govern the whole professional practice of Finance, People, Legal, Risk or another specialist capability
 - Make the primary customer or service user the only stakeholder or override applicable obligations
 - Treat structure, automation or feedback volume as proof of value
 - Require every small case to complete every guide
@@ -97,7 +103,11 @@ Operations Automated should begin with the primary customer, service user or sta
 
 This starting point does not erase other affected parties or applicable legal, safety, ethical, resilience, accessibility and human obligations. A convenient customer experience is not a successful outcome if it creates hidden harm, unmanageable work or an operation that cannot recover.
 
-The method should use the minimum explicit structure that makes purpose, work, ownership, evidence, authority, feedback and recovery understandable. It may borrow useful practices from established approaches where they fit, but it should not require doctrinal or wholesale framework adoption. Structure should be used, observed, adapted, expanded or removed according to outcomes.
+Once the journey identifies why and where to improve, the method should move into the operational value system. It should start with the first operational event and follow the demand, work, decisions, information, outcomes, variation, failure and recovery from beginning to end. This is where a product or service promise becomes a repeatable outcome. Consistent operations sustains value and creates capacity for further change; weak operations can propagate harm, rework, cost, pressure, regulatory exposure and delayed product work.
+
+The method should use the minimum explicit structure that makes purpose, work, ownership, evidence, authority, feedback and recovery understandable. It may borrow and combine useful practices from established approaches where they fit, but it should not require doctrinal or wholesale framework adoption. Journey mapping, Lean techniques, MoSCoW and deeper service, quality, risk or project practices are selectable tools, not competing identities. Their use should be explained, observed and adapted according to outcomes.
+
+Operations Automated may improve the operational work inside any capability and the interface between that capability and an end-to-end outcome. It does not govern the whole of Finance, People, Legal, Risk or another specialist profession. Risk and assurance should help teams identify and treat material exposure early. A disproportionate or unexplained control that blocks a required outcome creates an interface problem and possible secondary risk to record and escalate, but delivery pressure does not remove obligations or transfer risk authority.
 
 Feedback is part of the journey. It should be easy for the person giving or receiving it and delivered in a form and channel suitable for their context. Automation may reduce the effort of capture, acknowledgement, validation, routing, synthesis, reminders and reporting. AI may identify patterns and propose changes. Consequential judgement, authority and approval remain human-controlled.
 

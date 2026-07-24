@@ -30,7 +30,7 @@ Use it for a detailed operational practice guide. Apply it proportionately: a se
 | 7 | Value, beneficiaries and minimum outcomes | The primary customer, service user or stakeholder journey, user-defined value, other people affected, minimum acceptable operation and authority over trade-offs |
 | 8 | Inputs, evidence and entry criteria | Required information, sources, provenance, quality, uncertainty and prerequisites |
 | 9 | Demand, work types and variation | Relevant triggers, clicks or interactions, demand categories, normal work, exceptions, urgency, volume, seasonality and consequence |
-| 10 | Activities and workflow | The visible journey and its operational injection points, including normal, exceptional, escalation and review routes |
+| 10 | Activities and workflow | Movement from the visible journey into the end-to-end operational value system, beginning with the first operational event and including normal, exceptional, escalation and review routes |
 | 11 | Decision rights, rules and escalation | Rules, judgement points, decision authority, risk acceptance, escalation and unresolved ambiguity |
 | 12 | Outputs, records and completion | Useful outcomes, retained artefacts, system-of-record boundary and evidence that the work is complete |
 | 13 | Interfaces and dependencies | Upstream, downstream and cross-functional exchanges required by the journey, including ownership, timing, failure and recovery |
@@ -80,16 +80,18 @@ Before proposing a practice guide:
 2. Separate recorded evidence, practitioner judgement, AI inference, assumption and recommendation.
 3. Check all relevant operational lenses and explain any material exclusion.
 4. Start from the primary customer, service user or stakeholder journey and show the operational injection points.
-5. Show cross-functional interfaces and decision authority.
-6. Include normal, exceptional, degraded and recovery conditions where relevant.
-7. Explain what the user receives and how to use it.
-8. Make feedback easy for the receiver in a suitable form or channel and show who responds.
-9. Use the shortest presentation and minimum structure that preserve material reasoning.
-10. Test terminology outside the author's immediate context.
-11. Use UK English and plain language.
-12. Exclude confidential employer, client or third-party information and proprietary artefacts.
-13. Record sources, status, version, limitations and review trigger.
-14. Validate links, identifiers, terminology, duplication and consistency before review.
+5. Move from the journey into the operational value system and state the required outcomes, priorities and minimum-outcome gates.
+6. Select and combine methods deliberately for the context; explain why each material tool is suitable.
+7. Show cross-functional interfaces and decision authority without claiming governance over whole specialist functions.
+8. Include normal, exceptional, degraded and recovery conditions where relevant.
+9. Explain what the user receives and how to use it.
+10. Make feedback easy for the receiver in a suitable form or channel and show who responds.
+11. Use the shortest presentation and minimum structure that preserve material reasoning.
+12. Test terminology outside the author's immediate context.
+13. Use UK English and plain language.
+14. Exclude confidential employer, client or third-party information and proprietary artefacts.
+15. Record sources, status, version, limitations and review trigger.
+16. Validate links, identifiers, terminology, duplication and consistency before review.
 
 ## Naming and structure
 
