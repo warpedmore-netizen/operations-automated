@@ -2,6 +2,20 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 0.6.0 - proposed
+
+- Added durable feedback provenance covering conversation, message, original wording, type, date, status, workspace and submitting user.
+- Added seven-way feedback classification without creating approval.
+- Added structured methodology and product change proposals with evidence, alternatives, risks, validation, cost and route.
+- Added a Decision Inbox with separate preparation and release decisions.
+- Added bounded implementation instructions requiring a new branch, draft pull request, decision record, changelog, version impact and tests.
+- Added founder-only release confirmation, manual or explicit GitHub merge execution, repository reindexing and implementation receipts.
+- Added approved-context indexing and tests covering rejected evidence, merged retrieval, transition safety and auditability.
+- Added plain-English decision briefs with prominent access to the exact draft change on GitHub.
+- Added an on-demand Challenge Studio covering principles, AI suitability, deliberately manual work and delivery capability.
+- Proposed an amendment to the approved Human-AI Collaboration Method covering human/machine readability, automation choice, development collaboration and internal capability.
+- This is a proposed Workbench product increment. It does not alter or approve the methodology v0.6 baseline.
+
 ## 0.6 - Actionable delivery and governed collaboration
 
 - Approved by Jamie Peppard on 2026-07-23 for internal validation and authorised for merge through PR #9; not approved for external publication.

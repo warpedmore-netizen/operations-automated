@@ -43,11 +43,43 @@ test("local interface assets exist and no external resources are loaded", () => 
   assert.doesNotMatch(html, /(?:src|href)="https?:\/\//i);
 });
 
-test("essential actions and accessibility landmarks are present", () => {
-  for (const action of ["copy-brief", "export-json", "export-markdown", "record-stage", "advance-stage", "new-workspace"]) {
-    assert.match(html, new RegExp(`data-action="${action}"`));
+test("essential controls and accessibility landmarks are present", () => {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "guide-view"]) {
+    assert.match(html, new RegExp(`id="${id}"`));
   }
-  assert.match(html, /<main[^>]+id="workspace"/);
+  for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Cost and usage", "Settings", "How this works"]) assert.match(html, new RegExp(label));
+  assert.match(html, /<main[^>]+id="main"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /lang="en-GB"/);
+  assert.match(html, /Translate to English/);
+  assert.match(html, /Review captured text before reasoning/);
+  assert.match(html, /hard budget blocks further paid requests/i);
+  assert.match(html, /id="context-panel"[^>]+hidden/);
+  assert.match(appSource, /Behind this answer/);
+  assert.match(appSource, /userFacingAnswer/);
+  assert.match(html + appSource, /Approve and merge/);
+  assert.match(html, /Preparation and release are separate decisions/);
+});
+
+test("change review and methodology challenge are designed for the founder", () => {
+  assert.match(html, /Send me a challenge/);
+  assert.match(html, /Principles/);
+  assert.match(html, /AI suitability/);
+  assert.match(html, /Manual work/);
+  assert.match(html, /Delivery capability/);
+  assert.match(appSource, /What am I deciding\?/);
+  assert.match(appSource, /Open the draft change on GitHub/);
+  assert.match(appSource, /one primary plain-language question/);
+  assert.match(appSource, /Treat my answer as evidence, not approval/);
+});
+
+test("the interface states the governance and data boundaries", () => {
+  assert.match(html, /Feedback is not approval/i);
+  assert.match(html, /No automatic repository writes/i);
+  assert.match(html, /Non-confidential project material only/i);
+  assert.match(html, /Not approved/i);
+});
+
+test("the interface source contains no mojibake or placeholder attachment wording", () => {
+  assert.doesNotMatch(html + appSource, /ï¼|â€”|â€¦|metadata staged|reserved for the next increment/i);
 });
