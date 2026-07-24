@@ -1,4 +1,5 @@
 import { createServer } from "node:http";
+import { execFileSync } from "node:child_process";
 import { readFile, stat, mkdir, writeFile, unlink } from "node:fs/promises";
 import { createReadStream, existsSync, readFileSync } from "node:fs";
 import { createHash, randomUUID } from "node:crypto";
@@ -17,8 +18,13 @@ import {
 import { changelogVersion, readGitRefFile, retrieveIndexedSections, scanGitRef, scanWorkingTree } from "./repository-index.mjs";
 import { approveAndMergePullRequest } from "./repository-release.mjs";
 import {
-  publicConnectionMetadata, selectSpaceRoles, synchroniseConfluencePages, testConfluenceConnection
+  inspectConfluencePublication, publicConnectionMetadata, publishConfluencePublication,
+  selectSpaceRoles, synchroniseConfluencePages, testConfluenceConnection
 } from "./confluence-connector.mjs";
+import {
+  CONFLICT_REAPPLY_CONFIRMATION, PUBLICATION_CONFIRMATION,
+  buildConfluencePublicationPlan, publicPublicationPlan
+} from "./confluence-publication.mjs";
 import { createCredentialStore } from "./credential-store.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
@@ -48,6 +54,7 @@ await Promise.all([mkdir(attachmentRoot, { recursive: true }), mkdir(instruction
 const credentialStore = createCredentialStore();
 let connectedDocuments = [];
 let confluenceSyncState = { documentCount: 0, lastSyncedAt: null };
+const confluencePublicationPlans = new Map();
 
 const db = new DatabaseSync(resolve(dataRoot, "workbench.sqlite"));
 db.exec(`
@@ -126,8 +133,28 @@ db.exec(`
     id TEXT PRIMARY KEY, source_ref TEXT NOT NULL, document_count INTEGER NOT NULL,
     approved_count INTEGER NOT NULL, baseline_version TEXT NOT NULL, created_at TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS confluence_publication_pages (
+    item_key TEXT PRIMARY KEY, source_path TEXT NOT NULL DEFAULT '', target_role TEXT NOT NULL,
+    confluence_page_id TEXT NOT NULL, confluence_space_id TEXT NOT NULL,
+    confluence_parent_id TEXT, source_hash TEXT NOT NULL, source_status TEXT NOT NULL,
+    confluence_version INTEGER NOT NULL, confluence_title TEXT NOT NULL,
+    web_url TEXT NOT NULL DEFAULT '', source_commit_sha TEXT NOT NULL,
+    last_run_id TEXT NOT NULL, last_published_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS confluence_publication_runs (
+    id TEXT PRIMARY KEY, plan_id TEXT NOT NULL, source_commit_sha TEXT NOT NULL,
+    actor TEXT NOT NULL, status TEXT NOT NULL, created_count INTEGER NOT NULL DEFAULT 0,
+    updated_count INTEGER NOT NULL DEFAULT 0, unchanged_count INTEGER NOT NULL DEFAULT 0,
+    failure_message TEXT NOT NULL DEFAULT '', started_at TEXT NOT NULL, completed_at TEXT
+  );
+  CREATE TABLE IF NOT EXISTS confluence_publication_queue (
+    id TEXT PRIMARY KEY, proposal_id TEXT, decision_id TEXT, commit_sha TEXT NOT NULL,
+    methodology_version TEXT, status TEXT NOT NULL DEFAULT 'pending',
+    publication_run_id TEXT, created_at TEXT NOT NULL, published_at TEXT
+  );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
+  CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
 `);
 
 function ensureColumn(table, name, definition) {
@@ -166,6 +193,117 @@ const audit = (action, entityType, entityId, detail = {}) =>
 const getSettings = () => ({ ...DEFAULT_SETTINGS, ...safeJson(db.prepare("SELECT value_json FROM settings WHERE id=1").get().value_json, {}) });
 const providerConfigured = (tier = 2) => Boolean(process.env.OPENAI_API_KEY && process.env[`OPENAI_TIER_${tier}_MODEL`]);
 reindexRepository("working-tree");
+
+function gitOutput(args, fallback = "") {
+  try {
+    return execFileSync(process.env.GIT_EXECUTABLE || "git", [
+      "-c", `safe.directory=${repositoryRoot.replaceAll("\\", "/")}`,
+      ...args
+    ], { cwd: repositoryRoot, encoding: "utf8" }).trim();
+  } catch {
+    return fallback;
+  }
+}
+
+function publicationRepositoryIdentity() {
+  const controlledPaths = [
+    "README.md", "CHARTER.md", "GOVERNANCE.md", "ROADMAP.md", "PROJECT-PRIORITIES.md", "CHANGELOG.md",
+    "methodology", "principles", "evolution", "product", "templates", "decisions", "proposals", "feedback", "pilots"
+  ];
+  const controlledChanges = gitOutput(["status", "--porcelain", "--untracked-files=all", "--", ...controlledPaths], "");
+  return {
+    branch: process.env.WORKBENCH_PUBLICATION_BRANCH || gitOutput(["branch", "--show-current"], "unknown"),
+    commitSha: process.env.WORKBENCH_PUBLICATION_COMMIT || gitOutput(["rev-parse", "HEAD"], "working-tree"),
+    controlledSourceClean: process.env.WORKBENCH_PUBLICATION_SOURCE_CLEAN === "true" || controlledChanges.length === 0,
+    controlledChangeCount: controlledChanges ? controlledChanges.split(/\r?\n/).filter(Boolean).length : 0
+  };
+}
+
+function publicationMappings() {
+  return db.prepare("SELECT * FROM confluence_publication_pages ORDER BY item_key").all().map((item) => ({
+    itemKey: item.item_key,
+    sourcePath: item.source_path,
+    targetRole: item.target_role,
+    confluencePageId: item.confluence_page_id,
+    confluenceSpaceId: item.confluence_space_id,
+    confluenceParentId: item.confluence_parent_id,
+    sourceHash: item.source_hash,
+    sourceStatus: item.source_status,
+    confluenceVersion: item.confluence_version,
+    confluenceTitle: item.confluence_title,
+    webUrl: item.web_url,
+    sourceCommitSha: item.source_commit_sha,
+    lastRunId: item.last_run_id,
+    lastPublishedAt: item.last_published_at
+  }));
+}
+
+function publicationSummary() {
+  const lastRun = rowObject(db.prepare(`
+    SELECT id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
+      unchanged_count,failure_message,started_at,completed_at
+    FROM confluence_publication_runs ORDER BY started_at DESC LIMIT 1
+  `).get());
+  const pending = Number(db.prepare("SELECT COUNT(*) AS count FROM confluence_publication_queue WHERE status='pending'").get().count || 0);
+  const managed = Number(db.prepare("SELECT COUNT(*) AS count FROM confluence_publication_pages").get().count || 0);
+  const identity = publicationRepositoryIdentity();
+  const lastPublishedCommit = String(lastRun?.status === "completed" ? lastRun.source_commit_sha || "" : "");
+  return {
+    status: "proposed-private-capability",
+    confirmationPhrase: PUBLICATION_CONFIRMATION,
+    conflictReapplyPhrase: CONFLICT_REAPPLY_CONFIRMATION,
+    automaticPublication: false,
+    deleteEnabled: false,
+    authority: FOUNDER_NAME,
+    pendingMethodologyReleases: pending,
+    managedPages: managed,
+    repositoryBranch: identity.branch,
+    repositoryCommitSha: identity.commitSha,
+    controlledSourceClean: identity.controlledSourceClean,
+    lastPublishedCommitSha: lastPublishedCommit,
+    repositoryAheadOfConfluence: managed === 0 || !lastPublishedCommit || lastPublishedCommit !== identity.commitSha,
+    lastRun
+  };
+}
+
+function queueConfluencePublication({ proposalId, decisionId, commitSha, methodologyVersion }) {
+  if (!commitSha) return null;
+  const existing = db.prepare("SELECT id FROM confluence_publication_queue WHERE commit_sha=? AND status='pending' LIMIT 1").get(commitSha);
+  if (existing) return existing.id;
+  const id = randomUUID();
+  db.prepare("INSERT INTO confluence_publication_queue VALUES(?,?,?,?,?,'pending',NULL,?,NULL)")
+    .run(id, proposalId || null, decisionId || null, commitSha, methodologyVersion || null, now());
+  audit("confluence.publication.queued", "confluence-publication", id, {
+    proposalId: proposalId || null,
+    decisionId: decisionId || null,
+    commitSha,
+    methodologyVersion: methodologyVersion || null,
+    automaticWrite: false
+  });
+  return id;
+}
+
+function storePublishedPage(runId, sourceCommitSha, item, publishedAt) {
+  db.prepare(`
+    INSERT INTO confluence_publication_pages(
+      item_key,source_path,target_role,confluence_page_id,confluence_space_id,
+      confluence_parent_id,source_hash,source_status,confluence_version,
+      confluence_title,web_url,source_commit_sha,last_run_id,last_published_at
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    ON CONFLICT(item_key) DO UPDATE SET
+      source_path=excluded.source_path,target_role=excluded.target_role,
+      confluence_page_id=excluded.confluence_page_id,confluence_space_id=excluded.confluence_space_id,
+      confluence_parent_id=excluded.confluence_parent_id,source_hash=excluded.source_hash,
+      source_status=excluded.source_status,confluence_version=excluded.confluence_version,
+      confluence_title=excluded.confluence_title,web_url=excluded.web_url,
+      source_commit_sha=excluded.source_commit_sha,last_run_id=excluded.last_run_id,
+      last_published_at=excluded.last_published_at
+  `).run(
+    item.key, item.sourcePath || "", item.role, item.confluencePageId, item.spaceId,
+    item.confluenceParentId || null, item.sourceHash, item.sourceStatus,
+    item.confluenceVersion, item.title, item.webUrl || "", sourceCommitSha, runId, publishedAt
+  );
+}
 
 function monthlyUsage() {
   const date = new Date();
@@ -217,6 +355,22 @@ async function jsonBody(request) {
   const raw = await body(request);
   try { return JSON.parse(raw.toString("utf8") || "{}"); }
   catch { throw Object.assign(new Error("Request body must be valid JSON."), { status: 400 }); }
+}
+
+function requireLocalJsonConnectionAction(request) {
+  const contentType = String(request.headers["content-type"] || "").toLowerCase();
+  if (!contentType.startsWith("application/json")) {
+    throw Object.assign(new Error("Confluence actions require a local Workbench JSON request."), { status: 415 });
+  }
+  if (String(request.headers["sec-fetch-site"] || "").toLowerCase() === "cross-site") {
+    throw Object.assign(new Error("A different website cannot invoke the local Confluence connection."), { status: 403 });
+  }
+  const origin = String(request.headers.origin || "");
+  if (!origin) return;
+  const allowed = new Set([`http://127.0.0.1:${port}`, `http://localhost:${port}`]);
+  if (!allowed.has(origin)) {
+    throw Object.assign(new Error("A different website cannot invoke the local Confluence connection."), { status: 403 });
+  }
 }
 
 function safeStaticPath(pathname) {
@@ -381,8 +535,11 @@ async function openAiResponse({ input, instructions, route, sources, outputType 
 
 async function api(request, response, url) {
   const method = request.method || "GET";
+  if (method !== "GET" && url.pathname.startsWith("/api/connections/confluence")) {
+    requireLocalJsonConnectionAction(request);
+  }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
-    buildVersion: "0.7.0",
+    buildVersion: "0.8.0",
     settings: getSettings(),
     apiConfigured: providerConfigured(2),
     mode: providerConfigured(2) ? "provider" : "local-grounded",
@@ -410,11 +567,16 @@ async function api(request, response, url) {
         connection: publicConnectionMetadata(saved, confluenceSyncState),
         storageError,
         boundary: {
-          readOnly: true,
-          writeEnabled: false,
+          readOnlyEvidenceSync: true,
+          writeEnabled: true,
+          writeMode: "preview-and-founder-confirmation",
+          automaticWrites: false,
+          deleteEnabled: false,
+          managedPagesOnly: true,
           pageContentPersistence: "server-memory-only",
           approvalCreated: false
-        }
+        },
+        publication: publicationSummary()
       }
     });
   }
@@ -433,7 +595,8 @@ async function api(request, response, url) {
       siteUrl: tested.credentials.siteUrl,
       cloudId: tested.cloudId,
       spaces: tested.spaces,
-      writeEnabled: false
+      writeEnabled: true,
+      writeMode: "approval-gated-controlled-pages"
     });
   }
   if (method === "PUT" && url.pathname === "/api/connections/confluence") {
@@ -464,7 +627,8 @@ async function api(request, response, url) {
       internalSpaceId: stored.internalSpace.id,
       methodologySpaceId: stored.methodologySpace.id,
       credentialStoredWithWindowsProtection: true,
-      writeEnabled: false
+      writeEnabled: true,
+      automaticWrites: false
     });
     return json(response, 200, {
       configured: true,
@@ -499,7 +663,8 @@ async function api(request, response, url) {
     audit("connection.confluence.verified", "connection", "confluence-cloud", {
       site: new URL(updated.siteUrl).hostname,
       visibleSpaces: tested.spaces.length,
-      writeEnabled: false
+      writeEnabled: true,
+      automaticWrites: false
     });
     return json(response, 200, {
       verified: true,
@@ -517,11 +682,227 @@ async function api(request, response, url) {
       methodologyDocuments: documents.filter((item) => item.role === "methodology").length,
       totalDocuments: documents.length,
       contentPersisted: false,
-      writeEnabled: false
+      writeEnabled: true,
+      writePerformed: false
     });
     return json(response, 200, {
       synchronised: true,
       connection: publicConnectionMetadata(stored, confluenceSyncState)
+    });
+  }
+  if (method === "POST" && url.pathname === "/api/connections/confluence/publication-plan") {
+    const stored = credentialStore.available ? await credentialStore.get() : null;
+    if (!stored) return json(response, 409, { error: "Save a Confluence connection before preparing a publication preview." });
+    const identity = publicationRepositoryIdentity();
+    const plan = buildConfluencePublicationPlan({
+      repositoryRoot,
+      sourceBranch: identity.branch,
+      sourceCommit: identity.commitSha
+    });
+    const inspected = await inspectConfluencePublication(stored, plan, publicationMappings());
+    inspected.publishable = inspected.publishable && identity.branch === "main" && identity.controlledSourceClean;
+    inspected.conflictReapplyPhrase = CONFLICT_REAPPLY_CONFIRMATION;
+    inspected.blockers = [
+      ...(identity.branch === "main" ? [] : [`Publication is blocked while the Workbench is running from “${identity.branch}”. Merge and run the reviewed change from main first.`]),
+      ...(identity.controlledSourceClean ? [] : [`Publication is blocked because ${identity.controlledChangeCount} controlled source change${identity.controlledChangeCount === 1 ? " is" : "s are"} not committed in the reviewed repository source.`]),
+      ...(inspected.summary.conflict ? [`Resolve ${inspected.summary.conflict} Confluence conflict${inspected.summary.conflict === 1 ? "" : "s"} before publishing.`] : [])
+    ];
+    confluencePublicationPlans.set(inspected.id, inspected);
+    while (confluencePublicationPlans.size > 10) confluencePublicationPlans.delete(confluencePublicationPlans.keys().next().value);
+    audit("confluence.publication.previewed", "confluence-publication", inspected.id, {
+      sourceBranch: identity.branch,
+      sourceCommitSha: identity.commitSha,
+      create: inspected.summary.create,
+      update: inspected.summary.update,
+      unchanged: inspected.summary.unchanged,
+      conflict: inspected.summary.conflict,
+      writePerformed: false
+    });
+    return json(response, 200, {
+      plan: publicPublicationPlan(inspected),
+      publication: publicationSummary(),
+      writePerformed: false,
+      approvalCreated: false
+    });
+  }
+  if (method === "POST" && url.pathname === "/api/connections/confluence/publication-conflicts/reapply") {
+    const value = await jsonBody(request);
+    if (String(value.actor || "") !== FOUNDER_NAME) {
+      return json(response, 403, { error: `${FOUNDER_NAME} must decide how a managed-page conflict is resolved.` });
+    }
+    if (value.reviewed !== true || String(value.confirmation || "") !== CONFLICT_REAPPLY_CONFIRMATION) {
+      return json(response, 403, { error: `Review both versions and enter “${CONFLICT_REAPPLY_CONFIRMATION}” exactly.` });
+    }
+    const cached = confluencePublicationPlans.get(String(value.planId || ""));
+    if (!cached) return json(response, 409, { error: "The conflict preview is no longer available. Generate a new preview." });
+    const identity = publicationRepositoryIdentity();
+    if (identity.branch !== "main" || !identity.controlledSourceClean) {
+      return json(response, 409, { error: "Conflict resolution is allowed only from a clean, reviewed main source." });
+    }
+    const currentPlan = buildConfluencePublicationPlan({
+      repositoryRoot,
+      sourceBranch: identity.branch,
+      sourceCommit: identity.commitSha
+    });
+    if (currentPlan.id !== cached.id) {
+      return json(response, 409, { error: "The repository changed after the conflict preview. Generate a new preview." });
+    }
+    const stored = credentialStore.available ? await credentialStore.get() : null;
+    if (!stored) return json(response, 409, { error: "The saved Confluence connection is no longer available." });
+    const refreshed = await inspectConfluencePublication(stored, currentPlan, publicationMappings());
+    const item = refreshed.items.find((candidate) => candidate.key === String(value.itemKey || ""));
+    if (!item || item.action !== "conflict" || item.conflictType !== "managed-page-version") {
+      return json(response, 409, { error: "Only a current, independently edited Workbench-managed page can use this recovery action." });
+    }
+    const changed = db.prepare(`
+      UPDATE confluence_publication_pages
+      SET confluence_version=?,source_hash='',last_run_id=?
+      WHERE item_key=? AND confluence_page_id=?
+    `).run(item.confluenceVersion, `conflict-${cached.id}`, item.key, item.confluencePageId);
+    if (!changed.changes) return json(response, 409, { error: "The managed page mapping changed. Generate a new preview." });
+    confluencePublicationPlans.delete(cached.id);
+    audit("confluence.publication-conflict.reapply-authorised", "confluence-page", item.confluencePageId, {
+      itemKey: item.key,
+      sourcePath: item.sourcePath || null,
+      actor: FOUNDER_NAME,
+      reviewedGitAndConfluence: true,
+      confluenceVersionAcceptedForReplacement: item.confluenceVersion,
+      writePerformed: false,
+      nextAction: "Generate a new preview, then separately approve the update."
+    });
+    return json(response, 200, {
+      resolvedForRepreview: true,
+      itemKey: item.key,
+      confluencePageId: item.confluencePageId,
+      acceptedConfluenceVersion: item.confluenceVersion,
+      writePerformed: false,
+      message: "The current Confluence version is now the comparison baseline. Generate a new preview; the Git reading copy will appear as an update and still requires separate publication confirmation."
+    });
+  }
+  if (method === "POST" && url.pathname === "/api/connections/confluence/publish") {
+    const value = await jsonBody(request);
+    if (String(value.actor || "") !== FOUNDER_NAME) {
+      return json(response, 403, { error: `${FOUNDER_NAME} must authorise this private Confluence publication.` });
+    }
+    if (String(value.confirmation || "") !== PUBLICATION_CONFIRMATION || value.reviewed !== true) {
+      return json(response, 403, { error: `Review the page plan and enter “${PUBLICATION_CONFIRMATION}” exactly before publishing.` });
+    }
+    const inspected = confluencePublicationPlans.get(String(value.planId || ""));
+    if (!inspected) return json(response, 409, { error: "The publication preview is no longer available. Generate and review a new preview." });
+    const identity = publicationRepositoryIdentity();
+    if (identity.branch !== "main") {
+      return json(response, 409, { error: "Controlled Confluence publication is allowed only while the Workbench is running from main." });
+    }
+    if (!identity.controlledSourceClean) {
+      return json(response, 409, { error: "Controlled repository documents changed after the reviewed commit. Commit and review them before publishing." });
+    }
+    const currentPlan = buildConfluencePublicationPlan({
+      repositoryRoot,
+      sourceBranch: identity.branch,
+      sourceCommit: identity.commitSha
+    });
+    if (currentPlan.id !== inspected.id || currentPlan.sourceCommit !== inspected.sourceCommit) {
+      return json(response, 409, { error: "The repository changed after this preview. Generate and review a new publication plan." });
+    }
+    const stored = credentialStore.available ? await credentialStore.get() : null;
+    if (!stored) return json(response, 409, { error: "The saved Confluence connection is no longer available." });
+    const refreshed = await inspectConfluencePublication(stored, currentPlan, publicationMappings());
+    if (!refreshed.publishable) {
+      return json(response, 409, {
+        error: "Confluence changed after the preview. Refresh the plan and resolve the reported conflict before publishing.",
+        plan: publicPublicationPlan(refreshed)
+      });
+    }
+    const runId = randomUUID();
+    const startedAt = now();
+    db.prepare("INSERT INTO confluence_publication_runs VALUES(?,?,?,?,?,0,0,0,'',?,NULL)")
+      .run(runId, refreshed.id, identity.commitSha, FOUNDER_NAME, "in-progress", startedAt);
+    audit("confluence.publication.authorised", "confluence-publication", runId, {
+      planId: refreshed.id,
+      actor: FOUNDER_NAME,
+      sourceCommitSha: identity.commitSha,
+      explicitConfirmation: true,
+      deletionEnabled: false
+    });
+    try {
+      const result = await publishConfluencePublication(stored, refreshed, {
+        onPublished: async (item) => {
+          const publishedAt = now();
+          storePublishedPage(runId, identity.commitSha, item, publishedAt);
+          audit("confluence.page.published", "confluence-page", item.confluencePageId, {
+            runId,
+            itemKey: item.key,
+            sourcePath: item.sourcePath || null,
+            sourceHash: item.sourceHash,
+            sourceStatus: item.sourceStatus,
+            outcome: item.outcome,
+            confluenceVersion: item.confluenceVersion,
+            pageBodyLogged: false
+          });
+        }
+      });
+      const completedAt = now();
+      db.prepare(`
+        UPDATE confluence_publication_runs
+        SET status='completed',created_count=?,updated_count=?,unchanged_count=?,completed_at=?
+        WHERE id=?
+      `).run(result.created, result.updated, result.unchanged, completedAt, runId);
+      db.prepare(`
+        UPDATE confluence_publication_queue
+        SET status='published',publication_run_id=?,published_at=?
+        WHERE status='pending'
+      `).run(runId, completedAt);
+      confluencePublicationPlans.delete(refreshed.id);
+      audit("confluence.publication.completed", "confluence-publication", runId, {
+        sourceCommitSha: identity.commitSha,
+        created: result.created,
+        updated: result.updated,
+        unchanged: result.unchanged,
+        automaticPublication: false,
+        pagesDeleted: 0
+      });
+      return json(response, 200, {
+        runId,
+        status: "completed",
+        sourceCommitSha: identity.commitSha,
+        created: result.created,
+        updated: result.updated,
+        unchanged: result.unchanged,
+        pagesDeleted: 0,
+        items: result.items.map(({ bodyStorage: _bodyStorage, ...item }) => item),
+        publication: publicationSummary()
+      });
+    } catch (error) {
+      const completedAt = now();
+      db.prepare(`
+        UPDATE confluence_publication_runs
+        SET status='failed',failure_message=?,completed_at=?
+        WHERE id=?
+      `).run(String(error.message || "Publication failed.").slice(0, 500), completedAt, runId);
+      audit("confluence.publication.failed", "confluence-publication", runId, {
+        sourceCommitSha: identity.commitSha,
+        message: String(error.message || "Publication failed.").slice(0, 500),
+        retryRequiresNewPreview: true
+      });
+      throw error;
+    }
+  }
+  if (method === "GET" && url.pathname === "/api/connections/confluence/publications") {
+    const runs = db.prepare(`
+      SELECT id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
+        unchanged_count,failure_message,started_at,completed_at
+      FROM confluence_publication_runs ORDER BY started_at DESC LIMIT 20
+    `).all();
+    const pages = db.prepare(`
+      SELECT item_key,source_path,target_role,confluence_page_id,source_hash,source_status,
+        confluence_version,confluence_title,web_url,source_commit_sha,last_run_id,last_published_at
+      FROM confluence_publication_pages ORDER BY target_role,confluence_title
+    `).all();
+    return json(response, 200, {
+      publication: publicationSummary(),
+      runs,
+      pages,
+      pageBodiesIncluded: false
     });
   }
   if (method === "GET" && url.pathname === "/api/provider/test") {
@@ -848,7 +1229,21 @@ Never claim to approve, publish, merge or edit methodology.`
         decisionId, receiptId, pullRequestUrl: merge.pullRequestUrl, commitSha: merge.commitSha,
         baselineVersion: index.baselineVersion, reindexedAt: index.indexedAt
       });
-      return json(response, 200, { proposal: proposalRecord(proposal.id), decisionId, receiptId, implementationReceipt: true });
+      const publicationQueueId = proposal.change_kind === "methodology"
+        ? queueConfluencePublication({
+          proposalId: proposal.id,
+          decisionId,
+          commitSha: merge.commitSha,
+          methodologyVersion: index.baselineVersion
+        })
+        : null;
+      return json(response, 200, {
+        proposal: proposalRecord(proposal.id),
+        decisionId,
+        receiptId,
+        implementationReceipt: true,
+        confluencePublicationQueued: Boolean(publicationQueueId)
+      });
     } catch (error) {
       if (error.code !== "manual-merge-required") throw error;
       return json(response, 202, {
@@ -947,7 +1342,20 @@ Never claim to approve, publish, merge or edit methodology.`
       receiptId, pullRequestUrl: proposal.pull_request_url, commitSha: value.commitSha,
       sourceRef, reindexedAt: index.indexedAt, baselineVersion: index.baselineVersion
     });
-    return json(response, 200, { proposal: proposalRecord(proposal.id), receiptId, implementationReceipt: true });
+    const publicationQueueId = proposal.change_kind === "methodology"
+      ? queueConfluencePublication({
+        proposalId: proposal.id,
+        decisionId: approval.id,
+        commitSha: value.commitSha,
+        methodologyVersion: value.methodologyVersion || index.baselineVersion
+      })
+      : null;
+    return json(response, 200, {
+      proposal: proposalRecord(proposal.id),
+      receiptId,
+      implementationReceipt: true,
+      confluencePublicationQueued: Boolean(publicationQueueId)
+    });
   }
   if (method === "GET" && url.pathname === "/api/repository/baseline") {
     const run = rowObject(db.prepare("SELECT * FROM repository_index_runs ORDER BY created_at DESC LIMIT 1").get());

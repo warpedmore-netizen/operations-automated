@@ -57,10 +57,24 @@ test("local API persists governed conversations and the complete feedback-to-cha
   try {
     const connections = await call("/api/connections");
     assert.equal(connections.response.ok, true);
-    assert.equal(connections.payload.confluence.boundary.readOnly, true);
-    assert.equal(connections.payload.confluence.boundary.writeEnabled, false);
+    assert.equal(connections.payload.confluence.boundary.readOnlyEvidenceSync, true);
+    assert.equal(connections.payload.confluence.boundary.writeEnabled, true);
+    assert.equal(connections.payload.confluence.boundary.automaticWrites, false);
+    assert.equal(connections.payload.confluence.boundary.deleteEnabled, false);
+    assert.equal(connections.payload.confluence.boundary.managedPagesOnly, true);
     assert.equal(connections.payload.confluence.boundary.approvalCreated, false);
+    assert.equal(connections.payload.confluence.publication.automaticPublication, false);
     assert.doesNotMatch(JSON.stringify(connections.payload), /apiToken|Authorization/i);
+
+    const unsafeConnectionAction = await fetch(`http://127.0.0.1:${port}/api/connections/confluence/publication-plan`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain",
+        Origin: "https://untrusted.example"
+      },
+      body: "{}"
+    });
+    assert.equal(unsafeConnectionAction.status, 415);
 
     const created = await ok("/api/conversations", { workspace: "living-methodology", title: "Governed loop verification" });
     const conversationId = created.conversation.id;

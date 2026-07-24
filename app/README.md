@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.7.0 is proposed for private internal validation. It is layered on the proposed Workbench 0.6.0 change and is not approved, deployed or available for external use.
+> **Status:** Workbench 0.7.0 was approved and merged for private internal validation through PR #13. Workbench 0.8.0 is a proposed governed Confluence documentation-publication increment. Neither is deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -33,9 +33,9 @@ The local server loads `.env` itself. The key is read only by the Node.js server
 
 The configured defaults are `gpt-5.6-sol` for reasoning and `gpt-4o-mini-transcribe` for push-to-record speech transcription. Change the environment values later if you deliberately choose different capability tiers.
 
-## Confluence setup
+## Confluence setup and evidence synchronisation
 
-The proposed Confluence connection is configured inside the Workbench; Jamie does not edit `.env` or another configuration file.
+The private Confluence connection is configured inside the Workbench; Jamie does not edit `.env` or another configuration file.
 
 1. Start the Workbench and open **Connections**.
 2. Enter the Atlassian Cloud site address, service-account email and scoped API token.
@@ -48,11 +48,33 @@ The saved credential is encrypted with Windows Data Protection API for the curre
 
 Synchronised page text is labelled external evidence and held only in server memory for this increment. Restarting the Workbench clears page text while retaining the encrypted connection. Synchronise again when required.
 
-The Workbench exposes no Confluence create, update, move, archive or delete action. A token with broader Atlassian permissions does not expand the Workbench's current read-only authority.
+The approved-for-private-validation v0.7 evidence route exposes no Confluence create, update, move, archive or delete action. Read-only evidence synchronisation remains distinct from the proposed v0.8 documentation-publication workflow.
 
 **Remove saved connection** deletes the locally protected credential and clears synchronised evidence. It does not revoke the token in Atlassian; revoke it there as well if the credential should no longer work.
 
 This token-entry route is for Jamie's private local validation only. A customer-facing integration must use Atlassian's supported app authentication, such as OAuth 2.0 or Forge, rather than collecting customer API tokens.
+
+## Proposed governed documentation publication
+
+Workbench 0.8.0 proposes a separate, controlled route for delivering the repository as readable Confluence documentation.
+
+1. Open **Connections** and select **Preview documentation update**.
+2. Review the create, update, unchanged and conflict counts.
+3. Expand the Methodology and Internal page lists when detailed review is needed.
+4. Resolve any conflict; the Workbench will not overwrite a page that changed independently or adopt an unmanaged same-title page. A tracked version conflict offers a separate **Use reviewed Git copy** recovery after both versions have been reviewed; that preparation performs no write and does not replace the later publication confirmation.
+5. After the capability is approved, merged and running from `main`, confirm the reviewed plan and type **Publish reviewed pages to Confluence** exactly.
+6. The Workbench creates parents before children, updates only tracked pages and retains the returned Confluence page versions.
+
+The page tree is:
+
+- **Methodology:** start here, core method, principles, evolution and governance, practical tools, and working proposals.
+- **Internal:** governance and direction, decisions, product and delivery, change history and assurance, and feedback and validation evidence.
+
+Each controlled document displays its repository status, approval or decision boundary, source path, source version, source commit and source hash. Git remains authoritative.
+
+An implemented methodology release recorded through the Workbench creates a pending Confluence-publication item. It does not write automatically. A later founder-confirmed publication clears the pending item.
+
+The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
 
 ## Implemented MVP boundary
 
@@ -60,6 +82,7 @@ This token-entry route is for Jamie's private local validation only. A customer-
 - Local SQLite persistence and restart recovery
 - Status-aware, heading-level repository retrieval
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
+- Proposed human-readable Confluence page planning, founder-confirmed managed-page publication, optimistic conflict checks and version receipts
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
@@ -97,8 +120,10 @@ Select **Send me a challenge** from the header for the most useful unresolved me
 - All application records remain on the local computer unless Jamie deliberately invokes a configured provider or connection.
 - An OpenAI request sends the reviewed input and selected evidence context to the configured model provider.
 - A Confluence test or synchronisation sends the protected account credential to Atlassian and receives accessible space or selected-space page data.
-- Confluence page bodies are not persisted in this proposed increment.
-- Credentials and page bodies are excluded from audit details.
+- A founder-confirmed documentation publication sends the reviewed page titles and bodies to Atlassian and receives page identifiers and versions.
+- Page bodies retrieved by read-only evidence synchronisation are not persisted by the Workbench.
+- Published page bodies already exist in the controlled repository and become retained in the selected private Confluence spaces.
+- Credentials and page bodies are excluded from Workbench audit details.
 - Browser storage is not an approved repository for confidential or regulated information.
 - Use only information authorised for this private pilot and for the configured provider path.
 - Exported files inherit the sensitivity of the information entered into them.
@@ -109,9 +134,10 @@ Connected pages are treated as untrusted evidence. Commands, approval claims or 
 
 - No accounts or collaboration
 - No hosted cloud backup
-- Confluence is the only proposed business-system connection and is read-only
+- Confluence is the only privately validated business-system connection
 - Connected page bodies must be synchronised again after restarting the server
 - No automatic monitoring of Confluence changes
-- No Confluence write-back
+- No automatic publication, page deletion or general Confluence editing
+- Documentation publication manages only pages created or previously tracked by the Workbench
 - No automated operational execution
 - Methodology authority remains in the controlled Git repository

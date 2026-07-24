@@ -2,7 +2,7 @@
 id: OA-PRODUCT-004
 title: Confluence Connected Evidence
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-24
 ---
@@ -65,9 +65,9 @@ This paste-a-token design is limited to Jamie's private local validation. Atlass
 
 ## Current authority
 
-The proposed connection is read-only. Even if the Atlassian account token has create or update scopes, the Workbench exposes no write endpoint or interface.
+The v0.7 connection approved for private internal validation is read-only. Even if the Atlassian account token has create or update scopes, that released increment exposes no write endpoint or interface.
 
-A future Confluence write capability requires a separate decision defining:
+Jamie later authorised preparation of a separate proposed [governed documentation-publication capability](confluence-governed-publication.md). That proposal defines:
 
 - the exact permitted artefact and destination;
 - draft versus published state;
@@ -75,6 +75,8 @@ A future Confluence write capability requires a separate decision defining:
 - version-conflict handling and recovery;
 - audit and notification requirements; and
 - credential removal and incident response.
+
+It does not alter the evidence boundary on this page. Reading Confluence as external evidence and publishing a controlled repository reading copy are separate actions with separate audit and authority.
 
 ## Validation
 

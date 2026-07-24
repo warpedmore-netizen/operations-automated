@@ -2,10 +2,13 @@
 id: OA-DECISION-2026-07-24-001
 title: Prepare the Private Confluence Workbench Connection
 status: recorded
-decision: approved-for-preparation
+decision: approved-for-private-internal-validation
 decision_maker: Jamie Peppard
 date: 2026-07-24
-release_status: pending
+release_status: merged-for-private-internal-validation
+release_date: 2026-07-25
+release_pull_request: 13
+release_commit: 30aa37468f0cd488db7ddb7185d9ed81287d6797
 ---
 
 # Prepare the private Confluence Workbench connection
@@ -14,7 +17,9 @@ release_status: pending
 
 Jamie Peppard instructed Codex to make the AI Workbench own the Confluence connection experience. Jamie should be able to paste the already-created credential into the Workbench once, rather than create or maintain an environment file or provide the credential through chat.
 
-This authorises preparation and private validation of a read-only Confluence connection. It does not approve merge, external release, general customer use, automatic publication or any Confluence write.
+This initially authorised preparation of a read-only Confluence connection. On 2026-07-25 Jamie Peppard explicitly approved PR #13 for private internal validation and authorised its merge. PR #13 was merged into `main` as commit `30aa37468f0cd488db7ddb7185d9ed81287d6797`.
+
+That later decision approved the read-only connection for private internal validation. It did not approve external release, general customer use, automatic publication or any Confluence write.
 
 ## Intended outcome
 
@@ -57,4 +62,6 @@ This authorises preparation and private validation of a read-only Confluence con
 
 ## Release decision
 
-Pending. This record authorises preparation only. It does not describe the proposed Workbench 0.7.0 increment as approved or released.
+Approved and merged for private internal validation only.
+
+The connected-evidence product specification remains `proposed` because the technical connection is still being validated and has not been approved as an externally available product. Artefact status, internal validation and external publication remain separate decisions.

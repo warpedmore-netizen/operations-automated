@@ -2,9 +2,9 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.3
+version: 0.4
 owner: Jamie Peppard
-last_updated: 2026-07-23
+last_updated: 2026-07-25
 ---
 
 # Current MoSCoW priorities and outstanding work
@@ -16,6 +16,7 @@ last_updated: 2026-07-23
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
+- **Confluence position:** the private read-only connection is approved for internal validation. A governed human-readable publication workflow is proposed; automatic publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
 
@@ -35,6 +36,7 @@ These are required to preserve the intended method or unblock the next justified
 10. **Resolve remaining draft PRs deliberately.** PRs #3 and #8 are outside the v0.6 approval and must not be merged merely because the work is technically complete.
 11. **Prove activation and first use.** A created artefact is incomplete until its intended user can reach and begin using it, or the blocker and recovery route are explicit.
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
+13. **Keep authoritative change and human delivery aligned.** Git remains authoritative, while any Confluence reading copy must retain source, status, approval boundary, conflict protection and a traceable publication receipt.
 
 ## Should
 
@@ -52,6 +54,7 @@ These materially improve usefulness, validation or control but do not all block 
 10. Keep versions, sources, assumptions and approval states visible in every reusable artefact.
 11. Pilot the proposed collaboration method across different tasks, formats, disagreements and control points.
 12. Measure first-use success rather than relying only on construction tests.
+13. Validate one complete repository-to-Confluence publication and one later incremental update, including an independent-edit conflict and recovery.
 
 ## Could
 
@@ -60,8 +63,8 @@ These are possible later options, subject to evidence, priority and separate app
 1. Native Google Sheets, Excel, Word or PDF outputs.
 2. Reusable formulae and scoring tools where comparison genuinely benefits from calculation.
 3. Multi-workspace and grouped-project views with shared principles and governance.
-4. A versioned operational knowledge base with connected policies, procedures, controls, risks and decisions.
-5. Confluence, Jira, Notion or other publication adapters.
+4. Additional operational knowledge-base views connecting policies, procedures, controls, risks and decisions after the Confluence reading model is validated.
+5. Jira, Notion or other publication adapters after the Confluence adapter demonstrates repeatable value.
 6. Cloud scheduling and mobile, email, Teams or other notifications.
 7. Consented feedback forms, usage analytics and a structured evidence store.
 8. A focused guide, practitioner toolkit, facilitated assessment or later subscription workspace.
@@ -110,6 +113,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
 | Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
+| Confluence reading library | Review the proposed ordered Methodology and Internal page tree, then test one founder-confirmed initial publication and later incremental update | Workbench 0.8.0 proposed; live write deliberately blocked during development | Jamie reviews the draft PR, then separately confirms the exact live publication plan after merge |
 
 ## Next sequence when work resumes
 

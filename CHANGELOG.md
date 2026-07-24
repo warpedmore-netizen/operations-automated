@@ -2,7 +2,23 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## Workbench 0.7.0 - proposed
+## Workbench 0.8.0 - proposed
+
+- Added a human-readable Confluence information architecture covering the Methodology and Internal spaces.
+- Added controlled Markdown-to-Confluence conversion with visible repository status, approval boundary, source version, commit and hash.
+- Added a read-only publication preview showing create, update, unchanged and conflict outcomes before any write.
+- Added founder-only, plan-specific confirmation requiring the exact phrase `Publish reviewed pages to Confluence`.
+- Added optimistic Confluence version checks so independent page edits become conflicts rather than silent overwrites.
+- Added unmanaged same-title and missing-page conflict protection.
+- Added a separate founder-confirmed recovery that can prepare a reviewed Git copy to replace an independently edited managed page without performing the write or bypassing the later publication confirmation.
+- Added sequential parent-before-child creation, managed-page mappings and returned Confluence version receipts.
+- Added publication-run audit records that exclude credentials and page bodies.
+- Added a pending-publication queue when an implemented methodology release is recorded through the Workbench.
+- Kept automatic publication, deletion, archiving, external publication and general Confluence editing disabled.
+- Added a governed product proposal, decision record, feedback record and validation tests.
+- The approved Operations Automated methodology v0.6 baseline remains unchanged.
+
+## Workbench 0.7.0 - approved for private internal validation
 
 - Added an in-Workbench Confluence Cloud setup so Jamie can enter the connection once without editing environment files.
 - Added Windows user-level encrypted credential storage outside the repository, browser storage, SQLite and conversation memory.
@@ -13,7 +29,8 @@ All material changes to Operations Automated will be recorded here.
 - Labelled synchronised pages as external evidence and made them available to answer and proposal retrieval without granting approval or repository authority.
 - Added prompt-injection resistance, secret-masking, audit minimisation and tests for site validation, credentials, roles and synchronisation.
 - Added a local removal route that deletes the protected credential and clears synchronised evidence without implying Atlassian token revocation.
-- Recorded Jamie Peppard's approval to prepare and privately validate this connection. Confluence writes, merge, external release and production use remain unapproved.
+- Jamie Peppard approved PR #13 for private internal validation on 2026-07-25 and authorised its merge as commit `30aa37468f0cd488db7ddb7185d9ed81287d6797`.
+- Confluence writes, automatic publication, external release and production use were not approved by that decision.
 - The approved Operations Automated methodology v0.6 baseline remains unchanged.
 
 ## Workbench 0.6.0 - proposed
