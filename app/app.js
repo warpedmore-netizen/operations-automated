@@ -18,7 +18,9 @@ const state = {
   selectedProposalId: null,
   currentUser: "Jamie Peppard",
   repositoryMode: "manual",
-  capture: null
+  capture: null,
+  confluence: null,
+  confluenceTest: null
 };
 
 async function request(path, options = {}) {
@@ -566,7 +568,7 @@ async function loadDecisionInbox(selectedId = state.selectedProposalId, status =
   renderProposalDetail(selected);
 }
 
-const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "usage", "settings", "guide"]);
+const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "usage", "settings", "connections", "guide"]);
 
 function switchView(name, updateHash = true) {
   if (!validViews.has(name)) return;
@@ -577,6 +579,7 @@ function switchView(name, updateHash = true) {
   if (name === "usage") loadUsage().catch((error) => toast(error.message, true));
   if (name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
   if (name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
+  if (name === "connections") loadConnections().catch((error) => toast(error.message, true));
 }
 
 async function loadUsage() {
@@ -596,6 +599,168 @@ async function loadUsage() {
       <span>${record.input_tokens.toLocaleString()} in / ${record.output_tokens.toLocaleString()} out</span>
       <strong>${formatCost(record.estimated_cost)}</strong>
     </div>`).join("") || "<p>No requests recorded yet.</p>"}`;
+}
+
+function renderConnectionStatus(value) {
+  const area = $("#confluence-connection-status");
+  const actions = $("#confluence-saved-actions");
+  const record = value?.connection;
+  state.confluence = value;
+  actions.hidden = !value?.configured;
+  if (!value?.storageAvailable) {
+    area.className = "connection-status error";
+    area.innerHTML = `<strong>Encrypted storage is unavailable.</strong><p>${escapeHtml(value?.storageError || "This private connection release requires the Workbench to run under your Windows account.")}</p>`;
+    return;
+  }
+  if (value?.storageError) {
+    area.className = "connection-status error";
+    area.innerHTML = `<strong>The saved credential could not be opened.</strong><p>${escapeHtml(value.storageError)}</p>`;
+    return;
+  }
+  if (!value?.configured || !record) {
+    area.className = "connection-status";
+    area.innerHTML = "<strong>No Confluence connection is saved yet.</strong><p>Enter the site, service-account email and token below. Testing does not save anything.</p>";
+    return;
+  }
+  const synced = Number(record.syncedDocuments || 0);
+  area.className = `connection-status ${synced ? "connected" : ""}`;
+  area.innerHTML = `
+    <div><strong>${synced ? "Connected evidence is ready." : "Confluence is connected."}</strong><span>${escapeHtml(record.siteUrl)}</span></div>
+    <dl>
+      <div><dt>Account</dt><dd>${escapeHtml(record.accountEmailMasked)}</dd></div>
+      <div><dt>Internal</dt><dd>${escapeHtml(record.internalSpace?.name || "Not assigned")}</dd></div>
+      <div><dt>Methodology</dt><dd>${escapeHtml(record.methodologySpace?.name || "Not assigned")}</dd></div>
+      <div><dt>Current session</dt><dd>${synced ? `${synced} pages synchronised` : "Not synchronised"}</dd></div>
+    </dl>
+    <p>${record.lastSyncedAt ? `Last synchronised ${escapeHtml(formatDate(record.lastSyncedAt))}.` : "Select Synchronise read-only evidence when you want these spaces to influence Workbench answers."}</p>`;
+  if (!$("#confluence-form").siteUrl.value) $("#confluence-form").siteUrl.value = record.siteUrl || "";
+}
+
+async function loadConnections() {
+  const value = await request("/api/connections");
+  renderConnectionStatus(value.confluence);
+}
+
+function populateConfluenceSpaces(spaces) {
+  const options = `<option value="">Choose a space</option>${spaces.map((space) =>
+    `<option value="${escapeHtml(space.id)}">${escapeHtml(space.name)}${space.key ? ` (${escapeHtml(space.key)})` : ""}</option>`
+  ).join("")}`;
+  const form = $("#confluence-form");
+  form.internalSpaceId.innerHTML = options;
+  form.methodologySpaceId.innerHTML = options;
+  $("#confluence-space-step").hidden = false;
+}
+
+async function testConfluence(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const button = $("#test-confluence");
+  button.disabled = true;
+  button.textContent = "Testing securely…";
+  try {
+    const values = Object.fromEntries(new FormData(form));
+    const result = await request("/api/connections/confluence/test", {
+      method: "POST",
+      body: JSON.stringify({
+        siteUrl: values.siteUrl,
+        accountEmail: values.accountEmail,
+        apiToken: values.apiToken
+      })
+    });
+    state.confluenceTest = result;
+    populateConfluenceSpaces(result.spaces);
+    $("#confluence-connection-status").className = "connection-status connected";
+    $("#confluence-connection-status").innerHTML = `<strong>Read-only test passed.</strong><p>${result.spaces.length} visible spaces found. Assign the two roles below, then save the encrypted connection.</p>`;
+    toast("Connection tested. Nothing has been saved yet.");
+  } catch (error) {
+    $("#confluence-connection-status").className = "connection-status error";
+    $("#confluence-connection-status").innerHTML = `<strong>The connection test did not pass.</strong><p>${escapeHtml(error.message)}</p>`;
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Test and show spaces";
+  }
+}
+
+async function saveConfluence() {
+  const form = $("#confluence-form");
+  const values = Object.fromEntries(new FormData(form));
+  const button = $("#save-confluence");
+  if (!state.confluenceTest) return toast("Test the connection before saving it.", true);
+  if (!values.internalSpaceId || !values.methodologySpaceId) return toast("Choose both space roles.", true);
+  button.disabled = true;
+  button.textContent = "Encrypting and saving…";
+  try {
+    const result = await request("/api/connections/confluence", {
+      method: "PUT",
+      body: JSON.stringify(values)
+    });
+    form.apiToken.value = "";
+    state.confluenceTest = null;
+    $("#confluence-space-step").hidden = true;
+    renderConnectionStatus({
+      storageAvailable: true,
+      configured: result.configured,
+      connection: result.connection
+    });
+    toast("Confluence connection saved with Windows encryption.");
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Save encrypted connection";
+  }
+}
+
+async function verifyConfluence() {
+  const button = $("#verify-confluence");
+  button.disabled = true;
+  button.textContent = "Verifying…";
+  try {
+    const result = await request("/api/connections/confluence/verify", { method: "POST", body: "{}" });
+    renderConnectionStatus({ storageAvailable: true, configured: true, connection: result.connection });
+    toast("Saved Confluence connection verified.");
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Verify saved connection";
+  }
+}
+
+async function synchroniseConfluence() {
+  const button = $("#sync-confluence");
+  button.disabled = true;
+  button.textContent = "Synchronising read-only…";
+  try {
+    const result = await request("/api/connections/confluence/synchronise", { method: "POST", body: "{}" });
+    renderConnectionStatus({ storageAvailable: true, configured: true, connection: result.connection });
+    toast(`${result.connection.syncedDocuments} Confluence pages are now available as evidence.`);
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Synchronise read-only evidence";
+  }
+}
+
+async function removeConfluence() {
+  const confirmed = window.confirm("Remove the saved Confluence credential and clear synchronised page evidence from this Workbench? This does not revoke the token in Atlassian.");
+  if (!confirmed) return;
+  const button = $("#remove-confluence");
+  button.disabled = true;
+  try {
+    const result = await request("/api/connections/confluence", { method: "DELETE" });
+    $("#confluence-form").reset();
+    $("#confluence-space-step").hidden = true;
+    state.confluenceTest = null;
+    renderConnectionStatus({ storageAvailable: true, configured: false, connection: null });
+    toast(result.message);
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+  }
 }
 
 function renderAttachments() {
@@ -830,6 +995,11 @@ $("#settings-form").addEventListener("submit", async (event) => {
     toast("Local spending and routing controls saved.");
   } catch (error) { toast(error.message, true); }
 });
+$("#confluence-form").addEventListener("submit", testConfluence);
+$("#save-confluence").addEventListener("click", saveConfluence);
+$("#verify-confluence").addEventListener("click", verifyConfluence);
+$("#sync-confluence").addEventListener("click", synchroniseConfluence);
+$("#remove-confluence").addEventListener("click", removeConfluence);
 $("#export-button").addEventListener("click", async () => {
   if (!state.conversation) return toast("There is no conversation to export.", true);
   const value = await request("/api/export", {

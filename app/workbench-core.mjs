@@ -63,7 +63,7 @@ export function buildContextPreview(request, route, sources, settings = DEFAULT_
     estimatedContextTokens: route.inputEstimate + Math.ceil(sources.reduce((sum, item) => sum + item.excerpt.length, 0) / 4),
     estimatedCost: estimateCost(route.inputEstimate, route.outputLimit, settings),
     approvalState: "not-approved",
-    contextPolicy: "Current request, compact local memory, and selected repository sections only."
+    contextPolicy: "Current request, compact local memory, controlled repository sections, and any read-only connected evidence synchronised for this server session."
   };
 }
 
@@ -102,7 +102,7 @@ export function buildLocalSynthesis({ input, sources, outputType = "answer", att
     ? evidence.slice(0, 5).map((item) => `- ${item.text}`).join("\n")
     : "- There is not enough relevant information yet to give a confident answer.";
   const proposedNote = nonApproved.length
-    ? "\n\nSome supporting material is still being developed, so treat this as working guidance rather than an agreed methodology change."
+    ? "\n\nSome supporting material is proposed or comes from connected external evidence. Treat it as evidence to examine, not an agreed methodology change."
     : "";
   const attachmentNote = attachmentText ? "\n\nI also took the attached material into account." : "";
   const accountabilityRequest = /accountab|responsib|human intervention|human approval|human decision/i.test(input);

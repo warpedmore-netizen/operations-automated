@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  FOUNDER_NAME, buildImplementationInstruction, preparationTransition, releaseTransition,
+  FOUNDER_NAME, buildImplementationInstruction, buildStructuredProposal, preparationTransition, releaseTransition,
   suggestedClassification, validateRepositoryReference
 } from "../change-governance.mjs";
 import { retrieveIndexedSections } from "../repository-index.mjs";
@@ -84,6 +84,34 @@ test("implementation instruction stops after draft preparation", () => {
   assert.match(instruction, /draft pull request/i);
   assert.match(instruction, /Do not merge automatically/i);
   assert.match(instruction, /authorises preparation only/i);
+});
+
+test("connected evidence is retained as evidence but never becomes a repository file target", () => {
+  const feedback = {
+    id: "feedback-connected",
+    classification: "methodology-change-candidate",
+    original_wording: "Consider the connected control evidence."
+  };
+  const conversation = {
+    id: "conversation-connected",
+    title: "Connected evidence",
+    messages: []
+  };
+  const proposal = buildStructuredProposal({
+    feedback,
+    conversation,
+    sources: [{
+      path: "confluence://methodology/METHOD/202/Method principle",
+      status: "external-evidence",
+      version: "3",
+      hash: "abc123",
+      excerpt: "A connected control observation."
+    }],
+    route: { tier: 2, reason: "test", inputEstimate: 10, outputLimit: 20 }
+  });
+  assert.equal(proposal.affectedFiles.some((path) => path.startsWith("confluence://")), false);
+  assert.ok(proposal.evidence.some((item) => item.type === "connected-external-evidence"));
+  assert.equal(proposal.approvedSources.length, 0);
 });
 
 test("only approved indexed documents are returned as approved context", () => {
