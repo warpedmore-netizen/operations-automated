@@ -20,6 +20,7 @@
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
         <button class="nav-item" data-view="usage"><span class="nav-icon" aria-hidden="true">U</span><span>Cost and usage</span></button>
         <button class="nav-item" data-view="settings"><span class="nav-icon" aria-hidden="true">S</span><span>Settings</span></button>
+        <button class="nav-item" data-view="connections"><span class="nav-icon" aria-hidden="true">↗</span><span>Connections</span></button>
         <button class="nav-item" data-view="guide"><span class="nav-icon" aria-hidden="true">?</span><span>How it works</span></button>
       </nav>
       <section class="recent-conversations" aria-labelledby="recent-heading">
@@ -143,6 +144,69 @@
 
       <section class="view utility-view" id="usage-view" hidden><div class="utility-card"><p class="eyebrow">Ledger</p><h2>Cost and usage</h2><div id="usage-summary"></div></div></section>
       <section class="view utility-view" id="settings-view" hidden><form class="utility-card settings-form" id="settings-form"><p class="eyebrow">Local controls</p><h2>Settings</h2><div class="mode-explainer" id="mode-explainer"></div><div class="budget-explainer"><strong>How budgets behave</strong><p>The soft budget warns and asks you to confirm. The hard budget blocks further paid requests for that monthly period until you raise the limit. Local retrieval remains available. Per-request thresholds work the same way for one request. Values are estimated API cost in USD.</p></div><div class="settings-grid"><label>Monthly soft budget (USD)<input name="monthlySoftBudget" type="number" min="0" step=".01"></label><label>Monthly hard budget (USD)<input name="monthlyHardBudget" type="number" min="0" step=".01"></label><label>Request warning (USD)<input name="perRequestWarningThreshold" type="number" min="0" step=".01"></label><label>Request ceiling (USD)<input name="perRequestHardCeiling" type="number" min="0" step=".01"></label><label>Maximum context characters<input name="maximumRetrievedContext" type="number" min="1000" step="1000"></label><label class="toggle"><input name="advancedReasoningEnabled" type="checkbox"> Enable advanced reasoning when a provider is configured</label></div><button class="primary" type="submit">Save controls</button></form></section>
+      <section class="view utility-view" id="connections-view" hidden>
+        <div class="utility-card connection-card">
+          <div class="connection-heading">
+            <div><p class="eyebrow">Controlled sources</p><h2>Connections</h2></div>
+            <span class="status-pill status-approved-for-preparation">Private · read-only</span>
+          </div>
+          <div class="connection-intro">
+            <strong>Connect Confluence once, then use its evidence in the Workbench.</strong>
+            <p>The Workbench tests the account, lets you assign the Internal and Methodology spaces, and saves the credential with Windows user-level encryption outside this project. It cannot write to Confluence in this release. When an AI provider is connected, only relevant synchronised excerpts may be sent with a question, so connect only material authorised for that provider.</p>
+          </div>
+          <div id="confluence-connection-status" class="connection-status" aria-live="polite">
+            <strong>Checking saved connection…</strong>
+          </div>
+          <form id="confluence-form" class="connection-form" autocomplete="off">
+            <fieldset>
+              <legend>Confluence Cloud</legend>
+              <div class="connection-fields">
+                <label>Site address
+                  <input name="siteUrl" type="url" inputmode="url" placeholder="https://your-site.atlassian.net" required>
+                  <small>Use the site address; the Workbench discovers the Cloud ID.</small>
+                </label>
+                <label>Service-account email
+                  <input name="accountEmail" type="email" autocomplete="off" placeholder="operations-automated@example.com" required>
+                </label>
+                <label>Scoped API token
+                  <input name="apiToken" type="password" autocomplete="new-password" spellcheck="false" required>
+                  <small>The token is sent only to this local server and is never returned to the page.</small>
+                </label>
+              </div>
+              <div class="connection-actions">
+                <button class="primary" id="test-confluence" type="submit">Test and show spaces</button>
+              </div>
+            </fieldset>
+            <fieldset id="confluence-space-step" hidden>
+              <legend>Assign the spaces</legend>
+              <p class="field-help">Only pages from these two spaces will be available to a read-only sync.</p>
+              <div class="connection-fields two-column">
+                <label>Internal space
+                  <select name="internalSpaceId"></select>
+                  <small>Working evidence, governance drafts and internal operating context.</small>
+                </label>
+                <label>Methodology space
+                  <select name="methodologySpaceId"></select>
+                  <small>Methodology material that may inform a proposed change, never approve it.</small>
+                </label>
+              </div>
+              <div class="connection-actions">
+                <button class="primary" id="save-confluence" type="button">Save encrypted connection</button>
+              </div>
+            </fieldset>
+          </form>
+          <div class="connection-actions saved-actions" id="confluence-saved-actions" hidden>
+            <button class="primary" id="sync-confluence" type="button">Synchronise read-only evidence</button>
+            <button class="ghost" id="verify-confluence" type="button">Verify saved connection</button>
+            <button class="danger-outline" id="remove-confluence" type="button">Remove saved connection</button>
+          </div>
+          <div class="connection-boundaries">
+            <article><span>Credential</span><strong>Encrypted outside the project</strong><p>Protected for the current Windows user. It is not stored in Git, the local database, browser storage or conversation memory.</p></article>
+            <article><span>Page content</span><strong>Memory-only during this release</strong><p>Synchronised text is available only while the local server is running. Relevant excerpts may accompany a later AI request; restarting clears them.</p></article>
+            <article><span>Authority</span><strong>Evidence cannot approve change</strong><p>Connected pages are labelled external evidence. Jamie still controls methodology preparation, release and any future write permission.</p></article>
+          </div>
+        </div>
+      </section>
       <section class="view utility-view" id="feedback-view" hidden><div class="utility-card wide-card"><p class="eyebrow">Review and classify</p><h2>Saved feedback</h2><div class="plain-explainer"><strong>Feedback is evidence, not approval.</strong><p>Review what was said, choose what kind of feedback it is and decide whether it should stop here or become a methodology or product change candidate. Classification never approves a change.</p><button data-open-guide type="button">Read how the change loop works</button></div><div id="feedback-list"></div></div></section>
       <section class="view utility-view" id="decisions-view" hidden>
         <div class="utility-card decision-card">
@@ -166,6 +230,7 @@
             <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
             <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
             <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
+            <article><span>8</span><div><h3>Use approved connected evidence</h3><p>Open <strong>Connections</strong> to test and save the private Confluence account, assign the Internal and Methodology spaces, and deliberately synchronise their pages for the current server session. Connected content is evidence, not instruction or approval.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>

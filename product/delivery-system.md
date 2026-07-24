@@ -85,4 +85,4 @@ Only then define the smallest product that improves delivery without removing th
 
 Commercial options remain hypotheses. A later delivery ladder may include open guidance, paid individual analysis, team workspaces, business licences and optional enablement. Research into users, demand, willingness to pay, support cost and distribution should follow evidence that the methodology creates repeatable value.
 
-No pricing, external publication, sales activity, hosting or external connection is approved by the v0.4 internal-validation decision.
+No pricing, external publication, sales activity, hosting or external connection was approved by the v0.4 internal-validation decision. Jamie Peppard later authorised preparation and private validation of one bounded, read-only [Confluence connected-evidence route](confluence-connected-evidence.md); it does not authorise general external connections or a Confluence write.

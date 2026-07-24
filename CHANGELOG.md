@@ -2,6 +2,20 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 0.7.0 - proposed
+
+- Added an in-Workbench Confluence Cloud setup so Jamie can enter the connection once without editing environment files.
+- Added Windows user-level encrypted credential storage outside the repository, browser storage, SQLite and conversation memory.
+- Added scoped-token authentication through Atlassian's Cloud-ID API route and a bounded `.atlassian.net` site allow-list.
+- Added read-only connection testing and accessible-space discovery.
+- Added explicit Internal and Methodology space roles.
+- Added deliberate read-only page synchronisation into server memory for the current Workbench session.
+- Labelled synchronised pages as external evidence and made them available to answer and proposal retrieval without granting approval or repository authority.
+- Added prompt-injection resistance, secret-masking, audit minimisation and tests for site validation, credentials, roles and synchronisation.
+- Added a local removal route that deletes the protected credential and clears synchronised evidence without implying Atlassian token revocation.
+- Recorded Jamie Peppard's approval to prepare and privately validate this connection. Confluence writes, merge, external release and production use remain unapproved.
+- The approved Operations Automated methodology v0.6 baseline remains unchanged.
+
 ## Workbench 0.6.0 - proposed
 
 - Added durable feedback provenance covering conversation, message, original wording, type, date, status, workspace and submitting user.

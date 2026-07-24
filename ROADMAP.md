@@ -44,6 +44,8 @@ The [current methodology synthesis and visual map](methodology/current-methodolo
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
+The proposed Workbench 0.7.0 increment adds a founder-authorised, private and read-only [Confluence connected-evidence route](product/confluence-connected-evidence.md). It keeps the credential outside the repository with Windows user-level protection and keeps synchronised page bodies in server memory only. This is a product proposal layered on the draft governed Workbench; it does not change the approved methodology baseline or authorise a Confluence write.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -97,7 +99,7 @@ Jamie's next participation is a short response to a daily challenge or a questio
 
 ## Connections and technology
 
-The manual method-and-evolution MVP requires no new external connection.
+The manual method-and-evolution MVP requires no new external connection. Jamie later authorised preparation of the separate private read-only Confluence evidence connection described above; that decision does not expand the authority of the manual MVP or approve other connections.
 
 Before any AI provider, feedback form, analytics service, database, notification channel or business system is connected, AI should explain:
 

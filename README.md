@@ -8,7 +8,7 @@ This repository is the controlled source for the methodology, its principles, go
 
 > **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the separately recorded private read-only Confluence proposal require separate decisions.
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 
@@ -74,11 +74,13 @@ Answers are not accepted uncritically. AI may reverse an assumption, introduce c
 
 The first seven responses are amalgamated in the approved internal [founder pilot methodology synthesis](proposals/founder-pilot-initial-synthesis-v0.5.md). The [v0.5 assurance pack](proposals/v0.5-first-checkpoint-assurance-pack.md) records Jamie's conditional internal-validation decision. The daily cycle continues regardless of that checkpoint.
 
-## Application experiment
+## Application and Workbench experiments
 
 The [OPERATE Workspace MVP 0.1](app/README.md) remains approved only for private testing and is not deployed or approved for external use. A separate governance-workbench proof of concept is also retained on its draft branch as product evidence; it does not change the approved methodology or product boundary.
 
 Private testing demonstrated useful record, approval and export mechanics but also showed that the application mainly reorganises user input rather than returning genuine AI analysis. The v0.4 decision parks it as a retained learning experiment while the methodology and output model are validated. Its code is not deleted, and the unapproved interface experiment remains preserved on its separate branch.
+
+The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. A proposed Workbench 0.7.0 increment adds a private read-only [Confluence connected-evidence route](product/confluence-connected-evidence.md). Both remain draft product evidence: neither is approved for deployment or external use, and the Confluence route has no write capability.
 
 ## Repository control
 

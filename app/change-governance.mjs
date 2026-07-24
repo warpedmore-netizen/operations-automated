@@ -61,9 +61,10 @@ export function proposalKind(classification) {
 export function buildStructuredProposal({ feedback, conversation, sources, route, expectedCost = 0 }) {
   const kind = proposalKind(feedback.classification);
   const approvedSources = sources.filter((source) => source.status === "approved");
+  const connectedSources = sources.filter((source) => source.status === "external-evidence");
   const assistant = conversation.messages.find((message) => message.id === feedback.message_id);
   const affectedFiles = [...new Set([
-    ...sources.map((source) => source.path),
+    ...sources.filter((source) => !source.path.includes("://")).map((source) => source.path),
     ...(kind === "product" ? ["app/index.html", "app/app.js", "app/server.mjs", "app/styles.css"] : [])
   ])];
   return {
@@ -77,7 +78,14 @@ export function buildStructuredProposal({ feedback, conversation, sources, route
     rationale: `This proposal is traceable to feedback ${feedback.id}. Classification identifies a candidate for human review; it does not approve the change.`,
     evidence: [
       { type: "feedback", reference: feedback.id, wording: feedback.original_wording || feedback.wording },
-      { type: "conversation", reference: conversation.id, title: conversation.title }
+      { type: "conversation", reference: conversation.id, title: conversation.title },
+      ...connectedSources.map((source) => ({
+        type: "connected-external-evidence",
+        reference: source.path,
+        status: source.status,
+        version: source.version,
+        hash: source.hash
+      }))
     ],
     alternatives: [
       "Retain the current approved position and record the feedback as learning only.",

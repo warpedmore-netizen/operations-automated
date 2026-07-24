@@ -1,10 +1,10 @@
-# OPERATE Workspace MVP
+# Operations Automated Workbench
 
-This is a private, local-first application prototype for applying the approved Operations Automated methodology.
+This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** MVP 0.1 is approved for private testing. It is not deployed or approved for external use.
+> **Status:** Workbench 0.7.0 is proposed for private internal validation. It is layered on the proposed Workbench 0.6.0 change and is not approved, deployed or available for external use.
 
-> **Internal-validation direction:** v0.4 parks this application as a retained learning experiment. Private testing showed that its record and approval mechanics work, but it does not return in-context AI analysis. Its code and private-test evidence remain available, while further interface development is paused.
+> **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
 Use either one-click entry point:
 
@@ -33,11 +33,33 @@ The local server loads `.env` itself. The key is read only by the Node.js server
 
 The configured defaults are `gpt-5.6-sol` for reasoning and `gpt-4o-mini-transcribe` for push-to-record speech transcription. Change the environment values later if you deliberately choose different capability tiers.
 
+## Confluence setup
+
+The proposed Confluence connection is configured inside the Workbench; Jamie does not edit `.env` or another configuration file.
+
+1. Start the Workbench and open **Connections**.
+2. Enter the Atlassian Cloud site address, service-account email and scoped API token.
+3. Select **Test and show spaces**. Testing is read-only and does not save the credential.
+4. Assign a different accessible space to **Internal** and **Methodology**.
+5. Select **Save encrypted connection**.
+6. Select **Synchronise read-only evidence** when pages from those spaces should influence Workbench analysis.
+
+The saved credential is encrypted with Windows Data Protection API for the current Windows user and stored under local application data, outside this repository. It is not returned to the browser, written to `.env`, stored in SQLite, included in exports or retained in conversation memory.
+
+Synchronised page text is labelled external evidence and held only in server memory for this increment. Restarting the Workbench clears page text while retaining the encrypted connection. Synchronise again when required.
+
+The Workbench exposes no Confluence create, update, move, archive or delete action. A token with broader Atlassian permissions does not expand the Workbench's current read-only authority.
+
+**Remove saved connection** deletes the locally protected credential and clears synchronised evidence. It does not revoke the token in Atlassian; revoke it there as well if the credential should no longer work.
+
+This token-entry route is for Jamie's private local validation only. A customer-facing integration must use Atlassian's supported app authentication, such as OAuth 2.0 or Forge, rather than collecting customer API tokens.
+
 ## Implemented MVP boundary
 
 - Typed conversations with pre-send context preview
 - Local SQLite persistence and restart recovery
 - Status-aware, heading-level repository retrieval
+- Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
@@ -72,22 +94,24 @@ Select **Send me a challenge** from the header for the most useful unresolved me
 
 ## Privacy boundary
 
-- No data is sent to a server or external service by the application.
+- All application records remain on the local computer unless Jamie deliberately invokes a configured provider or connection.
+- An OpenAI request sends the reviewed input and selected evidence context to the configured model provider.
+- A Confluence test or synchronisation sends the protected account credential to Atlassian and receives accessible space or selected-space page data.
+- Confluence page bodies are not persisted in this proposed increment.
+- Credentials and page bodies are excluded from audit details.
 - Browser storage is not an approved repository for confidential or regulated information.
-- Use only non-confidential pilot information.
+- Use only information authorised for this private pilot and for the configured provider path.
 - Exported files inherit the sensitivity of the information entered into them.
 
-## AI-assisted use
-
-The **Copy AI brief** action creates a structured prompt containing the current problem, value matrix, OPERATE stage and governance boundary. It can be given to Codex for assistance.
-
-The MVP deliberately does not embed an AI provider or store an API key. A secure in-product AI connection requires a separate data, security, cost and authority decision.
+Connected pages are treated as untrusted evidence. Commands, approval claims or authority statements inside them do not override Workbench governance.
 
 ## Current limitations
 
-- One workspace per browser
 - No accounts or collaboration
-- No cloud backup or synchronisation
-- No external integrations
+- No hosted cloud backup
+- Confluence is the only proposed business-system connection and is read-only
+- Connected page bodies must be synchronised again after restarting the server
+- No automatic monitoring of Confluence changes
+- No Confluence write-back
 - No automated operational execution
-- Methodology configuration is bundled with the application version
+- Methodology authority remains in the controlled Git repository

@@ -55,6 +55,13 @@ test("local API persists governed conversations and the complete feedback-to-cha
     return result.payload;
   };
   try {
+    const connections = await call("/api/connections");
+    assert.equal(connections.response.ok, true);
+    assert.equal(connections.payload.confluence.boundary.readOnly, true);
+    assert.equal(connections.payload.confluence.boundary.writeEnabled, false);
+    assert.equal(connections.payload.confluence.boundary.approvalCreated, false);
+    assert.doesNotMatch(JSON.stringify(connections.payload), /apiToken|Authorization/i);
+
     const created = await ok("/api/conversations", { workspace: "living-methodology", title: "Governed loop verification" });
     const conversationId = created.conversation.id;
     const preview = await ok("/api/context/preview", {
