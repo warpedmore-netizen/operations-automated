@@ -24,6 +24,7 @@ if (-not $resolvedParent.StartsWith($localAppDataBoundary, [System.StringCompari
 }
 
 [Console]::OutputEncoding = $utf8
+[Console]::InputEncoding = $utf8
 
 if ($Operation -eq "Delete") {
     if (Test-Path -LiteralPath $StorePath -PathType Leaf) {

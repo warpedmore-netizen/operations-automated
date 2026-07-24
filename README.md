@@ -8,7 +8,7 @@ This repository is the controlled source for the methodology, its principles, go
 
 > **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the separately recorded private read-only Confluence proposal require separate decisions.
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. A governed Confluence documentation-publication capability is being proposed separately; no automatic or external publication is approved.
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 
@@ -80,7 +80,9 @@ The [OPERATE Workspace MVP 0.1](app/README.md) remains approved only for private
 
 Private testing demonstrated useful record, approval and export mechanics but also showed that the application mainly reorganises user input rather than returning genuine AI analysis. The v0.4 decision parks it as a retained learning experiment while the methodology and output model are validated. Its code is not deleted, and the unapproved interface experiment remains preserved on its separate branch.
 
-The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. A proposed Workbench 0.7.0 increment adds a private read-only [Confluence connected-evidence route](product/confluence-connected-evidence.md). Both remain draft product evidence: neither is approved for deployment or external use, and the Confluence route has no write capability.
+The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. Workbench 0.7.0 added a private [Confluence connected-evidence route](product/confluence-connected-evidence.md) that Jamie approved and merged for private internal validation through PR #13.
+
+A proposed Workbench 0.8.0 increment adds [governed Confluence documentation publication](product/confluence-governed-publication.md). It treats Git as authoritative, previews a readable Methodology and Internal page tree, requires Jamie's plan-specific confirmation, checks tracked Confluence versions and records page receipts. Automatic publication, page deletion, external release and customer use remain unapproved.
 
 ## Repository control
 

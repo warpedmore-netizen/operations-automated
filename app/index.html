@@ -148,11 +148,11 @@
         <div class="utility-card connection-card">
           <div class="connection-heading">
             <div><p class="eyebrow">Controlled sources</p><h2>Connections</h2></div>
-            <span class="status-pill status-approved-for-preparation">Private · read-only</span>
+            <span class="status-pill status-approved-for-preparation">Private · governed publication</span>
           </div>
           <div class="connection-intro">
-            <strong>Connect Confluence once, then use its evidence in the Workbench.</strong>
-            <p>The Workbench tests the account, lets you assign the Internal and Methodology spaces, and saves the credential with Windows user-level encryption outside this project. It cannot write to Confluence in this release. When an AI provider is connected, only relevant synchronised excerpts may be sent with a question, so connect only material authorised for that provider.</p>
+            <strong>Use Confluence as the readable delivery surface while Git remains authoritative.</strong>
+            <p>The Workbench can synchronise read-only evidence from your selected spaces. It can also prepare a human-readable documentation plan, show every proposed page change and publish only after Jamie Peppard reviews the plan and enters the required confirmation. It never publishes automatically or deletes a Confluence page.</p>
           </div>
           <div id="confluence-connection-status" class="connection-status" aria-live="polite">
             <strong>Checking saved connection…</strong>
@@ -200,10 +200,43 @@
             <button class="ghost" id="verify-confluence" type="button">Verify saved connection</button>
             <button class="danger-outline" id="remove-confluence" type="button">Remove saved connection</button>
           </div>
+          <section class="publication-panel" id="confluence-publication" hidden>
+            <div class="publication-heading">
+              <div>
+                <p class="eyebrow">Readable project memory</p>
+                <h3>Methodology documentation publication</h3>
+              </div>
+              <span class="status-pill status-proposed">Proposed · human controlled</span>
+            </div>
+            <p class="publication-explainer">The page tree separates Methodology from Internal project memory. Repository status, source version, commit and approval boundary appear on every controlled document. Confluence edits are conflict-checked and will not be overwritten silently.</p>
+            <div id="confluence-publication-status" class="publication-status" aria-live="polite">
+              <strong>No publication preview has been prepared.</strong>
+              <p>Previewing reads the current Confluence page list and compares it with the controlled repository. It does not write anything.</p>
+            </div>
+            <div class="connection-actions">
+              <button class="primary" id="preview-confluence-publication" type="button">Preview documentation update</button>
+            </div>
+            <div id="confluence-publication-plan"></div>
+            <form id="confluence-publication-approval" class="publication-approval" hidden>
+              <h4>Founder publication confirmation</h4>
+              <p>This action can create and update the pages shown above. It cannot delete pages, change repository approval or publish externally.</p>
+              <label>Authorised human
+                <input name="actor" value="Jamie Peppard" readonly>
+              </label>
+              <label class="check-label">
+                <input name="reviewed" type="checkbox" required>
+                I have reviewed the page plan and its conflicts, destinations and statuses.
+              </label>
+              <label>Type the confirmation shown above
+                <input name="confirmation" autocomplete="off" spellcheck="false" required>
+              </label>
+              <button class="primary" id="publish-confluence" type="submit">Publish reviewed pages</button>
+            </form>
+          </section>
           <div class="connection-boundaries">
-            <article><span>Credential</span><strong>Encrypted outside the project</strong><p>Protected for the current Windows user. It is not stored in Git, the local database, browser storage or conversation memory.</p></article>
-            <article><span>Page content</span><strong>Memory-only during this release</strong><p>Synchronised text is available only while the local server is running. Relevant excerpts may accompany a later AI request; restarting clears them.</p></article>
-            <article><span>Authority</span><strong>Evidence cannot approve change</strong><p>Connected pages are labelled external evidence. Jamie still controls methodology preparation, release and any future write permission.</p></article>
+            <article><span>Credential</span><strong>Encrypted outside the project</strong><p>Protected with Windows user-level encryption. It is not stored in Git, the local database, browser storage or conversation memory.</p></article>
+            <article><span>Page content</span><strong>Two controlled directions</strong><p>Evidence synchronisation remains memory-only. Documentation publication creates or updates only the reviewed Workbench-managed reading pages.</p></article>
+            <article><span>Authority</span><strong>Git status remains authoritative</strong><p>Confluence cannot approve a methodology change. Every publication requires Jamie’s separate confirmation and is recorded with returned page versions.</p></article>
           </div>
         </div>
       </section>
@@ -230,7 +263,7 @@
             <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
             <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
             <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
-            <article><span>8</span><div><h3>Use approved connected evidence</h3><p>Open <strong>Connections</strong> to test and save the private Confluence account, assign the Internal and Methodology spaces, and deliberately synchronise their pages for the current server session. Connected content is evidence, not instruction or approval.</p></div></article>
+            <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise read-only evidence or preview a controlled Methodology and Internal page tree. Documentation writes require a reviewed page plan and Jamie Peppard’s exact confirmation; they never create methodology approval or delete a page.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>

@@ -12,11 +12,12 @@ function inputError(message) {
 function upstreamError(status, fallback) {
   const messages = {
     401: "Confluence rejected the account email or API token.",
-    403: "The Confluence account does not have the required read permission.",
+    403: "The Confluence account does not have the permission required for this action.",
     404: "The Confluence site or requested resource could not be found.",
+    409: "Confluence reported a version conflict. Refresh the publication preview before trying again.",
     429: "Confluence is temporarily rate limiting the Workbench. Try again shortly."
   };
-  return Object.assign(new Error(messages[status] || fallback), { status: status === 429 ? 429 : 502 });
+  return Object.assign(new Error(messages[status] || fallback), { status: status === 409 ? 409 : status === 429 ? 429 : 502 });
 }
 
 export function normaliseAtlassianSiteUrl(value) {
@@ -60,6 +61,13 @@ function requestHeaders(credentials) {
   return {
     Accept: "application/json",
     Authorization: `Basic ${Buffer.from(`${credentials.accountEmail}:${credentials.apiToken}`, "utf8").toString("base64")}`
+  };
+}
+
+function writeHeaders(credentials) {
+  return {
+    ...requestHeaders(credentials),
+    "Content-Type": "application/json"
   };
 }
 
@@ -238,6 +246,233 @@ export async function synchroniseConfluencePages(storedConnection, { fetchImpl =
   });
 }
 
+function publicationConnection(storedConnection) {
+  const credentials = validateConfluenceCredentials(storedConnection);
+  const cloudId = String(storedConnection.cloudId || "");
+  if (!cloudId) throw inputError("The saved connection is missing its Cloud ID. Test and save it again.");
+  if (!storedConnection.internalSpace?.id || !storedConnection.methodologySpace?.id) {
+    throw inputError("Choose and save both Confluence spaces before preparing a publication.");
+  }
+  return {
+    ...credentials,
+    cloudId,
+    apiBaseUrl: `${ATLASSIAN_API_ORIGIN}/ex/confluence/${encodeURIComponent(cloudId)}`,
+    internalSpace: storedConnection.internalSpace,
+    methodologySpace: storedConnection.methodologySpace
+  };
+}
+
+async function publicationPagesForSpace(connection, space, fetchImpl) {
+  return (await listPaged({
+    fetchImpl,
+    baseUrl: connection.apiBaseUrl,
+    path: `/wiki/api/v2/spaces/${encodeURIComponent(space.id)}/pages`,
+    credentials: connection,
+    maximum: 1000,
+    parameters: { status: "current" }
+  })).map((page) => ({
+    id: String(page.id || ""),
+    title: String(page.title || ""),
+    spaceId: String(page.spaceId || space.id),
+    parentId: page.parentId ? String(page.parentId) : null,
+    status: String(page.status || "current"),
+    version: Number(page.version?.number || 0),
+    webPath: String(page._links?.webui || "")
+  })).filter((page) => page.id);
+}
+
+function mappingFor(mappings, key) {
+  return mappings.find((mapping) => mapping.itemKey === key || mapping.item_key === key) || null;
+}
+
+export async function inspectConfluencePublication(storedConnection, plan, mappings = [], { fetchImpl = fetch } = {}) {
+  const connection = publicationConnection(storedConnection);
+  const spaces = {
+    internal: connection.internalSpace,
+    methodology: connection.methodologySpace
+  };
+  const [internalPages, methodologyPages] = await Promise.all([
+    publicationPagesForSpace(connection, spaces.internal, fetchImpl),
+    publicationPagesForSpace(connection, spaces.methodology, fetchImpl)
+  ]);
+  const pagesByRole = { internal: internalPages, methodology: methodologyPages };
+  const inspected = plan.items.map((item) => {
+    const mapping = mappingFor(mappings, item.key);
+    const pages = pagesByRole[item.role] || [];
+    const remote = mapping
+      ? pages.find((page) => page.id === String(mapping.confluencePageId || mapping.confluence_page_id || ""))
+      : null;
+    const titleMatch = pages.find((page) => page.title.toLocaleLowerCase("en-GB") === item.title.toLocaleLowerCase("en-GB"));
+    let action = "create";
+    let reason = "No managed Confluence page exists for this controlled item.";
+    let conflictType = "";
+    if (mapping && !remote) {
+      action = "conflict";
+      conflictType = "managed-page-missing";
+      reason = "The previously managed Confluence page is missing or is no longer visible.";
+    } else if (mapping && remote) {
+      const mappedSpace = String(mapping.confluenceSpaceId || mapping.confluence_space_id || "");
+      const mappedVersion = Number(mapping.confluenceVersion || mapping.confluence_version || 0);
+      const mappedHash = String(mapping.sourceHash || mapping.source_hash || "");
+      const mappedTitle = String(mapping.confluenceTitle || mapping.confluence_title || "");
+      if (remote.spaceId !== String(spaces[item.role].id) || (mappedSpace && mappedSpace !== remote.spaceId)) {
+        action = "conflict";
+        conflictType = "managed-page-moved";
+        reason = "The managed page is no longer in its controlled Confluence space.";
+      } else if (mappedVersion && remote.version !== mappedVersion) {
+        action = "conflict";
+        conflictType = "managed-page-version";
+        reason = "The Confluence page changed after the last Workbench publication. It will not be overwritten.";
+      } else if (mappedHash === item.sourceHash && mappedTitle === item.title) {
+        action = "unchanged";
+        reason = "The repository source and tracked Confluence version are unchanged.";
+      } else {
+        action = "update";
+        reason = "The controlled repository source changed and the tracked Confluence page has not changed independently.";
+      }
+    } else if (titleMatch) {
+      action = "conflict";
+      conflictType = "unmanaged-title";
+      reason = "A page with this title already exists but is not managed by this Workbench.";
+    }
+    return {
+      ...item,
+      action,
+      conflictType,
+      reason,
+      spaceId: String(spaces[item.role].id),
+      spaceName: spaces[item.role].name,
+      confluencePageId: remote?.id || "",
+      confluenceVersion: remote?.version || 0,
+      confluenceParentId: remote?.parentId || null,
+      webPath: remote?.webPath || "",
+      webUrl: remote?.webPath ? pageWebUrl(connection, { _links: { webui: remote.webPath } }) : ""
+    };
+  });
+  const byKey = new Map(inspected.map((item) => [item.key, item]));
+  for (const item of inspected) {
+    if (!item.parentKey) continue;
+    const parent = byKey.get(item.parentKey);
+    if (parent?.action === "conflict") {
+      item.action = "conflict";
+      item.conflictType = "parent-conflict";
+      item.reason = `The parent page “${parent.title}” has a conflict that must be resolved first.`;
+    }
+  }
+  const summary = Object.fromEntries(["create", "update", "unchanged", "conflict"].map((action) => [
+    action,
+    inspected.filter((item) => item.action === action).length
+  ]));
+  return {
+    ...plan,
+    spaces,
+    summary,
+    publishable: summary.conflict === 0,
+    items: inspected
+  };
+}
+
+function pageWebUrl(connection, page) {
+  const path = String(page?._links?.webui || "");
+  if (!path) return "";
+  try {
+    if (path.startsWith("/wiki/")) return new URL(path, connection.siteUrl).toString();
+    const base = String(page?._links?.base || `${connection.siteUrl}/wiki/`).replace(/\/?$/, "/");
+    return new URL(path.replace(/^\/+/, ""), base).toString();
+  }
+  catch { return ""; }
+}
+
+async function writePublicationPage(connection, item, parentId, fetchImpl) {
+  const versionMessage = `Operations Automated source ${item.sourcePath || item.key}; ${item.sourceStatus}; ${item.sourceHash}`;
+  if (item.action === "create") {
+    const payload = {
+      spaceId: String(item.spaceId),
+      status: "current",
+      title: item.title,
+      body: { representation: "storage", value: item.bodyStorage }
+    };
+    if (parentId) payload.parentId = String(parentId);
+    const response = await atlassianFetch(fetchImpl, `${connection.apiBaseUrl}/wiki/api/v2/pages`, {
+      method: "POST",
+      headers: writeHeaders(connection),
+      body: JSON.stringify(payload)
+    });
+    return readJsonResponse(response, "Confluence could not create the controlled reading page.");
+  }
+  const payload = {
+    id: String(item.confluencePageId),
+    status: "current",
+    title: item.title,
+    body: { representation: "storage", value: item.bodyStorage },
+    version: {
+      number: Number(item.confluenceVersion) + 1,
+      message: versionMessage.slice(0, 255)
+    }
+  };
+  if (parentId) payload.parentId = String(parentId);
+  const response = await atlassianFetch(fetchImpl, `${connection.apiBaseUrl}/wiki/api/v2/pages/${encodeURIComponent(item.confluencePageId)}`, {
+    method: "PUT",
+    headers: writeHeaders(connection),
+    body: JSON.stringify(payload)
+  });
+  return readJsonResponse(response, "Confluence could not update the controlled reading page.");
+}
+
+export async function publishConfluencePublication(
+  storedConnection,
+  inspectedPlan,
+  { fetchImpl = fetch, onPublished = async () => {} } = {}
+) {
+  if (!inspectedPlan?.publishable || inspectedPlan.items.some((item) => item.action === "conflict")) {
+    throw Object.assign(new Error("Resolve every Confluence conflict and refresh the preview before publishing."), { status: 409 });
+  }
+  const connection = publicationConnection(storedConnection);
+  const results = new Map();
+  const published = [];
+  for (const item of inspectedPlan.items) {
+    const parent = item.parentKey ? results.get(item.parentKey) : null;
+    const parentId = parent?.confluencePageId || null;
+    if (item.parentKey && !parentId) {
+      throw Object.assign(new Error(`The parent page for “${item.title}” was not available.`), { status: 409 });
+    }
+    if (item.action === "unchanged") {
+      const unchanged = {
+        ...item,
+        outcome: "unchanged",
+        confluencePageId: item.confluencePageId,
+        confluenceVersion: item.confluenceVersion,
+        webUrl: item.webPath ? pageWebUrl(connection, { _links: { webui: item.webPath } }) : ""
+      };
+      results.set(item.key, unchanged);
+      published.push(unchanged);
+      continue;
+    }
+    const page = await writePublicationPage(connection, item, parentId, fetchImpl);
+    const result = {
+      ...item,
+      outcome: item.action === "create" ? "created" : "updated",
+      confluencePageId: String(page.id || item.confluencePageId || ""),
+      confluenceVersion: Number(page.version?.number || (item.action === "update" ? item.confluenceVersion + 1 : 1)),
+      confluenceParentId: page.parentId ? String(page.parentId) : parentId,
+      webUrl: pageWebUrl(connection, page)
+    };
+    if (!result.confluencePageId) {
+      throw Object.assign(new Error("Confluence created or updated a page without returning its identifier."), { status: 502 });
+    }
+    results.set(item.key, result);
+    published.push(result);
+    await onPublished(result);
+  }
+  return {
+    publishedAt: new Date().toISOString(),
+    created: published.filter((item) => item.outcome === "created").length,
+    updated: published.filter((item) => item.outcome === "updated").length,
+    unchanged: published.filter((item) => item.outcome === "unchanged").length,
+    items: published
+  };
+}
+
 export function maskEmail(value) {
   const [name, domain] = String(value || "").split("@");
   if (!name || !domain) return "";
@@ -256,8 +491,11 @@ export function publicConnectionMetadata(connection, syncState = {}) {
     createdAt: connection.createdAt,
     updatedAt: connection.updatedAt,
     lastVerifiedAt: connection.lastVerifiedAt,
-    readOnly: true,
-    writeEnabled: false,
+    readOnly: false,
+    writeEnabled: true,
+    writeCapability: "approval-gated-controlled-pages",
+    automaticWrites: false,
+    deleteEnabled: false,
     syncedDocuments: Number(syncState.documentCount || 0),
     lastSyncedAt: syncState.lastSyncedAt || null,
     contentPersistence: "server-memory-only"

@@ -20,7 +20,8 @@ const state = {
   repositoryMode: "manual",
   capture: null,
   confluence: null,
-  confluenceTest: null
+  confluenceTest: null,
+  confluencePublicationPlan: null
 };
 
 async function request(path, options = {}) {
@@ -604,9 +605,11 @@ async function loadUsage() {
 function renderConnectionStatus(value) {
   const area = $("#confluence-connection-status");
   const actions = $("#confluence-saved-actions");
+  const publicationPanel = $("#confluence-publication");
   const record = value?.connection;
   state.confluence = value;
   actions.hidden = !value?.configured;
+  publicationPanel.hidden = !value?.configured;
   if (!value?.storageAvailable) {
     area.className = "connection-status error";
     area.innerHTML = `<strong>Encrypted storage is unavailable.</strong><p>${escapeHtml(value?.storageError || "This private connection release requires the Workbench to run under your Windows account.")}</p>`;
@@ -634,11 +637,183 @@ function renderConnectionStatus(value) {
     </dl>
     <p>${record.lastSyncedAt ? `Last synchronised ${escapeHtml(formatDate(record.lastSyncedAt))}.` : "Select Synchronise read-only evidence when you want these spaces to influence Workbench answers."}</p>`;
   if (!$("#confluence-form").siteUrl.value) $("#confluence-form").siteUrl.value = record.siteUrl || "";
+  renderPublicationSummary(value.publication);
 }
 
 async function loadConnections() {
   const value = await request("/api/connections");
   renderConnectionStatus(value.confluence);
+}
+
+function renderPublicationSummary(publication) {
+  if (!publication || state.confluencePublicationPlan) return;
+  const area = $("#confluence-publication-status");
+  const lastRun = publication.lastRun;
+  const pending = Number(publication.pendingMethodologyReleases || 0);
+  const managed = Number(publication.managedPages || 0);
+  const updateNeeded = Boolean(publication.repositoryAheadOfConfluence);
+  area.className = "publication-status";
+  if (!lastRun) {
+    area.innerHTML = `
+      <strong>No documentation publication has been recorded yet.</strong>
+      <p>${pending ? `${pending} implemented methodology release${pending === 1 ? " is" : "s are"} waiting for a reviewed Confluence update.` : "Prepare the first preview to create the readable page tree."}</p>`;
+    return;
+  }
+  const result = lastRun.status === "completed"
+    ? `${lastRun.created_count} created, ${lastRun.updated_count} updated and ${lastRun.unchanged_count} unchanged`
+    : `Last run ${escapeHtml(lastRun.status)}${lastRun.failure_message ? `: ${escapeHtml(lastRun.failure_message)}` : ""}`;
+  area.innerHTML = `
+    <strong>${managed} Workbench-managed Confluence page${managed === 1 ? "" : "s"}.</strong>
+    <p>${result}. ${pending ? `${pending} later release${pending === 1 ? " requires" : "s require"} publication review.` : updateNeeded ? "The current repository commit has not yet been reconciled with Confluence." : "Confluence is reconciled with the current repository commit."}</p>`;
+}
+
+function publicationActionLabel(action) {
+  return {
+    create: "Create",
+    update: "Update",
+    unchanged: "Unchanged",
+    conflict: "Conflict"
+  }[action] || action;
+}
+
+function renderConfluencePublicationPlan(plan) {
+  state.confluencePublicationPlan = plan;
+  const area = $("#confluence-publication-status");
+  const target = $("#confluence-publication-plan");
+  const form = $("#confluence-publication-approval");
+  const summary = plan.summary || {};
+  const groups = [
+    ["methodology", "Methodology space"],
+    ["internal", "Internal space"]
+  ];
+  area.className = `publication-status ${summary.conflict ? "error" : "connected"}`;
+  area.innerHTML = `
+    <strong>${plan.items.length} controlled pages reviewed against Confluence.</strong>
+    <p>${Number(summary.create || 0)} to create · ${Number(summary.update || 0)} to update · ${Number(summary.unchanged || 0)} unchanged · ${Number(summary.conflict || 0)} conflicts.</p>
+    <p>Source: ${escapeHtml(plan.sourceBranch)} at ${escapeHtml(String(plan.sourceCommit || "").slice(0, 12))}. No write has happened.</p>`;
+  const blockers = Array.isArray(plan.blockers) && plan.blockers.length
+    ? `<div class="publication-blockers"><strong>Publication is blocked</strong>${plan.blockers.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}</div>`
+    : "";
+  target.innerHTML = `
+    ${blockers}
+    <div class="publication-summary-grid">
+      <article><span>Create</span><strong>${Number(summary.create || 0)}</strong></article>
+      <article><span>Update</span><strong>${Number(summary.update || 0)}</strong></article>
+      <article><span>Unchanged</span><strong>${Number(summary.unchanged || 0)}</strong></article>
+      <article class="${summary.conflict ? "has-conflict" : ""}"><span>Conflict</span><strong>${Number(summary.conflict || 0)}</strong></article>
+    </div>
+    ${groups.map(([role, label]) => {
+      const items = plan.items.filter((item) => item.role === role);
+      return `<details class="publication-tree">
+        <summary><strong>${label}</strong><span>${items.length} pages</span></summary>
+        <div>${items.map((item) => `
+          <article class="publication-item action-${escapeHtml(item.action)}">
+            <span class="publication-action">${escapeHtml(publicationActionLabel(item.action))}</span>
+            <div>
+              <strong>${escapeHtml(item.title)}</strong>
+              <p>${escapeHtml(item.reason)}</p>
+              <small>${escapeHtml(item.sourcePath || "Generated navigation")} · ${escapeHtml(item.sourceStatus || "navigation")}</small>
+              ${item.action === "conflict" && item.webUrl ? `<a class="publication-conflict-link" href="${escapeHtml(item.webUrl)}" target="_blank" rel="noreferrer">Open the changed Confluence page</a>` : ""}
+              ${item.conflictType === "managed-page-version" ? `<button class="ghost publication-conflict-action" data-reapply-conflict="${escapeHtml(item.key)}" type="button">Use reviewed Git copy</button>` : ""}
+            </div>
+          </article>`).join("")}</div>
+      </details>`;
+    }).join("")}
+    <p class="confirmation-phrase">Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong></p>`;
+  form.hidden = !plan.publishable;
+  form.reset();
+  form.actor.value = "Jamie Peppard";
+  form.confirmation.placeholder = plan.confirmationPhrase;
+}
+
+async function previewConfluencePublication() {
+  const button = $("#preview-confluence-publication");
+  button.disabled = true;
+  button.textContent = "Comparing repository and Confluence…";
+  try {
+    const result = await request("/api/connections/confluence/publication-plan", {
+      method: "POST",
+      body: "{}"
+    });
+    renderConfluencePublicationPlan(result.plan);
+    toast("Publication preview ready. No Confluence page was changed.");
+  } catch (error) {
+    $("#confluence-publication-status").className = "publication-status error";
+    $("#confluence-publication-status").innerHTML = `<strong>The documentation preview could not be prepared.</strong><p>${escapeHtml(error.message)}</p>`;
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Preview documentation update";
+  }
+}
+
+async function publishConfluenceDocumentation(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const plan = state.confluencePublicationPlan;
+  if (!plan?.publishable) return toast("Prepare a publishable preview first.", true);
+  const values = Object.fromEntries(new FormData(form));
+  const button = $("#publish-confluence");
+  button.disabled = true;
+  button.textContent = "Publishing reviewed pages…";
+  try {
+    const result = await request("/api/connections/confluence/publish", {
+      method: "POST",
+      body: JSON.stringify({
+        planId: plan.id,
+        actor: values.actor,
+        reviewed: values.reviewed === "on",
+        confirmation: values.confirmation
+      })
+    });
+    const links = result.items.filter((item) => item.webUrl).slice(0, 8);
+    $("#confluence-publication-status").className = "publication-status connected";
+    $("#confluence-publication-status").innerHTML = `
+      <strong>Documentation publication completed.</strong>
+      <p>${result.created} created · ${result.updated} updated · ${result.unchanged} unchanged · ${result.pagesDeleted} deleted.</p>
+      <p>Source commit ${escapeHtml(String(result.sourceCommitSha || "").slice(0, 12))}; run ${escapeHtml(result.runId)}.</p>`;
+    $("#confluence-publication-plan").innerHTML = links.length
+      ? `<div class="publication-links"><strong>Open published pages</strong>${links.map((item) => `<a href="${escapeHtml(item.webUrl)}" target="_blank" rel="noreferrer">${escapeHtml(item.title)}</a>`).join("")}</div>`
+      : "";
+    form.hidden = true;
+    state.confluencePublicationPlan = null;
+    toast("Reviewed methodology documentation published to Confluence.");
+  } catch (error) {
+    $("#confluence-publication-status").className = "publication-status error";
+    $("#confluence-publication-status").innerHTML = `<strong>Publication stopped safely.</strong><p>${escapeHtml(error.message)}</p><p>Prepare a new preview before retrying.</p>`;
+    toast(error.message, true);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Publish reviewed pages";
+  }
+}
+
+async function reapplyGitCopyAfterConflict(itemKey) {
+  const plan = state.confluencePublicationPlan;
+  const item = plan?.items.find((candidate) => candidate.key === itemKey);
+  if (!plan || !item || item.conflictType !== "managed-page-version") return;
+  const accepted = window.confirm(
+    `Review “${item.title}” in Confluence and the controlled Git source before continuing.\n\nThis step does not write. It prepares the Git reading copy to replace the independently edited Confluence page in a later, separately confirmed publication.`
+  );
+  if (!accepted) return;
+  const confirmation = window.prompt(`Type this exactly:\n${plan.conflictReapplyPhrase}`);
+  if (confirmation === null) return;
+  try {
+    const result = await request("/api/connections/confluence/publication-conflicts/reapply", {
+      method: "POST",
+      body: JSON.stringify({
+        planId: plan.id,
+        itemKey,
+        actor: "Jamie Peppard",
+        reviewed: true,
+        confirmation
+      })
+    });
+    toast(result.message);
+    await previewConfluencePublication();
+  } catch (error) {
+    toast(error.message, true);
+  }
 }
 
 function populateConfluenceSpaces(spaces) {
@@ -697,7 +872,10 @@ async function saveConfluence() {
     });
     form.apiToken.value = "";
     state.confluenceTest = null;
+    state.confluencePublicationPlan = null;
     $("#confluence-space-step").hidden = true;
+    $("#confluence-publication-plan").innerHTML = "";
+    $("#confluence-publication-approval").hidden = true;
     renderConnectionStatus({
       storageAvailable: true,
       configured: result.configured,
@@ -754,6 +932,9 @@ async function removeConfluence() {
     $("#confluence-form").reset();
     $("#confluence-space-step").hidden = true;
     state.confluenceTest = null;
+    state.confluencePublicationPlan = null;
+    $("#confluence-publication-plan").innerHTML = "";
+    $("#confluence-publication-approval").hidden = true;
     renderConnectionStatus({ storageAvailable: true, configured: false, connection: null });
     toast(result.message);
   } catch (error) {
@@ -1000,6 +1181,12 @@ $("#save-confluence").addEventListener("click", saveConfluence);
 $("#verify-confluence").addEventListener("click", verifyConfluence);
 $("#sync-confluence").addEventListener("click", synchroniseConfluence);
 $("#remove-confluence").addEventListener("click", removeConfluence);
+$("#preview-confluence-publication").addEventListener("click", previewConfluencePublication);
+$("#confluence-publication-approval").addEventListener("submit", publishConfluenceDocumentation);
+$("#confluence-publication-plan").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-reapply-conflict]");
+  if (button) reapplyGitCopyAfterConflict(button.dataset.reapplyConflict);
+});
 $("#export-button").addEventListener("click", async () => {
   if (!state.conversation) return toast("There is no conversation to export.", true);
   const value = await request("/api/export", {

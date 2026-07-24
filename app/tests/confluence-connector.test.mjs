@@ -1,5 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import {
   confluenceStorageToText,
   normaliseAtlassianSiteUrl,
@@ -111,7 +113,10 @@ test("public connection metadata masks the account and never exposes the token",
   }, { documentCount: 4, lastSyncedAt: "2026-07-24T12:00:00.000Z" });
   assert.equal(value.accountEmailMasked, "s******@example.com");
   assert.equal(value.syncedDocuments, 4);
-  assert.equal(value.writeEnabled, false);
+  assert.equal(value.writeEnabled, true);
+  assert.equal(value.writeCapability, "approval-gated-controlled-pages");
+  assert.equal(value.automaticWrites, false);
+  assert.equal(value.deleteEnabled, false);
   assert.doesNotMatch(JSON.stringify(value), /must-not-leak|service@example\.com/);
 });
 
@@ -143,4 +148,10 @@ test("credential store passes secrets through stdin-oriented runner and uses Loc
   await store.delete();
   assert.deepEqual(calls.map((call) => call.operation), ["Set", "Get", "Delete"]);
   assert.match(credentialStorePath({ LOCALAPPDATA: "C:\\Users\\Jamie\\AppData\\Local" }), /OperationsAutomated[\\/]Workbench[\\/]confluence\.credentials$/);
+});
+
+test("Windows credential helper reads and writes JSON as UTF-8", () => {
+  const helper = readFileSync(fileURLToPath(new URL("../secure-store.ps1", import.meta.url)), "utf8");
+  assert.match(helper, /\[Console\]::InputEncoding = \$utf8/);
+  assert.match(helper, /\[Console\]::OutputEncoding = \$utf8/);
 });

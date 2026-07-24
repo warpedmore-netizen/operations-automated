@@ -44,7 +44,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Cost and usage", "Settings", "Connections", "How this works"]) assert.match(html, new RegExp(label));
@@ -78,11 +78,15 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /No automatic repository writes/i);
   assert.match(html, /Non-confidential project material only/i);
   assert.match(html, /Not approved/i);
-  assert.match(html, /Private · read-only/i);
+  assert.match(html, /Private · governed publication/i);
   assert.match(html, /Windows user-level encryption/i);
-  assert.match(html, /It cannot write to Confluence/i);
-  assert.match(html, /only relevant synchronised excerpts may be sent/i);
-  assert.match(html, /Evidence cannot approve change/i);
+  assert.match(html, /never publishes automatically or deletes a Confluence page/i);
+  assert.match(html, /Git status remains authoritative/i);
+  assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
+  assert.match(html, /cannot approve a methodology change/i);
+  assert.match(html, /Type the confirmation shown above/i);
+  assert.match(appSource, /Use reviewed Git copy/i);
+  assert.match(appSource, /publication-conflicts\/reapply/i);
 });
 
 test("the interface source contains no mojibake or placeholder attachment wording", () => {
