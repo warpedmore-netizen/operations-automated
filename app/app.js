@@ -1,299 +1,980 @@
-(function runApplication(engine, storageApi) {
-  "use strict";
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+const state = {
+  conversation: null,
+  conversations: [],
+  preview: null,
+  pending: null,
+  settings: null,
+  apiConfigured: false,
+  attachments: [],
+  recording: null,
+  recordingStream: null,
+  recordingChunks: [],
+  recordingTimer: null,
+  recordingClock: null,
+  recordingStartedAt: null,
+  proposals: [],
+  selectedProposalId: null,
+  currentUser: "Jamie Peppard",
+  repositoryMode: "manual",
+  capture: null
+};
 
-  if (!engine || !storageApi) throw new Error("OPERATE application dependencies did not load");
+async function request(path, options = {}) {
+  const response = await fetch(path, {
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+    ...options
+  });
+  const value = await response.json().catch(() => ({}));
+  if (!response.ok) throw Object.assign(new Error(value.error || "Request failed."), { status: response.status, value });
+  return value;
+}
 
-  const byId = (id) => document.getElementById(id);
-  const stored = storageApi.load(window.localStorage);
-  let workspace;
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
+  })[character]);
+}
+
+function markdown(value) {
+  return escapeHtml(value)
+    .replace(/^### (.+)$/gm, "<h4>$1</h4>")
+    .replace(/^## (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^# (.+)$/gm, "<h2>$1</h2>")
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`(.+?)`/g, "<code>$1</code>")
+    .replace(/_([^_\n]+)_/g, "<em>$1</em>")
+    .replace(/^- \[ \] (.+)$/gm, '<li class="check-item"><span aria-hidden="true">&#9633;</span> $1</li>')
+    .replace(/^- (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li(?: class="check-item")?>.*<\/li>\n?)+/g, "<ul>$&</ul>")
+    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
+    .replace(/\n\n/g, "</p><p>")
+    .replace(/\n/g, "<br>");
+}
+
+function toast(message, error = false) {
+  const element = $("#toast");
+  element.textContent = message;
+  element.classList.toggle("error", error);
+  element.classList.add("visible");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => element.classList.remove("visible"), 3200);
+}
+
+function setProcessing(active, title = "Working on your request", detail = "Retrieving controlled evidence...") {
+  $("#processing-state").hidden = !active;
+  $("#processing-title").textContent = title;
+  $("#processing-detail").textContent = detail;
+  if (active) $("#processing-state").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function formatCost(value) {
+  return `$${Number(value || 0).toFixed(4)} USD`;
+}
+
+function formatDate(value) {
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
+
+async function ensureConversation() {
+  if (state.conversation) return state.conversation;
+  const value = await request("/api/conversations", {
+    method: "POST",
+    body: JSON.stringify({ workspace: $("#workspace").value, title: "New conversation" })
+  });
+  state.conversation = value.conversation;
+  await loadConversationList();
+  return state.conversation;
+}
+
+async function loadConversation(id) {
+  state.conversation = (await request(`/api/conversations/${id}`)).conversation;
+  $("#workspace").value = state.conversation.workspace;
+  $("#workspace-label").textContent = $("#workspace").selectedOptions[0].textContent;
+  renderConversation();
+  switchView("conversation");
+}
+
+async function loadConversationList() {
+  state.conversations = (await request("/api/conversations")).conversations;
+  $("#conversation-list").innerHTML = state.conversations.length
+    ? state.conversations.slice(0, 10).map((conversation) => `
+      <button class="conversation-link ${state.conversation?.id === conversation.id ? "current" : ""}" data-conversation-id="${conversation.id}">
+        <strong>${escapeHtml(conversation.title)}</strong>
+        <span>${conversation.message_count || 0} messages &middot; ${escapeHtml(formatDate(conversation.updated_at))}</span>
+      </button>`).join("")
+    : '<p class="rail-empty">No conversations yet.</p>';
+}
+
+const feedbackOptions = [
+  ["useful", "Helpful"],
+  ["correct-interpretation", "You understood me"],
+  ["needs-clarification", "You misunderstood me"],
+  ["challenge-conclusion", "I disagree"],
+  ["add-evidence", "I have more information"],
+  ["record-methodology-feedback", "Suggest a change to the method"]
+];
+
+const challengePrompts = {
+  balanced: "Send me one useful challenge about the Operations Automated methodology. Choose the unresolved tension with the greatest decision value. Begin with a concrete situation, briefly give the strongest provisional Operations Automated response, say what you question in that response, and ask me one primary plain-language question. Do not give me a questionnaire. Treat my answer as evidence, not approval.",
+  principles: "Challenge one Operations Automated principle with a concrete situation where two reasonable principles, values or stakeholder needs conflict. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Do not give me a questionnaire. Treat my answer as evidence, not approval.",
+  "ai-suitability": "Challenge whether the Operations Automated methodology is genuinely suitable for AI to interpret and apply. Use a concrete situation where machine-readable guidance, human-readable meaning, evidence, judgement and authority could diverge. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
+  "manual-work": "Challenge how Operations Automated decides that work should remain manual. Use a concrete situation involving human judgement, facilitation, empathy, tacit knowledge or physical work that cannot responsibly be automated yet. Briefly give the strongest provisional response, identify what further thinking is needed, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
+  "delivery-capability": "Challenge how Operations Automated should work with development teams while building lasting internal capability. Use a concrete situation involving product ownership, technical delivery, knowledge transfer and the organisation's ability to operate the result. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Treat my answer as evidence, not approval."
+};
+
+function feedbackControls(messageId) {
+  return `<details class="feedback-panel" data-message="${messageId}">
+    <summary>Was this useful?</summary>
+    <p>Save a private reaction so it is not lost. Nothing changes automatically.</p>
+    <div class="feedback-controls">
+      ${feedbackOptions.map(([value, label]) => `<button data-feedback="${value}">${label}</button>`).join("")}
+    </div>
+  </details>`;
+}
+
+function userFacingAnswer(value) {
+  let text = String(value || "");
+  for (const heading of ["Current understanding", "What the controlled material supports", "Sources used", "Uncertainty and control"]) {
+    text = text.replace(new RegExp(`\\n?### ${heading}\\s*[\\s\\S]*?(?=\\n### |\\n## |$)`, "gi"), "");
+  }
+  return text
+    .replace(/^## (?:Repository-grounded answer|Detailed grounded analysis|Concise grounded summary)\s*/i, "")
+    .replace(/_\[[^\]]+\.(?:md|markdown|txt|json|csv)\]_/gi, "")
+    .replace(/`[^`\n]*\.(?:md|markdown|txt|json|csv)`/gi, "the internal guidance")
+    .replace(/### Recommended next action/gi, "## What to do next")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function technicalDetails(message, sources) {
+  const uniqueSources = [...new Map(sources.map((source) => [`${source.path}:${source.hash}`, source])).values()];
+  const execution = message.metadata?.localSynthesis ? "Local fallback" : "Connected AI";
+  if (!uniqueSources.length && !message.metadata) return "";
+  return `<details class="answer-details">
+    <summary>Behind this answer</summary>
+    <div class="answer-detail-grid">
+      <div><span>Answer method</span><strong>${execution}</strong></div>
+      <div><span>Internal references</span><strong>${uniqueSources.length}</strong></div>
+    </div>
+    ${uniqueSources.length ? `<ul>${uniqueSources.map((source) => `<li><span>${escapeHtml(source.path)}</span><em class="${source.status === "approved" ? "approved" : "proposed"}">${escapeHtml(source.status)}</em></li>`).join("")}</ul>` : "<p>No internal reference was attached to this answer.</p>"}
+  </details>`;
+}
+
+function renderConversation() {
+  const messages = state.conversation?.messages || [];
+  $("#welcome").hidden = messages.length > 0;
+  $("#conversation-title").textContent = state.conversation?.title || "New conversation";
+  $("#messages").innerHTML = messages.map((message) => {
+    const sources = message.metadata?.sources || [];
+    return `<article class="message ${message.role}">
+      <div class="message-role">${message.role === "user" ? "You" : "OA"}</div>
+      <div class="message-body">
+        ${message.role === "assistant" ? markdown(userFacingAnswer(message.working_text)) : `<p>${escapeHtml(message.working_text)}</p>`}
+        ${message.role === "assistant" ? technicalDetails(message, sources) + feedbackControls(message.id) : ""}
+      </div>
+    </article>`;
+  }).join("");
+  $("#messages").scrollTop = $("#messages").scrollHeight;
+  loadConversationList().catch(() => {});
+}
+
+function renderPreview(preview, target = "panel") {
+  const sources = preview.sources || [];
+  const execution = preview.executionMode || `Tier ${preview.route.tier}`;
+  if (target === "panel") {
+    $("#context-empty").hidden = true;
+    $("#context-content").hidden = false;
+    $("#classification").textContent = preview.classification;
+    $("#route-tier").textContent = execution;
+    $("#context-size").textContent = `~${preview.estimatedContextTokens.toLocaleString()} tokens`;
+    $("#estimated-cost").textContent = preview.estimatedCost ? formatCost(preview.estimatedCost) : "$0 local";
+    $("#route-reason").textContent = preview.providerAvailable
+      ? preview.route.reason
+      : `${preview.route.reason}; processed locally without an API call`;
+    $("#source-count").textContent = `${sources.length} selected`;
+    $("#sources").innerHTML = sources.map((source) => `<article>
+      <div><strong>${escapeHtml(source.path.split("/").at(-1))}</strong><span class="${source.status === "approved" ? "approved" : "proposed"}">${escapeHtml(source.status)}</span></div>
+      <code>${escapeHtml(source.path)}</code><p>${escapeHtml(source.reason)}</p>
+    </article>`).join("") || "<p>No relevant source selected.</p>";
+    return;
+  }
+  const attachmentLine = state.attachments.length
+    ? `<h3>Attached evidence</h3>${state.attachments.map((item) => `<p><code>${escapeHtml(item.filename)}</code> &middot; extracted once &middot; ${item.size.toLocaleString()} bytes</p>`).join("")}`
+    : "";
+  const budgetMessage = preview.monthlyHardBlocked
+    ? `<p class="budget-block"><strong>Monthly limit reached.</strong> This paid request cannot be sent unless you raise the limit in Settings.</p>`
+    : preview.monthlySoftWarning
+      ? `<p class="budget-warning"><strong>Soft budget warning.</strong> This request would bring estimated monthly usage to ${formatCost(preview.projectedMonthlyUsage)}. You can still confirm it.</p>`
+      : `<p class="budget-ok">Estimated cost for this request: <strong>${preview.estimatedCost ? formatCost(preview.estimatedCost) : "$0 local"}</strong>.</p>`;
+  $("#dialog-preview").innerHTML = `
+    <div class="send-summary">
+      <strong>You will get a plain-language answer.</strong>
+      <p>Your message has been checked and the supporting information will stay behind the answer unless you choose to view it.</p>
+    </div>
+    ${budgetMessage}
+    ${attachmentLine}
+    <details class="preview-details">
+      <summary>Technical request details</summary>
+      <div class="preview-grid">
+        <div><span>Workspace</span><strong>${escapeHtml(preview.workspace)}</strong></div>
+        <div><span>Execution</span><strong>${escapeHtml(execution)}</strong></div>
+        <div><span>Internal context</span><strong>~${preview.estimatedContextTokens.toLocaleString()} tokens</strong></div>
+        <div><span>Internal references</span><strong>${sources.length}</strong></div>
+      </div>
+      ${sources.map((source) => `<p><code>${escapeHtml(source.path)}</code> &middot; ${escapeHtml(source.status)}</p>`).join("") || "<p>No internal reference selected.</p>"}
+    </details>`;
+}
+
+function attachmentPayload() {
+  return {
+    attachmentIds: state.attachments.map((item) => item.id),
+    attachmentText: state.attachments.map((item) => `# ${item.filename}\n${item.extractedText || item.extracted_text || ""}`).join("\n\n")
+  };
+}
+
+async function previewAndSend(text) {
+  setProcessing(true, "Preparing your request", "Selecting repository evidence and checking cost controls...");
+  $(".send-button").disabled = true;
   try {
-    workspace = stored ? engine.normaliseWorkspace(stored) : engine.createWorkspace();
-  } catch {
-    workspace = engine.createWorkspace();
+    const conversation = await ensureConversation();
+    const payload = {
+      conversationId: conversation.id,
+      text,
+      workspace: $("#workspace").value,
+      outputType: $("#output-type").value,
+      ...attachmentPayload()
+    };
+    state.pending = payload;
+    state.preview = await request("/api/context/preview", { method: "POST", body: JSON.stringify(payload) });
+    renderPreview(state.preview);
+    renderPreview(state.preview, "dialog");
+    $("#confirm-send").disabled = Boolean(state.preview.monthlyHardBlocked);
+    $("#preview-dialog").showModal();
+  } finally {
+    setProcessing(false);
+    $(".send-button").disabled = false;
   }
+}
 
-  let toastTimer;
+async function sendChallenge(focus = "balanced") {
+  const prompt = challengePrompts[focus] || challengePrompts.balanced;
+  switchView("conversation");
+  $("#workspace").value = "living-methodology";
+  $("#workspace-label").textContent = "Living methodology";
+  $("#output-type").value = "analysis";
+  $("#input").value = prompt;
+  await previewAndSend(prompt);
+}
 
-  function getPath(object, path) {
-    return path.split(".").reduce((value, key) => value?.[key], object);
-  }
-
-  function setPath(object, path, value) {
-    const parts = path.split(".");
-    const final = parts.pop();
-    const target = parts.reduce((current, key) => current[key], object);
-    target[final] = value;
-    workspace.updatedAt = new Date().toISOString();
-  }
-
-  function persist() {
-    const saved = storageApi.save(window.localStorage, workspace);
-    if (!saved) showToast("This browser could not save the workspace.", true);
-  }
-
-  function showToast(message, error = false) {
-    const toast = byId("toast");
-    toast.textContent = message;
-    toast.classList.toggle("error", error);
-    toast.classList.add("visible");
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove("visible"), 2800);
-  }
-
-  function formatDate(value) {
-    if (!value) return "";
-    return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;"
-    })[character]);
-  }
-
-  function renderBindings() {
-    for (const element of document.querySelectorAll("[data-bind]")) {
-      if (document.activeElement !== element) element.value = getPath(workspace, element.dataset.bind) ?? "";
-    }
-  }
-
-  function renderSidebar(assessment) {
-    byId("sidebar-title").textContent = workspace.project.title || "Untitled problem";
-    byId("sidebar-owner").textContent = workspace.project.owner ? `Owned by ${workspace.project.owner}` : "Owner not recorded";
-    byId("progress-value").textContent = `${assessment.progress}%`;
-    byId("progress-bar").style.width = `${assessment.progress}%`;
-
-    byId("stage-list").innerHTML = engine.STAGES.map((stage, index) => {
-      const state = index < assessment.stageIndex ? "past" : index === assessment.stageIndex ? "current" : "future";
-      const label = state === "past" ? "Done" : state === "current" ? "Now" : "";
-      return `<li class="stage-item ${state}" ${state === "current" ? 'aria-current="step"' : ""}>
-        <span class="stage-number">${String(index + 1).padStart(2, "0")}</span>
-        <span>${stage.name}</span>
-        <span class="stage-state">${label}</span>
-      </li>`;
-    }).join("");
-  }
-
-  function renderNextAction(assessment) {
-    byId("next-action-title").textContent = assessment.nextAction;
-    byId("next-action-detail").textContent = assessment.detail;
-    const badge = byId("control-badge");
-    badge.textContent = assessment.control;
-    badge.classList.toggle("human", assessment.control.includes("Human"));
-  }
-
-  function renderApprovalPanel(assessment) {
-    const approvalPanel = byId("approval-panel");
-    if (!assessment.gateLabel) {
-      approvalPanel.hidden = true;
-      approvalPanel.innerHTML = "";
-      return;
-    }
-
-    const approval = workspace.approvals[assessment.stage.id];
-    approvalPanel.hidden = false;
-    approvalPanel.innerHTML = approval?.approved
-      ? `<h3>Human approval recorded</h3><p>${escapeHtml(approval.label)} — ${escapeHtml(approval.approvedBy)} on ${escapeHtml(formatDate(approval.approvedAt))}.</p><button class="button button-danger" type="button" data-action="revoke-approval">Remove approval</button>`
-      : assessment.recordMissing.length
-        ? `<h3>Human control point pending</h3><p>Complete the stage evidence, decision and owner before asking a human to ${escapeHtml(assessment.gateLabel.toLowerCase())}.</p>`
-        : `<h3>Human control point</h3><p>${escapeHtml(assessment.gateLabel)}. AI cannot make this decision.</p><div class="approval-controls"><label class="field"><span>Authorised human</span><input id="approval-name" type="text" placeholder="Name of the person approving" autocomplete="off"></label><button class="button button-primary" type="button" data-action="approve-stage">Record approval</button></div>`;
-  }
-
-  function renderStage(assessment) {
-    const stage = assessment.stage;
-    const record = workspace.stages[stage.id];
-    byId("stage-name").textContent = stage.name;
-    byId("stage-question").textContent = stage.question;
-    byId("stage-purpose").textContent = stage.purpose;
-    byId("stage-prompts").innerHTML = assessment.prompts.map((prompt) => `<li>${escapeHtml(prompt)}</li>`).join("");
-    byId("stage-evidence").value = record.evidence;
-    byId("stage-decision").value = record.decision;
-    byId("stage-owner").value = record.owner;
-
-    renderApprovalPanel(assessment);
-
-    const advanceButton = byId("advance-button");
-    advanceButton.disabled = !assessment.canAdvance;
-    advanceButton.textContent = assessment.stageIndex === engine.STAGES.length - 1 ? "Complete cycle" : `Move to ${engine.STAGES[assessment.stageIndex + 1].name}`;
-  }
-
-  function renderGovernance() {
-    byId("approval-list").innerHTML = Object.entries(engine.APPROVAL_GATES).map(([stageId, label]) => {
-      const approval = workspace.approvals[stageId];
-      return `<div class="approval-record"><div><strong>${escapeHtml(label)}</strong><span>${approval?.approved ? `${escapeHtml(approval.approvedBy)} · ${escapeHtml(formatDate(approval.approvedAt))}` : "Awaiting the relevant stage"}</span></div><span class="approval-state ${approval?.approved ? "approved" : "pending"}">${approval?.approved ? "Approved" : "Pending"}</span></div>`;
-    }).join("");
-  }
-
-  function renderActivity() {
-    const events = workspace.activity.slice(-6).reverse();
-    byId("activity-list").innerHTML = events.map((event) => `<li><strong>${escapeHtml(event.message)}</strong><span>${escapeHtml(formatDate(event.at))}</span></li>`).join("");
-  }
-
-  function render() {
-    const assessment = engine.assessWorkspace(workspace);
-    renderBindings();
-    renderSidebar(assessment);
-    renderNextAction(assessment);
-    renderStage(assessment);
-    renderGovernance();
-    renderActivity();
-  }
-
-  function download(filename, content, type) {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function slug(value) {
-    return (value || "operate-workspace").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "operate-workspace";
-  }
-
-  async function copyAiBrief() {
-    const brief = engine.buildAiBrief(workspace);
-    try {
-      await navigator.clipboard.writeText(brief);
-      showToast("AI brief copied. Paste it into Codex when you want assistance.");
-    } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = brief;
-      document.body.append(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-      showToast("AI brief copied.");
-    }
-  }
-
-  document.addEventListener("input", (event) => {
-    const binding = event.target.dataset?.bind;
-    if (binding) {
-      const before = `${workspace.currentStage}:${Object.keys(workspace.approvals).sort().join(",")}`;
-      setPath(workspace, binding, event.target.value);
-      const reviewStage = binding.startsWith("project.") ? "observe" : "prioritise";
-      workspace = engine.invalidateFromStage(workspace, reviewStage, `${binding.startsWith("project.") ? "Project context" : "Value matrix"} changed; affected approvals require review`);
-      persist();
-      const assessment = engine.assessWorkspace(workspace);
-      const after = `${workspace.currentStage}:${Object.keys(workspace.approvals).sort().join(",")}`;
-      if (before !== after) render();
-      else {
-        renderSidebar(assessment);
-        renderNextAction(assessment);
-      }
-    }
-  });
-
-  for (const id of ["stage-evidence", "stage-decision", "stage-owner"]) {
-    byId(id).addEventListener("input", () => {
-      const stage = workspace.currentStage;
-      const field = id.replace("stage-", "");
-      const beforeAssessment = engine.assessWorkspace(workspace);
-      const approvalWasRecorded = Boolean(workspace.approvals[stage]);
-      workspace = engine.invalidateFromStage(workspace, stage, `${engine.STAGES.find((item) => item.id === stage).name} evidence changed; approval requires review`);
-      workspace.stages[stage][field] = byId(id).value;
-      workspace.updatedAt = new Date().toISOString();
-      persist();
-      const assessment = engine.assessWorkspace(workspace);
-      const gateReadinessChanged = Boolean(assessment.gateLabel)
-        && (beforeAssessment.recordMissing.length === 0) !== (assessment.recordMissing.length === 0);
-      renderSidebar(assessment);
-      renderNextAction(assessment);
-      byId("advance-button").disabled = !assessment.canAdvance;
-      if (approvalWasRecorded || gateReadinessChanged) {
-        renderApprovalPanel(assessment);
-        renderGovernance();
-        renderActivity();
-      }
+async function sendPending() {
+  const payload = { ...state.pending, confirmed: true };
+  const submittedText = payload.text;
+  $("#preview-dialog").close();
+  $("#confirm-send").disabled = true;
+  $(".send-button").disabled = true;
+  $("#input").value = "";
+  setProcessing(true, "Sending your request", "Saving your reviewed input to the local conversation...");
+  try {
+    await request(`/api/conversations/${state.conversation.id}/messages`, {
+      method: "POST",
+      body: JSON.stringify({
+        workingText: payload.text,
+        originalText: state.capture?.originalText || payload.text,
+        inputType: state.capture ? "voice" : "text",
+        language: state.capture?.language || "en",
+        editedAfterCapture: Boolean(state.capture),
+        role: "user",
+        metadata: {
+          attachments: state.attachments.map(({ id, filename, hash }) => ({ id, filename, hash })),
+          translated: Boolean(state.capture?.translated),
+          originalLanguage: state.capture?.language || null
+        }
+      })
     });
+    state.conversation = (await request(`/api/conversations/${state.conversation.id}`)).conversation;
+    renderConversation();
+    setProcessing(true, "AI response in progress", "The model is reasoning over the selected evidence. This can take a little while...");
+    const result = await request("/api/respond", { method: "POST", body: JSON.stringify(payload) });
+    setProcessing(true, "Response received", "Saving the result and updating usage records...");
+    state.conversation = (await request(`/api/conversations/${state.conversation.id}`)).conversation;
+    renderConversation();
+    toast(result.usage.status === "offline"
+      ? "Grounded local response completed. No API call or cost."
+      : "Provider response completed and usage recorded.");
+    state.capture = null;
+    state.attachments = [];
+    renderAttachments();
+  } catch (error) {
+    if (!$("#input").value.trim()) $("#input").value = submittedText;
+    toast(error.message, true);
+  } finally {
+    setProcessing(false);
+    $("#confirm-send").disabled = Boolean(state.preview?.monthlyHardBlocked);
+    $(".send-button").disabled = false;
   }
+}
 
-  document.addEventListener("click", async (event) => {
-    const action = event.target.closest("[data-action]")?.dataset.action;
-    if (!action) return;
-
-    if (action === "record-stage") {
-      workspace = engine.normaliseWorkspace(workspace);
-      workspace.activity.push({ at: new Date().toISOString(), type: "stage-recorded", message: `${engine.assessWorkspace(workspace).stage.name} record updated` });
-      persist();
-      render();
-      showToast("Stage evidence retained in this browser.");
-    }
-
-    if (action === "approve-stage") {
-      try {
-        workspace = engine.setApproval(workspace, workspace.currentStage, byId("approval-name")?.value ?? "");
-        persist();
-        render();
-        showToast("Human approval recorded.");
-      } catch (error) {
-        showToast(error.message, true);
-      }
-    }
-
-    if (action === "revoke-approval") {
-      if (window.confirm("Remove this human approval? The workspace may no longer be able to progress.")) {
-        workspace = engine.revokeApproval(workspace, workspace.currentStage);
-        persist();
-        render();
-        showToast("Approval removed.");
-      }
-    }
-
-    if (action === "advance-stage") {
-      const result = engine.advanceStage(workspace);
-      if (!result.advanced) return showToast(result.reason, true);
-      workspace = result.workspace;
-      persist();
-      render();
-      showToast(workspace.status === "complete" ? "OPERATE cycle completed." : `Moved to ${engine.assessWorkspace(workspace).stage.name}.`);
-      document.querySelector(".stage-panel").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    if (action === "copy-brief") await copyAiBrief();
-
-    if (action === "export-json") {
-      download(`${slug(workspace.project.title)}.json`, `${JSON.stringify(workspace, null, 2)}\n`, "application/json");
-      showToast("JSON workspace exported.");
-    }
-
-    if (action === "export-markdown") {
-      download(`${slug(workspace.project.title)}.md`, engine.exportMarkdown(workspace), "text/markdown");
-      showToast("Governed record exported as Markdown.");
-    }
-
-    if (action === "new-workspace") {
-      if (window.confirm("Start a new workspace? Export the current record first if you need to retain it.")) {
-        storageApi.clear(window.localStorage);
-        workspace = engine.createWorkspace();
-        persist();
-        render();
-        window.scrollTo({ top: 0, behavior: "smooth" });
-        showToast("New private workspace created.");
-      }
-    }
+async function recordFeedback(button) {
+  const container = button.closest("[data-message]");
+  const disposition = button.dataset.feedback;
+  const needsDetail = ["challenge-conclusion", "add-evidence", "needs-clarification", "record-methodology-feedback"].includes(disposition);
+  const prompts = {
+    "challenge-conclusion": "What do you disagree with?",
+    "add-evidence": "What information should the answer take into account?",
+    "needs-clarification": "What did the answer fail to explain clearly?",
+    "record-methodology-feedback": "What should change in the Operations Automated method?"
+  };
+  const wording = needsDetail
+    ? window.prompt(prompts[disposition], "") ?? ""
+    : disposition.replaceAll("-", " ");
+  if (needsDetail && !wording.trim()) return;
+  await request("/api/feedback", {
+    method: "POST",
+    body: JSON.stringify({
+      conversationId: state.conversation.id,
+      messageId: container.dataset.message,
+      disposition,
+      wording
+    })
   });
+  button.classList.add("selected");
+  toast("Saved under Saved feedback. Nothing else changes automatically.");
+}
 
-  byId("import-file").addEventListener("change", async (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+async function loadFeedback() {
+  const items = (await request("/api/feedback")).feedback;
+  const typeLabels = {
+    useful: ["Helpful", "You marked this answer as helpful."],
+    "correct-interpretation": ["Understood correctly", "You said the answer understood what you meant."],
+    "challenge-conclusion": ["You disagree", "You challenged the answer's conclusion."],
+    "add-evidence": ["More information", "You added information the answer should consider."],
+    "needs-clarification": ["You were misunderstood", "You said the answer did not explain things clearly."],
+    "record-methodology-feedback": ["Suggested method change", "You suggested a change to the Operations Automated method."],
+    "proposal-requested": ["Change requested", "You asked to prepare a possible methodology change."]
+  };
+  $("#feedback-list").innerHTML = items.length
+    ? items.map((item) => {
+      const [title, explanation] = typeLabels[item.feedback_type || item.disposition] || ["Saved feedback", "You saved a reaction to this answer."];
+      const canPropose = ["methodology-change-candidate", "product-change-candidate"].includes(item.classification);
+      return `<article class="record-card">
+        <div><strong>${escapeHtml(title)}</strong><span class="status-pill status-${escapeHtml(item.status)}">${escapeHtml(statusLabel(item.status))}</span></div>
+        <small>${escapeHtml(explanation)}</small>
+        <blockquote>${escapeHtml(item.original_wording || item.wording || "No additional wording")}</blockquote>
+        <dl class="feedback-meta">
+          <div><dt>Submitted by</dt><dd>${escapeHtml(item.submitting_user || "Jamie Peppard")}</dd></div>
+          <div><dt>Workspace</dt><dd>${escapeHtml(item.affected_workspace || "General project")}</dd></div>
+          <div><dt>Created</dt><dd>${escapeHtml(formatDate(item.created_at))}</dd></div>
+          <div><dt>Conversation</dt><dd>${escapeHtml(item.conversation_title || "Conversation")}</dd></div>
+        </dl>
+        <label class="classification-field">How should this feedback be used?
+          <select data-feedback-classification="${item.id}">
+            ${classificationOptions(item.classification)}
+          </select>
+        </label>
+        <p class="classification-note">Classification organises the feedback. It does not approve anything.</p>
+        <div class="record-actions">
+          <button data-open-conversation="${item.conversation_id}" class="ghost">Open conversation</button>
+          <button data-save-classification="${item.id}" class="ghost">Save classification</button>
+          ${canPropose ? `<button data-create-proposal="${item.id}" class="primary">Create change proposal</button>` : ""}
+        </div>
+      </article>`;
+    }).join("")
+    : '<div class="empty-records"><strong>You have not saved any feedback yet.</strong><p>Open “Was this useful?” beneath an answer if you want to keep a reaction or correction.</p></div>';
+}
+
+const classifications = [
+  ["answer-only-correction", "Answer-only correction"],
+  ["conversation-context", "Conversation context"],
+  ["reusable-project-memory", "Reusable project memory"],
+  ["evidence-submission", "Evidence submission"],
+  ["methodology-change-candidate", "Methodology change candidate"],
+  ["product-change-candidate", "Product change candidate"],
+  ["no-action-required", "No action required"]
+];
+
+const statusLabels = {
+  "awaiting-review": "Awaiting review",
+  "revision-requested": "Revision requested",
+  "approved-for-preparation": "Approved for preparation",
+  "implementation-in-progress": "Implementation in progress",
+  "awaiting-release-approval": "Awaiting release approval",
+  implemented: "Implemented",
+  rejected: "Rejected",
+  deferred: "Deferred"
+};
+
+function statusLabel(value) {
+  return statusLabels[value] || String(value || "Awaiting review").replaceAll("-", " ");
+}
+
+function classificationOptions(selected) {
+  return classifications.map(([value, label]) => `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`).join("");
+}
+
+function proposalSection(title, content) {
+  if (!content || (Array.isArray(content) && !content.length)) return "";
+  const body = Array.isArray(content)
+    ? `<ul>${content.map((item) => {
+      if (typeof item === "string") return `<li>${escapeHtml(item)}</li>`;
+      if (item.path) return `<li><strong>${escapeHtml(item.path)}</strong>${item.status ? ` <span class="source-status">${escapeHtml(item.status)}</span>` : ""}</li>`;
+      if (item.type) return `<li><strong>${escapeHtml(item.type.replaceAll("-", " "))}:</strong> ${escapeHtml(item.wording || item.reference || "")}</li>`;
+      return `<li>${escapeHtml(JSON.stringify(item))}</li>`;
+    }).join("")}</ul>`
+    : `<p>${escapeHtml(content)}</p>`;
+  return `<section><h3>${title}</h3>${body}</section>`;
+}
+
+function decisionNeeded(proposal) {
+  if (["awaiting-review", "revision-requested", "deferred"].includes(proposal.status)) return "Decide whether to prepare this change, ask for a revision, reject it or defer it.";
+  if (proposal.status === "approved-for-preparation") return "Preparation is authorised. Start the bounded implementation handoff when you are ready.";
+  if (proposal.status === "implementation-in-progress") return "Review the implementation evidence and record its draft pull request before release review.";
+  if (proposal.status === "awaiting-release-approval") return "This is the separate release decision. Review the draft and choose whether it may merge.";
+  if (proposal.status === "implemented") return "No decision is outstanding. The retained receipt shows what was merged and reindexed.";
+  if (proposal.status === "rejected") return "No action is required unless new evidence justifies reopening the issue.";
+  return "This change is deferred. Revisit it only when timing, evidence or priorities change.";
+}
+
+function readableReview(proposal) {
+  return `<section class="review-brief" aria-label="Plain-English change review">
+    <div class="review-brief-heading"><span>Your review</span><h3>What am I deciding?</h3></div>
+    <dl>
+      <div><dt>Why this exists</dt><dd>${escapeHtml(proposal.problem_learning)}</dd></div>
+      <div><dt>What would change</dt><dd>${escapeHtml(proposal.proposed_wording)}</dd></div>
+      <div><dt>What stays controlled</dt><dd>${proposal.change_kind === "methodology"
+        ? "The approved methodology remains unchanged unless you later give the separate Approve and merge decision."
+        : "Main remains unchanged until the separate release decision; preparation only creates a reviewable draft."}</dd></div>
+      <div class="decision-needed"><dt>Your decision now</dt><dd>${escapeHtml(decisionNeeded(proposal))}</dd></div>
+    </dl>
+  </section>`;
+}
+
+function repositoryReviewLink(proposal) {
+  if (!proposal.pull_request_url) {
+    return `<div class="github-link-pending"><strong>GitHub review link</strong><span>The exact draft link will appear here as soon as implementation preparation is recorded.</span></div>`;
+  }
+  return `<a class="github-review-link" href="${escapeHtml(proposal.pull_request_url)}" target="_blank" rel="noreferrer">
+    <span><strong>Open the draft change on GitHub</strong><small>Read the proposed files and discussion in one place.</small></span>
+    <span aria-hidden="true">Open ↗</span>
+  </a>`;
+}
+
+function decisionActions(proposal) {
+  if (["awaiting-review", "revision-requested", "deferred"].includes(proposal.status)) {
+    return `<div class="decision-action-panel">
+      <label>Decision note<textarea id="decision-reason" rows="2" placeholder="Why are you making this decision?"></textarea></label>
+      <div class="decision-actions">
+        <button class="primary" data-decision-action="prepare-change" data-phase="preparation">Prepare change</button>
+        <button class="ghost" data-decision-action="request-revision" data-phase="preparation">Request revision</button>
+        <button class="danger-outline" data-decision-action="reject" data-phase="preparation">Reject</button>
+        <button class="ghost" data-decision-action="defer" data-phase="preparation">Defer</button>
+      </div>
+      <p>Prepare change authorises a bounded instruction only. It does not edit main or approve release.</p>
+    </div>`;
+  }
+  if (proposal.status === "approved-for-preparation") {
+    return `<div class="decision-action-panel">
+      <strong>Preparation is authorised. Release is not.</strong>
+      <p>The bounded instruction is ready for Codex or the repository integration.</p>
+      <button class="primary" data-start-handoff>Start implementation handoff</button>
+    </div>`;
+  }
+  if (proposal.status === "implementation-in-progress") {
+    return `<form class="repository-form" id="repository-reference-form">
+      <h3>Record the draft pull request</h3>
+      <p>The branch must not be main. The pull request must remain a draft.</p>
+      <label>Branch name<input name="branchName" required placeholder="codex/bounded-change"></label>
+      <label>Draft pull request URL<input name="pullRequestUrl" type="url" required placeholder="https://github.com/.../pull/123"></label>
+      <label>Implementation commit<input name="commitSha" required placeholder="7–40 character commit SHA"></label>
+      <label>Version impact<input name="versionImpact" required placeholder="Workbench minor version; methodology unchanged"></label>
+      <label>Methodology version, if affected<input name="methodologyVersion" placeholder="0.5"></label>
+      <label>Validation summary<textarea name="tests" rows="3" required placeholder="Tests run and results"></textarea></label>
+      <label class="check-label"><input name="decisionRecordIncluded" type="checkbox" required> Decision record included</label>
+      <label class="check-label"><input name="changelogUpdated" type="checkbox" required> Changelog updated</label>
+      <button class="primary" type="submit">Record preparation for release review</button>
+    </form>`;
+  }
+  if (proposal.status === "awaiting-release-approval") {
+    const releaseApproval = proposal.decisions.findLast((item) => item.phase === "release" && item.action === "approve-and-merge");
+    if (releaseApproval && state.repositoryMode === "manual") {
+      return `<form class="repository-form release-receipt-form" id="implementation-receipt-form">
+        <h3>Merge authorised; implementation receipt required</h3>
+        <p>Complete the authorised merge outside the Workbench, then record the merged commit. The repository will be reindexed and the feedback marked implemented.</p>
+        <label>Merged commit SHA<input name="commitSha" required></label>
+        <label>Released methodology version, if affected<input name="methodologyVersion" placeholder="No methodology version change"></label>
+        <button class="primary" type="submit">Record merged implementation</button>
+      </form>`;
+    }
+    return `<div class="decision-action-panel release-panel">
+      <label>Release decision note<textarea id="decision-reason" rows="2" placeholder="Why should this be released, changed, rejected or deferred?"></textarea></label>
+      <div class="decision-actions">
+        <button class="primary release-button" data-decision-action="approve-and-merge" data-phase="release">Approve and merge</button>
+        <button class="ghost" data-decision-action="request-changes" data-phase="release">Request changes</button>
+        <button class="danger-outline" data-decision-action="reject" data-phase="release">Reject</button>
+        <button class="ghost" data-decision-action="defer" data-phase="release">Defer</button>
+      </div>
+      <p>Only Jamie Peppard’s explicit “Approve and merge” confirmation can authorise a methodology release.</p>
+    </div>`;
+  }
+  return "";
+}
+
+function renderProposalDetail(proposal) {
+  if (!proposal) {
+    $("#decision-detail").innerHTML = '<div class="empty-records"><strong>Select a change candidate.</strong></div>';
+    return;
+  }
+  const receipt = proposal.receipt;
+  $("#decision-detail").innerHTML = `
+    <div class="proposal-heading">
+      <div><span class="change-kind">${escapeHtml(proposal.change_kind)} change</span><h2>${escapeHtml(proposal.title)}</h2></div>
+      <span class="status-pill status-${escapeHtml(proposal.status)}">${escapeHtml(statusLabel(proposal.status))}</span>
+    </div>
+    ${repositoryReviewLink(proposal)}
+    ${readableReview(proposal)}
+    ${decisionActions(proposal)}
+    <details class="proposal-details">
+      <summary>Read the full proposal, evidence and risks</summary>
+      ${proposalSection("Rationale", proposal.rationale)}
+      ${proposalSection("Relevant approved sources", proposal.approvedSources)}
+      ${proposalSection("Affected files or components", proposal.affectedFiles)}
+      ${proposalSection("Current wording", proposal.current_wording)}
+      ${proposalSection("Evidence", proposal.evidence)}
+      ${proposalSection("Credible alternatives", proposal.alternatives)}
+      ${proposalSection("Risks and unintended consequences", proposal.risks)}
+      ${proposalSection("Validation requirements", proposal.validationRequirements)}
+      <section><h3>Expected route and cost</h3><p>${escapeHtml(proposal.modelRoute.reason || "Deterministic preparation")} · ${formatCost(proposal.expected_cost)}</p></section>
+    </details>
+    ${proposal.implementation_instruction ? `<details class="proposal-details"><summary>Bounded implementation instruction</summary>${markdown(proposal.implementation_instruction)}</details>` : ""}
+    ${proposal.pull_request_url ? `<div class="repository-references"><strong>Draft pull request prepared</strong><a href="${escapeHtml(proposal.pull_request_url)}" target="_blank" rel="noreferrer">${escapeHtml(proposal.pull_request_url)}</a><span>Branch: ${escapeHtml(proposal.branch_name)}</span><span>Commit: ${escapeHtml(proposal.implementation_commit_sha)}</span></div>` : ""}
+    <section class="decision-history"><h3>Decision history</h3>${proposal.decisions.length ? proposal.decisions.map((decision) => `<article><div><strong>${escapeHtml(decision.action.replaceAll("-", " "))}</strong><span>${escapeHtml(formatDate(decision.created_at))}</span></div><p>${escapeHtml(decision.actor)} · ${escapeHtml(decision.phase)} decision · ${escapeHtml(statusLabel(decision.status_before))} → ${escapeHtml(statusLabel(decision.status_after))}</p>${decision.reason ? `<blockquote>${escapeHtml(decision.reason)}</blockquote>` : ""}</article>`).join("") : "<p>No decisions recorded yet.</p>"}</section>
+    ${receipt ? `<section class="implementation-receipt"><span>Implementation receipt</span><h3>Change implemented and reindexed</h3><p>Pull request: <a href="${escapeHtml(receipt.pull_request_url)}" target="_blank" rel="noreferrer">${escapeHtml(receipt.pull_request_url)}</a></p><p>Commit: ${escapeHtml(receipt.commit_sha)} · Baseline: ${escapeHtml(receipt.baseline_version)} · Reindexed ${escapeHtml(formatDate(receipt.reindexed_at))}</p></section>` : ""}
+  `;
+}
+
+async function loadDecisionInbox(selectedId = state.selectedProposalId, status = "") {
+  const value = await request(`/api/decision-inbox${status ? `?status=${encodeURIComponent(status)}` : ""}`);
+  state.proposals = value.proposals;
+  const allStatuses = Object.keys(statusLabels);
+  $("#decision-status-board").innerHTML = `<button class="${status ? "" : "active"}" data-decision-filter="">All<span>${Object.values(value.statusCounts).reduce((sum, count) => sum + count, 0)}</span></button>${allStatuses.map((item) => `<button class="${status === item ? "active" : ""}" data-decision-filter="${item}">${escapeHtml(statusLabel(item))}<span>${value.statusCounts[item] || 0}</span></button>`).join("")}`;
+  $("#decision-list").innerHTML = state.proposals.length
+    ? state.proposals.map((proposal) => `<button class="decision-link ${selectedId === proposal.id ? "current" : ""}" data-proposal-id="${proposal.id}"><strong>${escapeHtml(proposal.title)}</strong><span>${escapeHtml(proposal.change_kind)} · ${escapeHtml(statusLabel(proposal.status))}</span></button>`).join("")
+    : '<div class="empty-records"><strong>No changes in this state.</strong><p>Create a proposal from classified feedback first.</p></div>';
+  const selected = state.proposals.find((item) => item.id === selectedId) || state.proposals[0];
+  state.selectedProposalId = selected?.id || null;
+  renderProposalDetail(selected);
+}
+
+const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "usage", "settings", "guide"]);
+
+function switchView(name, updateHash = true) {
+  if (!validViews.has(name)) return;
+  $$(".view").forEach((view) => { view.hidden = view.id !== `${name}-view`; });
+  $$(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === name));
+  $("#details-button").hidden = name !== "conversation";
+  if (updateHash) history.replaceState(null, "", name === "conversation" ? `${location.pathname}${location.search}` : `#${name}`);
+  if (name === "usage") loadUsage().catch((error) => toast(error.message, true));
+  if (name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
+  if (name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
+}
+
+async function loadUsage() {
+  const value = await request("/api/usage");
+  const hardBudget = Number(value.settings.monthlyHardBudget || 0);
+  const percent = hardBudget ? Math.min(100, (value.monthlyEstimatedCost / hardBudget) * 100) : 0;
+  $("#usage-summary").innerHTML = `
+    <div class="usage-total"><span>This month</span><strong>${formatCost(value.monthlyEstimatedCost)}</strong></div>
+    <div class="budget-meter">
+      <div><span>Monthly hard budget</span><strong>${formatCost(hardBudget)}</strong></div>
+      <div class="budget-track" role="meter" aria-label="Monthly API budget used" aria-valuemin="0" aria-valuemax="${hardBudget}" aria-valuenow="${value.monthlyEstimatedCost}"><span style="width:${percent}%"></span></div>
+      <p>Soft warning at ${formatCost(value.settings.monthlySoftBudget)}. Paid calls stop at the hard budget; local records and retrieval remain available.</p>
+    </div>
+    <div class="usage-total usage-secondary"><span>All-time estimated API cost</span><strong>${formatCost(value.totalEstimatedCost)}</strong></div>
+    ${value.records.map((record) => `<div class="usage-row">
+      <span>${escapeHtml(record.provider)} &middot; ${escapeHtml(record.status)}</span>
+      <span>${record.input_tokens.toLocaleString()} in / ${record.output_tokens.toLocaleString()} out</span>
+      <strong>${formatCost(record.estimated_cost)}</strong>
+    </div>`).join("") || "<p>No requests recorded yet.</p>"}`;
+}
+
+function renderAttachments() {
+  $("#attachment-name").innerHTML = state.attachments.map((item) =>
+    `<span class="attachment-chip">${escapeHtml(item.filename)} <button type="button" data-remove-attachment="${item.id}" aria-label="Remove ${escapeHtml(item.filename)}">&times;</button></span>`
+  ).join("");
+}
+
+async function attachFile(file) {
+  const conversation = await ensureConversation();
+  if (!/\.(txt|md|markdown|csv|json)$/i.test(file.name)) throw new Error("Choose a text, Markdown, CSV or JSON file.");
+  if (file.size > state.settings.maximumFileSize) throw new Error("That file exceeds the configured size limit.");
+  const content = await file.text();
+  const value = await request("/api/attachments", {
+    method: "POST",
+    body: JSON.stringify({ conversationId: conversation.id, filename: file.name, mimeType: file.type, content })
+  });
+  const attachment = value.attachment;
+  attachment.extractedText = attachment.extractedText || attachment.extracted_text || content;
+  if (!state.attachments.some((item) => item.id === attachment.id)) state.attachments.push(attachment);
+  renderAttachments();
+  toast(attachment.duplicate ? "Existing extraction reused; the file was not processed twice." : "Document extracted locally and ready to use.");
+}
+
+async function init() {
+  const config = await request("/api/settings");
+  state.settings = config.settings;
+  state.apiConfigured = config.apiConfigured;
+  state.currentUser = config.currentUser || "Jamie Peppard";
+  state.repositoryMode = config.repositoryMode || "manual";
+  $("#baseline-state").textContent = `Approved baseline: ${config.approvedBaseline?.baseline_version || "not indexed"}`;
+  $("#baseline-state").title = config.approvedBaseline
+    ? `${config.approvedBaseline.approved_count} approved documents indexed ${formatDate(config.approvedBaseline.created_at)}`
+    : "No approved repository baseline has been indexed.";
+  $("#api-state").textContent = config.apiConfigured ? "Provider connected" : "Local methodology mode";
+  $("#api-state").classList.toggle("local", !config.apiConfigured);
+  $("#mode-explainer").innerHTML = config.apiConfigured
+    ? "<strong>Provider connected.</strong><p>Responses can use the configured AI capability tiers and will record usage.</p>"
+    : "<strong>Local methodology mode is active.</strong><p>Repository retrieval, grounded synthesis, documents, feedback and exports work without an API key or cost. Voice and image intelligence are unavailable until a provider is configured.</p>";
+  $("#record").hidden = false;
+  $("#record").disabled = !config.apiConfigured;
+  $("#record").title = config.apiConfigured ? "Record voice" : "Configure an OpenAI API key to enable voice";
+  for (const [key, value] of Object.entries(config.settings)) {
+    const field = $(`[name="${key}"]`);
+    if (field) field.type === "checkbox" ? field.checked = Boolean(value) : field.value = value;
+  }
+  await loadConversationList();
+  if (state.conversations[0]) state.conversation = (await request(`/api/conversations/${state.conversations[0].id}`)).conversation;
+  renderConversation();
+  const requestedView = location.hash.slice(1);
+  switchView(validViews.has(requestedView) ? requestedView : "conversation", false);
+}
+
+$("#composer").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const text = $("#input").value.trim();
+  if (!text) return toast("Describe what you want to work through first.", true);
+  try { await previewAndSend(text); } catch (error) { toast(error.message, true); }
+});
+$("#confirm-send").addEventListener("click", (event) => { event.preventDefault(); sendPending(); });
+$("#messages").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-feedback]");
+  if (button) recordFeedback(button).catch((error) => toast(error.message, true));
+});
+$("#feedback-list").addEventListener("click", async (event) => {
+  const conversationButton = event.target.closest("[data-open-conversation]");
+  if (conversationButton) {
+    loadConversation(conversationButton.dataset.openConversation).catch((error) => toast(error.message, true));
+    return;
+  }
+  const classificationButton = event.target.closest("[data-save-classification]");
+  if (classificationButton) {
+    const id = classificationButton.dataset.saveClassification;
+    const select = $(`[data-feedback-classification="${id}"]`);
     try {
-      workspace = engine.normaliseWorkspace(JSON.parse(await file.text()));
-      persist();
-      render();
-      showToast("Workspace imported.");
-    } catch {
-      showToast("That file is not a valid OPERATE workspace.", true);
-    } finally {
-      event.target.value = "";
+      await request(`/api/feedback/${id}/classification`, {
+        method: "PATCH",
+        body: JSON.stringify({ classification: select.value })
+      });
+      await loadFeedback();
+      toast("Classification saved. No approval was created.");
+    } catch (error) { toast(error.message, true); }
+    return;
+  }
+  const proposalButton = event.target.closest("[data-create-proposal]");
+  if (proposalButton) {
+    try {
+      const result = await request(`/api/feedback/${proposalButton.dataset.createProposal}/change-proposal`, { method: "POST", body: "{}" });
+      state.selectedProposalId = result.proposal.id;
+      switchView("decisions");
+      await loadDecisionInbox(result.proposal.id);
+      toast("Change proposal created for human review. Nothing was approved or changed.");
+    } catch (error) { toast(error.message, true); }
+  }
+});
+$("#decision-status-board").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-decision-filter]");
+  if (!button) return;
+  loadDecisionInbox(null, button.dataset.decisionFilter).catch((error) => toast(error.message, true));
+});
+$("#decision-list").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-proposal-id]");
+  if (!button) return;
+  state.selectedProposalId = button.dataset.proposalId;
+  const selected = state.proposals.find((proposal) => proposal.id === state.selectedProposalId);
+  $$(".decision-link").forEach((item) => item.classList.toggle("current", item === button));
+  renderProposalDetail(selected);
+});
+$("#decision-detail").addEventListener("click", async (event) => {
+  const proposal = state.proposals.find((item) => item.id === state.selectedProposalId);
+  if (!proposal) return;
+  const decisionButton = event.target.closest("[data-decision-action]");
+  if (decisionButton) {
+    const action = decisionButton.dataset.decisionAction;
+    const phase = decisionButton.dataset.phase;
+    let confirmation = "";
+    if (action === "approve-and-merge") {
+      confirmation = window.prompt('Type "Approve and merge" to confirm Jamie Peppard’s release decision:', "") || "";
+      if (confirmation !== "Approve and merge") return toast("Release was not authorised.", true);
     }
+    try {
+      const result = await request(`/api/change-proposals/${proposal.id}/decisions`, {
+        method: "POST",
+        body: JSON.stringify({
+          phase,
+          action,
+          actor: state.currentUser,
+          reason: document.querySelector("#decision-reason")?.value || "",
+          confirmation
+        })
+      });
+      await loadDecisionInbox(proposal.id);
+      toast(result.manualMergeRequired
+        ? "Merge authorised by Jamie. Complete the merge, then record the implementation receipt."
+        : `${action.replaceAll("-", " ")} recorded.`);
+    } catch (error) { toast(error.message, true); }
+    return;
+  }
+  if (event.target.closest("[data-start-handoff]")) {
+    try {
+      await request(`/api/change-proposals/${proposal.id}/implementation-handoff`, { method: "POST", body: "{}" });
+      await loadDecisionInbox(proposal.id);
+      toast("Bounded implementation handoff created. Main was not changed.");
+    } catch (error) { toast(error.message, true); }
+  }
+});
+$("#decision-detail").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const proposal = state.proposals.find((item) => item.id === state.selectedProposalId);
+  if (!proposal) return;
+  if (event.target.id === "repository-reference-form") {
+    const form = new FormData(event.target);
+    try {
+      await request(`/api/change-proposals/${proposal.id}/repository-reference`, {
+        method: "POST",
+        body: JSON.stringify({
+          branchName: form.get("branchName"),
+          pullRequestUrl: form.get("pullRequestUrl"),
+          isDraft: true,
+          commitSha: form.get("commitSha"),
+          versionImpact: form.get("versionImpact"),
+          methodologyVersion: form.get("methodologyVersion"),
+          validationStatus: "passed",
+          tests: String(form.get("tests") || "").split(/\r?\n/).filter(Boolean),
+          decisionRecordIncluded: form.get("decisionRecordIncluded") === "on",
+          changelogUpdated: form.get("changelogUpdated") === "on"
+        })
+      });
+      await loadDecisionInbox(proposal.id);
+      toast("Draft pull request recorded. A separate release decision is now required.");
+    } catch (error) { toast(error.message, true); }
+  }
+  if (event.target.id === "implementation-receipt-form") {
+    const form = new FormData(event.target);
+    try {
+      await request(`/api/change-proposals/${proposal.id}/implementation-receipt`, {
+        method: "POST",
+        body: JSON.stringify({
+          pullRequestUrl: proposal.pull_request_url,
+          commitSha: form.get("commitSha"),
+          methodologyVersion: form.get("methodologyVersion")
+        })
+      });
+      await loadDecisionInbox(proposal.id);
+      toast("Implementation receipt recorded. Repository reindexed and feedback marked implemented.");
+    } catch (error) { toast(error.message, true); }
+  }
+});
+$("#conversation-list").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-conversation-id]");
+  if (button) loadConversation(button.dataset.conversationId).catch((error) => toast(error.message, true));
+});
+$("#refresh-conversations").addEventListener("click", () => loadConversationList().catch((error) => toast(error.message, true)));
+$$("[data-starter]").forEach((button) => button.addEventListener("click", () => {
+  $("#input").value = button.dataset.starter;
+  $("#input").focus();
+}));
+$$("[data-send-challenge]").forEach((button) => button.addEventListener("click", () => {
+  sendChallenge(button.dataset.sendChallenge).catch((error) => toast(error.message, true));
+}));
+$$(".nav-item").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+$$("[data-open-guide]").forEach((button) => button.addEventListener("click", () => switchView("guide")));
+$("#details-button").addEventListener("click", () => {
+  const panel = $("#context-panel");
+  panel.hidden = !panel.hidden;
+  $("#conversation-view").classList.toggle("show-context", !panel.hidden);
+  $("#details-button").setAttribute("aria-expanded", String(!panel.hidden));
+  $("#details-button").textContent = panel.hidden ? "Technical details" : "Hide details";
+});
+window.addEventListener("hashchange", () => {
+  const requestedView = location.hash.slice(1);
+  switchView(validViews.has(requestedView) ? requestedView : "conversation", false);
+});
+$("#new-conversation").addEventListener("click", async () => {
+  state.conversation = null;
+  state.attachments = [];
+  await ensureConversation();
+  renderAttachments();
+  renderConversation();
+  switchView("conversation");
+});
+$("#workspace").addEventListener("change", () => {
+  $("#workspace-label").textContent = $("#workspace").selectedOptions[0].textContent;
+});
+$("#settings-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = Object.fromEntries(new FormData(event.target));
+  for (const key of ["monthlySoftBudget", "monthlyHardBudget", "perRequestWarningThreshold", "perRequestHardCeiling", "maximumRetrievedContext"]) data[key] = Number(data[key]);
+  data.advancedReasoningEnabled = event.target.advancedReasoningEnabled.checked;
+  try {
+    state.settings = (await request("/api/settings", { method: "PATCH", body: JSON.stringify(data) })).settings;
+    toast("Local spending and routing controls saved.");
+  } catch (error) { toast(error.message, true); }
+});
+$("#export-button").addEventListener("click", async () => {
+  if (!state.conversation) return toast("There is no conversation to export.", true);
+  const value = await request("/api/export", {
+    method: "POST",
+    body: JSON.stringify({ conversationId: state.conversation.id, format: "markdown" })
   });
+  const blob = new Blob([value.markdown], { type: "text/markdown" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `${state.conversation.title.replace(/\W+/g, "-").toLowerCase() || "conversation"}.md`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+});
+$("#attach").addEventListener("click", () => $("#file-input").click());
+$("#file-input").addEventListener("change", async () => {
+  const file = $("#file-input").files[0];
+  if (!file) return;
+  try { await attachFile(file); } catch (error) { toast(error.message, true); }
+  finally { $("#file-input").value = ""; }
+});
+$("#attachment-name").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-remove-attachment]");
+  if (!button) return;
+  state.attachments = state.attachments.filter((item) => item.id !== button.dataset.removeAttachment);
+  renderAttachments();
+});
+async function transcribeRecording(blob) {
+  $("#record").disabled = true;
+  $("#record").textContent = "Transcribing...";
+  setProcessing(true, "Transcribing your recording", "Audio is being converted to editable text. It is not being reasoned over yet...");
+  try {
+    const response = await fetch("/api/audio/transcribe", {
+      method: "POST",
+      headers: { "Content-Type": blob.type || "audio/webm" },
+      body: blob
+    });
+    const value = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(value.error || "Transcription failed.");
+    state.capture = { originalText: value.transcript, workingText: value.transcript, language: value.language, translated: false };
+    $("#transcript").value = value.transcript;
+    $("#translation").value = "";
+    $("#translation-field").hidden = true;
+    $("#language-label").textContent = `Detected language: ${value.language}`;
+    $("#capture-review").hidden = false;
+    toast("Transcription complete. Review it before using it.");
+  } finally {
+    setProcessing(false);
+    $("#record").disabled = !state.apiConfigured;
+    $("#record").textContent = "Record";
+    $("#record").setAttribute("aria-label", "Start voice recording");
+  }
+}
 
-  render();
-  persist();
-})(window.OPERATEEngine, window.OPERATEStorage);
+function stopRecording() {
+  if (state.recording?.state === "recording") {
+    $("#record").disabled = true;
+    $("#record").textContent = "Stopping...";
+    state.recording.stop();
+  }
+}
+
+function updateRecordingClock() {
+  const elapsed = Math.max(0, Math.floor((Date.now() - state.recordingStartedAt) / 1000));
+  const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
+  const seconds = String(elapsed % 60).padStart(2, "0");
+  $("#recording-time").textContent = `${minutes}:${seconds}`;
+}
+
+$("#record").addEventListener("click", async () => {
+  if (!state.apiConfigured) return toast("Configure an OpenAI API key to enable voice.", true);
+  if (state.recording?.state === "recording") return stopRecording();
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast("This browser does not support microphone recording.", true);
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    state.recording = recorder;
+    state.recordingStream = stream;
+    state.recordingChunks = [];
+    recorder.ondataavailable = (event) => { if (event.data.size) state.recordingChunks.push(event.data); };
+    recorder.onstop = async () => {
+      clearTimeout(state.recordingTimer);
+      clearInterval(state.recordingClock);
+      stream.getTracks().forEach((track) => track.stop());
+      $("#recording-status").hidden = true;
+      $("#record").classList.remove("recording");
+      $("#record").textContent = "Record";
+      $("#record").disabled = false;
+      $("#record").setAttribute("aria-label", "Start voice recording");
+      const blob = new Blob(state.recordingChunks, { type: recorder.mimeType || "audio/webm" });
+      state.recording = null;
+      state.recordingStream = null;
+      state.recordingChunks = [];
+      state.recordingStartedAt = null;
+      try { await transcribeRecording(blob); } catch (error) { toast(error.message, true); }
+    };
+    recorder.start();
+    state.recordingStartedAt = Date.now();
+    $("#recording-time").textContent = "00:00";
+    $("#recording-status").hidden = false;
+    state.recordingClock = setInterval(updateRecordingClock, 250);
+    $("#record").classList.add("recording");
+    $("#record").textContent = "Stop recording";
+    $("#record").setAttribute("aria-label", "Stop voice recording");
+    state.recordingTimer = setTimeout(stopRecording, state.settings.maximumAudioDuration * 1000);
+    toast("Recording. Press Stop when you have finished.");
+  } catch (error) {
+    toast(error.name === "NotAllowedError" ? "Microphone access was not granted." : error.message, true);
+  }
+});
+$("#translate-transcript").addEventListener("click", async () => {
+  const originalText = $("#transcript").value.trim();
+  if (!originalText) return toast("There is no transcript to translate.", true);
+  const button = $("#translate-transcript");
+  button.disabled = true;
+  button.textContent = "Translating...";
+  try {
+    const value = await request("/api/text/translate", { method: "POST", body: JSON.stringify({ text: originalText, targetLanguage: "English" }) });
+    $("#translation").value = value.translatedText;
+    $("#translation-field").hidden = false;
+    state.capture = { originalText, workingText: value.translatedText, language: state.capture?.language || "Undetermined", translated: true };
+    toast("English working translation created. Review it before use.");
+  } catch (error) { toast(error.message, true); }
+  finally { button.disabled = false; button.textContent = "Translate to English"; }
+});
+$("#discard-transcript").addEventListener("click", () => {
+  $("#capture-review").hidden = true;
+  $("#transcript").value = "";
+  $("#translation").value = "";
+  $("#translation-field").hidden = true;
+  state.capture = null;
+});
+$("#use-transcript").addEventListener("click", () => {
+  const originalText = $("#transcript").value.trim();
+  const translatedText = $("#translation-field").hidden ? "" : $("#translation").value.trim();
+  if (!originalText) return toast("Review or enter the transcript first.", true);
+  state.capture = {
+    originalText,
+    workingText: translatedText || originalText,
+    language: state.capture?.language || "Undetermined",
+    translated: Boolean(translatedText)
+  };
+  $("#input").value = state.capture.workingText;
+  $("#capture-review").hidden = true;
+  $("#input").focus();
+  toast("Reviewed voice text is ready to send.");
+});
+
+init().catch((error) => toast(error.message, true));

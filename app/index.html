@@ -8,191 +8,176 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <a class="skip-link" href="#workspace">Skip to workspace</a>
-
-  <header class="topbar">
-    <div class="brand">
-      <span class="brand-mark" aria-hidden="true">OA</span>
-      <div>
-        <strong>OPERATE Workspace</strong>
-        <span>Private MVP · Methodology v0.3</span>
-      </div>
-    </div>
-    <div class="topbar-actions">
-      <span class="privacy-pill"><span aria-hidden="true">●</span> Local only</span>
-      <button class="button button-quiet" type="button" data-action="copy-brief">Copy AI brief</button>
-      <button class="button button-quiet" type="button" data-action="export-json">Export JSON</button>
-      <button class="button button-primary" type="button" data-action="export-markdown">Export record</button>
-    </div>
-  </header>
-
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="OPERATE progress">
-      <div class="sidebar-intro">
-        <span class="eyebrow">Current workspace</span>
-        <h1 id="sidebar-title">Untitled problem</h1>
-        <p id="sidebar-owner">Owner not recorded</p>
-      </div>
-
-      <div class="progress-block">
-        <div class="progress-label"><span>Governed readiness</span><strong id="progress-value">0%</strong></div>
-        <div class="progress-track" aria-hidden="true"><span id="progress-bar"></span></div>
-      </div>
-
-      <nav>
-        <ol class="stage-list" id="stage-list"></ol>
+  <a class="skip-link" href="#main">Skip to conversation</a>
+  <div class="shell">
+    <aside class="rail">
+      <div class="brand"><span class="brand-mark">OA</span><div><strong>Operations Automated</strong><small>Private local workbench</small></div></div>
+      <button class="new-button" id="new-conversation" type="button"><span aria-hidden="true">+</span> New conversation</button>
+      <nav aria-label="Workbench">
+        <button class="nav-item active" data-view="conversation"><span class="nav-icon" aria-hidden="true">C</span><span>Conversations</span></button>
+        <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
+        <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
+        <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
+        <button class="nav-item" data-view="usage"><span class="nav-icon" aria-hidden="true">U</span><span>Cost and usage</span></button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon" aria-hidden="true">S</span><span>Settings</span></button>
+        <button class="nav-item" data-view="guide"><span class="nav-icon" aria-hidden="true">?</span><span>How it works</span></button>
       </nav>
-
-      <div class="sidebar-boundary">
-        <strong>Human-controlled</strong>
-        <p>The engine can guide and check. It cannot approve, publish or act beyond recorded authority.</p>
-      </div>
+      <section class="recent-conversations" aria-labelledby="recent-heading">
+        <div class="recent-heading"><span id="recent-heading">Recent</span><button id="refresh-conversations" type="button">Refresh</button></div>
+        <div id="conversation-list"><p class="rail-empty">No conversations yet.</p></div>
+      </section>
+      <div class="rail-note"><span class="status-dot"></span><strong>Local data boundary</strong><p>Non-confidential project material only. Nothing here is approval.</p></div>
     </aside>
 
-    <main id="workspace" class="workspace">
-      <section class="next-action" aria-labelledby="next-action-title">
-        <div>
-          <span class="eyebrow">Next governed action</span>
-          <h2 id="next-action-title">Define the problem and ownership</h2>
-          <p id="next-action-detail">Complete the project context before progressing.</p>
+    <main id="main">
+      <header class="topbar">
+        <div><p class="eyebrow" id="workspace-label">Living methodology</p><h1 id="conversation-title">New conversation</h1></div>
+        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Send me a challenge</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
+      </header>
+
+      <section class="view conversation-view" id="conversation-view">
+        <div class="thread-column">
+          <div class="welcome" id="welcome">
+            <span class="welcome-mark">OA</span>
+            <p class="eyebrow">Governed assistance</p>
+            <h2>What would you like to work through?</h2>
+            <p>Ask a question, talk through an idea, review a document or create something useful. You will see a clear answer first; supporting evidence and system details stay out of the way unless you open them.</p>
+            <button class="welcome-help" data-open-guide type="button">New here? See the two-minute guide</button>
+            <div class="challenge-callout">
+              <div><strong>Want the methodology to challenge you?</strong><span>Get one focused question with a concrete scenario and a reason it matters.</span></div>
+              <button class="primary" data-send-challenge="balanced" type="button">Send me a challenge</button>
+            </div>
+            <div class="starter-grid">
+              <button data-starter="Review this process idea against the approved methodology."><strong>Review an idea</strong><span>Ground it in approved guidance</span></button>
+              <button data-starter="Help me decide whether this feedback should become a controlled change proposal."><strong>Shape feedback</strong><span>Keep classification, preparation and release separate</span></button>
+              <button data-starter="Create a concise implementation checklist for this work."><strong>Create an artefact</strong><span>Produce a bounded useful output</span></button>
+            </div>
+          </div>
+          <div class="messages" id="messages" aria-live="polite"></div>
+          <div class="processing-state" id="processing-state" hidden role="status" aria-live="polite">
+            <span class="processing-spinner" aria-hidden="true"></span>
+            <div><strong id="processing-title">Working on your request</strong><span id="processing-detail">Retrieving controlled evidence...</span></div>
+          </div>
+          <div class="composer-wrap">
+            <div class="recording-status" id="recording-status" hidden role="status">
+              <span class="recording-pulse" aria-hidden="true"></span>
+              <div><strong>Recording in progress</strong><span>Speak now, then select Stop.</span></div>
+              <time id="recording-time">00:00</time>
+            </div>
+            <div class="capture-review" id="capture-review" hidden>
+              <div><strong>Review captured text before reasoning</strong><span id="language-label">Detected language: pending</span></div>
+              <label><span>Original transcript</span><textarea id="transcript" rows="3" aria-label="Editable original transcript"></textarea></label>
+              <label id="translation-field" hidden><span>English working translation</span><textarea id="translation" rows="3" aria-label="Editable English translation"></textarea></label>
+              <div class="capture-actions"><button class="ghost" id="discard-transcript" type="button">Discard</button><button class="ghost" id="translate-transcript" type="button">Translate to English</button><button class="primary" id="use-transcript" type="button">Use reviewed text</button></div>
+            </div>
+            <form class="composer" id="composer">
+              <textarea id="input" rows="2" placeholder="Ask a question or describe the work you need..." aria-label="Message"></textarea>
+              <div class="composer-tools">
+                <div class="composer-left">
+                  <button type="button" class="icon-button record-button" id="record" aria-label="Start voice recording" title="Record voice">Record</button>
+                  <button type="button" class="icon-button attach-button" id="attach" aria-label="Attach a text document">Attach</button>
+                  <input id="file-input" type="file" hidden accept=".txt,.md,.markdown,.json,.csv,text/plain,text/markdown,application/json,text/csv">
+                  <span class="attachment-name" id="attachment-name"></span>
+                </div>
+                <div class="send-options">
+                  <select id="workspace" aria-label="Workspace"><option value="living-methodology">Living methodology</option><option value="documentation-governance">Documentation governance</option><option value="general-project">General project work</option></select>
+                  <select id="output-type" aria-label="Output type"><option value="answer">Answer</option><option value="summary">Concise summary</option><option value="analysis">Detailed analysis</option><option value="checklist">Checklist</option><option value="template">Template</option><option value="proposal">Proposal preparation</option></select>
+                  <button class="send-button" type="submit" aria-label="Preview and send">Send</button>
+                </div>
+              </div>
+            </form>
+            <p class="boundary">Review before use &middot; Feedback is not approval &middot; No automatic repository writes</p>
+          </div>
         </div>
-        <span class="control-badge" id="control-badge">AI can assist</span>
+
+        <aside class="context-panel" id="context-panel" aria-label="Technical request details" hidden>
+          <div class="panel-title"><div><p class="eyebrow">Request envelope</p><h2>Context &amp; control</h2></div><span class="approval-pill">Not approved</span></div>
+          <div id="context-empty" class="context-empty"><div class="radar"></div><h3>Grounding appears here</h3><p>Write a request to preview the repository evidence, execution mode and governance status.</p></div>
+          <div id="context-content" hidden>
+            <dl class="context-facts">
+              <div><dt>Classification</dt><dd id="classification">-</dd></div>
+              <div><dt>Execution</dt><dd id="route-tier">-</dd></div>
+              <div><dt>Context</dt><dd id="context-size">-</dd></div>
+              <div><dt>Estimated cost</dt><dd id="estimated-cost">-</dd></div>
+            </dl>
+            <div class="route-reason"><span>Why this route</span><p id="route-reason">-</p></div>
+            <div class="sources"><div class="section-label"><span>Repository sources</span><em id="source-count">0 selected</em></div><div id="sources"></div></div>
+          </div>
+        </aside>
       </section>
 
-      <section class="intro-panel">
-        <div>
-          <span class="eyebrow">The working principle</span>
-          <h2>Turn a messy problem into a governed next move.</h2>
-        </div>
-        <p>Define value first, make decisions visible, keep people where consequence matters and retain what the work teaches you.</p>
-      </section>
-
-      <section class="panel" aria-labelledby="project-heading">
-        <div class="panel-heading">
-          <div><span class="step-number">01</span><h2 id="project-heading">Frame the work</h2></div>
-          <p>Describe the problem in ordinary language. No process map or technical specification is required.</p>
-        </div>
-        <div class="form-grid form-grid-two">
-          <label class="field field-wide">
-            <span>Workspace title</span>
-            <input data-bind="project.title" type="text" placeholder="For example: Reduce avoidable customer handoffs" autocomplete="off">
-          </label>
-          <label class="field field-wide">
-            <span>Problem or opportunity</span>
-            <textarea data-bind="project.problem" rows="4" placeholder="What is happening, and why is it worth examining?"></textarea>
-          </label>
-          <label class="field">
-            <span>People affected</span>
-            <input data-bind="project.peopleAffected" type="text" placeholder="Customers, colleagues, suppliers…" autocomplete="off">
-          </label>
-          <label class="field">
-            <span>Operational owner</span>
-            <input data-bind="project.owner" type="text" placeholder="Named person or accountable role" autocomplete="off">
-          </label>
-        </div>
-      </section>
-
-      <section class="panel" aria-labelledby="value-heading">
-        <div class="panel-heading">
-          <div><span class="step-number">02</span><h2 id="value-heading">Define what better means</h2></div>
-          <p>Cost and speed are not automatically the priority. Record the value proposition and the authority to resolve trade-offs.</p>
-        </div>
-        <div class="form-grid form-grid-two">
-          <label class="field field-wide">
-            <span>Value proposition</span>
-            <textarea data-bind="value.proposition" rows="3" placeholder="Who benefits, and what meaningful change should they experience?"></textarea>
-          </label>
-          <label class="field">
-            <span>Desired outcome</span>
-            <textarea data-bind="value.desiredOutcome" rows="3" placeholder="The observable result you want"></textarea>
-          </label>
-          <label class="field">
-            <span>Primary beneficiary</span>
-            <textarea data-bind="value.beneficiary" rows="3" placeholder="Who receives the value?"></textarea>
-          </label>
-          <label class="field">
-            <span>Forms of value</span>
-            <textarea data-bind="value.formsOfValue" rows="3" placeholder="Safety, quality, confidence, time, cost…"></textarea>
-          </label>
-          <label class="field">
-            <span>Priority order</span>
-            <textarea data-bind="value.priorities" rows="3" placeholder="What matters most when outcomes conflict?"></textarea>
-          </label>
-          <label class="field">
-            <span>Minimum acceptable outcome</span>
-            <textarea data-bind="value.minimumOutcome" rows="3" placeholder="What must every suitable option achieve?"></textarea>
-          </label>
-          <label class="field">
-            <span>Constraints and obligations</span>
-            <textarea data-bind="value.constraints" rows="3" placeholder="Legal, safety, ethical, human and practical boundaries"></textarea>
-          </label>
-          <label class="field field-wide">
-            <span>Decision authority</span>
-            <input data-bind="value.decisionAuthority" type="text" placeholder="Who is authorised to choose when outcomes conflict?" autocomplete="off">
-          </label>
-        </div>
-      </section>
-
-      <section class="panel stage-panel" aria-labelledby="stage-heading">
-        <div class="panel-heading">
-          <div><span class="step-number">03</span><h2 id="stage-heading">Work the current stage</h2></div>
-          <p id="stage-purpose"></p>
-        </div>
-
-        <div class="stage-question">
-          <span class="eyebrow" id="stage-name">Observe</span>
-          <blockquote id="stage-question">What actually happens?</blockquote>
-          <ul id="stage-prompts"></ul>
-        </div>
-
-        <div class="form-grid form-grid-two">
-          <label class="field field-wide">
-            <span>Evidence and observations</span>
-            <textarea id="stage-evidence" rows="5" placeholder="Record facts, sources, exceptions and uncertainty"></textarea>
-          </label>
-          <label class="field field-wide">
-            <span>Decision or conclusion</span>
-            <textarea id="stage-decision" rows="4" placeholder="What is decided, ruled out or carried forward?"></textarea>
-          </label>
-          <label class="field field-wide">
-            <span>Owner of the outcome</span>
-            <input id="stage-owner" type="text" placeholder="Named person or accountable role" autocomplete="off">
-          </label>
-        </div>
-
-        <div id="approval-panel" class="approval-panel" hidden></div>
-
-        <div class="stage-actions">
-          <button class="button button-quiet" type="button" data-action="record-stage">Record stage update</button>
-          <button class="button button-primary" type="button" data-action="advance-stage" id="advance-button">Move forward</button>
+      <section class="view utility-view" id="challenges-view" hidden>
+        <div class="utility-card challenge-studio">
+          <p class="eyebrow">Develop the methodology through dialogue</p>
+          <h2>Challenge studio</h2>
+          <p class="challenge-intro">Choose an area, then the Workbench will prepare one demanding, plain-language question. It should give you enough context to think, state a provisional Operations Automated position and show what is genuinely uncertain.</p>
+          <div class="challenge-focus-grid">
+            <article>
+              <span class="challenge-number">01</span>
+              <h3>Principles</h3>
+              <p>Test whether a principle remains useful when values, incentives or operating conditions conflict.</p>
+              <button class="primary" data-send-challenge="principles" type="button">Challenge my principles</button>
+            </article>
+            <article>
+              <span class="challenge-number">02</span>
+              <h3>AI suitability</h3>
+              <p>Test whether the methodology is understandable and executable by AI without hiding judgement or authority.</p>
+              <button class="primary" data-send-challenge="ai-suitability" type="button">Challenge AI suitability</button>
+            </article>
+            <article>
+              <span class="challenge-number">03</span>
+              <h3>Manual work</h3>
+              <p>Test where human judgement, facilitation, empathy or physical work should remain deliberately manual.</p>
+              <button class="primary" data-send-challenge="manual-work" type="button">Challenge manual work</button>
+            </article>
+            <article>
+              <span class="challenge-number">04</span>
+              <h3>Delivery capability</h3>
+              <p>Test how Operations Automated works with development teams and leaves stronger internal capability behind.</p>
+              <button class="primary" data-send-challenge="delivery-capability" type="button">Challenge delivery capability</button>
+            </article>
+          </div>
+          <div class="challenge-boundary"><strong>Your answer becomes evidence, not approval.</strong><p>You can keep it as conversation context, reusable memory or evidence, or propose a controlled methodology change later.</p></div>
         </div>
       </section>
 
-      <section class="evidence-grid">
-        <article class="panel compact-panel" aria-labelledby="governance-heading">
-          <div class="panel-heading compact-heading"><div><span class="step-number">04</span><h2 id="governance-heading">Governance record</h2></div></div>
-          <div id="approval-list" class="approval-list"></div>
-        </article>
-
-        <article class="panel compact-panel" aria-labelledby="activity-heading">
-          <div class="panel-heading compact-heading"><div><span class="step-number">05</span><h2 id="activity-heading">Recent activity</h2></div></div>
-          <ol id="activity-list" class="activity-list"></ol>
-        </article>
-      </section>
-
-      <section class="data-boundary">
-        <div>
-          <strong>Your browser holds this workspace.</strong>
-          <p>It is not synchronised or sent to an external service. Do not enter confidential or regulated information.</p>
+      <section class="view utility-view" id="usage-view" hidden><div class="utility-card"><p class="eyebrow">Ledger</p><h2>Cost and usage</h2><div id="usage-summary"></div></div></section>
+      <section class="view utility-view" id="settings-view" hidden><form class="utility-card settings-form" id="settings-form"><p class="eyebrow">Local controls</p><h2>Settings</h2><div class="mode-explainer" id="mode-explainer"></div><div class="budget-explainer"><strong>How budgets behave</strong><p>The soft budget warns and asks you to confirm. The hard budget blocks further paid requests for that monthly period until you raise the limit. Local retrieval remains available. Per-request thresholds work the same way for one request. Values are estimated API cost in USD.</p></div><div class="settings-grid"><label>Monthly soft budget (USD)<input name="monthlySoftBudget" type="number" min="0" step=".01"></label><label>Monthly hard budget (USD)<input name="monthlyHardBudget" type="number" min="0" step=".01"></label><label>Request warning (USD)<input name="perRequestWarningThreshold" type="number" min="0" step=".01"></label><label>Request ceiling (USD)<input name="perRequestHardCeiling" type="number" min="0" step=".01"></label><label>Maximum context characters<input name="maximumRetrievedContext" type="number" min="1000" step="1000"></label><label class="toggle"><input name="advancedReasoningEnabled" type="checkbox"> Enable advanced reasoning when a provider is configured</label></div><button class="primary" type="submit">Save controls</button></form></section>
+      <section class="view utility-view" id="feedback-view" hidden><div class="utility-card wide-card"><p class="eyebrow">Review and classify</p><h2>Saved feedback</h2><div class="plain-explainer"><strong>Feedback is evidence, not approval.</strong><p>Review what was said, choose what kind of feedback it is and decide whether it should stop here or become a methodology or product change candidate. Classification never approves a change.</p><button data-open-guide type="button">Read how the change loop works</button></div><div id="feedback-list"></div></div></section>
+      <section class="view utility-view" id="decisions-view" hidden>
+        <div class="utility-card decision-card">
+          <p class="eyebrow">Human-controlled change workflow</p><h2>Decision inbox</h2>
+          <div class="plain-explainer"><strong>Preparation and release are separate decisions.</strong><p>Each proposal starts with a plain-English review brief. When a draft pull request exists, one prominent link opens the exact change on GitHub. <strong>Prepare change</strong> never edits main; a later, explicit release decision is still required.</p></div>
+          <div class="decision-status-board" id="decision-status-board"></div>
+          <div class="decision-layout">
+            <div class="decision-list" id="decision-list"><p>Loading decisions...</p></div>
+            <div class="decision-detail" id="decision-detail"><div class="empty-records"><strong>Select a change candidate.</strong><p>The proposal, decisions, repository references and implementation receipt will appear here.</p></div></div>
+          </div>
         </div>
-        <div class="boundary-actions">
-          <label class="button button-quiet file-button">Import JSON<input id="import-file" type="file" accept="application/json,.json"></label>
-          <button class="button button-danger" type="button" data-action="new-workspace">Start a new workspace</button>
+      </section>
+      <section class="view utility-view" id="guide-view" hidden>
+        <div class="utility-card guide-card">
+          <p class="eyebrow">Two-minute guide</p><h2>How the Workbench works</h2>
+          <div class="guide-steps">
+            <article><span>1</span><div><h3>Choose your input</h3><p>Type directly, attach a text/Markdown/CSV/JSON document, or select <strong>Record</strong>. Voice is transcribed first so you can correct it before any reasoning call.</p></div></article>
+            <article><span>2</span><div><h3>Review captured meaning</h3><p>For voice, correct the original transcript. If needed, create and edit an English working translation. Only the reviewed working text continues.</p></div></article>
+            <article><span>3</span><div><h3>Choose workspace and output</h3><p>The workspace controls the type of repository guidance retrieved. Output type controls whether you receive an answer, summary, analysis, checklist, template or proposal-preparation brief.</p></div></article>
+            <article><span>4</span><div><h3>Check before sending</h3><p>You will see the estimated cost before anything is sent. Supporting evidence and technical details are available if you want them, but they do not interrupt the main answer.</p></div></article>
+            <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
+            <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
+            <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
+          </div>
+          <div class="guide-reference">
+            <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>
+            <article><h3>What is retained</h3><p>Conversations, reviewed transcripts, translations, extracted documents, feedback, proposals, decisions, repository references, implementation receipts, source references and usage are stored locally.</p></article>
+            <article><h3>What is never automatic</h3><p>Classification is not approval. Preparation does not edit main. AI cannot approve its own recommendation, and no change merges without Jamie Peppard’s explicit release action.</p></article>
+            <article><h3>Automation is not the default</h3><p>The methodology must also design work that remains manual, identify where human thinking is required and develop the teams and internal capability needed to operate the result.</p></article>
+          </div>
         </div>
       </section>
     </main>
   </div>
-
+  <dialog id="preview-dialog"><form method="dialog"><div class="dialog-head"><div><p class="eyebrow">Before sending</p><h2>Ready to send</h2></div><button value="cancel" aria-label="Close">&times;</button></div><div id="dialog-preview"></div><div class="dialog-actions"><button value="cancel" class="ghost">Cancel</button><button value="confirm" class="primary" id="confirm-send">Send now</button></div></form></dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="engine.js"></script>
