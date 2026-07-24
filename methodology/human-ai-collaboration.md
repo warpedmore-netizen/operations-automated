@@ -229,9 +229,9 @@ AI may not treat user engagement, continued conversation, silence or positive to
 
 ## Evolution protocol
 
-This proposed method is created before complete validation so that it can generate evidence through use.
+This method was created before complete validation so that it could generate evidence through use. It is now approved for founder-led internal validation within the scope recorded above.
 
-1. Use the current version provisionally and identify it as proposed when status is material.
+1. Use the current version within its recorded approval scope and make that status and boundary visible when material.
 2. Observe interaction outcomes and capture material signals.
 3. Compare each signal with the current method and related feedback.
 4. State whether the likely cause is method content, delivery execution, missing context or another operational dependency.
@@ -274,6 +274,6 @@ Agreement rate, response length and number of completed stages are not sufficien
 - When does adaptive presentation become inappropriate profiling or overfitting?
 - How much method state should be visible during ordinary use?
 - Which interaction measures indicate real comprehension without intrusive monitoring?
-- How quickly can the proposed method change without creating instability or governance fatigue?
+- How quickly can the working method change without creating instability or governance fatigue?
 
 These uncertainties should be tested through use rather than resolved by assumption.

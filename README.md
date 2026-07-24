@@ -11,8 +11,12 @@ This repository is the controlled source for the methodology, its principles, go
 > **Current boundary:** Commercial validation, external publication, application deployment and new feedback or communication connections require separate decisions.
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
+>
+> **Proposed v0.7:** An outside-in operating rule, adaptable minimum structure, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md) are proposed for Jamie's review. They are not approved and do not make the outlined practice areas complete or externally publishable.
 
 Start with the [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
+
+Use the [proposed numbered guide](guide/README.md) to review the planned book-like reading order, operational coverage, use cases and known gaps.
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
@@ -32,6 +36,9 @@ The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES
 | [Activation and first use](methodology/activation-and-first-use.md) | Evidence that the intended user can reach and begin using a deliverable | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
+| [Numbered reader guide](guide/README.md) | A normal reading order, reader routes, use cases and links to canonical guidance | Proposed v0.7 |
+| [Operational coverage model](methodology/operational-coverage-model.md) | The complete intended operational territory and its current depth | Proposed v0.7 |
+| [Cross-functional interfaces](methodology/cross-functional-interfaces.md) | How Operations exchanges information, decisions and outcomes with other capabilities | Proposed v0.7 |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 

@@ -2,9 +2,9 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.6
+version: 0.7
 owner: Jamie Peppard
-last_updated: 2026-07-23
+last_updated: 2026-07-24
 ---
 
 # Operations Automated Roadmap
@@ -44,6 +44,10 @@ The [current methodology synthesis and visual map](methodology/current-methodolo
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
+Version 0.7 is now proposed for review. It responds to Jamie's finding that the methodology remains too light in practical use cases, detailed operational coverage, cross-functional linkages and reader guidance. It also begins outside-in from the primary customer, service user or stakeholder journey, uses the minimum helpful structure and makes feedback easy for the receiver. The proposal adds a [numbered reader guide](guide/README.md), a complete [operational coverage model](methodology/operational-coverage-model.md), a [cross-functional interface model](methodology/cross-functional-interfaces.md), a common practice-guide standard and an explicit completeness scale.
+
+The proposed catalogue makes omissions visible; it does not claim that every area is already a usable or validated practice. The approved baseline remains v0.6 unless Jamie explicitly approves and merges v0.7.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -72,14 +76,16 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Use the approved Human-AI Collaboration Method during daily and ad-hoc internal validation and retain material failures or corrections.
-2. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet.
-3. Run a materially different second facilitated case and select its output from the need.
-4. Validate activation and first use on one executable and one workflow-dependent non-executable delivery.
-5. Test a simplified aid with someone who did not design it.
-6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
-7. Use the evidence to review v0.6 and decide the smallest justified product.
-8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
+1. Review the proposed v0.7 coverage, interfaces and reader-guide architecture using the [plain-English assurance pack](proposals/v0.7-assurance-pack.md).
+2. Apply the proposed coverage-and-interface map outside-in to two materially different, non-confidential journeys, including one outside a conventional service-management setting.
+3. Use those cases and Jamie's priorities to select the first practice families that should move from Outlined to Usable.
+4. Develop and test the first detailed practice guide using the common authoring standard.
+5. Test whether an independent reader can find and use the quick-question, full-assessment, implementation, and governance-and-review routes, and can give or receive feedback through a suitable route.
+6. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet and validate activation.
+7. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
+8. Prepare a new assurance pack before any later material methodology release.
+9. Define the smallest justified product only after repeatable method outputs create value.
+10. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision
 
