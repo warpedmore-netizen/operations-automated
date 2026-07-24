@@ -11,9 +11,9 @@ last_updated: 2026-07-24
 
 ## Current agreed position
 
-- **Approved baseline:** v0.6 for internal validation only, approved by Jamie Peppard on 2026-07-23 and authorised for merge through PR #9.
+- **Approved baseline:** v0.7 for internal validation only, approved by Jamie Peppard on 2026-07-24. Merge has not yet been authorised.
 - **Approved v0.6 additions:** actionable decision aids, activation and first use, the Human-AI Collaboration Method, and the current visual synthesis.
-- **Proposed v0.7:** operational coverage, cross-functional interfaces, a numbered reader guide, use cases and a common practice-guide standard are ready for Jamie's review but are not approved.
+- **Approved v0.7 additions:** operational coverage, cross-functional interfaces, a numbered reader guide, use cases, the journey-to-operation sequence and a common practice-guide standard are approved for internal validation with conditions.
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
@@ -32,7 +32,7 @@ These are required to preserve the intended method or unblock the next justified
 6. **Keep evidence, uncertainty, obligations and human authority visible.** A score or AI recommendation cannot create evidence, approval, safety or compliance.
 7. **Complete a second materially different, non-confidential facilitated case.** Select the smallest useful output from the need rather than assuming another spreadsheet.
 8. **Simplify the first-case output before treating it as validated.** Retain the comprehensive workbook as a deeper prototype; produce and test a short first-use version.
-9. **Use an assurance pack and explicit Jamie decision for every material release.** The v0.6 decision is recorded; future approvals require the same visible boundary.
+9. **Use an assurance pack and explicit Jamie decision for every material release.** The v0.7 decision is recorded; future approvals require the same visible boundary.
 10. **Resolve remaining draft PRs deliberately.** PRs #3 and #8 are outside the v0.6 approval and must not be merged merely because the work is technically complete.
 11. **Prove activation and first use.** A created artefact is incomplete until its intended user can reach and begin using it, or the blocker and recovery route are explicit.
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
@@ -59,7 +59,7 @@ These materially improve usefulness, validation or control but do not all block 
 10. Keep versions, sources, assumptions and approval states visible in every reusable artefact.
 11. Pilot the approved internal collaboration method across different tasks, formats, disagreements and control points.
 12. Measure first-use success rather than relying only on construction tests.
-13. Test the proposed guide routes with an independent reader.
+13. Test the approved internal-validation guide routes with an independent reader.
 14. Move the highest-value operational practice families from Outlined to Usable through worked cases, instructions, roles, measures, controls and simple tools.
 15. Add materially different examples, including an individual workflow, a physical or non-service operation and a low-volume, high-consequence activity.
 16. Test outside-in journey mapping and operational injection points across materially different contexts.
@@ -106,11 +106,11 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Daily evolution | Continue whole-system methodology challenges and retain material learning | Approved and active locally; dependent on desktop availability and capacity | Jamie may pause, resume or change cadence |
 | Old Pilot 1 | Decide whether PR #3 contains unique evidence worth retaining, has been superseded, or should be closed | Draft PR #3 open; likely overlaps later v0.4/v0.5 work | Explicit keep, supersede or close decision |
 | Governance as code | Test and decide which living-documentation, traceability, approval and publication features belong in the future product | Draft PR #8 built with fictional data; not approved or merged | Separate POC assurance and product-fit decision |
-| Methodology breadth | Maintain a complete operational coverage catalogue and show current depth without claiming unfinished guidance is complete | Proposed v0.7 coverage model added; Jamie's review pending | Approve, revise or reject the v0.7 architecture |
+| Methodology breadth | Maintain a complete operational coverage catalogue and show current depth without claiming unfinished guidance is complete | Approved for internal validation in v0.7; detailed practice coverage remains incomplete | Test, revise or retain after the v0.7 validation conditions |
 | Detailed practice guides | Expand priority areas into usable instructions, roles, workflows, measures, controls, examples and tools | Most capabilities remain Identified or Outlined | Prioritise after applying the coverage map to materially different cases |
-| Cross-functional interfaces | Validate how Operations works with strategy, finance, people, legal, risk, technology, product, procurement and other enabling or assurance capabilities | Proposed v0.7 interface model added; not yet case-tested | Test in two cases and revise before claiming general applicability |
-| Outside-in journeys | Validate that beginning with the primary person's journey reveals the right operational injection points without hiding other stakeholders or obligations | Proposed v0.7 guidance added; not yet case-tested | Test in one ordinary and one high-consequence journey |
-| Feedback loops | Define and validate receiver-centred capture, acknowledgement, routing, response and outcome review, with bounded automation | Proposed v0.7 guidance added; no multi-channel evidence | Test with different users, forms, channels and consequences |
+| Cross-functional interfaces | Validate how Operations works with strategy, finance, people, legal, risk, technology, product, procurement and other enabling or assurance capabilities | Approved for internal validation in v0.7; not yet case-tested | Test in two cases and revise before claiming general applicability |
+| Outside-in journeys | Validate that beginning with the primary person's journey reveals the right operational injection points without hiding other stakeholders or obligations | Approved for internal validation in v0.7; not yet case-tested | Test in one ordinary and one high-consequence journey |
+| Feedback loops | Define and validate receiver-centred capture, acknowledgement, routing, response and outcome review, with bounded automation | Approved for internal validation in v0.7; no multi-channel evidence | Test with different users, forms, channels and consequences |
 | Ask experience | Define the repeatable output pattern for answerable and unanswerable questions, including progressive disclosure | v0.5 approved; simplicity and artefact behaviour under v0.6 testing | Evidence from the two cases |
 | Assessment/project experience | Define the full retained consultancy-style journey and its minimum artefacts | Concept approved; delivery specification incomplete | Complete cases before product definition |
 | Product definition | Specify the smallest useful AI-assisted product from validated outputs | Not started; earlier application parked | Jamie approves scope after repeatable value is shown |
@@ -125,17 +125,17 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Success evidence | Define and collect measures for user value, outcome improvement, repeat use, support burden and failure | Measures proposed; no live evidence system | Include in future cases and product specification |
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Approved for internal validation in v0.6; founder evidence only | Review after seven materially different interactions or an earlier material failure |
-| Methodology navigation | Test the proposed numbered guide, four reader routes and links to canonical guidance | Proposed v0.7 guide added; no independent-reader evidence | Jamie reviews architecture, then an independent reader tests navigation |
+| Methodology navigation | Test the numbered guide, four reader routes and links to canonical guidance | Approved for internal validation in v0.7; no independent-reader evidence | An independent reader tests navigation |
 | Use-case library | Add worked examples that demonstrate outputs across different scales, sectors, work types and consequences | Proposed catalogue exists; completed evidence remains narrow | Select the next two cases from materially different use-case families |
 
 ## Next sequence when work resumes
 
-1. Review the proposed v0.7 coverage model, interface model and reader-guide architecture.
+1. Begin the approved v0.7 validation conditions with an independent-reader navigation test.
 2. Apply the coverage-and-interface map to two materially different cases.
 3. Select and develop the first detailed practice guide from the resulting evidence.
 4. Test the guide routes, simplified aid and activation path with someone who did not design them.
 5. Continue observing the approved Human-AI Collaboration Method during internal validation.
-6. Review the approved v0.6 components and proposed v0.7 additions after the validation evidence; retain, revise or withdraw them explicitly.
+6. Review the approved v0.7 baseline after the validation evidence; retain, revise or withdraw it explicitly.
 7. Triage PR #3 and PR #8 against the validated product need.
 8. Define the smallest product only from the outputs that repeatedly created value.
 

@@ -1,19 +1,21 @@
 ---
 id: OA-GUIDE-111
 title: Practice Guide Authoring Standard
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Practice guide authoring standard
 
 ## Purpose
 
-This proposed standard makes future Operations Automated practice guides consistent, useful and honest about their completeness. It prevents a short outline from being mistaken for an implementation guide and prevents comprehensive paperwork from replacing practical value.
+This standard makes future Operations Automated practice guides consistent, useful and honest about their completeness. Jamie Peppard approved it on 2026-07-24 for internal validation. It prevents a short outline from being mistaken for an implementation guide and prevents comprehensive paperwork from replacing practical value.
 
 Use it for a detailed operational practice guide. Apply it proportionately: a section may be concise or explicitly not applicable, but it should not disappear when its omission could hide value, people, risk, authority, dependency or failure.
 

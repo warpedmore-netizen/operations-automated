@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-110
 title: Tools and Reference
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 10 — Tools and reference
@@ -77,7 +80,7 @@ Templates support reasoning, evidence and decisions; completion of a form is not
 | [Change proposal](../../templates/change-proposal.md) | Draft | Prepare a controlled change |
 | [Methodology assurance pack](../../templates/methodology-assurance-pack.md) | Draft | Support a plain-English human decision |
 | [Founder check-in](../../templates/founder-check-in.md) | Draft | Structure a methodology challenge |
-| [Guide authoring standard](guide-authoring-standard.md) | Proposed | Define practice anatomy and completeness |
+| [Guide authoring standard](guide-authoring-standard.md) | Approved for internal validation | Define practice anatomy and completeness |
 | [Actionable and self-guided decision aids](../../methodology/actionable-decision-aids.md) | Approved for internal validation | Rules for proportionate usable aids |
 
 ## Known gaps

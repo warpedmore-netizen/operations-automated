@@ -12,6 +12,8 @@ last_updated: 2026-07-24
 
 ## How to use this tool
 
+Jamie Peppard authorised this draft for use during v0.7 internal validation on 2026-07-24. It remains draft until practical testing shows that it is understandable, proportionate and useful.
+
 Use this template to:
 
 1. identify which operational capabilities are material to an outcome;

@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-040
 title: Assess and Decide
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 03 — Assess and decide

@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-030
 title: Understand the Operation
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 02 — Understand the operation
@@ -83,8 +86,8 @@ This chapter helps a reader understand how work really happens as a connected sy
 | [Connected work, risk and control](../../methodology/connected-work-risk-and-control.md) | Approved for internal validation | Work-record relationships, risk, decisions and authority |
 | [Methodology architecture](../../methodology/operations-automated-overview.md) | Approved for internal validation | Scope and operational-understanding layer |
 | [OPERATE — Observe and Examine](../../methodology/operate-overview.md) | Approved for internal validation | Current reality, evidence, causes and dependencies |
-| [Operational coverage model](../../methodology/operational-coverage-model.md) | Proposed v0.7 | Outside-in journey, operational injection points and full capability coverage |
-| [Cross-functional interface model](../../methodology/cross-functional-interfaces.md) | Proposed v0.7 | Journey-led interface and authority mapping |
+| [Operational coverage model](../../methodology/operational-coverage-model.md) | Approved for internal validation | Outside-in journey, operational injection points and full capability coverage |
+| [Cross-functional interface model](../../methodology/cross-functional-interfaces.md) | Approved for internal validation | Journey-led interface and authority mapping |
 | [Operational coverage and interface map](../../templates/operational-coverage-and-interface-map.md) | Draft | Quick first pass and optional full coverage record |
 | [Operational assessment template](../../templates/operational-assessment.md) | Draft | Working current-state record |
 | [Provisional Operations Automated self-assessment](../../pilots/operations-automated-self-assessment-001.md) | Draft | Example of a connected internal assessment |
@@ -94,7 +97,7 @@ This chapter helps a reader understand how work really happens as a connected sy
 - No detailed discovery or observation guide exists for work-as-done.
 - Demand analysis, capacity, queue, hand-off and flow methods remain high level.
 - The journey-to-operation sequence and use of MoSCoW or alternative prioritisation methods require case testing.
-- The proposed interface template has not yet been tested with an independent user or materially different cases.
+- The draft interface template has not yet been tested with an independent user or materially different cases.
 - Detailed journey-mapping guidance and varied customer, physical-operation and supplier-network examples remain missing.
 - The connected-work model identifies record relationships but does not yet provide complete practice lifecycles.
 - Evidence quality and confidence need more practical rating guidance.

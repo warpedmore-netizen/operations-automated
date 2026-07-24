@@ -1,10 +1,12 @@
 ---
 id: OA-FEEDBACK-2026-07-24-001
 title: Move from the Primary Journey into the Operational Value System
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-24
 last_updated: 2026-07-24
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Move from the primary journey into the operational value system
@@ -63,7 +65,7 @@ MoSCoW is useful where four priority categories create clarity. It is not a univ
 
 ## Proposed disposition
 
-Add a journey-to-operation sequence to the proposed v0.7 operational coverage model and reader guide. Update the cross-functional interface model, practice-guide standard and draft coverage tool so that:
+Add a journey-to-operation sequence to the v0.7 operational coverage model and reader guide. Update the cross-functional interface model, practice-guide standard and draft coverage tool so that:
 
 1. the primary journey establishes purpose and the point of investigation;
 2. the method then maps the end-to-end operational value system from its first event;
@@ -74,7 +76,7 @@ Add a journey-to-operation sequence to the proposed v0.7 operational coverage mo
 
 ## Status and decision
 
-- **Methodology status:** Proposed as part of Foundation v0.7.
-- **Approval:** Pending Jamie Peppard's explicit decision.
+- **Methodology status:** Approved as part of Foundation v0.7 for internal validation.
+- **Approval:** Jamie Peppard, 2026-07-24.
 - **External publication:** Not approved.
 - **Review trigger:** Application to two materially different journeys, including one where a specialist control or interface could become a delivery constraint.

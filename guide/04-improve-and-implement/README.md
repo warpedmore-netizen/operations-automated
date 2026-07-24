@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-050
 title: Improve and Implement
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 04 — Improve and implement

@@ -1,23 +1,25 @@
 ---
 id: OA-METHOD-012
 title: Operational Coverage Model
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Operational coverage model
 
 ## Purpose and status
 
-This proposed model makes the intended breadth and current depth of Operations Automated visible. It turns the approved [operational lenses](operational-lenses.md) into a coverage catalogue so that a capability is not mistaken for complete guidance merely because it has been named.
+This model makes the intended breadth and current depth of Operations Automated visible. It turns the approved [operational lenses](operational-lenses.md) into a coverage catalogue so that a capability is not mistaken for complete guidance merely because it has been named.
 
 It is an inventory and development map, not a maturity score, certification scheme or claim that Operations Automated replaces a specialist framework. The levels below describe the depth and evidence of methodology guidance for a capability. They do not assess how mature, compliant or effective a user's operation is.
 
-The v0.6 baseline provides a credible architecture and several usable internal methods. It does not yet contain detailed practice guidance for every operational capability. No capability in this initial catalogue is claimed to be externally validated or publishable.
+Jamie Peppard approved this model on 2026-07-24 as v0.7 working guidance for internal validation. It builds on the credible v0.6 architecture and several usable internal methods, but it does not yet contain detailed practice guidance for every operational capability. No capability in this initial catalogue is claimed to be externally validated or publishable.
 
 ## Coverage levels
 
@@ -140,7 +142,7 @@ Design the loop so that:
 - AI may find patterns and propose changes but may not infer approval or accept consequence; and
 - the loop ends with a retained lesson, decision, improvement or explicit no-change reason, followed by outcome review where material.
 
-## Initial v0.6 coverage snapshot
+## v0.7 approval coverage snapshot
 
 | Capability group | Identified | Outlined | Usable internally | Validated | Publishable | Total |
 |---|---:|---:|---:|---:|---:|---:|
@@ -150,7 +152,7 @@ Design the loop so that:
 | Change and evolution | 4 | 3 | 3 | 0 | 0 | 10 |
 | **Total** | **16** | **21** | **8** | **0** | **0** | **45** |
 
-This is a methodology-depth snapshot, not an operational maturity result. “Usable internally” means that the v0.6 baseline contains a repeatable internal method or working guidance; it does not mean independent validation or external readiness. The detailed tables below show the evidence and gap behind every classification.
+This is a methodology-depth snapshot, not an operational maturity result. “Usable internally” means that the guidance approved through v0.7 contains a repeatable internal method or working guidance; it does not mean independent validation or external readiness. The detailed tables below show the evidence and gap behind every classification.
 
 ## How to use the model
 
@@ -170,7 +172,7 @@ Do not complete every capability at maximum depth for every question. Proportion
 
 Core value-flow capabilities connect an original need to a realised and observed outcome.
 
-| Capability | Intended scope | Current v0.6 coverage | Current anchor | Principal guidance gap |
+| Capability | Intended scope | Current v0.7 coverage | Current anchor | Principal guidance gap |
 |---|---|---|---|---|
 | Purpose, beneficiaries, value and minimum outcomes | Define why the operation exists, for whom and what must be sustained | Usable | User-defined value, value matrix and methodology architecture | Validate across competing stakeholder and non-commercial outcomes |
 | User, customer, citizen, employee and stakeholder experience | Understand needs, accessibility, effort, trust, communication and possible harm | Outlined | People-and-experience lens | Journey methods, experience measures, inclusion tests and feedback handling |
@@ -189,7 +191,7 @@ Core value-flow capabilities connect an original need to a realised and observed
 
 Enabling capabilities provide the people, knowledge, information, technology, resources and environment through which value flows.
 
-| Capability | Intended scope | Current v0.6 coverage | Current anchor | Principal guidance gap |
+| Capability | Intended scope | Current v0.7 coverage | Current anchor | Principal guidance gap |
 |---|---|---|---|---|
 | People, roles, skills, capacity and wellbeing | Ensure the operation has capable people, sustainable workload and meaningful human involvement | Outlined | People lens, human-led automation and founder synthesis | Workforce planning, role design, competence, training, workload and wellbeing methods |
 | Organisation design, leadership, culture and incentives | Align structures and behaviour with end-to-end outcomes | Identified | People and ownership lenses | Operating-model patterns, leadership routines, incentives, conflict and cultural change |
@@ -209,7 +211,7 @@ Enabling capabilities provide the people, knowledge, information, technology, re
 
 Direction and assurance capabilities establish priorities, boundaries, confidence and accountability.
 
-| Capability | Intended scope | Current v0.6 coverage | Current anchor | Principal guidance gap |
+| Capability | Intended scope | Current v0.7 coverage | Current anchor | Principal guidance gap |
 |---|---|---|---|---|
 | Strategy, policy and target operating model | Translate purpose and external conditions into operational direction and design | Outlined | Charter, methodology architecture and OPERATE Redesign | Strategy deployment, policy hierarchy, capability model and target operating-model guidance |
 | Portfolio, investment and prioritisation | Compare competing operational changes and allocate limited attention and resources | Identified | OPERATE Prioritise and value matrix | Portfolio criteria, capacity allocation, sequencing, dependencies and benefits governance |
@@ -226,7 +228,7 @@ Direction and assurance capabilities establish priorities, boundaries, confidenc
 
 Change and evolution capabilities move an operation from current reality to a retained improvement without losing control of live work.
 
-| Capability | Intended scope | Current v0.6 coverage | Current anchor | Principal guidance gap |
+| Capability | Intended scope | Current v0.7 coverage | Current anchor | Principal guidance gap |
 |---|---|---|---|---|
 | Continuous operational improvement | Observe, prioritise, examine, redesign, automate, test and evolve proportionately | Usable for internal validation | OPERATE | Practice techniques, complete worked cases and cross-context validation |
 | Process, service and operating-model redesign | Define a better target state, alternatives, controls and transition needs | Outlined | OPERATE Redesign and output contract | Design patterns, option assessment, co-design, simulation and target-state artefacts |
@@ -241,7 +243,7 @@ Change and evolution capabilities move an operation from current reality to a re
 
 ## Cross-functional and external interfaces
 
-No operational capability works alone. Use the proposed [cross-functional interface model](cross-functional-interfaces.md) to define why an interface exists, when it is triggered, what information or decisions move in each direction, who has authority and when escalation is required.
+No operational capability works alone. Use the approved [cross-functional interface model](cross-functional-interfaces.md) to define why an interface exists, when it is triggered, what information or decisions move in each direction, who has authority and when escalation is required.
 
 The named interfaces are capabilities and responsibilities, not assumed departments. A small organisation may have one person carrying several responsibilities, use an external adviser or combine a record and decision meeting. Combining roles does not remove the need to expose a conflict of interest, missing competence or decision beyond that person's authority.
 

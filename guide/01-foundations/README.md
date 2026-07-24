@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-020
 title: Foundations
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 01 — Foundations
@@ -80,7 +83,7 @@ This chapter establishes why Operations Automated exists and the principles that
 | [Human-led automation, AI and agents](../../principles/human-led-automation.md) | Approved | Human responsibility and delegation boundary |
 | [Learning through failure](../../principles/learning-through-failure.md) | Approved | Safe failure and retained learning |
 | [TIGIPI](../../principles/tigipi.md) | Approved | Novice, error and pressured-use design |
-| [Operational coverage model](../../methodology/operational-coverage-model.md) | Proposed v0.7 | Outside-in design, minimum useful structure, receiver-centred feedback and complete operational scope |
+| [Operational coverage model](../../methodology/operational-coverage-model.md) | Approved for internal validation | Outside-in design, minimum useful structure, receiver-centred feedback and complete operational scope |
 | [Value matrix template](../../templates/value-matrix.md) | Draft | Working structure for value and trade-offs |
 | [Methodology Governance](../../GOVERNANCE.md) | Proposed | Governance states and founder-controlled authority |
 

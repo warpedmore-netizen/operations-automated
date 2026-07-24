@@ -1,10 +1,12 @@
 ---
 id: OA-FEEDBACK-2026-07-23-003
 title: Methodology Depth, Operational Coverage and Reader Structure
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Methodology depth, operational coverage and reader structure
@@ -62,7 +64,7 @@ The response should therefore use progressive disclosure: a short reading spine,
 
 ## Proposed disposition
 
-Prepare Foundation v0.7 as a proposed guide-architecture change. It should introduce:
+Prepare Foundation v0.7 as a guide-architecture change for Jamie's decision. It should introduce:
 
 - A coverage catalogue
 - A cross-functional interface model
@@ -101,10 +103,12 @@ Low understanding or control creates the strongest development priority when it 
 
 ## Jamie's decision
 
-- **Decision:** Pending
-- **Approval scope if accepted:** Internal validation only
+- **Decision:** Approved
+- **Approver:** Jamie Peppard
+- **Approval date:** 2026-07-24
+- **Approval scope:** Internal validation only
 - **External publication:** Not approved
 
 ## Review trigger
 
-Review after the current methodology has been mapped into the proposed tree, all material operational areas have at least been identified, priority gaps have been outlined and a reader has tested whether they can find and apply the appropriate guidance without repository knowledge.
+Review after the current methodology has been mapped into the approved internal-validation tree, all material operational areas have at least been identified, priority gaps have been outlined and a reader has tested whether they can find and apply the appropriate guidance without repository knowledge.

@@ -1,17 +1,19 @@
 ---
 id: OA-GUIDE-000
 title: Operations Automated Reader Guide
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Operations Automated reader guide
 
-This proposed guide is the reader-first navigation layer for Operations Automated. It gives the methodology a normal book order while preserving the existing files as the authoritative sources.
+This guide is the reader-first navigation layer for Operations Automated. Jamie Peppard approved it on 2026-07-24 for internal validation. It gives the methodology a normal book order while preserving the existing files as the authoritative sources.
 
 The guide does not duplicate, approve or replace methodology content. Each chapter index explains what to read, what the material should help a reader produce, how the topic connects to other functions, what guidance currently exists and what remains incomplete. The status recorded on each linked artefact remains authoritative.
 
@@ -83,7 +85,7 @@ This is a connected system rather than a compulsory linear workflow. The normal 
 | Superseded | Retained for history but no longer current |
 | Rejected | Considered and deliberately not adopted |
 
-This navigation layer is **proposed**. A linked approved artefact remains approved for its recorded scope; a linked proposed, draft or idea artefact does not become approved because it appears in this guide.
+This navigation layer is **approved for internal validation**. A linked artefact retains its own recorded status; a linked proposed, draft or idea artefact does not become approved because it appears in this guide.
 
 ## How to use the chapter indexes
 
@@ -103,4 +105,4 @@ Use the [guide authoring standard](10-tools-and-reference/guide-authoring-standa
 
 ## Boundary
 
-The guide is approved only if and when Jamie Peppard explicitly authorises it. It is not approved for external publication. Confidential employer, client or third-party information, data and proprietary artefacts do not belong in examples, cases or guide content.
+The guide is approved for internal validation only. It is not approved for external publication. Confidential employer, client or third-party information, data and proprietary artefacts do not belong in examples, cases or guide content.

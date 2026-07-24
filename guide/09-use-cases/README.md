@@ -1,18 +1,21 @@
 ---
 id: OA-GUIDE-100
 title: Use Cases
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 09 — Use cases
 
 ## Purpose and intended reader
 
-This chapter is the proposed catalogue of materially different scenarios used to test, explain and deepen Operations Automated. It is for methodology users, facilitators, authors, reviewers and product teams who need evidence that the method transfers beyond one service-management or automation example.
+This chapter is the approved internal-validation catalogue of materially different scenarios used to test, explain and deepen Operations Automated. It is for methodology users, facilitators, authors, reviewers and product teams who need evidence that the method transfers beyond one service-management or automation example.
 
 The scenarios are non-confidential prompts, not claims of completed validation. A developed case should identify its evidence boundary, separate hypothetical assumptions from observations and retain what the case changes in the methodology.
 
@@ -100,7 +103,7 @@ The catalogue should expand when a new scenario tests a genuinely different boun
 | [Refund automation decision-aid validation](../../pilots/refund-automation-decision-aid-validation.md) | Draft | Category-first automation case and simplicity feedback |
 | [Founder pilot methodology synthesis](../../proposals/founder-pilot-initial-synthesis-v0.5.md) | Approved for internal validation | Seven founder responses and cross-cutting method findings |
 | [Methodology feedback template](../../templates/methodology-feedback.md) | Idea | Retained case signal and disposition |
-| This scenario catalogue | Proposed | Breadth plan; scenarios are not yet completed cases |
+| This scenario catalogue | Approved for internal validation | Breadth plan; scenarios are not yet completed cases |
 
 ## Known gaps
 

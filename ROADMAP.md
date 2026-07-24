@@ -19,7 +19,7 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Version 0.6 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-23; it is not approved for external publication.
+Version 0.7 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-24; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
@@ -44,9 +44,9 @@ The [current methodology synthesis and visual map](methodology/current-methodolo
 
 A [provisional self-assessment](pilots/operations-automated-self-assessment-001.md) has applied v0.4 to Operations Automated. It finds that the architecture is a credible internal starting point but not a completed methodology: detailed guidance, repeated case evidence, outcome measures and a completed release-review loop remain necessary.
 
-Version 0.7 is now proposed for review. It responds to Jamie's finding that the methodology remains too light in practical use cases, detailed operational coverage, cross-functional linkages and reader guidance. It begins outside-in from the primary customer, service user or stakeholder journey, then moves into the end-to-end operational value system that must deliver the required outcome. It uses the minimum helpful structure, selects and combines methods for the context, keeps specialist interfaces proportionate and makes feedback easy for the receiver. The proposal adds a [numbered reader guide](guide/README.md), a complete [operational coverage model](methodology/operational-coverage-model.md), a [cross-functional interface model](methodology/cross-functional-interfaces.md), a common practice-guide standard and an explicit completeness scale.
+Version 0.7 was approved on 2026-07-24 for internal validation. It responds to Jamie's finding that the methodology remains too light in practical use cases, detailed operational coverage, cross-functional linkages and reader guidance. It begins outside-in from the primary customer, service user or stakeholder journey, then moves into the end-to-end operational value system that must deliver the required outcome. It uses the minimum helpful structure, selects and combines methods for the context, keeps specialist interfaces proportionate and makes feedback easy for the receiver. It adds a [numbered reader guide](guide/README.md), a complete [operational coverage model](methodology/operational-coverage-model.md), a [cross-functional interface model](methodology/cross-functional-interfaces.md), a common practice-guide standard and an explicit completeness scale.
 
-The proposed catalogue makes omissions visible; it does not claim that every area is already a usable or validated practice. The approved baseline remains v0.6 unless Jamie explicitly approves and merges v0.7.
+The approved internal-validation catalogue makes omissions visible; it does not claim that every area is already a usable or validated practice. Merge, external publication and product release remain separate decisions.
 
 ## Three workstreams developed in tandem
 
@@ -76,8 +76,8 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Review the proposed v0.7 coverage, interfaces and reader-guide architecture using the [plain-English assurance pack](proposals/v0.7-assurance-pack.md).
-2. Apply the proposed coverage-and-interface map outside-in to two materially different, non-confidential journeys, including one outside a conventional service-management setting.
+1. Apply the approved v0.7 coverage, interfaces and reader-guide architecture using the conditions in the [plain-English assurance pack](proposals/v0.7-assurance-pack.md).
+2. Apply the draft coverage-and-interface map outside-in to two materially different, non-confidential journeys, including one outside a conventional service-management setting.
 3. Use those cases and Jamie's priorities to select the first practice families that should move from Outlined to Usable.
 4. Develop and test the first detailed practice guide using the common authoring standard.
 5. Test whether an independent reader can find and use the quick-question, full-assessment, implementation, and governance-and-review routes, and can give or receive feedback through a suitable route.

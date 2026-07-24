@@ -1,18 +1,21 @@
 ---
 id: OA-GUIDE-060
 title: Operational Practice Guides
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 05 — Operational practice guides
 
 ## Purpose and intended reader
 
-This chapter is the proposed catalogue for detailed operational practice guidance. It is for readers who need to go beyond the nine lenses and apply Operations Automated to a specific discipline, work type or cross-functional relationship.
+This chapter is the approved internal-validation catalogue for detailed operational practice guidance. It is for readers who need to go beyond the nine lenses and apply Operations Automated to a specific discipline, work type or cross-functional relationship.
 
 The catalogue makes missing depth visible. Listing a practice does not claim that the practice is complete, mandatory or owned only by an “operations” team. Practices are connected capabilities that should be selected and tailored according to the outcome, evidence, consequence and environment.
 
@@ -30,7 +33,7 @@ The catalogue makes missing depth visible. Listing a practice does not claim tha
 | Practice family | Scope and typical questions | Main interfaces | Current depth |
 |---|---|---|---|
 | Strategy, portfolio and operating model | Direction, service or product portfolio, priorities, investment and operating structure | Leadership, strategy, product, finance, portfolio | Outline only |
-| Customer, user, service and experience | Outside-in outcomes, promises, journeys, accessibility, feedback, complaints and service expectations | Customers, product, sales, communications, legal | Outline only; outside-in detail proposed |
+| Customer, user, service and experience | Outside-in outcomes, promises, journeys, accessibility, feedback, complaints and service expectations | Customers, product, sales, communications, legal | Approved outline only; detailed practice remains incomplete |
 | Demand, intake, cases and requests | Entry routes, categorisation, triage, service expectations, backlog and failed demand | Customer-facing teams, product, data, service owners | Partial working guidance |
 | Process, workflow, capacity, queues and scheduling | Work design, variation, hand-offs, constraints, staffing and physical or digital flow | People, facilities, technology, planning, finance | Outline only |
 | Events, incidents and problems | Detection, response, restoration, recurring causes, learning and material harm | Technology, safety, security, communications, risk | Partial relationship model |
@@ -45,7 +48,7 @@ The catalogue makes missing depth visible. Listing a practice does not claim tha
 | Performance, finance, planning and benefits | Outcomes, service, flow, quality, cost, forecasts, budgets and realised value | Finance, strategy, data, portfolio, leadership | Outline only |
 | Cross-functional change, products, projects and communications | Transition between change and live work, launch, adoption, feedback and ownership | Product, project, communications, sales, training, operations | Outline only |
 
-“Outline only” means the operational lenses mention the topic but no complete practice guide exists. “Partial working guidance” means at least one approved internal module provides useful content but does not yet meet the proposed authoring standard.
+“Outline only” means the operational lenses mention the topic but no complete practice guide exists. “Partial working guidance” means at least one approved internal module provides useful content but does not yet meet the approved internal-validation authoring standard.
 
 ## Expected inputs
 
@@ -88,9 +91,9 @@ Common interfaces include leadership, customers, product, sales, finance, people
 | [Operational lenses](../../methodology/operational-lenses.md) | Approved for internal validation | Breadth across nine connected views |
 | [Connected work, risk and control](../../methodology/connected-work-risk-and-control.md) | Approved for internal validation | Cases, requests, incidents, problems, risks, controls and decisions |
 | [Founder pilot methodology synthesis](../../proposals/founder-pilot-initial-synthesis-v0.5.md) | Approved for internal validation | Demand, people, assurance, resilience, risk and proportionality findings |
-| [Operational coverage model](../../methodology/operational-coverage-model.md) | Proposed v0.7 | Outside-in design, adaptable structure, feedback and 45-capability catalogue |
-| [Cross-functional interface model](../../methodology/cross-functional-interfaces.md) | Proposed v0.7 | Journey-led exchange, authority, escalation and recovery |
-| [Guide authoring standard](../10-tools-and-reference/guide-authoring-standard.md) | Proposed | Anatomy and completeness scale for future guides |
+| [Operational coverage model](../../methodology/operational-coverage-model.md) | Approved for internal validation | Outside-in design, adaptable structure, feedback and 45-capability catalogue |
+| [Cross-functional interface model](../../methodology/cross-functional-interfaces.md) | Approved for internal validation | Journey-led exchange, authority, escalation and recovery |
+| [Guide authoring standard](../10-tools-and-reference/guide-authoring-standard.md) | Approved for internal validation | Anatomy and completeness scale for future guides |
 | [Operational assessment template](../../templates/operational-assessment.md) | Draft | Cross-lens working record |
 
 ## Known gaps

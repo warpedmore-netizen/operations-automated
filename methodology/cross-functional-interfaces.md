@@ -1,19 +1,21 @@
 ---
 id: OA-METHOD-013
 title: Cross-functional Interface Model
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # Cross-functional interface model
 
 ## Purpose and status
 
-This proposed model helps a person, team or organisation make the connections between operational work and other capabilities explicit. It extends the [operational coverage model](operational-coverage-model.md), [operational lenses](operational-lenses.md) and [connected work, risk and control](connected-work-risk-and-control.md).
+This model helps a person, team or organisation make the connections between operational work and other capabilities explicit. Jamie Peppard approved it on 2026-07-24 as v0.7 working guidance for internal validation. It extends the [operational coverage model](operational-coverage-model.md), [operational lenses](operational-lenses.md) and [connected work, risk and control](connected-work-risk-and-control.md).
 
 The interface names below describe capabilities and responsibilities, not a required organisation chart. Finance may be a specialist team, an owner-manager, a shared service or an external accountant. The same principle applies to legal, people, technology, risk and every other interface.
 

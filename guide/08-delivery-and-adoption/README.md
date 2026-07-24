@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-090
 title: Delivery and Adoption
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 08 — Delivery and adoption
@@ -80,7 +83,7 @@ This chapter helps a reader turn methodology reasoning into an understandable, u
 | [Activation and first use](../../methodology/activation-and-first-use.md) | Approved for internal validation | Working handover and first useful action |
 | [Human-AI Collaboration Method](../../methodology/human-ai-collaboration.md) | Approved for internal validation | Understanding, representation, challenge and recovery |
 | [Delivery system](../../product/delivery-system.md) | Approved for internal validation | Facilitated delivery and future product direction |
-| [Operational coverage model](../../methodology/operational-coverage-model.md) | Proposed v0.7 | Receiver-centred feedback and continuous improvement loop |
+| [Operational coverage model](../../methodology/operational-coverage-model.md) | Approved for internal validation | Receiver-centred feedback and continuous improvement loop |
 | [Private OPERATE workspace MVP](../../product/MVP.md) | Approved for private testing | Retained workspace experiment and product boundaries |
 | [Commercial validation strategy](../../product/commercial-validation-strategy.md) | Proposed | Knowledge and applied-product hypotheses |
 

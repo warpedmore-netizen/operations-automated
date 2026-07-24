@@ -1,30 +1,32 @@
 ---
 id: OA-CHANGE-010
 title: Methodology Guide Architecture, Outside-in Design and Operational Coverage
-status: proposed
+status: approved
 version: 0.7
 owner: Jamie Peppard
 date: 2026-07-23
 last_updated: 2026-07-24
 approval_required: true
-approval_status: pending
+approval_status: approved
+approval_date: 2026-07-24
+approval_scope: internal_validation
 intended_scope: internal_validation
 publication_status: not_approved
 ---
 
-# Methodology guide architecture, outside-in design and operational coverage v0.7 proposal
+# Methodology guide architecture, outside-in design and operational coverage v0.7 decision
 
 ## Proposal status
 
-This is a proposed change for internal validation. It does not replace the approved baseline, approve external publication, establish certification requirements or claim compliance with another methodology or standard.
+Jamie Peppard approved this change on 2026-07-24 as the v0.7 baseline for internal validation. It does not approve external publication, establish certification requirements or claim compliance with another methodology or standard.
 
 Jamie Peppard retains approval authority.
 
-## Proposed change
+## Approved change
 
 Develop Operations Automated as a reader-ordered guide system around its existing principles, operational lenses, readiness path, OPERATE cycle, output contract and evolution system.
 
-The proposed architecture adds eight connected elements:
+The approved internal-validation architecture adds eight connected elements:
 
 1. An outside-in starting principle based on the primary customer, service user or stakeholder journey
 2. A journey-to-operational-value-system sequence
@@ -253,7 +255,7 @@ Every published example must be non-confidential, clearly marked as illustrative
 
 ## 5. Common guide standard
 
-Use the proposed [practice-guide authoring standard](../guide/10-tools-and-reference/guide-authoring-standard.md). Its twenty-section anatomy covers:
+Use the approved [practice-guide authoring standard](../guide/10-tools-and-reference/guide-authoring-standard.md). Its twenty-section anatomy covers:
 
 - status, applicability, purpose, readers, triggers, scope and terminology;
 - value, beneficiaries, minimum outcomes, evidence, work types and workflow;
@@ -332,7 +334,7 @@ Its limitation is that an index alone would identify topics without establishing
 
 ### Phase 1: inventory and architecture
 
-1. Map every current methodology artefact to the proposed guide tree.
+1. Map every current methodology artefact to the approved internal-validation guide tree.
 2. Create the initial operational coverage register.
 3. Assign depth and governance status independently.
 4. Identify duplicates, missing links and terminology conflicts.
@@ -375,11 +377,11 @@ Record navigation time, misunderstood terms, unnecessary effort, missing guidanc
 2. Review source attribution and avoid proprietary reproduction.
 3. Compare the resulting coverage with the official benchmark structures only to identify omissions.
 4. Run at least two materially different, non-confidential cases.
-5. Present retained evidence, unresolved gaps and the proposed release decision to Jamie.
+5. Present retained evidence, unresolved gaps and the next release decision to Jamie.
 
 ## Affected artefacts
 
-This proposed change includes:
+This approved internal-validation change includes:
 
 - Repository and methodology contents pages
 - Operational coverage and cross-functional interface models
@@ -421,8 +423,9 @@ Begin outside-in from the primary journey and intended outcome. Use the minimum 
 
 ## Jamie's decision
 
-- **Decision:** Pending
+- **Decision:** Approved for internal validation
 - **Approver:** Jamie Peppard
-- **Approval scope if accepted:** Internal validation only
+- **Date:** 2026-07-24
+- **Merge authority:** Not granted by this approval
 - **External publication:** Not approved
 - **Certification or compliance claim:** None

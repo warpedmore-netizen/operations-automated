@@ -1,11 +1,14 @@
 ---
 id: OA-GUIDE-010
 title: Start Here
-status: proposed
-version: 0.1
+status: approved
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-24
 approval_required: true
+approval_date: 2026-07-24
+approval_scope: internal validation
 ---
 
 # 00 — Start here
@@ -76,7 +79,7 @@ The absence of complete information is not a reason to return nothing. State wha
 | [Proportionate application and delivery modes](../../methodology/proportionate-application-and-delivery-modes.md) | Approved for internal validation | Quick-question and assessment/project routes |
 | [Methodology output contract](../../methodology/output-contract.md) | Approved for internal validation | Minimum useful response |
 | [Actionable and self-guided decision aids](../../methodology/actionable-decision-aids.md) | Approved for internal validation | Shortest useful aid and progressive disclosure |
-| [Operations Automated reader guide](../README.md) | Proposed | Proposed book order and navigation |
+| [Operations Automated reader guide](../README.md) | Approved for internal validation | Book order and navigation |
 
 ## Known gaps
 
