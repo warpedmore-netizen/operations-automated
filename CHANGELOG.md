@@ -23,6 +23,7 @@ All material changes to Operations Automated will be recorded here.
 
 ## Brand system 0.1.0 - draft
 
+- Corrected shared button-text precedence and lightened the website template with a deep-blue hero, brighter signal card and softer navigation after founder visual review.
 - Added a controlled brand area for consistent use across websites, applications and documentation.
 - Corrected the working identity after Jamie supplied the intended continuous OA loop reference.
 - Added controlled copies of the founder-supplied square mark, wide banner and 1584 × 396 LinkedIn profile cover.

@@ -100,6 +100,8 @@ This line reflects the approved methodology but remains draft brand expression r
 
 Connectivity, automation, efficiency, helpful delivery and broad applicability should be central to the company brand. The supplied images are the initial brand direction to match.
 
+The dark visual identity is the right overall direction, but it should be concentrated on signature moments rather than making every surface dark. Website navigation, menus and working content should feel lighter, and every primary action must remain immediately readable without hover or text selection.
+
 ### AI inference
 
 - The continuous loop is a stronger expression of connected operations than the previously assumed four-block mark.

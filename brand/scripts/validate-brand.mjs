@@ -240,6 +240,21 @@ for (const template of templates) {
   check(!/(?:src|href)="https?:\/\//.test(template), "A browser template has an unapproved external runtime dependency.");
 }
 
+const brandCss = read("tokens/brand.css");
+const websiteCss = read("templates/website/website.css");
+check(
+  brandCss.includes(".oa-base .oa-button"),
+  "Shared buttons must retain their intended text colour inside the OA base scope.",
+);
+check(
+  /\.hero\s+\.oa-button\s*\{[^}]*color:\s*var\(--oa-white\)/s.test(websiteCss),
+  "The website hero action must declare readable light text.",
+);
+check(
+  /linear-gradient\(112deg,\s*#061d30[^;]+#0b5875/s.test(websiteCss),
+  "The website hero must retain the reviewed lighter deep-blue treatment.",
+);
+
 const proposalPath = join(repositoryRoot, "proposals", "brand-system-assurance-pack-v0.1.md");
 check(existsSync(proposalPath), "The brand decision pack is missing.");
 
