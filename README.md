@@ -8,7 +8,7 @@ This repository is the controlled source for the methodology, its principles, go
 
 > **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. Governed Confluence publication mechanics and their lifecycle-first reading structure are approved for private internal validation. No automatic or external publication is approved.
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror is approved for private internal validation. The human-first reader layer and three bounded pilots are approved for private internal implementation, pending merge; no live pilot publication, migration, automatic interaction retrieval, automatic publication or external publication is approved.
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 
@@ -83,6 +83,8 @@ Private testing demonstrated useful record, approval and export mechanics but al
 The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. Workbench 0.7.0 added a private [Confluence connected-evidence route](product/confluence-connected-evidence.md) that Jamie approved and merged for private internal validation through PR #13.
 
 Workbench 0.8.0 added [governed Confluence documentation publication](product/confluence-governed-publication.md) for private internal validation through PR #14. Jamie approved and merged the 0.9.0 lifecycle-first revision through PR #15: each Methodology and Internal library is organised into Live, Draft and Archived before its normal subject folders, using repository status as the only placement authority. Plan-specific confirmation, tracked page versions and publication receipts remain required. Automatic publication, page deletion, external release and customer use remain unapproved.
+
+The first live publication proved the controls and created 108 reconciled pages. Founder review then identified that the result remains a controlled repository mirror rather than a human publication. The [Confluence human publication model](product/confluence-human-publication-model.md) is approved for private internal implementation of three bounded pilots. It adds a curated reader layer for a book-like methodology and organisational policies, frameworks, functionality documentation and user guides, while retaining the lifecycle mirror as a secondary controlled record. Authorised document edits, comments and feedback may enter the governed methodology challenge loop through the approved manual pilot; automatic retrieval remains separately unapproved.
 
 ## Repository control
 

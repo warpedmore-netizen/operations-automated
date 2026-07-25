@@ -2,7 +2,7 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.5
+version: 0.6
 owner: Jamie Peppard
 last_updated: 2026-07-25
 ---
@@ -16,7 +16,7 @@ last_updated: 2026-07-25
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
-- **Confluence position:** the private connection, governed publication mechanics and lifecycle-first Live, Draft and Archived reading structure are approved for internal validation. The first plan-specific publication remains confirmation-gated; automatic publication, deletion and external use remain unapproved.
+- **Confluence position:** the private connection and lifecycle-first controlled mirror are approved and the first 108-page publication reconciled successfully. Founder review found that the mirror is not yet a human publication. A reader-first book, policy, framework and guide layer, together with three bounded pilots, is approved for private internal implementation pending merge. Document interactions become governed challenge candidates only through the approved manual pilot. Migration, automatic interaction retrieval, automatic publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
 
@@ -113,7 +113,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
 | Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
-| Confluence reading library | Organise each space by Live, Draft and Archived before its subject folders, then test one founder-confirmed initial publication and later incremental update | Workbench 0.9.0 approved and merged for private validation through PR #15; no live pages created | Jamie separately confirms the exact live publication plan |
+| Confluence human publication | Add a reader-first methodology book and internal handbook, preserve the lifecycle mirror, and route document interactions into governed challenges | Model and three bounded pilots approved for private internal implementation; merge pending; current pages unchanged | Merge the approved design, implement the three pilots on a separate branch and retain separate live-write and connection decisions |
 
 ## Next sequence when work resumes
 
