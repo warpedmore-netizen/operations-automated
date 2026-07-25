@@ -56,11 +56,15 @@ type Workspace = {
     organisationReviewed: boolean;
     authorityReviewed: boolean;
     inventoryReviewed: boolean;
+    draftReviewComplete: boolean;
   };
   inventory: Item[];
   decisions: Record<string, "accepted" | "deferred" | "rejected">;
+  recommendationEdits: Record<string, Recommendation>;
+  customRecommendations: Recommendation[];
   package: GovernanceComponent[];
   connectors: Record<string, Connector>;
+  discussions: Partial<Record<Page, DiscussionMessage[]>>;
   audit: Array<{ at: string; action: string; detail: string }>;
 };
 
@@ -70,6 +74,16 @@ type Recommendation = {
   rationale: string;
   priority: "Now" | "Next" | "Later";
   outputs: string[];
+};
+
+type DiscussionKind = "question" | "suggestion" | "challenge";
+
+type DiscussionMessage = {
+  id: string;
+  at: string;
+  role: "user" | "guide";
+  kind: DiscussionKind;
+  text: string;
 };
 
 type Notice = {
@@ -87,7 +101,13 @@ type Preset = {
   dogfood?: boolean;
 };
 
-const APP_VERSION = "Private proposal 0.2";
+type AuthorityStructure = {
+  label: string;
+  description: string;
+  authority: AuthorityProfile;
+};
+
+const APP_VERSION = "Private proposal 0.3";
 
 const defaultKnowledge: KnowledgePlan = {
   sourceMode: "project-memory",
@@ -117,9 +137,12 @@ const blank: Workspace = {
     organisationReviewed: false,
     authorityReviewed: false,
     inventoryReviewed: false,
+    draftReviewComplete: false,
   },
   inventory: [],
   decisions: {},
+  recommendationEdits: {},
+  customRecommendations: [],
   package: [],
   connectors: {
     confluence: { mode: "not-configured", reference: "" },
@@ -127,6 +150,7 @@ const blank: Workspace = {
     googleDocs: { mode: "not-configured", reference: "" },
     word: { mode: "not-configured", reference: "" },
   },
+  discussions: {},
   audit: [],
 };
 
@@ -225,6 +249,48 @@ const documentTypes = [
   "Scenario library",
 ];
 
+const authorityStructures: AuthorityStructure[] = [
+  {
+    label: "Founder-led",
+    description:
+      "For a small organisation where one authorised person may hold several decision roles.",
+    authority: {
+      governanceAuthority: "Founder and Chief Executive",
+      methodologyAuthority: "Methodology Authority",
+      documentOwner: "Relevant Document Owner",
+      controlOwner: "Relevant Control Owner",
+      draftingAgent: "AI Governance Assistant",
+      publicationOperator: "Authorised Publication Operator",
+    },
+  },
+  {
+    label: "Leadership team",
+    description:
+      "For an organisation where executives and named service owners share responsibility.",
+    authority: {
+      governanceAuthority: "Chief Executive or Executive Team",
+      methodologyAuthority: "Methodology Lead",
+      documentOwner: "Relevant Service or Department Owner",
+      controlOwner: "Relevant Control Owner",
+      draftingAgent: "AI Governance Assistant",
+      publicationOperator: "Authorised Operations Administrator",
+    },
+  },
+  {
+    label: "Committee-led",
+    description:
+      "For a larger organisation with formal committees and delegated operational roles.",
+    authority: {
+      governanceAuthority: "Executive Committee or delegated Governance Committee",
+      methodologyAuthority: "Methodology Steering Group",
+      documentOwner: "Policy or Document Owner",
+      controlOwner: "Control Owner",
+      draftingAgent: "Governance Drafting Assistant",
+      publicationOperator: "Document Management or Publication Team",
+    },
+  },
+];
+
 const navItems: Array<{ page: Page; number?: string; description: string }> = [
   { page: "Overview", description: "Purpose and progress" },
   { page: "Organisation", number: "01", description: "What you do and why" },
@@ -304,36 +370,43 @@ const authorityFields: Array<{
   key: keyof AuthorityProfile;
   label: string;
   help: string;
+  example: string;
 }> = [
   {
     key: "governanceAuthority",
-    label: "Company governance authority",
-    help: "The role that can approve company policy, material business-governance changes and company risk acceptance.",
+    label: "Who has the final say on company policy and business risk?",
+    help: "Use a role or decision group, not a person's name. This role approves company rules, material governance changes and risk acceptance.",
+    example: "Founder and Chief Executive, Board, Executive Committee or Governance Committee",
   },
   {
     key: "methodologyAuthority",
-    label: "Methodology authority",
-    help: "The separate role that can approve what the customer-facing Operations Automated methodology means.",
+    label: "Who has the final say on what the customer methodology means?",
+    help: "This may be the same person, but the decision is different: it changes what the customer-facing methodology teaches.",
+    example: "Methodology Authority, Methodology Lead or Methodology Steering Group",
   },
   {
     key: "documentOwner",
-    label: "Document owner",
-    help: "The role responsible for keeping a document accurate, useful and reviewed.",
+    label: "Who keeps each document accurate and useful?",
+    help: "This is normally the role closest to the subject. Different documents can have different owners later.",
+    example: "Service Owner, Department Head, Policy Owner or Relevant Document Owner",
   },
   {
     key: "controlOwner",
-    label: "Control owner",
-    help: "The role responsible for making sure a control is designed, operated, evidenced and improved.",
+    label: "Who makes sure each control actually works?",
+    help: "This role owns control design, operation, evidence, testing and improvement.",
+    example: "Operations Lead, Risk Owner, Service Owner or Relevant Control Owner",
   },
   {
     key: "draftingAgent",
-    label: "AI drafting role",
-    help: "The named AI capability that may analyse and draft but cannot approve, publish Live or accept risk.",
+    label: "What should the AI drafting assistant be called?",
+    help: "This is a capability name for the audit and documents. It may analyse and draft but cannot approve, publish Live or accept risk.",
+    example: "AI Governance Assistant",
   },
   {
     key: "publicationOperator",
-    label: "Publication operator",
-    help: "The role allowed to carry out an already authorised publication plan. Publishing does not create approval.",
+    label: "Who carries out publication after it has been approved?",
+    help: "This role executes an authorised plan. Being able to publish does not give the role authority to approve.",
+    example: "Authorised Operations Administrator, Document Manager or Publication Team",
   },
 ];
 
@@ -457,6 +530,15 @@ function routeFor(workspace: Workspace): Recommendation[] {
   return result;
 }
 
+function recommendationsFor(workspace: Workspace) {
+  const suggested = routeFor(workspace).map((recommendation) => ({
+    ...recommendation,
+    ...(workspace.recommendationEdits[recommendation.id] || {}),
+    id: recommendation.id,
+  }));
+  return [...suggested, ...workspace.customRecommendations];
+}
+
 function readiness(workspace: Workspace) {
   const types = new Set(
     workspace.inventory.filter((item) => item.status === "current").map((item) => item.type),
@@ -518,7 +600,7 @@ function stepComplete(page: Page, workspace: Workspace) {
   if (page === "Sources & destination") return workspace.knowledge.confirmed;
   if (page === "Inventory") return workspace.progress.inventoryReviewed;
   if (page === "Recommendations") return Object.keys(workspace.decisions).length > 0;
-  if (page === "Draft documents") return workspace.package.length > 0;
+  if (page === "Draft documents") return workspace.progress.draftReviewComplete;
   return false;
 }
 
@@ -527,6 +609,44 @@ function nextPage(workspace: Workspace): Page {
     journeyPages.find((page) => !stepComplete(page, workspace)) ||
     "Draft documents"
   );
+}
+
+function guidedReply(
+  page: Page,
+  kind: DiscussionKind,
+  workspace: Workspace,
+  message: string,
+) {
+  const acknowledgement =
+    kind === "question"
+      ? "Your question is retained against this step."
+      : kind === "suggestion"
+        ? "Your suggestion is retained as product feedback."
+        : "Your challenge is retained for review rather than treated as agreement.";
+
+  const guidance: Record<Page, string> = {
+    Overview:
+      "The useful output is an explained recommendation followed by readable proposed documents. Nothing is approved or published by completing this journey.",
+    Organisation:
+      "Use only enough context to change the answer: what the organisation provides, who relies on it, its important dependencies and the immediate outcome. Exact detail is not required where it adds no value.",
+    Authority: `This workspace currently gives final company-governance decisions to “${workspace.authority.governanceAuthority}”. One person may hold several roles, but each decision should still name the role being exercised. Choosing or editing a title here records responsibility; it does not delegate power.`,
+    "Sources & destination":
+      "The source is what this assessment may read. The destination is where an authorised publication may later be carried out. They can be different places and saving them connects or publishes nothing.",
+    Inventory:
+      "The inventory records what appears to exist and what is missing. It is evidence about documentation, not proof that the operation or control works.",
+    Recommendations:
+      "You can rename or rewrite a recommendation, change its priority and outputs, or add another route. Any material edit clears its previous selection and generated package so the changed meaning must be reviewed again.",
+    "Draft documents":
+      "Read and select the drafts that are suitable for the next controlled review. You do not need to open the technical JSON package. Direct Workbench import is a separate capability that is not active yet.",
+    Audit:
+      "The audit shows what the workspace recorded. It supports traceability but does not turn a saved action, comment or technical event into approval.",
+  };
+
+  const boundary = message.trim().length > 400
+    ? "The detail is retained, but no automatic change has been made."
+    : "No document, authority or publication state has changed automatically.";
+
+  return `${acknowledgement} ${guidance[page]} ${boundary}`;
 }
 
 function HelpTip({ label, children }: { label: string; children: ReactNode }) {
@@ -626,6 +746,176 @@ function SaveNotice({
   );
 }
 
+function PageDiscussion({
+  page,
+  messages,
+  value,
+  kind,
+  onValueChange,
+  onKindChange,
+  onSubmit,
+}: {
+  page: Page;
+  messages: DiscussionMessage[];
+  value: string;
+  kind: DiscussionKind;
+  onValueChange: (value: string) => void;
+  onKindChange: (kind: DiscussionKind) => void;
+  onSubmit: () => void;
+}) {
+  const starters: Record<Page, string> = {
+    Overview: "What will I get back from this journey?",
+    Organisation: "What information is actually needed here?",
+    Authority: "Who should own this in my type of organisation?",
+    "Sources & destination": "Why are the source and destination different?",
+    Inventory: "What counts as useful evidence in this inventory?",
+    Recommendations: "I want to suggest a different recommendation.",
+    "Draft documents": "What am I expected to do after reading these drafts?",
+    Audit: "Why was this action recorded?",
+  };
+
+  return (
+    <section className="discussion" id={`discussion-${page.replaceAll(" ", "-")}`}>
+      <div className="discussion-heading">
+        <div>
+          <span className="kicker">DISCUSS THIS PAGE</span>
+          <h2>Ask, suggest or challenge without leaving the workspace.</h2>
+        </div>
+        <span className="guided-label">Guided response · connected AI not active</span>
+      </div>
+      <p className="discussion-intro">
+        Your message is retained against {page.toLowerCase()}. The immediate reply uses controlled
+        workspace guidance; it is not presented as generative AI analysis.
+      </p>
+
+      {messages.length ? (
+        <div className="discussion-thread" aria-live="polite">
+          {messages.slice(-8).map((message) => (
+            <article className={message.role} key={message.id}>
+              <span>{message.role === "user" ? `Your ${message.kind}` : "Governance guide"}</span>
+              <p>{message.text}</p>
+            </article>
+          ))}
+        </div>
+      ) : null}
+
+      <div className="discussion-compose">
+        <label>
+          <span>Response type</span>
+          <select value={kind} onChange={(event) => onKindChange(event.target.value as DiscussionKind)}>
+            <option value="question">Ask a question</option>
+            <option value="suggestion">Make a suggestion</option>
+            <option value="challenge">Challenge the approach</option>
+          </select>
+        </label>
+        <label className="message-field">
+          <span>Your message</span>
+          <textarea
+            rows={3}
+            maxLength={1200}
+            placeholder={starters[page]}
+            value={value}
+            onChange={(event) => onValueChange(event.target.value)}
+          />
+        </label>
+        <button type="button" disabled={!value.trim()} onClick={onSubmit}>
+          Add to this page
+        </button>
+      </div>
+      <small>
+        Do not enter confidential employer, client or third-party information. A discussion does
+        not edit a recommendation, approve a document or publish anything. This private pilot
+        retains the eight most recent exchanges on each page.
+      </small>
+    </section>
+  );
+}
+
+function RecommendationEditor({
+  draft,
+  isNew,
+  onChange,
+  onSave,
+  onCancel,
+}: {
+  draft: Recommendation;
+  isNew: boolean;
+  onChange: (draft: Recommendation) => void;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="recommendation-editor">
+      <div className="two-up">
+        <FormField
+          label="Recommendation title"
+          help="Rename the proposed route in language the organisation understands."
+        >
+          <input
+            value={draft.title}
+            onChange={(event) => onChange({ ...draft, title: event.target.value })}
+          />
+        </FormField>
+        <FormField
+          label="Priority"
+          help="Now means act in this cycle; Next means after the immediate work; Later means retain for review."
+        >
+          <select
+            value={draft.priority}
+            onChange={(event) =>
+              onChange({
+                ...draft,
+                priority: event.target.value as Recommendation["priority"],
+              })
+            }
+          >
+            <option value="Now">Now</option>
+            <option value="Next">Next</option>
+            <option value="Later">Later</option>
+          </select>
+        </FormField>
+      </div>
+      <FormField
+        label="Why this is worth doing"
+        help="Explain the evidence, gap or desired outcome that makes this route useful."
+      >
+        <textarea
+          rows={3}
+          value={draft.rationale}
+          onChange={(event) => onChange({ ...draft, rationale: event.target.value })}
+        />
+      </FormField>
+      <FormField
+        label="Proposed outputs"
+        help="Enter one document, decision aid, control or other useful output per line."
+        example="Business Governance Framework"
+      >
+        <textarea
+          rows={5}
+          value={draft.outputs.join("\n")}
+          onChange={(event) => onChange({ ...draft, outputs: event.target.value.split("\n") })}
+        />
+      </FormField>
+      <div className="form-actions">
+        <button
+          type="button"
+          disabled={!draft.title.trim() || !draft.outputs.some((output) => output.trim())}
+          onClick={onSave}
+        >
+          {isNew ? "Add recommendation" : "Save recommendation changes"}
+        </button>
+        <button type="button" className="secondary" onClick={onCancel}>
+          Cancel
+        </button>
+        <span>
+          Saving a material change clears any previous selection and generated documents so the
+          new meaning can be reviewed.
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function JourneyStrip({
   workspace,
   go,
@@ -659,8 +949,12 @@ export function GovernanceLab() {
     title: "",
     status: "current" as Item["status"],
   });
+  const [recommendationDraft, setRecommendationDraft] = useState<Recommendation | null>(null);
+  const [addingRecommendation, setAddingRecommendation] = useState(false);
+  const [discussionInputs, setDiscussionInputs] = useState<Partial<Record<Page, string>>>({});
+  const [discussionKinds, setDiscussionKinds] = useState<Partial<Record<Page, DiscussionKind>>>({});
 
-  const recommendations = useMemo(() => routeFor(workspace), [workspace]);
+  const recommendations = useMemo(() => recommendationsFor(workspace), [workspace]);
   const dimensions = useMemo(() => readiness(workspace), [workspace]);
 
   useEffect(() => {
@@ -678,7 +972,15 @@ export function GovernanceLab() {
           connectors: { ...blank.connectors, ...(stored.connectors || {}) },
           inventory: Array.isArray(stored.inventory) ? stored.inventory : [],
           decisions: stored.decisions || {},
+          recommendationEdits: stored.recommendationEdits || {},
+          customRecommendations: Array.isArray(stored.customRecommendations)
+            ? stored.customRecommendations
+            : [],
           package: Array.isArray(stored.package) ? stored.package : [],
+          discussions:
+            stored.discussions && typeof stored.discussions === "object"
+              ? stored.discussions
+              : {},
           audit: Array.isArray(stored.audit) ? stored.audit : [],
         };
         if (isOperationsAutomated(hydrated) && !hydrated.inventory.length) {
@@ -742,6 +1044,9 @@ export function GovernanceLab() {
 
   function loadPreset(index: number) {
     const preset = presets[index];
+    const suggestedAuthority = preset.dogfood
+      ? authorityStructures[0].authority
+      : authorityStructures[1].authority;
     const inventory = preset.inventory.map((item, itemIndex) => ({
       id: `preset-${index}-${itemIndex}`,
       type: item[0],
@@ -764,15 +1069,18 @@ export function GovernanceLab() {
       {
         ...workspace,
         organisation: { ...preset.organisation },
-        authority: { ...defaultAuthority },
+        authority: { ...suggestedAuthority },
         knowledge,
         progress: {
           organisationReviewed: false,
           authorityReviewed: false,
           inventoryReviewed: false,
+          draftReviewComplete: false,
         },
         inventory,
         decisions: {},
+        recommendationEdits: {},
+        customRecommendations: [],
         package: [],
       },
       preset.dogfood ? "Private dogfooding context loaded" : "Fictional context loaded",
@@ -785,12 +1093,36 @@ export function GovernanceLab() {
     );
   }
 
+  function applyAuthorityStructure(structure: AuthorityStructure) {
+    setWorkspace({
+      ...workspace,
+      authority: { ...structure.authority },
+      progress: {
+        ...workspace.progress,
+        authorityReviewed: false,
+        draftReviewComplete: false,
+      },
+      package: [],
+    });
+    setNotice({
+      page: "Authority",
+      kind: "success",
+      message: `${structure.label} examples are now in the fields. Amend any title that does not match the organisation, then save the roles.`,
+    });
+  }
+
   function saveOrganisation() {
     const next = isOperationsAutomated(workspace)
       ? {
           ...workspace,
-          progress: { ...workspace.progress, organisationReviewed: true },
+          progress: {
+            ...workspace.progress,
+            organisationReviewed: true,
+            draftReviewComplete: false,
+          },
           inventory: mergeKnownInventory(workspace.inventory),
+          decisions: {},
+          package: [],
           knowledge: {
             ...defaultKnowledge,
             ...workspace.knowledge,
@@ -798,7 +1130,13 @@ export function GovernanceLab() {
         }
       : {
           ...workspace,
-          progress: { ...workspace.progress, organisationReviewed: true },
+          progress: {
+            ...workspace.progress,
+            organisationReviewed: true,
+            draftReviewComplete: false,
+          },
+          decisions: {},
+          package: [],
         };
     void save(
       next,
@@ -817,7 +1155,12 @@ export function GovernanceLab() {
     void save(
       {
         ...workspace,
-        progress: { ...workspace.progress, authorityReviewed: true },
+        progress: {
+          ...workspace.progress,
+          authorityReviewed: true,
+          draftReviewComplete: false,
+        },
+        package: [],
       },
       "Authority profile updated",
       workspace.authority.governanceAuthority,
@@ -831,14 +1174,174 @@ export function GovernanceLab() {
     );
   }
 
+  function beginRecommendationEdit(recommendation: Recommendation) {
+    setRecommendationDraft({
+      ...recommendation,
+      outputs: [...recommendation.outputs],
+    });
+    setAddingRecommendation(false);
+  }
+
+  function saveRecommendationEdit() {
+    if (
+      !recommendationDraft?.title.trim() ||
+      !recommendationDraft.outputs.some((output) => output.trim())
+    ) return;
+    const decisions = { ...workspace.decisions };
+    delete decisions[recommendationDraft.id];
+    const custom = workspace.customRecommendations.some(
+      (item) => item.id === recommendationDraft.id,
+    );
+    const next = {
+      ...workspace,
+      decisions,
+      recommendationEdits: custom
+        ? workspace.recommendationEdits
+        : {
+            ...workspace.recommendationEdits,
+            [recommendationDraft.id]: {
+              ...recommendationDraft,
+              title: recommendationDraft.title.trim(),
+              rationale: recommendationDraft.rationale.trim(),
+              outputs: recommendationDraft.outputs.map((output) => output.trim()).filter(Boolean),
+            },
+          },
+      customRecommendations: custom
+        ? workspace.customRecommendations.map((item) =>
+            item.id === recommendationDraft.id
+              ? {
+                  ...recommendationDraft,
+                  title: recommendationDraft.title.trim(),
+                  rationale: recommendationDraft.rationale.trim(),
+                  outputs: recommendationDraft.outputs
+                    .map((output) => output.trim())
+                    .filter(Boolean),
+                }
+              : item,
+          )
+        : workspace.customRecommendations,
+      package: [],
+      progress: { ...workspace.progress, draftReviewComplete: false },
+    };
+    void save(
+      next,
+      "Recommendation edited",
+      recommendationDraft.title.trim(),
+      {
+        page: "Recommendations",
+        message:
+          "The recommendation was updated. Its previous selection and generated package were cleared so the changed meaning can be reviewed again.",
+      },
+    );
+    setRecommendationDraft(null);
+  }
+
+  function addRecommendation() {
+    if (
+      !recommendationDraft?.title.trim() ||
+      !recommendationDraft.outputs.some((output) => output.trim())
+    ) return;
+    const recommendation: Recommendation = {
+      ...recommendationDraft,
+      id: `custom-${Date.now()}`,
+      title: recommendationDraft.title.trim(),
+      rationale: recommendationDraft.rationale.trim(),
+      outputs: recommendationDraft.outputs.map((output) => output.trim()).filter(Boolean),
+    };
+    void save(
+      {
+        ...workspace,
+        customRecommendations: [...workspace.customRecommendations, recommendation],
+        package: [],
+        progress: { ...workspace.progress, draftReviewComplete: false },
+      },
+      "Recommendation added",
+      recommendation.title,
+      {
+        page: "Recommendations",
+        message:
+          "Your recommendation is now part of this workspace. Review it and select it only if you want its outputs generated as proposals.",
+      },
+    );
+    setRecommendationDraft(null);
+    setAddingRecommendation(false);
+  }
+
+  function startNewRecommendation() {
+    setAddingRecommendation(true);
+    setRecommendationDraft({
+      id: "new",
+      title: "",
+      rationale: "",
+      priority: "Next",
+      outputs: [""],
+    });
+  }
+
+  function seedDiscussion(page: Page, text: string) {
+    setDiscussionKinds({ ...discussionKinds, [page]: "suggestion" });
+    setDiscussionInputs({ ...discussionInputs, [page]: text });
+    window.setTimeout(
+      () =>
+        document
+          .getElementById(`discussion-${page.replaceAll(" ", "-")}`)
+          ?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      0,
+    );
+  }
+
+  function submitDiscussion(page: Page) {
+    const text = (discussionInputs[page] || "").trim();
+    if (!text) return;
+    const kind = discussionKinds[page] || "question";
+    const at = new Date().toISOString();
+    const messages = [
+      ...(workspace.discussions[page] || []),
+      {
+        id: `${Date.now()}-user`,
+        at,
+        role: "user" as const,
+        kind,
+        text,
+      },
+      {
+        id: `${Date.now()}-guide`,
+        at,
+        role: "guide" as const,
+        kind,
+        text: guidedReply(page, kind, workspace, text),
+      },
+    ].slice(-16);
+    void save(
+      {
+        ...workspace,
+        discussions: { ...workspace.discussions, [page]: messages },
+      },
+      "Page discussion recorded",
+      `${page}: ${kind}`,
+      {
+        page,
+        message:
+          "Your message and the guided response are retained on this page. No recommendation, document or authority has changed automatically.",
+      },
+    );
+    setDiscussionInputs({ ...discussionInputs, [page]: "" });
+  }
+
   function saveKnowledgePlan() {
     const next = {
       ...workspace,
       knowledge: { ...workspace.knowledge, confirmed: true },
-      progress: { ...workspace.progress, inventoryReviewed: false },
+      progress: {
+        ...workspace.progress,
+        inventoryReviewed: false,
+        draftReviewComplete: false,
+      },
       inventory: isOperationsAutomated(workspace)
         ? mergeKnownInventory(workspace.inventory)
         : workspace.inventory,
+      decisions: {},
+      package: [],
     };
     void save(
       next,
@@ -875,7 +1378,13 @@ export function GovernanceLab() {
     void save(
       {
         ...workspace,
-        progress: { ...workspace.progress, inventoryReviewed: true },
+        progress: {
+          ...workspace.progress,
+          inventoryReviewed: true,
+          draftReviewComplete: false,
+        },
+        decisions: {},
+        package: [],
       },
       "Working inventory confirmed",
       `${workspace.inventory.length} inventory items`,
@@ -900,7 +1409,11 @@ export function GovernanceLab() {
       destinationDescription(workspace.knowledge),
     );
     await save(
-      { ...workspace, package: components },
+      {
+        ...workspace,
+        package: components,
+        progress: { ...workspace.progress, draftReviewComplete: false },
+      },
       "Proposed governance documents generated",
       `${components.length} proposed documents`,
       {
@@ -915,13 +1428,35 @@ export function GovernanceLab() {
   function includeAllDrafts() {
     const selected = workspace.package.map((item) => ({ ...item, status: "accepted" as const }));
     void save(
-      { ...workspace, package: selected },
+      {
+        ...workspace,
+        package: selected,
+        progress: { ...workspace.progress, draftReviewComplete: false },
+      },
       "All generated documents included in Draft hand-off",
       `${selected.length} proposed documents`,
       {
         page: "Draft documents",
         message:
           "All generated documents are selected for Workbench review. This selection is not policy approval and cannot publish to Live.",
+      },
+    );
+  }
+
+  function completeDraftReview() {
+    const included = workspace.package.filter((item) => item.status === "accepted").length;
+    if (!included) return;
+    void save(
+      {
+        ...workspace,
+        progress: { ...workspace.progress, draftReviewComplete: true },
+      },
+      "Draft review recorded",
+      `${included} proposed documents ready for a future controlled Workbench import`,
+      {
+        page: "Draft documents",
+        message:
+          "You are finished in this app for now. Your selected drafts and destination are retained. You do not need to open or move the technical JSON package; direct Workbench import is the next product capability and is not active yet.",
       },
     );
   }
@@ -1108,55 +1643,73 @@ export function GovernanceLab() {
       <>
         <PageIntro
           page="Authority"
-          eyebrow="WHO CAN DECIDE WHAT"
-          title="Authority means the role allowed to make each decision."
+          eyebrow="WHO OWNS THE DECISION"
+          title="Choose job titles that make sense in your organisation."
         >
-          A role name keeps the documents useful as people change. One authorised person may
-          hold several roles during private validation, but the AI drafting role cannot approve
-          its own work.
+          You are not designing a complicated committee structure. You are simply telling the
+          proposed documents who has the final say, who keeps the work accurate and who may carry
+          out an already-approved action.
         </PageIntro>
 
         <section className="explanation-grid">
           <article>
-            <span>Company governance</span>
-            <strong>How Operations Automated runs as a business</strong>
-            <p>Policies, business risk, controls, permissions and company publication.</p>
+            <span>Final decision</span>
+            <strong>Who may say yes to policy, risk or methodology meaning?</strong>
+            <p>This could be a founder, chief executive, board, executive team or committee.</p>
           </article>
           <article>
-            <span>Customer methodology</span>
-            <strong>What Operations Automated teaches other people</strong>
-            <p>Method meaning, guidance, practices, templates and external release.</p>
+            <span>Day-to-day ownership</span>
+            <strong>Who keeps the document or control working?</strong>
+            <p>This is normally a service owner, department lead, policy owner or control owner.</p>
           </article>
           <article className="decision-card">
-            <span>Human control</span>
-            <strong>Technical access is not decision authority</strong>
-            <p>The audit retains the actual human actor when a consequential decision occurs.</p>
+            <span>One person, several roles</span>
+            <strong>A small organisation does not need six different people.</strong>
+            <p>The title records which responsibility the person is exercising for that decision.</p>
           </article>
+        </section>
+
+        <section>
+          <span className="kicker">START WITH THE NEAREST STRUCTURE</span>
+          <h2>Pick an example, then change any title that is wrong.</h2>
+          <div className="authority-presets">
+            {authorityStructures.map((structure) => (
+              <button
+                type="button"
+                className="authority-preset"
+                onClick={() => applyAuthorityStructure(structure)}
+                key={structure.label}
+              >
+                <strong>{structure.label}</strong>
+                <span>{structure.description}</span>
+                <small>Use these role examples</small>
+              </button>
+            ))}
+          </div>
         </section>
 
         <section className="form-card">
           <div className="form-heading">
             <div>
-              <h2>Recommended role model</h2>
-              <p>Keep these defaults unless a different role genuinely owns the decision.</p>
+              <h2>Your role titles</h2>
+              <p>The examples become wording inside the proposed documents.</p>
             </div>
             <button
               type="button"
               className="secondary"
-              onClick={() =>
-                setWorkspace({
-                  ...workspace,
-                  authority: { ...defaultAuthority },
-                  progress: { ...workspace.progress, authorityReviewed: false },
-                })
-              }
+              onClick={() => applyAuthorityStructure(authorityStructures[0])}
             >
-              Restore recommended roles
+              Use founder-led examples
             </button>
           </div>
           <div className="form-grid">
             {authorityFields.map((field) => (
-              <FormField key={field.key} label={field.label} help={field.help}>
+              <FormField
+                key={field.key}
+                label={field.label}
+                help={field.help}
+                example={field.example}
+              >
                 <input
                   value={workspace.authority[field.key]}
                   onChange={(event) =>
@@ -1177,10 +1730,10 @@ export function GovernanceLab() {
             ))}
           </div>
           <div className="authority-boundary">
-            <strong>What saving authority does—and does not do</strong>
+            <strong>Saving records the proposed responsibility model—it does not grant power.</strong>
             <p>
-              It gives the proposed documents meaningful role names. It does not delegate new
-              powers, approve anything, or make AI responsible for a human decision.
+              The actual authorised human or group still makes consequential decisions. Technical
+              access, a role title or an AI draft never creates approval.
             </p>
           </div>
           <div className="form-actions">
@@ -1617,6 +2170,54 @@ export function GovernanceLab() {
           generation.
         </PageIntro>
 
+        <section className="recommendation-tools">
+          <div>
+            <span className="kicker">YOUR ROUTE, NOT A FIXED ANSWER</span>
+            <h2>Amend what the service suggests.</h2>
+            <p>
+              Rename or rewrite a recommendation, change its outputs, add a different route, or
+              discuss what is missing before selecting anything.
+            </p>
+          </div>
+          <div className="actions">
+            <button type="button" onClick={startNewRecommendation}>
+              Add a recommendation
+            </button>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() =>
+                seedDiscussion(
+                  "Recommendations",
+                  "I want to suggest a different route because ",
+                )
+              }
+            >
+              Suggest or discuss
+            </button>
+          </div>
+        </section>
+
+        {addingRecommendation && recommendationDraft ? (
+          <section className="form-card">
+            <h2>Add your own recommendation</h2>
+            <p>
+              Describe the useful route and the outputs it should create. It will remain proposed
+              until you select it for draft generation.
+            </p>
+            <RecommendationEditor
+              draft={recommendationDraft}
+              isNew
+              onChange={setRecommendationDraft}
+              onSave={addRecommendation}
+              onCancel={() => {
+                setAddingRecommendation(false);
+                setRecommendationDraft(null);
+              }}
+            />
+          </section>
+        ) : null}
+
         <section className="recommendations">
           {recommendations.map((item) => (
             <article key={item.id}>
@@ -1627,6 +2228,38 @@ export function GovernanceLab() {
                   <p>{item.rationale}</p>
                 </div>
               </div>
+
+              <div className="recommendation-actions">
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => beginRecommendationEdit(item)}
+                >
+                  Edit or rename
+                </button>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() =>
+                    seedDiscussion(
+                      "Recommendations",
+                      `I want to discuss “${item.title}” because `,
+                    )
+                  }
+                >
+                  Discuss this
+                </button>
+              </div>
+
+              {recommendationDraft?.id === item.id && !addingRecommendation ? (
+                <RecommendationEditor
+                  draft={recommendationDraft}
+                  isNew={false}
+                  onChange={setRecommendationDraft}
+                  onSave={saveRecommendationEdit}
+                  onCancel={() => setRecommendationDraft(null)}
+                />
+              ) : null}
 
               <div className="recommendation-facts">
                 <div>
@@ -1683,6 +2316,11 @@ export function GovernanceLab() {
                         {
                           ...workspace,
                           decisions: { ...workspace.decisions, [item.id]: decision },
+                          package: [],
+                          progress: {
+                            ...workspace.progress,
+                            draftReviewComplete: false,
+                          },
                         },
                         "Recommendation disposition",
                         `${item.id}: ${decision}`,
@@ -1816,6 +2454,10 @@ export function GovernanceLab() {
                                   }
                                 : item,
                             ),
+                            progress: {
+                              ...workspace.progress,
+                              draftReviewComplete: false,
+                            },
                           },
                           "Draft document selection changed",
                           component.title,
@@ -1839,27 +2481,56 @@ export function GovernanceLab() {
 
               <div className="handoff">
                 <div>
-                  <span className="kicker">CONTROLLED HAND-OFF</span>
+                  <span className="kicker">YOUR NEXT ACTION</span>
                   <strong>
                     {included} of {workspace.package.length} documents selected
                   </strong>
                   <p>{destinationDescription(workspace.knowledge)}</p>
                 </div>
                 <div>
+                  <h2>Finish the review in this app.</h2>
                   <p>
-                    The package contains no credentials and grants no approval. The private
-                    Workbench must compare committed source before any later Draft publication.
-                    Direct import is not active in this version.
+                    Read the documents you care about, include the suitable ones, then record that
+                    they are ready for the next controlled stage. You do not need to open, copy or
+                    understand JSON.
                   </p>
                   {included ? (
-                    <a className="download" href="/api/governance-package">
-                      Prepare credential-free Workbench package
-                    </a>
+                    <button type="button" onClick={completeDraftReview}>
+                      Finish review and retain the selection
+                    </button>
                   ) : (
                     <button type="button" disabled>
                       Select at least one draft
                     </button>
                   )}
+                  <div className="handoff-result">
+                    <strong>What happens after this?</strong>
+                    <ol>
+                      <li>Your selected drafts and intended Confluence Draft location stay here.</li>
+                      <li>
+                        A future controlled import will send them to the private Workbench for
+                        comparison.
+                      </li>
+                      <li>
+                        Confluence Draft publication will still require its own reviewed plan and
+                        human confirmation.
+                      </li>
+                    </ol>
+                    <p>
+                      Direct Workbench import is not active yet, so this is the honest stopping
+                      point for the current product test.
+                    </p>
+                  </div>
+                  <details className="technical-package">
+                    <summary>Technical package for future import (advanced)</summary>
+                    <p>
+                      This credential-free JSON is an internal transport format for the future
+                      Workbench connection. Ordinary users do not need it.
+                    </p>
+                    <a className="download" href="/api/governance-package">
+                      Download technical JSON package
+                    </a>
+                  </details>
                 </div>
               </div>
               <SaveNotice notice={notice} page="Draft documents" go={go} />
@@ -2002,7 +2673,22 @@ export function GovernanceLab() {
           </div>
         </header>
 
-        <div className="content">{view}</div>
+        <div className="content">
+          {view}
+          <PageDiscussion
+            page={active}
+            messages={workspace.discussions[active] || []}
+            value={discussionInputs[active] || ""}
+            kind={discussionKinds[active] || "question"}
+            onValueChange={(value) =>
+              setDiscussionInputs({ ...discussionInputs, [active]: value })
+            }
+            onKindChange={(kind) =>
+              setDiscussionKinds({ ...discussionKinds, [active]: kind })
+            }
+            onSubmit={() => submitDiscussion(active)}
+          />
+        </div>
         <footer>
           Connected Governance — by Operations Automated · Private internal dogfooding or
           fictional demonstration only · Proposed brand pilot · AI may propose but cannot approve

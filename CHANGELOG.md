@@ -2,6 +2,19 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Proposed — Connected Governance conversational journey
+
+- Reframed Authority as six plain decision and ownership questions.
+- Added founder-led, leadership-team and committee-led starter structures with recognisable job-title examples and editable wording.
+- Made recommendations workable: users may rename, rewrite, reprioritise, change outputs or add another proposed route.
+- Clear stale recommendation selections and generated documents when a recommendation's meaning changes.
+- Added a retained ask, suggest or challenge discussion to every application page.
+- Labelled immediate page responses as controlled guidance rather than connected generative AI.
+- Replaced the JSON-first handoff with a clear human review completion and honest current stopping point.
+- Retained the credential-free JSON package only as an advanced future-import artefact.
+- Preserved the positively validated draft brand pilot without representing the brand as approved.
+- No generated company policy, brand approval, AI provider connection, direct Workbench import, Confluence publication, Live promotion or external release is approved by this proposal.
+
 ## Proposed — Connected Governance guided journey and brand pilot
 
 - Added a guided six-step journey from operating context to readable proposed documents.

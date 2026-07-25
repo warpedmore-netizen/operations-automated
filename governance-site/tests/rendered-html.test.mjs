@@ -40,7 +40,10 @@ test("fields explain their purpose and the interface offers safe assisted contex
   assert.match(lab, /role="tooltip"/);
   assert.match(lab, /Use Operations Automated context/);
   assert.match(lab, /does not send data to another AI service/);
-  assert.match(lab, /Authority means the role allowed to make each decision/);
+  assert.match(lab, /Choose job titles that make sense in your organisation/);
+  assert.match(lab, /Founder-led/);
+  assert.match(lab, /Chief Executive or Executive Team/);
+  assert.match(lab, /Executive Committee or delegated Governance Committee/);
 });
 
 test("sources, inventory and Draft destination remain visibly separate", () => {
@@ -64,6 +67,10 @@ test("recommendations explain evidence, outputs, authority and consequences", ()
   assert.match(lab, /Select for draft generation/);
   assert.match(lab, /Generate proposed documents/);
   assert.match(lab, /Review the generated drafts/);
+  assert.match(lab, /Edit or rename/);
+  assert.match(lab, /Add a recommendation/);
+  assert.match(lab, /Suggest or discuss/);
+  assert.match(lab, /previous selection and generated package were cleared/);
 });
 
 test("the private dogfooding route generates substantive role-based governance drafts", () => {
@@ -72,7 +79,9 @@ test("the private dogfooding route generates substantive role-based governance d
 
   assert.match(lab, /Operations Automated/);
   assert.match(lab, /Read the proposed document/);
-  assert.match(lab, /Prepare credential-free Workbench package/);
+  assert.match(lab, /Finish review and retain the selection/);
+  assert.match(lab, /You do not need to open, copy or\s+understand JSON/);
+  assert.match(lab, /Download technical JSON package/);
   for (const title of [
     "Business Governance Framework",
     "Roles and Delegated Authority Standard",
@@ -90,6 +99,17 @@ test("the private dogfooding route generates substantive role-based governance d
   assert.match(governance, /status: proposed/);
   assert.match(governance, /Operations Automated Governance Authority/);
   assert.doesNotMatch(governance, /Jamie Peppard/);
+});
+
+test("every page exposes a retained two-way discussion without claiming connected AI", () => {
+  const lab = read("app/GovernanceLab.tsx");
+
+  assert.match(lab, /DISCUSS THIS PAGE/);
+  assert.match(lab, /Ask, suggest or challenge without leaving the workspace/);
+  assert.match(lab, /Guided response · connected AI not active/);
+  assert.match(lab, /not presented as generative AI analysis/);
+  assert.match(lab, /Page discussion recorded/);
+  assert.match(lab, /does\s+not edit a recommendation, approve a document or publish anything/);
 });
 
 test("the proposed brand pilot uses the retained OA identity without implying approval", () => {

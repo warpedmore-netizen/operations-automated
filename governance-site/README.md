@@ -5,12 +5,14 @@ Private, deployable testing surface for the proposed Connected Governance servic
 The service now guides a tester from operating context to readable proposed governance:
 
 1. describe the organisation and intended outcome;
-2. define who may approve, own, draft and publish;
+2. choose a familiar authority structure, then amend who may approve, own, draft and publish;
 3. separate the knowledge source from the Confluence Draft destination;
 4. inspect the current-document inventory and known gaps;
-5. review an explained recommendation;
+5. review, amend, add or discuss an explained recommendation;
 6. generate and read the actual proposed documents; and
-7. prepare a credential-free package for later private Workbench review.
+7. retain the human-reviewed selection for a later controlled Workbench import.
+
+Every page also retains questions, suggestions and challenges beside the relevant work. Immediate replies use controlled page guidance and are visibly labelled as non-generative because a connected AI provider is not active in this proposal.
 
 Operations Automated is the first bounded dogfooding organisation. Its known context and inventory can be loaded without retyping project memory. The interface also retains fictional organisations for safe testing.
 
@@ -21,6 +23,8 @@ Operations Automated is the first bounded dogfooding organisation. Its known con
 - Company governance and customer-methodology authority remain separate.
 - The private Workbench retains the protected Confluence credential.
 - The hosted product records source scope and destination but does not ask for or store an API key.
+- Recommendation edits clear stale selections and generated work.
+- The technical JSON package is an advanced future-import artefact; an ordinary tester does not need to handle it.
 - Direct hosted-to-Workbench import is not active in this increment.
 - Live publication, external release, automatic publication, deletion and silent overwrite remain disabled.
 
