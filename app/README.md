@@ -6,6 +6,8 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
+> **Proposed mobile knowledge pilot:** Workbench build `1.1.0-mobile-knowledge-draft` corrects the local reading and phone layout and proposes a Jamie-only Tailscale access route. The layout correction is available on its review branch. Remote access is not enabled, Tailscale is not installed and the connection still needs Jamie's explicit approval.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
@@ -19,6 +21,22 @@ The page and server compare a controlled build marker. A persistent restart warn
 The underlying `.\Start-Workbench.ps1` command remains available for troubleshooting and automation.
 
 The direct `npm start` command remains available for environments where Node.js and npm are already on `PATH`.
+
+The launcher checks the running server build before opening the page. If an older recognised Workbench is still using port 4173, it verifies that the listener is the local Node Workbench, stops it and starts the selected repository build. This prevents an apparently running page from silently using missing or stale assets.
+
+## Proposed phone access
+
+The proportionate founder pilot is Tailscale Serve, not a public tunnel:
+
+1. Jamie explicitly approves the private access connection and Jamie-only identity boundary.
+2. Install Tailscale from its official source on this Windows computer and on the phone.
+3. Sign in to both devices with the same authorised account.
+4. Keep the Workbench listening only on `127.0.0.1:4173`.
+5. Run `tailscale serve --bg 4173` and use the returned private HTTPS `*.ts.net` address on the phone.
+6. Allow microphone access, complete one spoken challenge and confirm that an unauthorised identity cannot connect.
+7. Record and test the Serve-disable and device-removal route.
+
+The computer and Workbench still need to be running. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. No remote access has been activated by this documentation.
 
 ## Proposed brand review pilot
 

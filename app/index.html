@@ -3,8 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="A private, governed OPERATE workspace for operational problem solving.">
-  <title>OPERATE Workspace</title>
+  <meta name="description" content="A private, governed knowledge workbench for challenging and developing Operations Automated.">
+  <meta name="theme-color" content="#03111e">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="OA Workbench">
+  <title>Operations Automated Knowledge Workbench</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/brand-system/assets/logo/generated/mark-dark-tile-192.png">
+  <link rel="apple-touch-icon" href="/brand-system/assets/logo/generated/mark-dark-tile-192.png">
   <link rel="stylesheet" href="/brand-system/tokens/brand.css">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -12,11 +20,11 @@
   <a class="skip-link" href="#main">Skip to conversation</a>
   <div class="shell">
     <aside class="rail">
-      <div class="brand"><img class="brand-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt=""><div><strong>Operations Automated</strong><small>Private local workbench</small></div></div>
+      <div class="brand"><span class="brand-logo" aria-hidden="true">OA</span><div><strong>Operations Automated</strong><small>Private knowledge workbench</small></div></div>
       <button class="new-button" id="new-conversation" type="button"><span aria-hidden="true">+</span> New conversation</button>
       <nav aria-label="Workbench">
-        <button class="nav-item active" data-view="conversation"><span class="nav-icon" aria-hidden="true">C</span><span>Conversations</span></button>
         <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
+        <button class="nav-item active" data-view="conversation"><span class="nav-icon" aria-hidden="true">C</span><span>Conversations</span></button>
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
         <button class="nav-item" data-view="brand"><span class="nav-icon" aria-hidden="true">OA</span><span>Brand review</span></button>
@@ -38,17 +46,17 @@
         <p id="server-version-message">The page files and local server are from different Workbench versions.</p>
       </div>
       <header class="topbar">
-        <div><p class="eyebrow" id="workspace-label">Living methodology</p><h1 id="conversation-title">New conversation</h1></div>
-        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Send me a challenge</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
+        <div><p class="eyebrow" id="workspace-label">Knowledge workbench</p><h1 id="conversation-title">New conversation</h1></div>
+        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
       </header>
 
       <section class="view conversation-view" id="conversation-view">
         <div class="thread-column">
           <div class="welcome" id="welcome">
-            <img class="welcome-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="">
-            <p class="eyebrow">Governed assistance</p>
-            <h2>What would you like to work through?</h2>
-            <p>Ask a question, talk through an idea, review a document or create something useful. You will see a clear answer first; supporting evidence and system details stay out of the way unless you open them.</p>
+            <span class="welcome-logo" aria-hidden="true">OA</span>
+            <p class="eyebrow">Challenge · defend · develop</p>
+            <h2>Develop the knowledge, not the tooling.</h2>
+            <p>Ask a question, defend a position, challenge the methodology or review a proposed change. The Workbench keeps the readable answer and human decision first; evidence and technical trace remain available without dominating the experience.</p>
             <button class="welcome-help" data-open-guide type="button">New here? See the two-minute guide</button>
             <div class="challenge-callout">
               <div><strong>Want the methodology to challenge you?</strong><span>Get one focused question with a concrete scenario and a reason it matters.</span></div>
@@ -118,6 +126,18 @@
           <p class="eyebrow">Develop the methodology through dialogue</p>
           <h2>Challenge studio</h2>
           <p class="challenge-intro">Choose an area, then the Workbench will prepare one demanding, plain-language question. It should give you enough context to think, state a provisional Operations Automated position and show what is genuinely uncertain.</p>
+          <div class="knowledge-control-room">
+            <div>
+              <strong>This is the knowledge control room.</strong>
+              <p>Codex can build products. This Workbench exists to challenge, connect, govern and improve the methodology and its readable documentation.</p>
+            </div>
+            <nav aria-label="Knowledge workflow">
+              <button type="button" data-route-view="conversation"><span>1</span>Talk or defend</button>
+              <button type="button" data-route-view="feedback"><span>2</span>Retain feedback</button>
+              <button type="button" data-route-view="decisions"><span>3</span>Review a change</button>
+              <button type="button" data-route-view="connections"><span>4</span>Publish knowledge</button>
+            </nav>
+          </div>
           <div class="challenge-focus-grid">
             <article>
               <span class="challenge-number">01</span>
@@ -160,6 +180,29 @@
             <strong>Use Confluence as the readable delivery surface while Git remains authoritative.</strong>
             <p>The Workbench can synchronise read-only evidence from your selected spaces. It can also prepare a human-readable documentation plan, show every proposed page change and publish only after Jamie Peppard reviews the plan and enters the required confirmation. It never publishes automatically or deletes a Confluence page.</p>
           </div>
+          <section class="phone-access-panel" aria-labelledby="phone-access-heading">
+            <div class="phone-access-heading">
+              <div><p class="eyebrow">Anywhere challenge access</p><h3 id="phone-access-heading">Secure phone access</h3></div>
+              <span class="status-pill status-awaiting-review">Proposed connection · not enabled</span>
+            </div>
+            <p>The Workbench currently listens only on this computer. The recommended private route is Tailscale Serve: the Workbench stays bound to localhost, Tailscale supplies an HTTPS address inside Jamie’s private tailnet, and the phone signs in to the same identity. Do not use a public tunnel or router port-forward.</p>
+            <div class="phone-readiness-grid">
+              <article><span>Computer</span><strong>Workbench and Tailscale running</strong><p>The computer must be on. Tailscale is not currently installed, so remote access cannot yet work.</p></article>
+              <article><span>Phone</span><strong>Tailscale app and same sign-in</strong><p>Open the private HTTPS address in Safari or Chrome, then add it to the home screen.</p></article>
+              <article><span>Voice</span><strong>HTTPS microphone permission</strong><p>The secure address lets the browser request microphone access; the reviewed transcript still appears before reasoning.</p></article>
+            </div>
+            <details class="phone-setup">
+              <summary>Show the proposed first-use route</summary>
+              <ol>
+                <li>Approve this new private access connection and its Jamie-only boundary.</li>
+                <li>Install Tailscale on this Windows computer and on the phone, then sign in to both with the same account.</li>
+                <li>Keep the Workbench on <code>127.0.0.1:4173</code> and expose it privately with <code>tailscale serve --bg 4173</code>.</li>
+                <li>Open the HTTPS <code>*.ts.net</code> address on the phone, allow microphone access and complete one spoken challenge.</li>
+                <li>Verify that a non-authorised account cannot reach it and record the removal route before treating setup as complete.</li>
+              </ol>
+              <p><strong>Still controlled:</strong> enabling this route changes access and security. It needs Jamie’s explicit connection decision before it is activated.</p>
+            </details>
+          </section>
           <div id="confluence-connection-status" class="connection-status" aria-live="polite">
             <strong>Checking saved connection…</strong>
           </div>
@@ -305,8 +348,9 @@
             <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
             <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
             <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
-            <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise read-only evidence or preview a controlled Methodology and Internal page tree. Documentation writes require a reviewed page plan and Jamie Peppard’s exact confirmation; they never create methodology approval or delete a page.</p></div></article>
-            <article><span>9</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. Approve for internal use, request revision or reject each direction; those choices remain evidence until the overall brand decision is explicitly made.</p></div></article>
+            <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
+            <article><span>9</span><div><h3>Use the Workbench from a phone</h3><p>The proposed route keeps the local server private and uses Tailscale HTTPS between authorised devices. It is not enabled yet because a new access and security connection requires Jamie’s separate approval.</p></div></article>
+            <article><span>10</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. Approve for internal use, request revision or reject each direction; those choices remain evidence until the overall brand decision is explicitly made.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>

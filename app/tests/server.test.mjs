@@ -78,6 +78,10 @@ test("local API persists governed conversations and the complete feedback-to-cha
     const brandAsset = await fetch(`http://127.0.0.1:${port}/brand-system/assets/logo/generated/mark-colour-transparent-1024.png`);
     assert.equal(brandAsset.ok, true);
     assert.equal(brandAsset.headers.get("content-type"), "image/png");
+    const manifest = await fetch(`http://127.0.0.1:${port}/manifest.webmanifest`);
+    assert.equal(manifest.ok, true);
+    assert.equal(manifest.headers.get("content-type"), "application/manifest+json; charset=utf-8");
+    assert.match((await manifest.json()).name, /Knowledge Workbench/);
 
     const initialBrandReview = await call("/api/brand-review");
     assert.equal(initialBrandReview.response.ok, true);

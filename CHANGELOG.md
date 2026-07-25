@@ -2,6 +2,20 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.1.0 mobile knowledge workbench - proposed
+
+- Reframed the founder experience around challenge, defence, retained feedback, readable decisions and governed knowledge publication.
+- Added reliable blue-brand fallbacks so a missing token sheet cannot leave white navigation text on a transparent background.
+- Removed broken primary image dependencies from the Workbench shell while retaining the controlled brand assets in the Brand Review area.
+- Added a phone-focused responsive layout with visible navigation labels, 44-pixel primary actions, contained conversation content and professional blue active states.
+- Added an installable web-app manifest and phone home-screen metadata.
+- Added an in-product secure phone-access proposal using private Tailscale Serve HTTPS while keeping the Workbench on localhost.
+- Recorded that Tailscale is not installed and that no remote access has been enabled.
+- Connected the proposed knowledge journey to the already demonstrated PR #18 Confluence Draft route, without duplicating or broadening its recorded authority.
+- Retained separate preparation, release, merge and Confluence publication decisions.
+- Added the originating feedback, approved-for-preparation decision, product proposal, assurance pack and validation requirements.
+- Kept the approved methodology baseline, existing Confluence publication behaviour, external publication and customer use unchanged.
+
 ## Brand system 0.1.0 - draft
 
 - Added a controlled brand area for consistent use across websites, applications and documentation.
