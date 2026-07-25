@@ -1,0 +1,46 @@
+{
+  "id": "OA-BRAND-001",
+  "name": "Operations Automated Brand System",
+  "status": "draft",
+  "version": "0.1.0",
+  "owner": "Jamie Peppard",
+  "date": "2026-07-25",
+  "approvalRequired": true,
+  "sourceMark": {
+    "description": "Four-part blue connection mark from the improved prototype",
+    "repositoryReference": "1c50729:governance-site/public/favicon.svg",
+    "adoptionStatus": "draft pending Jamie confirmation"
+  },
+  "assets": {
+    "logo": [
+      "assets/logo/mark-colour.svg",
+      "assets/logo/mark-navy.svg",
+      "assets/logo/mark-white.svg",
+      "assets/logo/lockup-colour.svg",
+      "assets/logo/lockup-white.svg",
+      "assets/logo/generated/mark-colour-32.png",
+      "assets/logo/generated/mark-colour-192.png",
+      "assets/logo/generated/mark-colour-512.png",
+      "assets/logo/generated/mark-navy-512.png",
+      "assets/logo/generated/mark-white-512.png",
+      "assets/logo/generated/lockup-colour-1200.png",
+      "assets/logo/generated/lockup-white-1200.png"
+    ],
+    "tokens": [
+      "tokens/brand.tokens.json",
+      "tokens/brand.css",
+      "tokens/brand.ts"
+    ],
+    "templates": [
+      "templates/website/index.html",
+      "templates/application/index.html",
+      "templates/documentation/document-template.md"
+    ]
+  },
+  "boundaries": [
+    "Not approved for external publication",
+    "Does not approve product deployment or migration",
+    "Does not change methodology meaning",
+    "Does not establish trade-mark clearance"
+  ]
+}

@@ -16,6 +16,8 @@ Start with the [current methodology synthesis and visual map](methodology/curren
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
+The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its logo adoption, visual language, voice and templates remain proposed for internal review and are not approved for external publication.
+
 ## How the system fits together
 
 | Component | Purpose | Status |

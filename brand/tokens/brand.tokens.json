@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "name": "Operations Automated brand tokens",
+    "status": "draft",
+    "version": "0.1.0",
+    "owner": "Jamie Peppard"
+  },
+  "colour": {
+    "midnight": "#071A2D",
+    "navy": "#0B2742",
+    "ink": "#102A43",
+    "logoBlue": "#0C79D8",
+    "blue": "#0B77D2",
+    "flow": "#2E9EFF",
+    "sky": "#68C4FF",
+    "paper": "#F7FAFC",
+    "canvas": "#EEF4F8",
+    "white": "#FFFFFF",
+    "muted": "#52677C",
+    "line": "#CDD9E3",
+    "amber": "#A45A00",
+    "amberSoft": "#FFF1D6",
+    "success": "#19705B",
+    "successSoft": "#E2F3ED",
+    "warning": "#8A5700",
+    "warningSoft": "#FFF2D8",
+    "danger": "#A43D3D",
+    "dangerSoft": "#FBE8E6",
+    "neutralSoft": "#E9EFF4"
+  },
+  "type": {
+    "sans": "\"Source Sans 3\", \"Source Sans Pro\", \"Segoe UI\", Arial, sans-serif",
+    "serif": "\"Source Serif 4\", Georgia, \"Times New Roman\", serif",
+    "mono": "\"Cascadia Mono\", \"SFMono-Regular\", Consolas, monospace",
+    "size": {
+      "xs": "0.75rem",
+      "sm": "0.875rem",
+      "body": "1rem",
+      "lead": "1.25rem",
+      "h3": "1.5rem",
+      "h2": "clamp(1.875rem, 4vw, 3rem)",
+      "h1": "clamp(2.75rem, 7vw, 5.75rem)"
+    },
+    "lineHeight": {
+      "tight": 1.05,
+      "heading": 1.15,
+      "body": 1.6
+    }
+  },
+  "space": {
+    "1": "0.25rem",
+    "2": "0.5rem",
+    "3": "0.75rem",
+    "4": "1rem",
+    "6": "1.5rem",
+    "8": "2rem",
+    "12": "3rem",
+    "16": "4rem",
+    "24": "6rem"
+  },
+  "radius": {
+    "small": "0.375rem",
+    "medium": "0.75rem",
+    "large": "1.25rem",
+    "pill": "999px"
+  },
+  "shadow": {
+    "low": "0 10px 30px rgba(7, 26, 45, 0.08)",
+    "high": "0 24px 60px rgba(7, 26, 45, 0.14)"
+  },
+  "motion": {
+    "fast": "140ms",
+    "medium": "260ms",
+    "easeOut": "cubic-bezier(0.16, 1, 0.3, 1)"
+  }
+}

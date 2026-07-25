@@ -2,6 +2,17 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Brand system 0.1.0 - draft
+
+- Added a controlled brand area for consistent use across websites, applications and documentation.
+- Reused the four-part blue connection mark as the working logo source, pending Jamie's confirmation that it is the intended agreed asset.
+- Proposed **Connected operations. Human outcomes.** as the organising brand idea.
+- Added logo, colour, typography, layout, imagery, motion, accessibility, voice and naming guidance.
+- Added platform-neutral JSON tokens, reusable CSS variables and typed application tokens.
+- Added a visual brand board and working website, application and documentation templates.
+- Added logo export generation, automated token, reference and contrast checks, and a plain-English decision pack.
+- Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.
+
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.
