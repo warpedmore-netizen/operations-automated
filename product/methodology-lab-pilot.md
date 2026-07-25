@@ -115,4 +115,12 @@ The first pilot succeeds when:
 - No scheduled publication, automatic interaction retrieval or Live promotion is enabled.
 - A successful technical publication does not approve the synthesis.
 - A successful founder review does not establish external validity.
-- External publication, customer use and automatic AI publication remain unapproved.
+- External publication, customer use, scheduled publication and AI promotion to Live remain unapproved.
+
+## First Draft publication
+
+The first controlled Draft publication completed on 2026-07-25 from commit `1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3`.
+
+The Workbench created ten Lab pages, changed none of the existing 108 managed pages, deleted nothing and returned a version-one receipt for every page. The immediate reconciliation reported all ten Lab pages unchanged and no conflict.
+
+The [Lab reading root](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+Lab+Pilot+1) is now ready for Jamie's human review. This publication is evidence about the delivery mechanism, not approval of the synthesis or proof of reader value.

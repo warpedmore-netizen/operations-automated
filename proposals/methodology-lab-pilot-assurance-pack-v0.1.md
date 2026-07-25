@@ -34,7 +34,7 @@ date: 2026-07-25
 
 - **Supporting evidence:** The first 108-page publication was technically successful but not human-readable enough; Jamie approved the human-first model and three pilots in PR #17.
 - **Strength:** Direct founder usability evidence and an approved target model.
-- **Limitation:** No rendered Lab, first-use observation or independent reader evidence exists yet.
+- **Limitation:** The Draft Lab is rendered and technically reconciled, but Jamie has not yet completed the first-use review and no independent reader evidence exists.
 - **Strongest alternative:** Create a dedicated Confluence space.
 - **Reason not selected first:** A new space adds permission, ownership and clean-up decisions without being necessary to isolate a ten-page pilot.
 - **Consequence of no change:** The Workbench remains a safe repository publisher but does not test its ability to deliver the methodology as a human product.
@@ -53,7 +53,8 @@ date: 2026-07-25
 | Confidentiality | Pass – only controlled Operations Automated sources are included |
 | Recovery | Pass with limitation – publication conflicts stop the write; no automatic deletion or purge exists |
 | Technical validation | Pass – automated tests cover Lab isolation, source mapping, the managed Draft parent and separate Live authority |
-| Outcome validation | Missing – requires the rendered Lab and Jamie's review |
+| Draft delivery | Pass – 10 created, 0 updated, 0 deleted, 0 conflicts; immediate comparison returned 10 unchanged |
+| Reader outcome validation | Missing – requires Jamie's review of the rendered Draft Lab |
 
 ## Exact implementation boundary
 

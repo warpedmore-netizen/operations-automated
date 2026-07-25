@@ -5,7 +5,9 @@ status: recorded
 decision: approved-for-implementation-preparation
 decision_maker: Jamie Peppard
 date: 2026-07-25
-release_status: pending
+release_status: draft-published
+draft_publication_commit: 1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3
+draft_publication_run: cf070202-72be-4a03-8313-d7c18bfa5d8e
 ---
 
 # Prepare the Methodology Lab pilot
@@ -44,3 +46,19 @@ This decision does not authorise:
 - customer use.
 
 AI may prepare, check and publish the Draft plan. Any Confluence conflict stops the write. Jamie retains the decision to approve methodology meaning, merge the implementation and promote material to Live.
+
+## Draft publication outcome
+
+The Workbench published the ten proposed Lab pages beneath the existing Methodology **Draft** page on 2026-07-25.
+
+- **Source commit:** `1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3`
+- **Publication run:** `cf070202-72be-4a03-8313-d7c18bfa5d8e`
+- **Created:** 10
+- **Updated:** 0
+- **Deleted:** 0
+- **Conflicts:** 0
+- **Reconciliation:** 10 unchanged
+- **Existing controlled pages changed:** 0
+- **Reading root:** [Operations Automated Methodology Lab – Pilot 1](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+Lab+Pilot+1)
+
+This is a Draft delivery outcome. It does not approve the Lab prose, merge PR #18 or promote any page to Live.

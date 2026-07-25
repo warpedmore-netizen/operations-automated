@@ -11,6 +11,7 @@ All material changes to Operations Automated will be recorded here.
 - Added a separate Workbench preview mode that contains only the Lab pages and targets the existing private Methodology space.
 - Added validation that rejects unapproved sources, non-proposed pilot pages, duplicate keys or titles, missing parents and hierarchy cycles.
 - Added retained source, conflict, version and audit controls for AI-managed Draft publication.
+- Published the ten proposed Lab pages beneath the existing Methodology Draft page from commit `1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3`; 10 pages were created, none of the existing 108 were changed, no page was deleted and the immediate comparison returned all 10 unchanged.
 - Added a review page that separates methodology, explanation, navigation, product, evidence and no-change feedback.
 - Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no scheduled publication.
 - Added a product specification, feedback record, decision record and assurance pack for the first dogfooding loop.
