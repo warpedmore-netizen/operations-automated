@@ -2,6 +2,18 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.0.0 Methodology Lab - proposed
+
+- Added an isolated ten-page Methodology Lab manuscript implementing the approved book-style reader pilot.
+- Added a controlled manifest defining titles, hierarchy, reading order and approved source maps.
+- Added a separate Workbench preview mode that contains only the Lab pages and targets the existing private Methodology space.
+- Added validation that rejects unapproved sources, non-proposed pilot pages, duplicate keys or titles, missing parents and hierarchy cycles.
+- Added the exact confirmation `Publish reviewed methodology lab to Confluence`.
+- Added a review page that separates methodology, explanation, navigation, product, evidence and no-change feedback.
+- Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no automatic publication.
+- Added a product specification, feedback record, decision record and assurance pack for the first dogfooding loop.
+- This implementation remains proposed. Merge and the later live Confluence plan each require separate Jamie Peppard decisions.
+
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.
@@ -13,7 +25,8 @@ All material changes to Operations Automated will be recorded here.
 - Kept automatic retrieval of document interactions behind a separate permission, confidentiality and retention decision.
 - Kept the current 108 pages unchanged and retained the separate founder confirmation for every live Confluence write.
 - Jamie Peppard approved the human-first publication model and all three bounded pilots for private internal implementation on 2026-07-25.
-- Merge, live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
+- Jamie Peppard explicitly authorised merge of PR #17 on 2026-07-25; it was merged as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.
+- Live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
 
 ## Workbench 0.9.0 - approved for private internal validation
 

@@ -4,8 +4,10 @@ import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
+  METHODOLOGY_LAB_CONFIRMATION,
   PUBLICATION_CONFIRMATION,
   buildConfluencePublicationPlan,
+  buildMethodologyLabPublicationPlan,
   markdownToConfluenceStorage,
   publicationLifecycle
 } from "../confluence-publication.mjs";
@@ -92,6 +94,80 @@ test("publication plan creates a lifecycle-first human reading structure with so
       assert.equal(titlesByRole.has(key), false, `duplicate title ${key}`);
       titlesByRole.add(key);
     }
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("methodology lab plan is isolated, source-mapped and confirmation-gated", async () => {
+  const root = await mkdtemp(join(tmpdir(), "oa-methodology-lab-plan-"));
+  try {
+    await mkdir(join(root, "methodology"), { recursive: true });
+    await mkdir(join(root, "publication", "methodology-lab-001"), { recursive: true });
+    await writeFile(
+      join(root, "methodology", "approved-method.md"),
+      "---\ntitle: Approved Method\nstatus: approved\nversion: 0.6\n---\n# Approved method\n\nControlled meaning.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "00-start.md"),
+      "---\ntitle: Methodology Lab\nstatus: proposed\nversion: 0.1\n---\n# Methodology Lab\n\nStart with the reader.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "01-review.md"),
+      "---\ntitle: Review the Pilot\nstatus: proposed\nversion: 0.1\n---\n# Review the pilot\n\nRecord what worked.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "manifest.json"),
+      JSON.stringify({
+        id: "OA-METHODOLOGY-LAB-001",
+        title: "Methodology Lab",
+        status: "proposed-pilot",
+        version: "0.1",
+        pages: [
+          {
+            key: "hub",
+            file: "00-start.md",
+            title: "Methodology Lab",
+            parentKey: null,
+            sources: ["methodology/approved-method.md"]
+          },
+          {
+            key: "review",
+            file: "01-review.md",
+            title: "Review the Pilot",
+            parentKey: "hub",
+            sources: ["methodology/approved-method.md"]
+          }
+        ]
+      }),
+      "utf8"
+    );
+
+    const plan = buildMethodologyLabPublicationPlan({
+      repositoryRoot: root,
+      sourceBranch: "main",
+      sourceCommit: "b".repeat(40),
+      generatedAt: "2026-07-25T09:00:00.000Z"
+    });
+
+    assert.equal(plan.publicationKind, "methodology-lab-pilot");
+    assert.equal(plan.confirmationPhrase, METHODOLOGY_LAB_CONFIRMATION);
+    assert.equal(plan.existingControlledPagesChanged, false);
+    assert.equal(plan.automaticPublication, false);
+    assert.equal(plan.deletionEnabled, false);
+    assert.deepEqual(plan.items.map((item) => item.key), [
+      "methodology-lab-001:hub",
+      "methodology-lab-001:review"
+    ]);
+    assert.ok(plan.items.every((item) => item.role === "methodology"));
+    assert.ok(plan.items.every((item) => item.sourceStatus === "proposed-pilot"));
+    assert.match(plan.items[0].bodyStorage, /proposed reading synthesis/i);
+    assert.match(plan.items[0].bodyStorage, /methodology\/approved-method\.md/);
+    assert.match(plan.items[0].bodyStorage, /Git remains authoritative/);
+    assert.equal(plan.items[1].parentKey, "methodology-lab-001:hub");
   } finally {
     await rm(root, { recursive: true, force: true });
   }

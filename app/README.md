@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. It is not deployed or approved for external use.
+> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The Workbench 1.0.0 Methodology Lab implementation remains proposed. The Workbench is not deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -81,6 +81,24 @@ Each controlled document displays its repository status, derived lifecycle locat
 An implemented methodology release recorded through the Workbench creates a pending Confluence-publication item. It does not write automatically. A later founder-confirmed publication clears the pending item.
 
 The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
+
+## Methodology Lab – Pilot 1
+
+The proposed Methodology Lab implements the first human-first reading pilot approved through PR #17 without changing the current controlled mirror.
+
+After the implementation is reviewed, approved, merged and running from clean `main`:
+
+1. Open **Connections**.
+2. Select **Preview Methodology Lab**.
+3. Confirm that the plan contains only the ten proposed Lab pages in the private Methodology space.
+4. Review each title, parent, source map and create, update, unchanged or conflict action.
+5. If the plan remains correct, enter **Publish reviewed methodology lab to Confluence** exactly.
+6. Open the returned Lab pages and complete **Review the methodology pilot**.
+7. Retain the response through the existing feedback and challenge loop.
+
+The Lab manuscript is stored under `publication/methodology-lab-001`. Every page remains proposed, maps to approved controlled sources and states that Git remains authoritative.
+
+The Lab preview and confirmation are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page or approve its own synthesis.
 
 ## Implemented MVP boundary
 

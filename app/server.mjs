@@ -22,8 +22,8 @@ import {
   selectSpaceRoles, synchroniseConfluencePages, testConfluenceConnection
 } from "./confluence-connector.mjs";
 import {
-  CONFLICT_REAPPLY_CONFIRMATION, PUBLICATION_CONFIRMATION,
-  buildConfluencePublicationPlan, publicPublicationPlan
+  CONFLICT_REAPPLY_CONFIRMATION, METHODOLOGY_LAB_CONFIRMATION, PUBLICATION_CONFIRMATION,
+  buildConfluencePublicationPlan, buildMethodologyLabPublicationPlan, publicPublicationPlan
 } from "./confluence-publication.mjs";
 import { createCredentialStore } from "./credential-store.mjs";
 
@@ -168,6 +168,7 @@ ensureColumn("feedback", "classification", "TEXT NOT NULL DEFAULT 'conversation-
 ensureColumn("feedback", "affected_workspace", "TEXT NOT NULL DEFAULT 'living-methodology'");
 ensureColumn("feedback", "submitting_user", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
 ensureColumn("feedback", "updated_at", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("confluence_publication_runs", "publication_kind", "TEXT NOT NULL DEFAULT 'controlled-mirror'");
 db.exec(`
   UPDATE feedback SET original_wording=wording WHERE original_wording='';
   UPDATE feedback SET feedback_type=disposition WHERE feedback_type='unspecified';
@@ -208,7 +209,8 @@ function gitOutput(args, fallback = "") {
 function publicationRepositoryIdentity() {
   const controlledPaths = [
     "README.md", "CHARTER.md", "GOVERNANCE.md", "ROADMAP.md", "PROJECT-PRIORITIES.md", "CHANGELOG.md",
-    "methodology", "principles", "evolution", "product", "templates", "decisions", "proposals", "feedback", "pilots"
+    "methodology", "principles", "evolution", "product", "templates", "decisions", "proposals", "feedback", "pilots",
+    "publication"
   ];
   const controlledChanges = gitOutput(["status", "--porcelain", "--untracked-files=all", "--", ...controlledPaths], "");
   return {
@@ -217,6 +219,17 @@ function publicationRepositoryIdentity() {
     controlledSourceClean: process.env.WORKBENCH_PUBLICATION_SOURCE_CLEAN === "true" || controlledChanges.length === 0,
     controlledChangeCount: controlledChanges ? controlledChanges.split(/\r?\n/).filter(Boolean).length : 0
   };
+}
+
+function buildCurrentConfluencePublication(publicationKind, identity) {
+  const builder = publicationKind === "methodology-lab-pilot"
+    ? buildMethodologyLabPublicationPlan
+    : buildConfluencePublicationPlan;
+  return builder({
+    repositoryRoot,
+    sourceBranch: identity.branch,
+    sourceCommit: identity.commitSha
+  });
 }
 
 function publicationMappings() {
@@ -242,10 +255,20 @@ function publicationSummary() {
   const lastRun = rowObject(db.prepare(`
     SELECT id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
       unchanged_count,failure_message,started_at,completed_at
-    FROM confluence_publication_runs ORDER BY started_at DESC LIMIT 1
+    FROM confluence_publication_runs
+    WHERE publication_kind='controlled-mirror'
+    ORDER BY started_at DESC LIMIT 1
+  `).get());
+  const lastLabRun = rowObject(db.prepare(`
+    SELECT id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
+      unchanged_count,failure_message,started_at,completed_at
+    FROM confluence_publication_runs
+    WHERE publication_kind='methodology-lab-pilot'
+    ORDER BY started_at DESC LIMIT 1
   `).get());
   const pending = Number(db.prepare("SELECT COUNT(*) AS count FROM confluence_publication_queue WHERE status='pending'").get().count || 0);
   const managed = Number(db.prepare("SELECT COUNT(*) AS count FROM confluence_publication_pages").get().count || 0);
+  const managedLab = Number(db.prepare("SELECT COUNT(*) AS count FROM confluence_publication_pages WHERE item_key LIKE 'methodology-lab-001:%'").get().count || 0);
   const identity = publicationRepositoryIdentity();
   const lastPublishedCommit = String(lastRun?.status === "completed" ? lastRun.source_commit_sha || "" : "");
   return {
@@ -262,7 +285,11 @@ function publicationSummary() {
     controlledSourceClean: identity.controlledSourceClean,
     lastPublishedCommitSha: lastPublishedCommit,
     repositoryAheadOfConfluence: managed === 0 || !lastPublishedCommit || lastPublishedCommit !== identity.commitSha,
-    lastRun
+    lastRun,
+    methodologyLab: {
+      managedPages: managedLab,
+      lastRun: lastLabRun
+    }
   };
 }
 
@@ -539,7 +566,7 @@ async function api(request, response, url) {
     requireLocalJsonConnectionAction(request);
   }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
-    buildVersion: "0.9.0",
+    buildVersion: "1.0.0-pilot",
     settings: getSettings(),
     apiConfigured: providerConfigured(2),
     mode: providerConfigured(2) ? "provider" : "local-grounded",
@@ -691,14 +718,15 @@ async function api(request, response, url) {
     });
   }
   if (method === "POST" && url.pathname === "/api/connections/confluence/publication-plan") {
+    const value = await jsonBody(request);
     const stored = credentialStore.available ? await credentialStore.get() : null;
     if (!stored) return json(response, 409, { error: "Save a Confluence connection before preparing a publication preview." });
     const identity = publicationRepositoryIdentity();
-    const plan = buildConfluencePublicationPlan({
-      repositoryRoot,
-      sourceBranch: identity.branch,
-      sourceCommit: identity.commitSha
-    });
+    const publicationKind = String(value.publicationKind || "controlled-mirror");
+    if (!["controlled-mirror", "methodology-lab-pilot"].includes(publicationKind)) {
+      return json(response, 400, { error: "Choose a supported controlled publication plan." });
+    }
+    const plan = buildCurrentConfluencePublication(publicationKind, identity);
     const inspected = await inspectConfluencePublication(stored, plan, publicationMappings());
     inspected.publishable = inspected.publishable && identity.branch === "main" && identity.controlledSourceClean;
     inspected.conflictReapplyPhrase = CONFLICT_REAPPLY_CONFIRMATION;
@@ -712,6 +740,7 @@ async function api(request, response, url) {
     audit("confluence.publication.previewed", "confluence-publication", inspected.id, {
       sourceBranch: identity.branch,
       sourceCommitSha: identity.commitSha,
+      publicationKind,
       create: inspected.summary.create,
       update: inspected.summary.update,
       unchanged: inspected.summary.unchanged,
@@ -739,11 +768,7 @@ async function api(request, response, url) {
     if (identity.branch !== "main" || !identity.controlledSourceClean) {
       return json(response, 409, { error: "Conflict resolution is allowed only from a clean, reviewed main source." });
     }
-    const currentPlan = buildConfluencePublicationPlan({
-      repositoryRoot,
-      sourceBranch: identity.branch,
-      sourceCommit: identity.commitSha
-    });
+    const currentPlan = buildCurrentConfluencePublication(cached.publicationKind, identity);
     if (currentPlan.id !== cached.id) {
       return json(response, 409, { error: "The repository changed after the conflict preview. Generate a new preview." });
     }
@@ -784,11 +809,14 @@ async function api(request, response, url) {
     if (String(value.actor || "") !== FOUNDER_NAME) {
       return json(response, 403, { error: `${FOUNDER_NAME} must authorise this private Confluence publication.` });
     }
-    if (String(value.confirmation || "") !== PUBLICATION_CONFIRMATION || value.reviewed !== true) {
-      return json(response, 403, { error: `Review the page plan and enter “${PUBLICATION_CONFIRMATION}” exactly before publishing.` });
-    }
     const inspected = confluencePublicationPlans.get(String(value.planId || ""));
     if (!inspected) return json(response, 409, { error: "The publication preview is no longer available. Generate and review a new preview." });
+    const requiredConfirmation = inspected.publicationKind === "methodology-lab-pilot"
+      ? METHODOLOGY_LAB_CONFIRMATION
+      : PUBLICATION_CONFIRMATION;
+    if (String(value.confirmation || "") !== requiredConfirmation || value.reviewed !== true) {
+      return json(response, 403, { error: `Review the page plan and enter “${requiredConfirmation}” exactly before publishing.` });
+    }
     const identity = publicationRepositoryIdentity();
     if (identity.branch !== "main") {
       return json(response, 409, { error: "Controlled Confluence publication is allowed only while the Workbench is running from main." });
@@ -796,11 +824,7 @@ async function api(request, response, url) {
     if (!identity.controlledSourceClean) {
       return json(response, 409, { error: "Controlled repository documents changed after the reviewed commit. Commit and review them before publishing." });
     }
-    const currentPlan = buildConfluencePublicationPlan({
-      repositoryRoot,
-      sourceBranch: identity.branch,
-      sourceCommit: identity.commitSha
-    });
+    const currentPlan = buildCurrentConfluencePublication(inspected.publicationKind, identity);
     if (currentPlan.id !== inspected.id || currentPlan.sourceCommit !== inspected.sourceCommit) {
       return json(response, 409, { error: "The repository changed after this preview. Generate and review a new publication plan." });
     }
@@ -815,10 +839,15 @@ async function api(request, response, url) {
     }
     const runId = randomUUID();
     const startedAt = now();
-    db.prepare("INSERT INTO confluence_publication_runs VALUES(?,?,?,?,?,0,0,0,'',?,NULL)")
-      .run(runId, refreshed.id, identity.commitSha, FOUNDER_NAME, "in-progress", startedAt);
+    db.prepare(`
+      INSERT INTO confluence_publication_runs(
+        id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
+        unchanged_count,failure_message,started_at,completed_at,publication_kind
+      ) VALUES(?,?,?,?,?,0,0,0,'',?,NULL,?)
+    `).run(runId, refreshed.id, identity.commitSha, FOUNDER_NAME, "in-progress", startedAt, refreshed.publicationKind);
     audit("confluence.publication.authorised", "confluence-publication", runId, {
       planId: refreshed.id,
+      publicationKind: refreshed.publicationKind,
       actor: FOUNDER_NAME,
       sourceCommitSha: identity.commitSha,
       explicitConfirmation: true,
@@ -847,14 +876,17 @@ async function api(request, response, url) {
         SET status='completed',created_count=?,updated_count=?,unchanged_count=?,completed_at=?
         WHERE id=?
       `).run(result.created, result.updated, result.unchanged, completedAt, runId);
-      db.prepare(`
-        UPDATE confluence_publication_queue
-        SET status='published',publication_run_id=?,published_at=?
-        WHERE status='pending'
-      `).run(runId, completedAt);
+      if (refreshed.publicationKind === "controlled-mirror") {
+        db.prepare(`
+          UPDATE confluence_publication_queue
+          SET status='published',publication_run_id=?,published_at=?
+          WHERE status='pending'
+        `).run(runId, completedAt);
+      }
       confluencePublicationPlans.delete(refreshed.id);
       audit("confluence.publication.completed", "confluence-publication", runId, {
         sourceCommitSha: identity.commitSha,
+        publicationKind: refreshed.publicationKind,
         created: result.created,
         updated: result.updated,
         unchanged: result.unchanged,
@@ -864,6 +896,7 @@ async function api(request, response, url) {
       return json(response, 200, {
         runId,
         status: "completed",
+        publicationKind: refreshed.publicationKind,
         sourceCommitSha: identity.commitSha,
         created: result.created,
         updated: result.updated,
@@ -890,7 +923,7 @@ async function api(request, response, url) {
   if (method === "GET" && url.pathname === "/api/connections/confluence/publications") {
     const runs = db.prepare(`
       SELECT id,plan_id,source_commit_sha,actor,status,created_count,updated_count,
-        unchanged_count,failure_message,started_at,completed_at
+        unchanged_count,failure_message,started_at,completed_at,publication_kind
       FROM confluence_publication_runs ORDER BY started_at DESC LIMIT 20
     `).all();
     const pages = db.prepare(`

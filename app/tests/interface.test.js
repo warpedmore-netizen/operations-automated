@@ -44,7 +44,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "preview-methodology-lab", "confluence-publication-approval", "publish-confluence", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Cost and usage", "Settings", "Connections", "How this works"]) assert.match(html, new RegExp(label));
@@ -85,6 +85,8 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
   assert.match(html, /cannot approve a methodology change/i);
   assert.match(html, /organised first into Live, Draft and Archived/i);
+  assert.match(html, /Methodology Lab – Pilot 1/i);
+  assert.match(html, /leaves the current 108 pages unchanged/i);
   assert.match(html, /Type the confirmation shown above/i);
   assert.match(appSource, /Use reviewed Git copy/i);
   assert.match(appSource, /publication-conflicts\/reapply/i);

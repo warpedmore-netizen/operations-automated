@@ -1,0 +1,118 @@
+---
+id: OA-PRODUCT-007
+title: Methodology Lab Pilot
+status: proposed
+version: 0.1
+owner: Jamie Peppard
+date: 2026-07-25
+---
+
+# Methodology Lab pilot
+
+## Purpose
+
+The Methodology Lab lets Operations Automated use its own Workbench to create and evaluate the first human-first methodology reading path.
+
+It is a private dogfooding environment, not a replacement for the authoritative repository or the existing controlled Confluence mirror.
+
+## Location
+
+The pilot uses a separate top-level page tree in the already selected private Methodology space:
+
+**Operations Automated Methodology Lab – Pilot 1**
+
+This is sufficient isolation for the first test without creating:
+
+- another Confluence credential;
+- another connection or data source;
+- a third assigned space;
+- a migration of the current 108 pages; or
+- a new external audience.
+
+## Reader path
+
+The controlled pilot contains:
+
+1. Start here;
+2. Read the methodology;
+3. Part I – Purpose, value and the human boundary;
+4. Part II – Start with the journey;
+5. one complete chapter: Journey first, operation next;
+6. Part III – Understand the connected operation;
+7. Part IV – Improve and implement with OPERATE;
+8. Part V – Become ready for automation, AI and agents;
+9. Part VI – Govern, learn and evolve; and
+10. Review the methodology pilot.
+
+The final page is part of the design rather than an afterthought. It asks whether the reader can orient, understand, act, trust and identify value.
+
+## Source and status
+
+Every Lab page:
+
+- remains `proposed` during the pilot;
+- identifies itself as a proposed reading synthesis;
+- maps to one or more approved, published or recorded repository sources;
+- includes source status, version, hash and commit;
+- states that Git remains authoritative; and
+- distinguishes connective wording from approved source meaning.
+
+The Workbench refuses to build the plan when:
+
+- a page has no controlled source;
+- a source is not approved, published or recorded;
+- a page is not marked proposed;
+- a key, title or parent is missing or duplicated; or
+- the hierarchy contains a cycle.
+
+## Governed workflow
+
+1. Run the Workbench from a clean `main`.
+2. Open **Connections**.
+3. Select **Preview Methodology Lab**.
+4. Review the exact create, update, unchanged and conflict results.
+5. Confirm that only the Lab pages are present.
+6. Resolve any managed or unmanaged-page conflict.
+7. Enter **Publish reviewed methodology lab to Confluence** exactly.
+8. Open the returned Lab pages and complete the review page.
+9. Retain the review through the existing feedback and methodology challenge loop.
+
+Previewing performs no write. A preview expires when the repository or relevant Confluence state changes.
+
+## First feedback loop
+
+The review should separate:
+
+| Signal | Example | Likely route |
+|---|---|---|
+| Methodology meaning | A lens, boundary or operational relationship is missing | Methodology challenge and possible governed change |
+| Explanation | The meaning is correct but difficult to understand | Curated page revision |
+| Reading structure | The sequence or navigation leaves the reader lost | Publication-model revision |
+| Product behaviour | Preview, confirmation, links or conflict handling fails | Workbench product change |
+| Evidence gap | The idea needs a real case or independent user | Accumulate evidence or design another pilot |
+| No change | The point is already adequately covered | Retain the reasoning and close the signal |
+
+AI should reconstruct Jamie's strongest reasonable meaning, apply a proportionate counter-test and recommend a disposition. Feedback does not automatically change the methodology or Lab.
+
+## Success measures
+
+The first pilot succeeds when:
+
+- Jamie can find the starting point in under 30 seconds;
+- the six-part route can be explained without Git knowledge;
+- the complete chapter provides a usable operational approach;
+- approved source meaning and proposed synthesis are distinguishable;
+- the Workbench creates or updates only the reviewed Lab pages;
+- the existing 108 pages remain unchanged;
+- every created page returns a tracked identifier and version; and
+- the review produces at least one clear disposition, including a justified no-change result where appropriate.
+
+## Retained boundaries
+
+- Git remains authoritative.
+- The Lab remains private and proposed.
+- No existing page is deleted, moved, archived or silently overwritten.
+- No automatic publication or interaction retrieval is enabled.
+- A successful technical publication does not approve the synthesis.
+- A successful founder review does not establish external validity.
+- External publication, customer use and automatic AI publication remain unapproved.

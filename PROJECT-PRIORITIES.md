@@ -16,7 +16,7 @@ last_updated: 2026-07-25
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
-- **Confluence position:** the private connection and lifecycle-first controlled mirror are approved and the first 108-page publication reconciled successfully. Founder review found that the mirror is not yet a human publication. A reader-first book, policy, framework and guide layer, together with three bounded pilots, is approved for private internal implementation pending merge. Document interactions become governed challenge candidates only through the approved manual pilot. Migration, automatic interaction retrieval, automatic publication, deletion and external use remain unapproved.
+- **Confluence position:** the private connection, lifecycle-first controlled mirror and human-first publication model are approved, and the first 108-page publication reconciled successfully. The first reader implementation is proposed as an isolated ten-page Methodology Lab using the existing private Methodology space. Document interactions become governed challenge candidates only through the approved manual pilot. Live Lab publication, migration, automatic interaction retrieval, automatic publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
 
@@ -113,7 +113,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
 | Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
-| Confluence human publication | Add a reader-first methodology book and internal handbook, preserve the lifecycle mirror, and route document interactions into governed challenges | Model and three bounded pilots approved for private internal implementation; merge pending; current pages unchanged | Merge the approved design, implement the three pilots on a separate branch and retain separate live-write and connection decisions |
+| Confluence human publication | Add a reader-first methodology book and internal handbook, preserve the lifecycle mirror, and route document interactions into governed challenges | Model and three bounded pilots merged through PR #17; ten-page Methodology Lab implementation proposed; current pages unchanged | Review the Lab implementation, then separately confirm its exact live plan and retain the resulting feedback |
 
 ## Next sequence when work resumes
 
