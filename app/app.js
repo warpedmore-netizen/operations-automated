@@ -31,6 +31,8 @@ const state = {
   selectedWorkItemId: null,
   operateRecords: [],
   operationsBible: [],
+  operateNetwork: null,
+  currentOperateRecord: null,
   serverCompatible: true
 };
 
@@ -136,6 +138,7 @@ function recordAsWorkItem(record) {
 
 function renderWorkDetail(item, record = null) {
   state.selectedWorkItemId = item?.id || null;
+  state.currentOperateRecord = record;
   if (!item) {
     $("#work-detail").innerHTML = '<div class="work-detail-empty"><span aria-hidden="true">↗</span><strong>Select an item</strong><p>The underlying record, priority explanation, authority boundary and next action will appear here.</p></div>';
     return;
@@ -154,14 +157,20 @@ function renderWorkDetail(item, record = null) {
       <div><dt>Due</dt><dd>${escapeHtml(formatDateOnly(record.dueAt))}</dd></div>
       <div><dt>Automation</dt><dd>${escapeHtml(record.automationMode || "manual")}</dd></div>
       ${record.case ? `<div><dt>Case</dt><dd>${escapeHtml(record.case.title)}</dd></div>` : ""}
+      ${record.parent ? `<div><dt>Parent work</dt><dd>${escapeHtml(record.parent.title)}</dd></div>` : ""}
       ${record.journey ? `<div><dt>Journey</dt><dd>${escapeHtml(record.journey)}${record.journeyStage ? ` · ${escapeHtml(record.journeyStage)}` : ""}</dd></div>` : ""}
     </dl>
     ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
     ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong></button>`).join("")}</section>` : ""}
     ${record.links?.length ? `<section class="work-relations"><h4>Relationships</h4>${record.links.map((link) => {
-      const otherTitle = link.from_record_id === record.id ? link.to_title : link.from_title;
-      return `<div><span>${escapeHtml(link.relationship.replaceAll("-", " "))}</span><strong>${escapeHtml(otherTitle)}</strong></div>`;
+      const otherTitle = link.fromRecordId === record.id ? link.to_title : link.from_title;
+      const provenance = link.proposedVia === "ai"
+        ? `Suggested by Oppa Mate · confirmed by ${link.confirmedBy}`
+        : `Linked by ${link.confirmedBy || link.proposedBy}`;
+      return `<div class="relationship-row"><span><small>${escapeHtml(link.relationship.replaceAll("-", " "))}</small><strong>${escapeHtml(otherTitle)}</strong><em>${escapeHtml(provenance)}</em></span><details class="link-correction"><summary>Correct</summary><label>Why is this link wrong?<input data-link-rejection-reason="${link.id}" maxlength="500"></label><button class="link-reject" data-reject-operate-link="${link.id}">Reject link</button></details></div>`;
     }).join("")}</section>` : ""}
+    ${record.linkSuggestions?.length ? `<section class="link-suggestions"><div><h4>Oppa Mate sees possible connections</h4><p>These are inferences from record types and shared context. Accept only when the relationship is operationally true.</p></div>${record.linkSuggestions.map((suggestion, index) => `<article><span class="work-type work-type-${workTypeClass(suggestion.otherType)}">${escapeHtml(suggestion.otherType)}</span><strong>${escapeHtml(suggestion.otherTitle)}</strong><p>${escapeHtml(suggestion.rationale)}</p><button class="ghost" data-accept-link-suggestion="${index}">Confirm link</button></article>`).join("")}</section>` : ""}
+    <button class="ghost link-work-action" data-link-operate-record="${record.id}">Link related work</button>
     ${record.recordType === "task" && !["done", "cancelled"].includes(record.status) ? `<button class="primary" data-complete-task="${record.id}">Mark task done</button>` : ""}
   ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
   $("#work-detail").innerHTML = `
@@ -230,6 +239,29 @@ function populateCaptureSelectors() {
   caseSelect.innerHTML = '<option value="">No case yet</option>'
     + cases.map((record) => `<option value="${record.id}">${escapeHtml(record.title)}</option>`).join("");
   if ([...caseSelect.options].some((option) => option.value === selectedCase)) caseSelect.value = selectedCase;
+  const parentSelect = $("#capture-parent");
+  const selectedParent = parentSelect.value;
+  parentSelect.innerHTML = '<option value="">No parent work</option>'
+    + state.operateRecords
+      .filter((record) => !["closed", "done", "cancelled", "completed", "rejected"].includes(record.status))
+      .map((record) => `<option value="${record.id}">${escapeHtml(record.bible?.label || record.recordType)} · ${escapeHtml(record.title)}</option>`).join("");
+  if ([...parentSelect.options].some((option) => option.value === selectedParent)) parentSelect.value = selectedParent;
+}
+
+function renderOperateNetwork() {
+  const network = state.operateNetwork;
+  if (!network) return;
+  const totals = network.totals;
+  $("#operate-network-summary").innerHTML = `
+    <div><span>Connected open work</span><strong>${totals.connectedOpen}/${totals.open}</strong></div>
+    <div><span>Explicit links</span><strong>${totals.explicitLinks}</strong></div>
+    <div><span>Deepest structure</span><strong>${totals.maxDepth} ${totals.maxDepth === 1 ? "level" : "levels"}</strong></div>
+    <div><span>Link provenance</span><strong>${totals.humanConfirmedLinks} human · ${totals.aiConfirmedLinks} AI-assisted</strong></div>`;
+  $("#operate-network-signals").innerHTML = network.signals.map((signal) => `
+    <article class="network-signal network-signal-${escapeHtml(signal.kind)}">
+      <strong>${escapeHtml(signal.title)}</strong><p>${escapeHtml(signal.detail)}</p>
+    </article>`).join("");
+  $("#operate-network-boundary").textContent = network.boundary;
 }
 
 function renderOperate() {
@@ -237,7 +269,7 @@ function renderOperate() {
   const cases = records.filter((record) => record.recordType === "case");
   const linkedWork = records.filter((record) => record.recordType !== "case");
   $("#case-register-count").textContent = `${cases.length} ${cases.length === 1 ? "case" : "cases"}`;
-  $("#operate-record-count").textContent = `${linkedWork.length} linked ${linkedWork.length === 1 ? "record" : "records"}`;
+  $("#operate-record-count").textContent = `${linkedWork.length} operational ${linkedWork.length === 1 ? "record" : "records"}`;
   $("#case-register").innerHTML = cases.length ? cases.map((record) => `
     <button class="case-card" data-open-operate-record="${record.id}">
       <span>${escapeHtml(statusLabel(record.status))}</span>
@@ -250,7 +282,7 @@ function renderOperate() {
       <span class="work-type work-type-${workTypeClass(record.recordType)}">${escapeHtml(record.bible?.label || record.recordType)}</span>
       <strong>${escapeHtml(record.title)}</strong>
       <small>${escapeHtml(statusLabel(record.status))} &middot; priority ${record.priority.score}${record.caseId ? " &middot; linked to case" : ""}</small>
-    </button>`).join("") : '<div class="empty-records"><strong>No linked work yet.</strong><p>Capture a Request or Task directly, or connect it to a Case.</p></div>';
+    </button>`).join("") : '<div class="empty-records"><strong>No operational work yet.</strong><p>Capture a Request or Task directly, or connect it to a Case.</p></div>';
   $("#bible-boundary").innerHTML = '<strong>The Operations Bible recommends classification, routing and automation eligibility.</strong><span>It remains a proposed product dictionary and does not change the approved methodology baseline.</span>';
   $("#operations-bible").innerHTML = state.operationsBible.map((entry) => `
     <article>
@@ -259,16 +291,19 @@ function renderOperate() {
       <dl><div><dt>Use when</dt><dd>${escapeHtml(entry.useWhen)}</dd></div><div><dt>Do not use when</dt><dd>${escapeHtml(entry.avoidWhen)}</dd></div></dl>
       <details><summary>Authority and automation</summary><p><strong>Authority:</strong> ${escapeHtml(entry.approval)}</p><p><strong>Automation:</strong> ${escapeHtml(entry.automation)}</p></details>
     </article>`).join("");
+  renderOperateNetwork();
   populateCaptureSelectors();
 }
 
 async function loadOperate() {
-  const [recordsValue, bibleValue] = await Promise.all([
+  const [recordsValue, bibleValue, networkValue] = await Promise.all([
     request("/api/operate/records"),
-    request("/api/operate/bible")
+    request("/api/operate/bible"),
+    request("/api/operate/network")
   ]);
   state.operateRecords = recordsValue.records;
   state.operationsBible = bibleValue.entries;
+  state.operateNetwork = networkValue.network;
   renderOperate();
 }
 
@@ -282,6 +317,21 @@ function openWorkCapture() {
   populateCaptureSelectors();
   $("#work-capture-dialog").showModal();
   $("#work-capture-form [name=title]").focus();
+}
+
+function openLinkCapture(record) {
+  if (!record) return;
+  const form = $("#work-link-form");
+  form.dataset.fromRecordId = record.id;
+  $("#work-link-source").textContent = record.title;
+  const target = $("#work-link-target");
+  target.innerHTML = state.operateRecords
+    .filter((candidate) => candidate.id !== record.id)
+    .map((candidate) => `<option value="${candidate.id}">${escapeHtml(candidate.bible?.label || candidate.recordType)} · ${escapeHtml(candidate.title)}</option>`)
+    .join("");
+  form.reset();
+  $("#work-link-dialog").showModal();
+  target.focus();
 }
 
 async function ensureConversation() {
@@ -1617,6 +1667,59 @@ $("#work-detail").addEventListener("click", async (event) => {
     await openOperateRecord(related.dataset.openOperateRecord);
     return;
   }
+  const linkRecord = event.target.closest("[data-link-operate-record]");
+  if (linkRecord) {
+    openLinkCapture(state.currentOperateRecord);
+    return;
+  }
+  const acceptedSuggestion = event.target.closest("[data-accept-link-suggestion]");
+  if (acceptedSuggestion) {
+    const suggestion = state.currentOperateRecord?.linkSuggestions?.[Number(acceptedSuggestion.dataset.acceptLinkSuggestion)];
+    if (!suggestion) return;
+    acceptedSuggestion.disabled = true;
+    try {
+      await request("/api/operate/links", {
+        method: "POST",
+        body: JSON.stringify({
+          ...suggestion,
+          actor: state.currentUser,
+          proposedVia: "ai",
+          confirmation: "Confirm link"
+        })
+      });
+      const currentRecordId = state.currentOperateRecord.id;
+      await Promise.all([loadOperate(), loadMyWork()]);
+      await openOperateRecord(currentRecordId);
+      toast("Oppa Mate's suggestion was confirmed. Both the suggestion and your confirmation are retained.");
+    } catch (error) {
+      acceptedSuggestion.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const rejectedLink = event.target.closest("[data-reject-operate-link]");
+  if (rejectedLink) {
+    const reason = rejectedLink.closest(".link-correction")?.querySelector("[data-link-rejection-reason]")?.value.trim() || "";
+    if (reason.length < 3) {
+      toast("Record why the relationship is wrong before rejecting it.", true);
+      return;
+    }
+    rejectedLink.disabled = true;
+    try {
+      const currentRecordId = state.currentOperateRecord.id;
+      await request(`/api/operate/links/${encodeURIComponent(rejectedLink.dataset.rejectOperateLink)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ state: "rejected", actor: state.currentUser, reason })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      await openOperateRecord(currentRecordId);
+      toast("Relationship rejected and retained in activity history.");
+    } catch (error) {
+      rejectedLink.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   const complete = event.target.closest("[data-complete-task]");
   if (complete) {
     complete.disabled = true;
@@ -1633,6 +1736,37 @@ $("#work-detail").addEventListener("click", async (event) => {
       complete.disabled = false;
       toast(error.message, true);
     }
+  }
+});
+$$('[data-close-work-link]').forEach((button) => button.addEventListener("click", () => $("#work-link-dialog").close()));
+$("#work-link-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const submit = form.querySelector('[type="submit"]');
+  const data = Object.fromEntries(new FormData(form));
+  submit.disabled = true;
+  try {
+    await request("/api/operate/links", {
+      method: "POST",
+      body: JSON.stringify({
+        fromRecordId: form.dataset.fromRecordId,
+        toRecordId: data.toRecordId,
+        relationship: data.relationship,
+        rationale: data.rationale,
+        actor: state.currentUser,
+        proposedVia: "human",
+        confidence: 5
+      })
+    });
+    const currentRecordId = form.dataset.fromRecordId;
+    $("#work-link-dialog").close();
+    await Promise.all([loadOperate(), loadMyWork()]);
+    await openOperateRecord(currentRecordId);
+    toast("Relationship confirmed and added to the operational graph.");
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    submit.disabled = false;
   }
 });
 $("#brand-review-grid").addEventListener("click", async (event) => {

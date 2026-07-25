@@ -155,6 +155,11 @@ export const OPERATIONS_BIBLE = Object.freeze([
 
 export const BIBLE_BY_TYPE = new Map(OPERATIONS_BIBLE.map((entry) => [entry.type, entry]));
 
+export const OPERATE_RELATIONSHIPS = Object.freeze([
+  "contains", "relates-to", "caused-by", "generated", "treats",
+  "implements", "blocks", "evidences", "tests", "improves"
+]);
+
 const CLOSED_STATUSES = new Set([
   "closed", "done", "cancelled", "completed", "rejected", "no-action",
   "decided", "superseded",
@@ -257,6 +262,179 @@ export function validateOperateRecord(input) {
       accepted: !input.recordType || recordType === recommendation.type,
       selectedType: recordType
     }
+  };
+}
+
+function valueFor(item, camel, snake = camel) {
+  return item?.[camel] ?? item?.[snake] ?? null;
+}
+
+function activeLink(link) {
+  return String(valueFor(link, "state") || "confirmed") !== "rejected";
+}
+
+const LINK_SUGGESTION_RULES = Object.freeze([
+  ["incident", "problem", "evidences", "An incident can provide evidence for an underlying problem."],
+  ["request", "problem", "evidences", "Repeated or avoidable demand can provide evidence for a problem."],
+  ["finding", "problem", "evidences", "A finding can provide evidence for a cause investigation."],
+  ["finding", "risk", "evidences", "A finding can provide evidence for a possible risk."],
+  ["problem", "change", "generated", "A problem can generate a controlled change."],
+  ["problem", "improvement", "generated", "A problem can generate a continual improvement initiative."],
+  ["finding", "change", "generated", "A finding can generate a controlled change."],
+  ["improvement", "change", "generated", "An improvement can generate a controlled change."],
+  ["request", "task", "generated", "A request can generate one or more executable tasks."],
+  ["change", "task", "generated", "A change can generate implementation or verification tasks."],
+  ["change", "risk", "treats", "A change may treat a linked operational risk."],
+  ["scenario-test", "finding", "generated", "A scenario test can generate evidenced findings."],
+  ["scenario-test", "risk", "evidences", "A scenario test can provide evidence about a risk."],
+  ["scenario-test", "change", "generated", "A scenario test can generate a controlled change."],
+  ["scenario-test", "improvement", "generated", "A scenario test can generate an improvement initiative."]
+]);
+
+function connectedContext(left, right) {
+  const leftCase = valueFor(left, "caseId", "case_id");
+  const rightCase = valueFor(right, "caseId", "case_id");
+  const leftParent = valueFor(left, "parentId", "parent_id");
+  const rightParent = valueFor(right, "parentId", "parent_id");
+  return Boolean(
+    (leftCase && leftCase === rightCase)
+    || leftParent === right.id
+    || rightParent === left.id
+  );
+}
+
+export function suggestOperateLinks(record, records = [], links = []) {
+  if (!record || String(valueFor(record, "recordType", "record_type")) === "case") return [];
+  const existingPairs = new Set(links.map((link) => {
+    const from = valueFor(link, "fromRecordId", "from_record_id");
+    const to = valueFor(link, "toRecordId", "to_record_id");
+    return [from, to].sort().join(":");
+  }));
+  const suggestions = [];
+  for (const candidate of records) {
+    if (!candidate || candidate.id === record.id || isClosedStatus(candidate.status)) continue;
+    if (!connectedContext(record, candidate)) continue;
+    if (existingPairs.has([record.id, candidate.id].sort().join(":"))) continue;
+    const recordType = String(valueFor(record, "recordType", "record_type"));
+    const candidateType = String(valueFor(candidate, "recordType", "record_type"));
+    const forward = LINK_SUGGESTION_RULES.find(([from, to]) => from === recordType && to === candidateType);
+    const reverse = LINK_SUGGESTION_RULES.find(([from, to]) => from === candidateType && to === recordType);
+    const rule = forward || reverse;
+    if (!rule) continue;
+    const [, , relationship, rationale] = rule;
+    suggestions.push({
+      fromRecordId: forward ? record.id : candidate.id,
+      toRecordId: forward ? candidate.id : record.id,
+      otherRecordId: candidate.id,
+      otherTitle: candidate.title,
+      otherType: candidateType,
+      relationship,
+      rationale,
+      confidence: 3,
+      proposedBy: "Oppa Mate",
+      proposedVia: "ai"
+    });
+  }
+  return suggestions.slice(0, 3);
+}
+
+export function summariseOperateNetwork(records = [], links = []) {
+  const activeRecords = records.filter((record) => !isClosedStatus(record.status));
+  const activeLinks = links.filter(activeLink);
+  const linkedIds = new Set();
+  for (const link of activeLinks) {
+    linkedIds.add(valueFor(link, "fromRecordId", "from_record_id"));
+    linkedIds.add(valueFor(link, "toRecordId", "to_record_id"));
+  }
+  for (const record of records) {
+    const caseId = valueFor(record, "caseId", "case_id");
+    const parentId = valueFor(record, "parentId", "parent_id");
+    if (caseId || parentId) linkedIds.add(record.id);
+    if (caseId) linkedIds.add(caseId);
+    if (parentId) linkedIds.add(parentId);
+  }
+
+  const byId = new Map(records.map((record) => [record.id, record]));
+  const depthFor = (record, seen = new Set()) => {
+    if (!record || seen.has(record.id)) return 1;
+    const nextSeen = new Set(seen).add(record.id);
+    const parentId = valueFor(record, "parentId", "parent_id");
+    if (parentId) return 1 + depthFor(byId.get(parentId), nextSeen);
+    const caseId = valueFor(record, "caseId", "case_id");
+    if (caseId && caseId !== record.id) return 1 + depthFor(byId.get(caseId), nextSeen);
+    return 1;
+  };
+
+  const unlinkedOpen = activeRecords.filter((record) => {
+    const type = String(valueFor(record, "recordType", "record_type"));
+    return type !== "case" && !linkedIds.has(record.id);
+  });
+  const treatedRiskIds = new Set(activeLinks
+    .filter((link) => String(link.relationship) === "treats")
+    .flatMap((link) => [valueFor(link, "fromRecordId", "from_record_id"), valueFor(link, "toRecordId", "to_record_id")]));
+  const untreatedRisks = activeRecords.filter((record) =>
+    String(valueFor(record, "recordType", "record_type")) === "risk" && !treatedRiskIds.has(record.id));
+  const blockerIds = new Set(activeLinks
+    .filter((link) => String(link.relationship) === "blocks")
+    .flatMap((link) => [valueFor(link, "fromRecordId", "from_record_id"), valueFor(link, "toRecordId", "to_record_id")]));
+  for (const record of activeRecords) if (record.blocking) blockerIds.add(record.id);
+
+  const caseHotspots = activeRecords
+    .filter((record) => String(valueFor(record, "recordType", "record_type")) === "case")
+    .map((record) => {
+      const children = activeRecords.filter((item) => valueFor(item, "caseId", "case_id") === record.id);
+      return {
+        id: record.id,
+        title: record.title,
+        openRecords: children.length,
+        highestPriority: children.reduce((highest, item) => Math.max(highest, priorityFor(item).score), 0)
+      };
+    })
+    .filter((item) => item.openRecords > 0)
+    .sort((left, right) => right.highestPriority - left.highestPriority || right.openRecords - left.openRecords)
+    .slice(0, 3);
+
+  const signals = [];
+  if (unlinkedOpen.length) signals.push({
+    kind: "connection-gap",
+    title: `${unlinkedOpen.length} open ${unlinkedOpen.length === 1 ? "record is" : "records are"} not connected`,
+    detail: "Linking the work may expose a shared outcome, cause, dependency or duplicate demand."
+  });
+  if (untreatedRisks.length) signals.push({
+    kind: "risk-gap",
+    title: `${untreatedRisks.length} open ${untreatedRisks.length === 1 ? "risk has" : "risks have"} no linked treatment`,
+    detail: "This is a relationship signal, not evidence that no treatment exists."
+  });
+  if (blockerIds.size) signals.push({
+    kind: "blocked-flow",
+    title: `${blockerIds.size} ${blockerIds.size === 1 ? "record affects" : "records affect"} blocked flow`,
+    detail: "Review the connected dependency before optimising an isolated task."
+  });
+  if (caseHotspots[0]) signals.push({
+    kind: "case-hotspot",
+    title: `${caseHotspots[0].title} has the strongest connected attention signal`,
+    detail: `${caseHotspots[0].openRecords} open linked records; highest priority ${caseHotspots[0].highestPriority}/100.`
+  });
+  if (!signals.length) signals.push({
+    kind: "no-signal",
+    title: "No immediate network gap is visible",
+    detail: "Add and correct relationships as evidence develops; absence of a signal is not proof of absence."
+  });
+
+  return {
+    totals: {
+      records: records.length,
+      open: activeRecords.length,
+      explicitLinks: activeLinks.length,
+      connectedOpen: activeRecords.filter((record) => linkedIds.has(record.id)).length,
+      unlinkedOpen: unlinkedOpen.length,
+      maxDepth: records.reduce((maximum, record) => Math.max(maximum, depthFor(record)), 0),
+      humanConfirmedLinks: activeLinks.filter((link) => String(valueFor(link, "proposedVia", "proposed_via") || "human") === "human").length,
+      aiConfirmedLinks: activeLinks.filter((link) => String(valueFor(link, "proposedVia", "proposed_via")) === "ai").length
+    },
+    caseHotspots,
+    signals,
+    boundary: "These signals are derived from recorded relationships. They support investigation and prioritisation; they are not facts, approvals or risk acceptance."
   };
 }
 

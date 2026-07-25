@@ -109,12 +109,18 @@
             <span>Case</span><i>contains</i><span>Incident or Request</span><i>may evidence</i><span>Problem</span><i>may generate</i><span>Change</span>
           </div>
           <p class="model-flow-note"><strong>Risk crosses every record.</strong> Findings, decisions, tasks, improvements and scenario tests connect wherever the evidence requires them.</p>
+          <section class="operate-network" aria-labelledby="operate-network-heading">
+            <div class="section-heading"><div><p class="eyebrow">Information from relationships</p><h3 id="operate-network-heading">What the links tell us</h3></div><span>Derived, not assumed</span></div>
+            <div class="operate-network-summary" id="operate-network-summary"><p>Reading the operational graph...</p></div>
+            <div class="operate-network-signals" id="operate-network-signals"></div>
+            <p class="operate-network-boundary" id="operate-network-boundary"></p>
+          </section>
           <section class="case-register" aria-labelledby="case-register-heading">
             <div class="section-heading"><div><p class="eyebrow">Outcome containers</p><h3 id="case-register-heading">Cases</h3></div><span id="case-register-count">Loading...</span></div>
             <div class="case-grid" id="case-register"><p>Loading cases...</p></div>
           </section>
           <section class="all-work-register" aria-labelledby="all-work-heading">
-            <div class="section-heading"><div><p class="eyebrow">Linked records</p><h3 id="all-work-heading">Operational work</h3></div><span id="operate-record-count">Loading...</span></div>
+            <div class="section-heading"><div><p class="eyebrow">Operational graph</p><h3 id="all-work-heading">Operational work</h3></div><span id="operate-record-count">Loading...</span></div>
             <div class="operate-record-list" id="operate-record-list"><p>Loading records...</p></div>
           </section>
           <details class="operations-bible">
@@ -462,6 +468,7 @@
       <div class="capture-grid">
         <label>Record type<select name="recordType" id="capture-record-type"><option value="">Let Oppa Mate recommend</option></select></label>
         <label>Related case<select name="caseId" id="capture-case"><option value="">No case yet</option></select></label>
+        <label>Parent work<select name="parentId" id="capture-parent"><option value="">No parent work</option></select></label>
         <label>Impact<select name="impact"><option value="2">Low</option><option value="3" selected>Medium</option><option value="4">High</option><option value="5">Critical</option></select></label>
         <label>Urgency<select name="urgency"><option value="1">Low</option><option value="2" selected>Normal</option><option value="4">High</option><option value="5">Immediate</option></select></label>
         <label>Due date<input name="dueAt" type="date"></label>
@@ -478,6 +485,17 @@
       </details>
       <div class="capture-boundary"><strong>Classification organises work; it does not approve it.</strong><span>Novel, sensitive or higher-risk action still follows the relevant human or policy gate.</span></div>
       <div class="dialog-actions"><button type="button" class="ghost" data-close-work-capture>Cancel</button><button type="submit" class="primary">Capture and prioritise</button></div>
+    </form>
+  </dialog>
+  <dialog id="work-link-dialog">
+    <form id="work-link-form">
+      <div class="dialog-head"><div><p class="eyebrow">Build the operational graph</p><h2>Link related work</h2></div><button type="button" data-close-work-link aria-label="Close">&times;</button></div>
+      <p class="capture-intro">Link <strong id="work-link-source">this record</strong> to another record when the relationship helps explain an outcome, cause, dependency, treatment or improvement.</p>
+      <label class="capture-wide">Related record<select name="toRecordId" id="work-link-target" required></select></label>
+      <label class="capture-wide">Relationship<select name="relationship" required><option value="relates-to">Relates to</option><option value="contains">Contains</option><option value="caused-by">Caused by</option><option value="generated">Generated</option><option value="treats">Treats</option><option value="implements">Implements</option><option value="blocks">Blocks</option><option value="evidences">Evidences</option><option value="tests">Tests</option><option value="improves">Improves</option></select></label>
+      <label class="capture-wide">Why does this link matter?<textarea name="rationale" rows="3" maxlength="1000" placeholder="For example: this incident is one of three failures pointing to the same underlying cause"></textarea></label>
+      <div class="capture-boundary"><strong>A relationship adds context; it does not create approval.</strong><span>Incorrect links can be rejected without deleting the retained activity evidence.</span></div>
+      <div class="dialog-actions"><button type="button" class="ghost" data-close-work-link>Cancel</button><button type="submit" class="primary">Confirm relationship</button></div>
     </form>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>

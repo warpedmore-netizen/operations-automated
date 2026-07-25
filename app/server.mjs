@@ -28,8 +28,8 @@ import {
 import { createCredentialStore } from "./credential-store.mjs";
 import voiceCapture from "./voice-capture.js";
 import {
-  BIBLE_BY_TYPE, OPERATIONS_BIBLE, isClosedStatus, priorityFor,
-  sortWorkItems, validateOperateRecord
+  BIBLE_BY_TYPE, OPERATE_RELATIONSHIPS, OPERATIONS_BIBLE, isClosedStatus, priorityFor,
+  sortWorkItems, suggestOperateLinks, summariseOperateNetwork, validateOperateRecord
 } from "./operate-model.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
@@ -208,6 +208,12 @@ db.exec(`
     from_record_id TEXT NOT NULL REFERENCES operate_records(id) ON DELETE CASCADE,
     to_record_id TEXT NOT NULL REFERENCES operate_records(id) ON DELETE CASCADE,
     relationship TEXT NOT NULL,
+    proposed_by TEXT NOT NULL DEFAULT 'Jamie Peppard',
+    proposed_via TEXT NOT NULL DEFAULT 'human',
+    rationale TEXT NOT NULL DEFAULT '',
+    confidence INTEGER NOT NULL DEFAULT 3,
+    state TEXT NOT NULL DEFAULT 'confirmed',
+    confirmed_by TEXT NOT NULL DEFAULT 'Jamie Peppard',
     created_at TEXT NOT NULL,
     UNIQUE(from_record_id, to_record_id, relationship)
   );
@@ -240,6 +246,12 @@ ensureColumn("feedback", "classification", "TEXT NOT NULL DEFAULT 'conversation-
 ensureColumn("feedback", "affected_workspace", "TEXT NOT NULL DEFAULT 'living-methodology'");
 ensureColumn("feedback", "submitting_user", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
 ensureColumn("feedback", "updated_at", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("operate_links", "proposed_by", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
+ensureColumn("operate_links", "proposed_via", "TEXT NOT NULL DEFAULT 'human'");
+ensureColumn("operate_links", "rationale", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("operate_links", "confidence", "INTEGER NOT NULL DEFAULT 3");
+ensureColumn("operate_links", "state", "TEXT NOT NULL DEFAULT 'confirmed'");
+ensureColumn("operate_links", "confirmed_by", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
 db.exec(`
   UPDATE feedback SET original_wording=wording WHERE original_wording='';
   UPDATE feedback SET feedback_type=disposition WHERE feedback_type='unspecified';
@@ -551,9 +563,17 @@ function operateRow(row, { includeRelations = false } = {}) {
     FROM operate_links l
     JOIN operate_records source ON source.id=l.from_record_id
     JOIN operate_records target ON target.id=l.to_record_id
-    WHERE l.from_record_id=? OR l.to_record_id=?
+    WHERE (l.from_record_id=? OR l.to_record_id=?) AND l.state!='rejected'
     ORDER BY l.created_at
-  `).all(row.id, row.id);
+  `).all(row.id, row.id).map((link) => ({
+    ...link,
+    fromRecordId: link.from_record_id,
+    toRecordId: link.to_record_id,
+    proposedBy: link.proposed_by,
+    proposedVia: link.proposed_via,
+    confirmedBy: link.confirmed_by,
+    createdAt: link.created_at
+  }));
   const children = db.prepare("SELECT * FROM operate_records WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC").all(row.id, row.id)
     .map((item) => operateRow(item));
   const activity = db.prepare("SELECT * FROM operate_activity WHERE record_id=? ORDER BY created_at DESC").all(row.id)
@@ -561,7 +581,9 @@ function operateRow(row, { includeRelations = false } = {}) {
   return {
     ...value,
     case: row.case_id ? operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(row.case_id)) : null,
+    parent: row.parent_id ? operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(row.parent_id)) : null,
     links,
+    linkSuggestions: suggestOperateLinks(value, operateRecords(), db.prepare("SELECT * FROM operate_links").all()),
     children,
     activity
   };
@@ -580,6 +602,40 @@ function operateRecords({ recordType = "", caseId = "", status = "" } = {}) {
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
   return db.prepare(`SELECT * FROM operate_records ${where} ORDER BY updated_at DESC`).all(...values)
     .map((item) => operateRow(item));
+}
+
+function operateNetwork() {
+  return summariseOperateNetwork(
+    operateRecords(),
+    db.prepare("SELECT * FROM operate_links").all()
+  );
+}
+
+function parentWouldCycle(recordId, parentId) {
+  let currentId = parentId;
+  const visited = new Set([recordId]);
+  while (currentId) {
+    if (visited.has(currentId)) return true;
+    visited.add(currentId);
+    currentId = operateRecord(currentId)?.parentId || null;
+  }
+  return false;
+}
+
+function resolveOperateParent(value, recordId = null) {
+  if (!value.parentId) return { value, error: null };
+  const parent = operateRecord(value.parentId);
+  if (!parent) return { value, error: "The selected parent work record does not exist." };
+  if (recordId && parentWouldCycle(recordId, value.parentId)) {
+    return { value, error: "That parent would create a circular work hierarchy." };
+  }
+  const inheritedCaseId = value.recordType === "case"
+    ? null
+    : parent.recordType === "case" ? parent.id : parent.caseId;
+  if (value.caseId && inheritedCaseId && value.caseId !== inheritedCaseId) {
+    return { value, error: "Parent work and related Case must belong to the same operational context." };
+  }
+  return { value: { ...value, caseId: value.caseId || inheritedCaseId || null }, error: null };
 }
 
 function operateInboxItem(record) {
@@ -930,6 +986,12 @@ async function api(request, response, url) {
       authority: "The dictionary can recommend classification and routing. It cannot create approval or expand delegated authority."
     });
   }
+  if (method === "GET" && url.pathname === "/api/operate/network") {
+    return json(response, 200, {
+      network: operateNetwork(),
+      provenance: "Relationships may be created by a person or suggested by Oppa Mate. AI-suggested links enter the confirmed graph only after Jamie Peppard explicitly accepts them."
+    });
+  }
   if (method === "GET" && url.pathname === "/api/operate/records") {
     return json(response, 200, {
       records: operateRecords({
@@ -947,14 +1009,14 @@ async function api(request, response, url) {
     try { value = validateOperateRecord(input); }
     catch (error) { return json(response, 400, { error: error.message }); }
     if (value.recordType === "case") value.caseId = null;
+    const parentResult = resolveOperateParent(value);
+    if (parentResult.error) return json(response, 400, { error: parentResult.error });
+    value = parentResult.value;
     if (value.caseId) {
       const linkedCase = operateRecord(value.caseId);
       if (!linkedCase || linkedCase.recordType !== "case") {
         return json(response, 400, { error: "Link work only to an existing Case." });
       }
-    }
-    if (value.parentId && !operateRecord(value.parentId)) {
-      return json(response, 400, { error: "The selected parent work record does not exist." });
     }
     const id = randomUUID();
     const timestamp = now();
@@ -1015,17 +1077,14 @@ async function api(request, response, url) {
     } catch (error) {
       return json(response, 400, { error: error.message });
     }
+    const parentResult = resolveOperateParent(value, existing.id);
+    if (parentResult.error) return json(response, 400, { error: parentResult.error });
+    value = parentResult.value;
     if (value.caseId) {
       const linkedCase = operateRecord(value.caseId);
       if (!linkedCase || linkedCase.recordType !== "case") {
         return json(response, 400, { error: "Link work only to an existing Case." });
       }
-    }
-    if (value.parentId === existing.id) {
-      return json(response, 400, { error: "A work record cannot be its own parent." });
-    }
-    if (value.parentId && !operateRecord(value.parentId)) {
-      return json(response, 400, { error: "The selected parent work record does not exist." });
     }
     const authorityConfirmations = new Map([
       ["approval:approved", "Approve"],
@@ -1068,20 +1127,75 @@ async function api(request, response, url) {
     const from = operateRecord(String(value.fromRecordId || ""));
     const to = operateRecord(String(value.toRecordId || ""));
     if (!from || !to || from.id === to.id) return json(response, 400, { error: "Choose two different existing operational records." });
-    const relationships = new Set(["contains", "relates-to", "caused-by", "generated", "treats", "implements", "blocks", "evidences", "tests", "improves"]);
+    const relationships = new Set(OPERATE_RELATIONSHIPS);
     const relationship = String(value.relationship || "relates-to");
     if (!relationships.has(relationship)) return json(response, 400, { error: "Choose a relationship defined by the initial Operations Bible." });
+    const proposedVia = String(value.proposedVia || "human") === "ai" ? "ai" : "human";
+    const actor = String(value.actor || FOUNDER_NAME).trim().slice(0, 120) || FOUNDER_NAME;
+    if (proposedVia === "ai" && (actor !== FOUNDER_NAME || String(value.confirmation || "") !== "Confirm link")) {
+      return json(response, 403, { error: `An Oppa Mate relationship suggestion requires ${FOUNDER_NAME}'s exact "Confirm link" confirmation.` });
+    }
+    const proposedBy = proposedVia === "ai" ? "Oppa Mate" : actor;
+    const rationale = String(value.rationale || "").trim().slice(0, 1000);
+    const confidence = Math.min(5, Math.max(1, Number.isFinite(Number(value.confidence)) ? Math.round(Number(value.confidence)) : 3));
     const id = randomUUID();
+    const timestamp = now();
     try {
-      db.prepare("INSERT INTO operate_links VALUES(?,?,?,?,?)").run(id, from.id, to.id, relationship, now());
+      db.prepare(`
+        INSERT INTO operate_links(
+          id,from_record_id,to_record_id,relationship,proposed_by,proposed_via,
+          rationale,confidence,state,confirmed_by,created_at
+        ) VALUES(?,?,?,?,?,?,?,?,?,?,?)
+      `).run(id, from.id, to.id, relationship, proposedBy, proposedVia, rationale, confidence, "confirmed", actor, timestamp);
     } catch (error) {
       if (/UNIQUE/.test(error.message)) return json(response, 409, { error: "That relationship is already recorded." });
       throw error;
     }
-    audit("operate-record.linked", "operate-link", id, {
-      fromRecordId: from.id, toRecordId: to.id, relationship, approvalCreated: false
+    const activityDetail = JSON.stringify({
+      linkId: id, otherRecordId: to.id, relationship, proposedBy, proposedVia,
+      confirmedBy: actor, confidence, rationale, approvalCreated: false
     });
-    return json(response, 201, { link: { id, fromRecordId: from.id, toRecordId: to.id, relationship }, approvalCreated: false });
+    db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+      .run(randomUUID(), from.id, "relationship.confirmed", actor, activityDetail, timestamp);
+    db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+      .run(randomUUID(), to.id, "relationship.confirmed", actor, JSON.stringify({
+        ...safeJson(activityDetail, {}), otherRecordId: from.id
+      }), timestamp);
+    audit("operate-record.linked", "operate-link", id, {
+      fromRecordId: from.id, toRecordId: to.id, relationship, proposedBy,
+      proposedVia, confirmedBy: actor, approvalCreated: false
+    });
+    return json(response, 201, {
+      link: {
+        id, fromRecordId: from.id, toRecordId: to.id, relationship, proposedBy,
+        proposedVia, rationale, confidence, state: "confirmed", confirmedBy: actor, createdAt: timestamp
+      },
+      approvalCreated: false
+    });
+  }
+  const operateLinkMatch = url.pathname.match(/^\/api\/operate\/links\/([^/]+)$/);
+  if (method === "PATCH" && operateLinkMatch) {
+    requireLocalJsonAction(request, "Operational relationship correction");
+    const link = db.prepare("SELECT * FROM operate_links WHERE id=?").get(operateLinkMatch[1]);
+    if (!link) return json(response, 404, { error: "Operational relationship not found." });
+    const value = await jsonBody(request);
+    if (String(value.state || "") !== "rejected") {
+      return json(response, 400, { error: "A relationship can be retained or rejected; it is never silently deleted." });
+    }
+    const actor = String(value.actor || FOUNDER_NAME).trim().slice(0, 120) || FOUNDER_NAME;
+    const reason = String(value.reason || "").trim().slice(0, 1000);
+    if (reason.length < 3) return json(response, 400, { error: "Record why the relationship is being rejected." });
+    const timestamp = now();
+    db.prepare("UPDATE operate_links SET state='rejected' WHERE id=?").run(link.id);
+    for (const [recordId, otherRecordId] of [[link.from_record_id, link.to_record_id], [link.to_record_id, link.from_record_id]]) {
+      db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)").run(
+        randomUUID(), recordId, "relationship.rejected", actor,
+        JSON.stringify({ linkId: link.id, otherRecordId, relationship: link.relationship, reason, approvalCreated: false }),
+        timestamp
+      );
+    }
+    audit("operate-record.link-rejected", "operate-link", link.id, { actor, reason, approvalCreated: false });
+    return json(response, 200, { link: { id: link.id, state: "rejected" }, approvalCreated: false });
   }
   if (method === "GET" && url.pathname === "/api/brand-review") {
     return json(response, 200, brandReviewData());

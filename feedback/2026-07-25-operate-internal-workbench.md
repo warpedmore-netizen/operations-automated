@@ -33,6 +33,23 @@ Jamie's brief also establishes these important product expectations:
 - Oppa Mate may recommend, route, update and automate within policy, but does not acquire approval authority; and
 - the first release should prove one end-to-end loop before attempting the whole model.
 
+## Founder clarification on 26 July 2026
+
+Jamie clarified the intended difference from ServiceNow or Jira:
+
+> Operate may become multi-tiered, but the difference is that the work is linked by people and AI so the structure gives information back.
+
+This is product direction, not approval of an inferred implementation. The strongest reasonable meaning is:
+
+- Operate may eventually support several levels of operational work and oversight;
+- hierarchy alone is not the differentiator;
+- people and AI should jointly propose, confirm and correct meaningful relationships;
+- provenance must show who or what proposed a relationship and who confirmed it;
+- the network should expose patterns, gaps, dependencies and priorities that isolated tickets cannot; and
+- collecting more structured fields is not valuable unless the system returns better understanding or a governed action.
+
+The clarification does not require the first MVP to reproduce the breadth of a mature service-management platform.
+
 ## Recorded evidence
 
 - The approved connected-work methodology already treats Cases, Requests, Tasks, Incidents, Problems, Changes, Risks, Controls, Decisions and learning as a connected network rather than isolated registers.
@@ -75,9 +92,19 @@ If the assistant classifies work incorrectly, the person can select another type
 
 Scenario testing, customer-journey analytics, sophisticated automation and external connections remain represented in the model but are not presented as completed MVP capability.
 
+### Reverse test
+
+More links can make the system worse when they are weak, duplicated or treated as fact. AI-suggested relationships should therefore be visibly inferential, require human confirmation before joining the active graph and remain correctable without erasing their history.
+
+### Information-value test
+
+The system should not claim that a graph is useful merely because it exists. The bounded MVP should derive a small number of inspectable signals from recorded relationships: disconnected open work, blocked flow, risks without linked treatment and cases concentrating the strongest attention. Each signal remains a prompt for investigation, not an automatic conclusion.
+
 ## What changed the AI assessment
 
 The Workbench should no longer be framed primarily as a set of conversations and specialist governance areas. Those capabilities remain valuable, but the ordinary entry point should be the work a person must understand or act on now.
+
+Jamie's follow-up sharpens the product thesis further: the primary asset is the governed operational graph and the information it returns. Records, forms and tiers are supporting structures rather than the product's distinctive value.
 
 ## Remaining uncertainty
 
@@ -85,10 +112,12 @@ The Workbench should no longer be framed primarily as a set of conversations and
 - No independent user has tested the record definitions or capture language.
 - The exact boundary between Case and project/programme management may need refinement after real use.
 - The complete Operations Bible is an initial product dictionary, not approved methodology meaning.
-- Brand Review feedback could not be queried from the usual local Workbench at the start of this task; retained repository feedback was applied, and no claim is made that the queue was empty.
+- The first derived network signals are rules-based and have not been calibrated against real operational data.
+- Relationship suggestions currently use shared context and type-safe rules; semantic AI analysis requires the separately governed embedded-AI capability.
+- Brand Review could not be queried at the start of the original preparation. It was available during the 26 July follow-up: no `revise` or `reject` item remained pending, and the earlier typography revision had both a response and a later internal-approval record. That review evidence does not approve this Operate proposal.
 
 ## Disposition
 
 **Product change candidate; prepare the bounded MVP now and accumulate use evidence.**
 
-Prepare the unified inbox, Cases, Requests, Tasks, existing approvals and existing Brand Review loop end to end. Retain the wider connected model and dictionary without presenting all of it as implemented. Do not merge, publish, connect a new system or treat the proposed dictionary and weighting as approved until Jamie reviews the assurance pack and draft pull request.
+Prepare the unified inbox, Cases, Requests, Tasks, existing approvals and existing Brand Review loop end to end. Add bounded multi-tier parent links, human-created and AI-suggested relationship provenance, non-destructive relationship correction and inspectable network signals. Retain the wider connected model and dictionary without presenting all of it as implemented. Do not merge, publish, connect a new system or treat the proposed dictionary, weighting, relationship rules or derived signals as approved until Jamie reviews the assurance pack and draft pull request.

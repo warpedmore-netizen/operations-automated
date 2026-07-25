@@ -30,6 +30,8 @@ That direction authorises controlled preparation of the smallest coherent produc
 - add proportionate tests, documentation, changelog and assurance evidence; and
 - commit, push and open a draft pull request for review.
 
+Jamie's 26 July clarification authorises bounded preparation of the shared operational-graph behaviour within the same proposal: optional parent tiers, human-created and AI-suggested links, visible provenance, non-destructive correction and inspectable derived signals. It does not approve the relationship rules or the signals as operational truth.
+
 ## Authority not granted
 
 - approve or alter methodology meaning;

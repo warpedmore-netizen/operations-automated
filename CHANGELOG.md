@@ -10,6 +10,12 @@ All material changes to Operations Automated will be recorded here.
 - Added the initial twelve-record Operations Bible with plain definitions, use and avoid guidance, statuses and human/automation boundaries.
 - Added ordinary-language capture with correctable Oppa Mate classification and retained recommendation evidence.
 - Added visible relationships between records without imposing one linear process.
+- Clarified the proposed product differentiator as a governed operational graph that returns information, rather than a larger ticket register.
+- Added optional parent work so useful multi-tier structures can emerge without one compulsory hierarchy.
+- Added interface-created relationships and type-safe Oppa Mate suggestions inside shared operational context.
+- Retained whether a person or Oppa Mate proposed each link, together with rationale, confidence and the human confirmer.
+- Required exact founder confirmation before an AI-suggested link enters the active graph and retained rejected links as correction evidence rather than deleting them.
+- Added bounded network signals for unconnected open work, blocked flow, risks without linked treatment and cases concentrating attention.
 - Added explicit exact founder confirmation before an Approval becomes approved or a Risk becomes accepted.
 - Added API, model and interface tests covering capture, linking, inbox ordering, completion and authority controls.
 - Retained the wider Incident, Problem, Change, Risk, Finding, Improvement and Scenario Test model without claiming complete workflows.

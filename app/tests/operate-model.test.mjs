@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   isClosedStatus, OPERATIONS_BIBLE, priorityFor, recommendRecordType,
-  sortWorkItems, validateOperateRecord
+  sortWorkItems, suggestOperateLinks, summariseOperateNetwork, validateOperateRecord
 } from "../operate-model.mjs";
 
 test("the initial Operations Bible covers the requested operational records in plain language", () => {
@@ -74,4 +74,42 @@ test("invalid due dates are rejected before they can break ordering or display",
     recordType: "task",
     dueAt: "not-a-date"
   }), /valid due date/i);
+});
+
+test("Oppa Mate suggests typed links only inside shared operational context", () => {
+  const records = [
+    { id: "case-1", recordType: "case", title: "Restore verification", status: "open" },
+    { id: "incident-1", recordType: "incident", title: "Verification failed", caseId: "case-1", status: "reported" },
+    { id: "problem-1", recordType: "problem", title: "Recurring provider timeout", caseId: "case-1", status: "investigating" },
+    { id: "problem-2", recordType: "problem", title: "Unrelated cause", caseId: "case-2", status: "investigating" }
+  ];
+  const suggestions = suggestOperateLinks(records[1], records, []);
+  assert.equal(suggestions.length, 1);
+  assert.equal(suggestions[0].fromRecordId, "incident-1");
+  assert.equal(suggestions[0].toRecordId, "problem-1");
+  assert.equal(suggestions[0].relationship, "evidences");
+  assert.equal(suggestions[0].proposedBy, "Oppa Mate");
+  assert.equal(suggestions.some((item) => item.toRecordId === "problem-2"), false);
+});
+
+test("the network turns structure into bounded operational signals", () => {
+  const records = [
+    { id: "case-1", record_type: "case", title: "Restore verification", status: "open", impact: 4 },
+    { id: "incident-1", record_type: "incident", title: "Verification failed", case_id: "case-1", status: "reported", impact: 5 },
+    { id: "task-1", record_type: "task", title: "Unlinked check", status: "to-do", blocking: true },
+    { id: "risk-1", record_type: "risk", title: "Evidence loss", case_id: "case-1", parent_id: "incident-1", status: "open" }
+  ];
+  const links = [{
+    id: "link-1", from_record_id: "incident-1", to_record_id: "risk-1",
+    relationship: "evidences", proposed_via: "ai", state: "confirmed"
+  }];
+  const network = summariseOperateNetwork(records, links);
+  assert.equal(network.totals.explicitLinks, 1);
+  assert.equal(network.totals.aiConfirmedLinks, 1);
+  assert.equal(network.totals.connectedOpen, 3);
+  assert.equal(network.totals.unlinkedOpen, 1);
+  assert.equal(network.totals.maxDepth, 3);
+  assert.ok(network.signals.some((item) => item.kind === "connection-gap"));
+  assert.ok(network.signals.some((item) => item.kind === "risk-gap"));
+  assert.match(network.boundary, /not facts, approvals or risk acceptance/i);
 });

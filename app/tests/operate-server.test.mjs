@@ -84,11 +84,77 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     });
     assert.equal(linked.response.status, 201);
     assert.equal(linked.payload.approvalCreated, false);
+    assert.equal(linked.payload.link.proposedVia, "human");
+    assert.equal(linked.payload.link.confirmedBy, "Jamie Peppard");
 
     const detail = await call(`/api/operate/records/${caseResult.record.id}`);
     assert.equal(detail.response.ok, true);
     assert.equal(detail.payload.record.children.length, 2);
     assert.ok(detail.payload.record.activity.some((item) => item.action === "record.created"));
+
+    const childTask = await create({
+      title: "Check the provider response code",
+      recordType: "task",
+      parentId: taskResult.record.id
+    });
+    assert.equal(childTask.record.parentId, taskResult.record.id);
+    assert.equal(childTask.record.caseId, caseResult.record.id);
+
+    const incidentResult = await create({
+      title: "Identity verification failed unexpectedly",
+      recordType: "incident",
+      caseId: caseResult.record.id
+    });
+    const problemResult = await create({
+      title: "Investigate the recurring provider timeout",
+      recordType: "problem",
+      caseId: caseResult.record.id
+    });
+    const incidentDetail = await call(`/api/operate/records/${incidentResult.record.id}`);
+    const aiSuggestion = incidentDetail.payload.record.linkSuggestions.find((item) => item.toRecordId === problemResult.record.id);
+    assert.equal(aiSuggestion.relationship, "evidences");
+
+    const unconfirmedAiLink = await call("/api/operate/links", {
+      method: "POST",
+      body: { ...aiSuggestion, proposedVia: "ai", actor: "Oppa Mate" }
+    });
+    assert.equal(unconfirmedAiLink.response.status, 403);
+    const confirmedAiLink = await call("/api/operate/links", {
+      method: "POST",
+      body: {
+        ...aiSuggestion,
+        proposedVia: "ai",
+        actor: "Jamie Peppard",
+        confirmation: "Confirm link"
+      }
+    });
+    assert.equal(confirmedAiLink.response.status, 201);
+    assert.equal(confirmedAiLink.payload.link.proposedBy, "Oppa Mate");
+    assert.equal(confirmedAiLink.payload.link.confirmedBy, "Jamie Peppard");
+
+    const network = await call("/api/operate/network");
+    assert.equal(network.response.ok, true);
+    assert.equal(network.payload.network.totals.explicitLinks, 2);
+    assert.equal(network.payload.network.totals.aiConfirmedLinks, 1);
+    assert.ok(network.payload.network.totals.maxDepth >= 3);
+    assert.match(network.payload.network.boundary, /not facts, approvals or risk acceptance/i);
+
+    const rejectedAiLink = await call(`/api/operate/links/${confirmedAiLink.payload.link.id}`, {
+      method: "PATCH",
+      body: { state: "rejected", actor: "Jamie Peppard", reason: "The incident does not evidence this cause." }
+    });
+    assert.equal(rejectedAiLink.response.ok, true);
+    const afterRejection = await call("/api/operate/network");
+    assert.equal(afterRejection.payload.network.totals.explicitLinks, 1);
+    const problemAfterRejection = await call(`/api/operate/records/${problemResult.record.id}`);
+    assert.ok(problemAfterRejection.payload.record.activity.some((item) => item.action === "relationship.rejected"));
+
+    const circularParent = await call(`/api/operate/records/${taskResult.record.id}`, {
+      method: "PATCH",
+      body: { parentId: childTask.record.id }
+    });
+    assert.equal(circularParent.response.status, 400);
+    assert.match(circularParent.payload.error, /circular/i);
 
     const inbox = await call("/api/my-work?order=recommended");
     assert.equal(inbox.response.ok, true);

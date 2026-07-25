@@ -2,9 +2,9 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
-date: 2026-07-25
+date: 2026-07-26
 ---
 
 # Operate internal workbench operating model
@@ -31,8 +31,27 @@ Classification, recommendation, a passing scenario test and technical readiness 
 | Operational records | Feedback, decisions and specialist local records | Cases, Requests and Tasks, with the wider dictionary available |
 | Relationships | Present in methodology and specialist workflows | Visible, queryable links between operational records |
 | Priority | Area-specific order | Explainable impact-first recommendation |
-| Assistant | Conversation and bounded governance support | Oppa Mate also recommends type, route and next action |
+| Service-account user | Conversation and bounded governance support | Oppa Mate is the recognisable company service account and may recommend type, route and next action within assigned permissions |
 | Authority | Named human controls | Unchanged and made explicit in record transitions |
+
+## Defining difference: a governed operational graph
+
+Operate may eventually become multi-tiered like a mature work or service-management platform, but tiers and records are not its defining value. Its proposed difference is a shared operational graph that people and AI build, challenge and learn from together.
+
+The intended loop is:
+
+1. capture a real need, event, action, decision or observation;
+2. connect it to the outcomes, causes, dependencies, risks, controls and changes that make it meaningful;
+3. retain whether a person or Oppa Mate proposed each material relationship and who confirmed it;
+4. derive inspectable signals from the network;
+5. challenge weak or missing relationships rather than treating structure as truth; and
+6. use the resulting information to prioritise, decide, act and learn.
+
+The system should therefore optimise for information returned, not records collected. A field, tier or link is useful only when it improves understanding, routing, a decision or a governed next action.
+
+Oppa Mate is the primary Operations Automated service-account identity across this model. The identity makes his activity recognisable and traceable; it does not itself grant access, approval authority or permission to execute consequential work.
+
+AI-suggested links remain inference. They join the active graph only after human confirmation in this MVP, and an incorrect confirmed relationship is rejected rather than silently deleted so its correction remains traceable.
 
 ## Initial Operations Bible
 
@@ -55,7 +74,7 @@ Each entry includes when to use it, when not to use it, available statuses and t
 
 ## Connected model
 
-Case is a container, not a forced lifecycle. A Request may sit within a Case. An Incident or repeated Request may evidence a Problem. A Problem, Risk, Finding or Improvement may generate a Change. A Finding may result in no action or any relevant work record. A Scenario Test may create Findings, Risks, Problems, Tasks, Requests, Changes and Improvements.
+Case is a container, not a forced lifecycle. Work may also have an optional parent, allowing several useful levels without making one universal hierarchy mandatory. A Request may sit within a Case. An Incident or repeated Request may evidence a Problem. A Problem, Risk, Finding or Improvement may generate a Change. A Finding may result in no action or any relevant work record. A Scenario Test may create Findings, Risks, Problems, Tasks, Requests, Changes and Improvements.
 
 Risk remains cross-cutting. Customer Journey, journey stage, product and service are optional overlays rather than new mandatory workflows.
 
@@ -98,7 +117,12 @@ Implemented in this proposal:
 - Cases, Requests and Tasks end to end;
 - durable initial dictionary for all twelve record types;
 - record details and related-work display;
-- explicit record links;
+- optional parent work for a bounded multi-tier structure;
+- explicit typed record links created by a person;
+- type-safe Oppa Mate relationship suggestions inside shared operational context;
+- retained relationship proposer, route, confidence, rationale and human confirmer;
+- non-destructive rejection of incorrect relationships;
+- derived network signals covering connection gaps, blocked flow, unlinked risk treatment and case attention hotspots;
 - explainable priority;
 - optional Case, journey and product classification;
 - existing Decision Inbox and Brand Review items in the unified inbox;
@@ -143,23 +167,27 @@ The proposal is ready for private technical review. It is not yet ready for broa
 ### Possible disadvantages
 
 - a numerical score can create false confidence;
+- a dense or weakly governed graph can create confident noise;
 - the full dictionary may feel larger than the immediate MVP;
 - Case can become a catch-all if boundaries are not learned through use;
 - a unified inbox can become noisy without ownership and status discipline; and
 - founder-specific tuning may not transfer to another user.
 
-The mitigation is progressive disclosure, explainability, optional links and a bounded private pilot using real non-confidential work.
+The mitigation is progressive disclosure, explainability, optional links, visible provenance, human confirmation of AI suggestions, retained correction and a bounded private pilot using real non-confidential work.
 
 ## Validation plan
 
 1. Run the complete automated Workbench test suite.
 2. Test creation and linking of a Case, Request and Task through the API.
-3. Confirm completed work leaves the open inbox.
-4. Confirm an Approval and accepted Risk reject missing or incorrect founder confirmation.
-5. Review the interface at desktop and phone widths.
-6. Use at least ten real items for one week and compare recommended order with Jamie's judgement.
-7. Record misclassification, false urgency, missing relationships and inappropriate recommendations.
-8. Run one independent-user capture and prioritisation test before any broader use.
+3. Confirm a child record inherits its Case context and circular parent relationships are rejected.
+4. Confirm an AI-suggested link cannot enter the active graph without exact human confirmation and retains both parties' provenance.
+5. Confirm a rejected relationship leaves activity evidence but no longer affects active network signals.
+6. Confirm completed work leaves the open inbox.
+7. Confirm an Approval and accepted Risk reject missing or incorrect founder confirmation.
+8. Review the interface at desktop and phone widths.
+9. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
+10. Record misclassification, false urgency, missing relationships, false links, missed links and inappropriate derived signals.
+11. Run one independent-user capture, linking and prioritisation test before any broader use.
 
 ## Decision required
 
@@ -169,6 +197,7 @@ Jamie should review whether this is the right bounded private-pilot model, espec
 - Case as a flexible container;
 - the priority factors and their relative weight;
 - the separation of classification, prioritisation, approval and risk acceptance; and
+- the proposition that the governed operational graph, rather than the ticket register, is the distinctive product value; and
 - the decision to defer external connections and advanced automation.
 
 Release, merge and any broader use remain separate decisions.

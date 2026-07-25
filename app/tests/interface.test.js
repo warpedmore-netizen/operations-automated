@@ -159,8 +159,15 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(html, /Closest deadline/);
   assert.match(html, /Cases &amp; work/);
   assert.match(html, /Operations Bible/);
+  assert.match(html, /What the links tell us/);
+  assert.match(html, /id="capture-parent"/);
+  assert.match(html, /id="work-link-dialog"/);
+  assert.match(html, /A relationship adds context; it does not create approval/);
   assert.match(html, /Classification organises work; it does not approve it/);
   assert.match(appSource, /\/api\/my-work/);
   assert.match(appSource, /\/api\/operate\/records/);
+  assert.match(appSource, /\/api\/operate\/network/);
+  assert.match(appSource, /Suggested by Oppa Mate/);
+  assert.match(appSource, /Relationship rejected and retained in activity history/);
   assert.match(cssSource, /min-height:\s*42px/);
 });
