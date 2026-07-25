@@ -2,6 +2,19 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.2.0 Operate internal workbench - proposed
+
+- Made **My Work** the ordinary entry point, with a short **Do Next** list and one inbox spanning operational records, open change decisions and Brand Review work.
+- Added explainable 80:20 priority using impact, urgency, risk, control implications, blocked work, strategic value, age and confidence.
+- Added durable Cases, Requests and Tasks with optional ownership, deadline, Case, journey and product classifications.
+- Added the initial twelve-record Operations Bible with plain definitions, use and avoid guidance, statuses and human/automation boundaries.
+- Added ordinary-language capture with correctable Oppa Mate classification and retained recommendation evidence.
+- Added visible relationships between records without imposing one linear process.
+- Added explicit exact founder confirmation before an Approval becomes approved or a Risk becomes accepted.
+- Added API, model and interface tests covering capture, linking, inbox ordering, completion and authority controls.
+- Retained the wider Incident, Problem, Change, Risk, Finding, Improvement and Scenario Test model without claiming complete workflows.
+- Kept methodology v0.6, release, merge, publication, new connections, autonomous execution and customer use unchanged and unapproved.
+
 ## Workbench 1.1.2 mobile voice recovery - proposed
 
 - Recorded the first real Samsung-phone transcription failure without claiming a cause that the previous telemetry cannot prove.

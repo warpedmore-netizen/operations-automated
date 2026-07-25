@@ -151,3 +151,16 @@ test("the interface states the governance and data boundaries", () => {
 test("the interface source contains no mojibake or placeholder attachment wording", () => {
   assert.doesNotMatch(html + appSource, /ï¼|â€”|â€¦|metadata staged|reserved for the next increment/i);
 });
+
+test("Operate starts with a unified, explainable My Work journey", () => {
+  assert.match(html, /id="my-work-view"/);
+  assert.match(html, /id="do-next-list"/);
+  assert.match(html, /Recommended order/);
+  assert.match(html, /Closest deadline/);
+  assert.match(html, /Cases &amp; work/);
+  assert.match(html, /Operations Bible/);
+  assert.match(html, /Classification organises work; it does not approve it/);
+  assert.match(appSource, /\/api\/my-work/);
+  assert.match(appSource, /\/api\/operate\/records/);
+  assert.match(cssSource, /min-height:\s*42px/);
+});

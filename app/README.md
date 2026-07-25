@@ -8,6 +8,8 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
+> **Proposed Operate pilot:** Workbench build `1.2.0-operate-workbench-draft` adds a unified **My Work** inbox, explainable **Do Next** order, Cases, Requests, Tasks and the initial Operations Bible. This is prepared product behaviour, not an approved methodology or release.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
@@ -129,6 +131,12 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 
 ## Implemented MVP boundary
 
+- Proposed unified **My Work** inbox across operational records, open change decisions and Brand Review work
+- Proposed explainable 80:20 priority and a five-item **Do Next** list
+- Proposed Cases, Requests and Tasks with optional relationships, journey and product overlays
+- Proposed Operations Bible covering Case, Request, Task, Incident, Problem, Change, Risk, Finding, Improvement, Scenario Test, Decision and Approval
+- Correctable Oppa Mate record-type recommendation from ordinary-language capture
+- Exact founder confirmation before an Approval becomes approved or a Risk becomes accepted
 - Typed conversations with pre-send context preview
 - Local SQLite persistence and restart recovery
 - Status-aware, heading-level repository retrieval

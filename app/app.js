@@ -26,6 +26,11 @@ const state = {
   confluenceTest: null,
   confluencePublicationPlan: null,
   brandReview: null,
+  myWork: null,
+  workOrder: "recommended",
+  selectedWorkItemId: null,
+  operateRecords: [],
+  operationsBible: [],
   serverCompatible: true
 };
 
@@ -83,6 +88,200 @@ function formatCost(value) {
 
 function formatDate(value) {
   return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium", timeStyle: "short" }).format(new Date(value));
+}
+
+function formatDateOnly(value) {
+  if (!value) return "No deadline";
+  return new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(value));
+}
+
+function workTypeClass(value) {
+  return String(value || "work").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
+}
+
+function workItemMarkup(item, compact = false) {
+  const reasons = item.priority?.reasons || [];
+  return `<button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
+    <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
+    <span class="work-item-copy">
+      <strong>${escapeHtml(item.title)}</strong>
+      ${compact ? "" : `<small>${escapeHtml(item.summary || "Open the underlying record for context.")}</small>`}
+      <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
+    </span>
+    <span class="priority-score priority-${escapeHtml(item.priority?.band || "planned")}"><b>${Number(item.priority?.score || 0)}</b><small>${item.priority?.overdue ? "Overdue" : reasons[0] || "Priority"}</small></span>
+  </button>`;
+}
+
+function recordAsWorkItem(record) {
+  return {
+    id: `operate:${record.id}`,
+    source: "Operate",
+    sourceType: "operate-record",
+    sourceId: record.id,
+    routeView: "operate",
+    recordType: record.recordType,
+    typeLabel: record.bible?.label || record.recordType,
+    title: record.title,
+    summary: record.summary || record.bible?.definition || "",
+    status: record.status,
+    owner: record.owner,
+    dueAt: record.dueAt,
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    actionLabel: "Open work",
+    priority: record.priority,
+    approvalState: record.approvalState
+  };
+}
+
+function renderWorkDetail(item, record = null) {
+  state.selectedWorkItemId = item?.id || null;
+  if (!item) {
+    $("#work-detail").innerHTML = '<div class="work-detail-empty"><span aria-hidden="true">↗</span><strong>Select an item</strong><p>The underlying record, priority explanation, authority boundary and next action will appear here.</p></div>';
+    return;
+  }
+  const priority = item.priority || {};
+  const factors = priority.factors || {};
+  const factorLabels = {
+    impact: "Impact", urgency: "Urgency", risk: "Risk", control: "Controls",
+    blocking: "Blocking", strategic: "Improvement", age: "Age", confidence: "Confidence"
+  };
+  const sourceAction = record ? "" : `<button class="primary" data-open-work-source="${escapeHtml(item.routeView)}" data-source-id="${escapeHtml(item.sourceId)}">${escapeHtml(item.actionLabel || "Open source")}</button>`;
+  const recordBody = record ? `
+    <dl class="work-detail-facts">
+      <div><dt>Owner</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div>
+      <div><dt>Status</dt><dd>${escapeHtml(statusLabel(record.status))}</dd></div>
+      <div><dt>Due</dt><dd>${escapeHtml(formatDateOnly(record.dueAt))}</dd></div>
+      <div><dt>Automation</dt><dd>${escapeHtml(record.automationMode || "manual")}</dd></div>
+      ${record.case ? `<div><dt>Case</dt><dd>${escapeHtml(record.case.title)}</dd></div>` : ""}
+      ${record.journey ? `<div><dt>Journey</dt><dd>${escapeHtml(record.journey)}${record.journeyStage ? ` · ${escapeHtml(record.journeyStage)}` : ""}</dd></div>` : ""}
+    </dl>
+    ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
+    ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong></button>`).join("")}</section>` : ""}
+    ${record.links?.length ? `<section class="work-relations"><h4>Relationships</h4>${record.links.map((link) => {
+      const otherTitle = link.from_record_id === record.id ? link.to_title : link.from_title;
+      return `<div><span>${escapeHtml(link.relationship.replaceAll("-", " "))}</span><strong>${escapeHtml(otherTitle)}</strong></div>`;
+    }).join("")}</section>` : ""}
+    ${record.recordType === "task" && !["done", "cancelled"].includes(record.status) ? `<button class="primary" data-complete-task="${record.id}">Mark task done</button>` : ""}
+  ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
+  $("#work-detail").innerHTML = `
+    <div class="work-detail-heading">
+      <div><span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span><h3>${escapeHtml(item.title)}</h3></div>
+      <span class="priority-score priority-${escapeHtml(priority.band || "planned")}"><b>${Number(priority.score || 0)}</b><small>Priority</small></span>
+    </div>
+    <p class="work-detail-summary">${escapeHtml(item.summary || "No additional summary was recorded.")}</p>
+    <div class="priority-explanation"><strong>Why this is here</strong><p>${escapeHtml(priority.explanation || "This item requires attention in the selected order.")}</p></div>
+    ${Object.keys(factors).length ? `<details class="priority-factors"><summary>See priority factors</summary><div>${Object.entries(factors).map(([key, value]) => `<span><small>${escapeHtml(factorLabels[key] || key)}</small><b>${Number(value)}/5</b></span>`).join("")}</div></details>` : ""}
+    ${recordBody}
+    <p class="approval-boundary">Recommendation and classification do not create approval or accept consequence.</p>
+  `;
+  $$(".work-item").forEach((element) => element.classList.toggle("current", element.dataset.workItemId === item.id));
+}
+
+async function openWorkItem(itemId) {
+  const item = state.myWork?.items.find((candidate) => candidate.id === itemId);
+  if (!item) return;
+  if (item.sourceType === "operate-record") {
+    const value = await request(`/api/operate/records/${encodeURIComponent(item.sourceId)}`);
+    renderWorkDetail(item, value.record);
+  } else {
+    renderWorkDetail(item);
+  }
+}
+
+function renderMyWork(value) {
+  state.myWork = value;
+  const summary = value.summary;
+  $("#work-summary").innerHTML = `
+    <div><span>Open attention</span><strong>${summary.total}</strong></div>
+    <div><span>Overdue</span><strong>${summary.overdue}</strong></div>
+    <div><span>Blocked</span><strong>${summary.blocked}</strong></div>
+    <div><span>Decisions</span><strong>${summary.decisions}</strong></div>`;
+  $("#do-next-list").innerHTML = value.doNext.length
+    ? value.doNext.map((item) => workItemMarkup(item, true)).join("")
+    : '<div class="empty-records"><strong>Nothing needs immediate attention.</strong><p>Capture a Case, Request or Task when new work arrives.</p></div>';
+  $("#work-inbox-list").innerHTML = value.items.length
+    ? value.items.map((item) => workItemMarkup(item)).join("")
+    : '<div class="empty-records"><strong>Your inbox is clear.</strong><p>Capture work in ordinary language and Oppa Mate will recommend a record type.</p></div>';
+  const orderLabel = $("#work-order").selectedOptions[0]?.textContent || "Recommended order";
+  $("#work-order-explanation").textContent = orderLabel;
+  if (state.selectedWorkItemId) {
+    const retained = value.items.find((item) => item.id === state.selectedWorkItemId);
+    if (retained) openWorkItem(retained.id).catch((error) => toast(error.message, true));
+    else renderWorkDetail(null);
+  }
+}
+
+async function loadMyWork(order = state.workOrder) {
+  state.workOrder = order;
+  $("#work-order").value = order;
+  renderMyWork(await request(`/api/my-work?order=${encodeURIComponent(order)}`));
+}
+
+function populateCaptureSelectors() {
+  const typeSelect = $("#capture-record-type");
+  const selectedType = typeSelect.value;
+  typeSelect.innerHTML = '<option value="">Let Oppa Mate recommend</option>'
+    + state.operationsBible.map((entry) => `<option value="${escapeHtml(entry.type)}">${escapeHtml(entry.label)}</option>`).join("");
+  if ([...typeSelect.options].some((option) => option.value === selectedType)) typeSelect.value = selectedType;
+  const caseSelect = $("#capture-case");
+  const selectedCase = caseSelect.value;
+  const cases = state.operateRecords.filter((record) => record.recordType === "case" && !["closed"].includes(record.status));
+  caseSelect.innerHTML = '<option value="">No case yet</option>'
+    + cases.map((record) => `<option value="${record.id}">${escapeHtml(record.title)}</option>`).join("");
+  if ([...caseSelect.options].some((option) => option.value === selectedCase)) caseSelect.value = selectedCase;
+}
+
+function renderOperate() {
+  const records = state.operateRecords;
+  const cases = records.filter((record) => record.recordType === "case");
+  const linkedWork = records.filter((record) => record.recordType !== "case");
+  $("#case-register-count").textContent = `${cases.length} ${cases.length === 1 ? "case" : "cases"}`;
+  $("#operate-record-count").textContent = `${linkedWork.length} linked ${linkedWork.length === 1 ? "record" : "records"}`;
+  $("#case-register").innerHTML = cases.length ? cases.map((record) => `
+    <button class="case-card" data-open-operate-record="${record.id}">
+      <span>${escapeHtml(statusLabel(record.status))}</span>
+      <strong>${escapeHtml(record.title)}</strong>
+      <p>${escapeHtml(record.summary || "No case summary recorded.")}</p>
+      <small>${records.filter((candidate) => candidate.caseId === record.id).length} linked records &middot; priority ${record.priority.score}</small>
+    </button>`).join("") : '<div class="empty-records"><strong>No Cases yet.</strong><p>Create a Case when several pieces of work contribute to one outcome.</p></div>';
+  $("#operate-record-list").innerHTML = linkedWork.length ? linkedWork.map((record) => `
+    <button data-open-operate-record="${record.id}">
+      <span class="work-type work-type-${workTypeClass(record.recordType)}">${escapeHtml(record.bible?.label || record.recordType)}</span>
+      <strong>${escapeHtml(record.title)}</strong>
+      <small>${escapeHtml(statusLabel(record.status))} &middot; priority ${record.priority.score}${record.caseId ? " &middot; linked to case" : ""}</small>
+    </button>`).join("") : '<div class="empty-records"><strong>No linked work yet.</strong><p>Capture a Request or Task directly, or connect it to a Case.</p></div>';
+  $("#bible-boundary").innerHTML = '<strong>The Operations Bible recommends classification, routing and automation eligibility.</strong><span>It remains a proposed product dictionary and does not change the approved methodology baseline.</span>';
+  $("#operations-bible").innerHTML = state.operationsBible.map((entry) => `
+    <article>
+      <span>${escapeHtml(entry.label)}</span>
+      <p>${escapeHtml(entry.definition)}</p>
+      <dl><div><dt>Use when</dt><dd>${escapeHtml(entry.useWhen)}</dd></div><div><dt>Do not use when</dt><dd>${escapeHtml(entry.avoidWhen)}</dd></div></dl>
+      <details><summary>Authority and automation</summary><p><strong>Authority:</strong> ${escapeHtml(entry.approval)}</p><p><strong>Automation:</strong> ${escapeHtml(entry.automation)}</p></details>
+    </article>`).join("");
+  populateCaptureSelectors();
+}
+
+async function loadOperate() {
+  const [recordsValue, bibleValue] = await Promise.all([
+    request("/api/operate/records"),
+    request("/api/operate/bible")
+  ]);
+  state.operateRecords = recordsValue.records;
+  state.operationsBible = bibleValue.entries;
+  renderOperate();
+}
+
+async function openOperateRecord(recordId) {
+  const value = await request(`/api/operate/records/${encodeURIComponent(recordId)}`);
+  switchView("my-work", true, false);
+  renderWorkDetail(recordAsWorkItem(value.record), value.record);
+}
+
+function openWorkCapture() {
+  populateCaptureSelectors();
+  $("#work-capture-dialog").showModal();
+  $("#work-capture-form [name=title]").focus();
 }
 
 async function ensureConversation() {
@@ -722,19 +921,43 @@ async function loadBrandReview() {
   }
 }
 
-const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "brand", "usage", "settings", "connections", "guide"]);
+const validViews = new Set(["my-work", "operate", "conversation", "challenges", "feedback", "decisions", "brand", "usage", "settings", "connections", "guide"]);
+const viewHeadings = {
+  "my-work": ["Operate workbench", "My work"],
+  operate: ["Connected work", "Cases & work"],
+  challenges: ["Knowledge workbench", "Challenge studio"],
+  feedback: ["Governed learning", "Saved feedback"],
+  decisions: ["Human-controlled change", "Decision inbox"],
+  brand: ["Proposed visual system", "Brand review"],
+  usage: ["Local controls", "Cost and usage"],
+  settings: ["Local controls", "Settings"],
+  connections: ["Controlled sources", "Connections"],
+  guide: ["First use", "How the Workbench works"]
+};
 
-function switchView(name, updateHash = true) {
+function switchView(name, updateHash = true, refresh = true) {
   if (!validViews.has(name)) return;
   $$(".view").forEach((view) => { view.hidden = view.id !== `${name}-view`; });
   $$(".nav-item").forEach((item) => item.classList.toggle("active", item.dataset.view === name));
   $("#details-button").hidden = name !== "conversation";
-  if (updateHash) history.replaceState(null, "", name === "conversation" ? `${location.pathname}${location.search}` : `#${name}`);
-  if (name === "usage") loadUsage().catch((error) => toast(error.message, true));
-  if (name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
-  if (name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
-  if (name === "brand") loadBrandReview().catch((error) => toast(error.message, true));
-  if (name === "connections") loadConnections().catch((error) => toast(error.message, true));
+  $("#export-button").hidden = name !== "conversation";
+  $("#new-conversation").hidden = name !== "conversation";
+  if (name === "conversation") {
+    $("#workspace-label").textContent = $("#workspace").selectedOptions[0]?.textContent || "Oppa Mate";
+    $("#conversation-title").textContent = state.conversation?.title || "New conversation";
+  } else {
+    const [eyebrow, title] = viewHeadings[name] || ["Operate workbench", "Operations Automated"];
+    $("#workspace-label").textContent = eyebrow;
+    $("#conversation-title").textContent = title;
+  }
+  if (updateHash) history.replaceState(null, "", name === "my-work" ? `${location.pathname}${location.search}` : `#${name}`);
+  if (refresh && name === "my-work") loadMyWork().catch((error) => toast(error.message, true));
+  if (refresh && name === "operate") loadOperate().catch((error) => toast(error.message, true));
+  if (refresh && name === "usage") loadUsage().catch((error) => toast(error.message, true));
+  if (refresh && name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
+  if (refresh && name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
+  if (refresh && name === "brand") loadBrandReview().catch((error) => toast(error.message, true));
+  if (refresh && name === "connections") loadConnections().catch((error) => toast(error.message, true));
 }
 
 async function loadUsage() {
@@ -1182,11 +1405,11 @@ async function init() {
     const field = $(`[name="${key}"]`);
     if (field) field.type === "checkbox" ? field.checked = Boolean(value) : field.value = value;
   }
-  await loadConversationList();
+  await Promise.all([loadConversationList(), loadOperate()]);
   if (state.conversations[0]) state.conversation = (await request(`/api/conversations/${state.conversations[0].id}`)).conversation;
   renderConversation();
   const requestedView = location.hash.slice(1);
-  switchView(validViews.has(requestedView) ? requestedView : "conversation", false);
+  switchView(validViews.has(requestedView) ? requestedView : "my-work", false);
 }
 
 $("#composer").addEventListener("submit", async (event) => {
@@ -1338,6 +1561,80 @@ $$("[data-send-challenge]").forEach((button) => button.addEventListener("click",
 }));
 $$(".nav-item").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
 $$("[data-route-view]").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.routeView)));
+for (const selector of ["#capture-work", "#capture-work-inline", "#capture-operate-record"]) {
+  $(selector).addEventListener("click", openWorkCapture);
+}
+$$("[data-close-work-capture]").forEach((button) => button.addEventListener("click", () => $("#work-capture-dialog").close()));
+$("#work-order").addEventListener("change", () => loadMyWork($("#work-order").value).catch((error) => toast(error.message, true)));
+$("#work-capture-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const submit = form.querySelector('[type="submit"]');
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
+  data.blocking = formData.has("blocking");
+  for (const key of ["impact", "urgency", "riskExposure", "controlImplication", "strategicValue"]) data[key] = Number(data[key]);
+  submit.disabled = true;
+  try {
+    const value = await request("/api/operate/records", { method: "POST", body: JSON.stringify(data) });
+    form.reset();
+    $("#work-capture-dialog").close();
+    await Promise.all([loadOperate(), loadMyWork()]);
+    switchView("my-work", true, false);
+    await openWorkItem(`operate:${value.record.id}`);
+    toast(`${value.message} Priority ${value.record.priority.score}/100.`);
+  } catch (error) {
+    toast(error.message, true);
+  } finally {
+    submit.disabled = false;
+  }
+});
+for (const selector of ["#do-next-list", "#work-inbox-list"]) {
+  $(selector).addEventListener("click", (event) => {
+    const item = event.target.closest("[data-work-item-id]");
+    if (item) openWorkItem(item.dataset.workItemId).catch((error) => toast(error.message, true));
+  });
+}
+for (const selector of ["#case-register", "#operate-record-list"]) {
+  $(selector).addEventListener("click", (event) => {
+    const item = event.target.closest("[data-open-operate-record]");
+    if (item) openOperateRecord(item.dataset.openOperateRecord).catch((error) => toast(error.message, true));
+  });
+}
+$("#work-detail").addEventListener("click", async (event) => {
+  const source = event.target.closest("[data-open-work-source]");
+  if (source) {
+    if (source.dataset.openWorkSource === "decisions") {
+      switchView("decisions", true, false);
+      await loadDecisionInbox(source.dataset.sourceId);
+    } else {
+      switchView(source.dataset.openWorkSource);
+    }
+    return;
+  }
+  const related = event.target.closest("[data-open-operate-record]");
+  if (related) {
+    await openOperateRecord(related.dataset.openOperateRecord);
+    return;
+  }
+  const complete = event.target.closest("[data-complete-task]");
+  if (complete) {
+    complete.disabled = true;
+    try {
+      await request(`/api/operate/records/${encodeURIComponent(complete.dataset.completeTask)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ status: "done", actor: state.currentUser })
+      });
+      state.selectedWorkItemId = null;
+      await Promise.all([loadOperate(), loadMyWork()]);
+      renderWorkDetail(null);
+      toast("Task completed. The related Case and activity history remain available.");
+    } catch (error) {
+      complete.disabled = false;
+      toast(error.message, true);
+    }
+  }
+});
 $("#brand-review-grid").addEventListener("click", async (event) => {
   const button = event.target.closest("[data-brand-review-action]");
   if (!button) return;
@@ -1370,7 +1667,7 @@ $("#details-button").addEventListener("click", () => {
 });
 window.addEventListener("hashchange", () => {
   const requestedView = location.hash.slice(1);
-  switchView(validViews.has(requestedView) ? requestedView : "conversation", false);
+  switchView(validViews.has(requestedView) ? requestedView : "my-work", false);
 });
 $("#new-conversation").addEventListener("click", async () => {
   state.conversation = null;

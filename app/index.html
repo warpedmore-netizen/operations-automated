@@ -17,14 +17,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="oa-base">
-  <a class="skip-link" href="#main">Skip to conversation</a>
+  <a class="skip-link" href="#main">Skip to workbench</a>
   <div class="shell">
     <aside class="rail">
       <div class="brand"><img class="brand-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt=""><div><strong>Operations Automated</strong><small>Private knowledge workbench</small></div></div>
-      <button class="new-button" id="new-conversation" type="button"><span aria-hidden="true">+</span> New conversation</button>
+      <button class="new-button" id="capture-work" type="button"><span aria-hidden="true">+</span> Capture work</button>
       <nav aria-label="Workbench">
+        <button class="nav-item active" data-view="my-work"><span class="nav-icon" aria-hidden="true">W</span><span>My work</span></button>
+        <button class="nav-item" data-view="operate"><span class="nav-icon" aria-hidden="true">O</span><span>Cases &amp; work</span></button>
+        <button class="nav-item" data-view="conversation"><span class="nav-icon" aria-hidden="true">AI</span><span>Oppa Mate</span></button>
         <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
-        <button class="nav-item active" data-view="conversation"><span class="nav-icon" aria-hidden="true">C</span><span>Conversations</span></button>
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
         <button class="nav-item" data-view="brand"><span class="nav-icon" aria-hidden="true">OA</span><span>Brand review</span></button>
@@ -46,11 +48,84 @@
         <p id="server-version-message">The page files and local server are from different Workbench versions.</p>
       </div>
       <header class="topbar">
-        <div><p class="eyebrow" id="workspace-label">Knowledge workbench</p><h1 id="conversation-title">New conversation</h1></div>
-        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
+        <div><p class="eyebrow" id="workspace-label">Operate workbench</p><h1 id="conversation-title">My work</h1></div>
+        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="ghost" id="new-conversation" type="button">New chat</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
       </header>
 
-      <section class="view conversation-view" id="conversation-view">
+      <section class="view utility-view my-work-view" id="my-work-view">
+        <div class="utility-card my-work-card">
+          <div class="work-page-heading">
+            <div>
+              <p class="eyebrow">One place for attention</p>
+              <h2>My work</h2>
+              <p>See the work most likely to improve an outcome or reduce exposure. Every item remains linked to its underlying record and every priority can be explained.</p>
+            </div>
+            <div class="work-order">
+              <label for="work-order">Order by</label>
+              <select id="work-order">
+                <option value="recommended">Recommended order</option>
+                <option value="deadline">Closest deadline</option>
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+              </select>
+            </div>
+          </div>
+          <div class="work-boundary">
+            <strong>Oppa Mate recommends; you remain in control.</strong>
+            <p>Priority considers impact, urgency, risk, controls, blocked work, improvement value, age and confidence. A recommendation never creates approval or accepts risk.</p>
+          </div>
+          <div class="work-summary" id="work-summary" aria-label="My work summary">
+            <div><span>Open attention</span><strong>—</strong></div>
+            <div><span>Overdue</span><strong>—</strong></div>
+            <div><span>Blocked</span><strong>—</strong></div>
+            <div><span>Decisions</span><strong>—</strong></div>
+          </div>
+          <section class="do-next" aria-labelledby="do-next-heading">
+            <div class="section-heading">
+              <div><p class="eyebrow">80:20 focus</p><h3 id="do-next-heading">Do next</h3></div>
+              <button class="primary compact-action" id="capture-work-inline" type="button">Capture work</button>
+            </div>
+            <div class="do-next-grid" id="do-next-list"><p>Finding the highest-value actions...</p></div>
+          </section>
+          <div class="my-work-layout">
+            <section class="work-inbox" aria-labelledby="work-inbox-heading">
+              <div class="section-heading"><div><p class="eyebrow">Unified inbox</p><h3 id="work-inbox-heading">Everything needing attention</h3></div><span id="work-order-explanation">Recommended order</span></div>
+              <div class="work-inbox-list" id="work-inbox-list" aria-live="polite"><p>Loading your work...</p></div>
+            </section>
+            <aside class="work-detail-panel" id="work-detail" aria-live="polite">
+              <div class="work-detail-empty"><span aria-hidden="true">↗</span><strong>Select an item</strong><p>The underlying record, priority explanation, authority boundary and next action will appear here.</p></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="view utility-view" id="operate-view" hidden>
+        <div class="utility-card operate-card">
+          <div class="work-page-heading">
+            <div><p class="eyebrow">Connected operational model</p><h2>Cases &amp; work</h2><p>Cases hold the outcome and history. Requests, Tasks, Incidents, Problems, Changes, Risks, Findings, Improvements and Scenario tests connect as needed rather than following a compulsory line.</p></div>
+            <button class="primary" id="capture-operate-record" type="button">Capture work</button>
+          </div>
+          <div class="model-flow" aria-label="Core operational relationship">
+            <span>Case</span><i>contains</i><span>Incident or Request</span><i>may evidence</i><span>Problem</span><i>may generate</i><span>Change</span>
+          </div>
+          <p class="model-flow-note"><strong>Risk crosses every record.</strong> Findings, decisions, tasks, improvements and scenario tests connect wherever the evidence requires them.</p>
+          <section class="case-register" aria-labelledby="case-register-heading">
+            <div class="section-heading"><div><p class="eyebrow">Outcome containers</p><h3 id="case-register-heading">Cases</h3></div><span id="case-register-count">Loading...</span></div>
+            <div class="case-grid" id="case-register"><p>Loading cases...</p></div>
+          </section>
+          <section class="all-work-register" aria-labelledby="all-work-heading">
+            <div class="section-heading"><div><p class="eyebrow">Linked records</p><h3 id="all-work-heading">Operational work</h3></div><span id="operate-record-count">Loading...</span></div>
+            <div class="operate-record-list" id="operate-record-list"><p>Loading records...</p></div>
+          </section>
+          <details class="operations-bible">
+            <summary><span><strong>Operations Bible</strong><small>Plain-English definitions, routing, approval and automation boundaries</small></span><b>Open dictionary</b></summary>
+            <div class="bible-boundary" id="bible-boundary"></div>
+            <div class="bible-grid" id="operations-bible"><p>Loading the dictionary...</p></div>
+          </details>
+        </div>
+      </section>
+
+      <section class="view conversation-view" id="conversation-view" hidden>
         <div class="thread-column">
           <div class="welcome" id="welcome">
             <img class="welcome-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="">
@@ -354,16 +429,18 @@
         <div class="utility-card guide-card">
           <p class="eyebrow">Two-minute guide</p><h2>How the Workbench works</h2>
           <div class="guide-steps">
-            <article><span>1</span><div><h3>Choose your input</h3><p>Type directly, attach a text/Markdown/CSV/JSON document, or select <strong>Record</strong>. The live level confirms that the microphone is receiving sound. Voice is transcribed first so you can correct it before any reasoning call.</p></div></article>
-            <article><span>2</span><div><h3>Review or recover captured meaning</h3><p>For voice, correct the original transcript. If transcription fails, the recording remains temporarily in that browser tab so you can retry without repeating yourself. Closing or refreshing the tab clears it.</p></div></article>
-            <article><span>3</span><div><h3>Choose workspace and output</h3><p>The workspace controls the type of repository guidance retrieved. Output type controls whether you receive an answer, summary, analysis, checklist, template or proposal-preparation brief.</p></div></article>
-            <article><span>4</span><div><h3>Check before sending</h3><p>You will see the estimated cost before anything is sent. Supporting evidence and technical details are available if you want them, but they do not interrupt the main answer.</p></div></article>
-            <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
-            <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
-            <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
-            <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
-            <article><span>9</span><div><h3>Use the Workbench from a phone</h3><p>The private route keeps the local server on this computer and uses Tailscale HTTPS between authorised devices. The Workbench, computer and Tailscale must all remain running. Operational activation does not by itself record governance approval.</p></div></article>
-            <article><span>10</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. A revision or rejection automatically enters the founder-feedback queue; Codex can prepare a response for your re-review, while overall brand approval remains a separate explicit decision.</p></div></article>
+            <article><span>1</span><div><h3>Start with My Work</h3><p><strong>Do Next</strong> recommends the few items most likely to matter now. Open any card to see the contributing priority factors, context and authority boundary. The score organises attention; it does not approve the work.</p></div></article>
+            <article><span>2</span><div><h3>Capture operational work</h3><p>Select <strong>Capture work</strong> and describe the need in ordinary language. Oppa Mate recommends a Case, Request, Task or another Operations Bible type. You can correct the classification and optionally add a Case, owner, deadline, impact or risk.</p></div></article>
+            <article><span>3</span><div><h3>Choose your knowledge input</h3><p>Open <strong>Oppa Mate</strong> to type directly, attach a text/Markdown/CSV/JSON document, or select <strong>Record</strong>. The live level confirms that the microphone is receiving sound. Voice is transcribed first so you can correct it before any reasoning call.</p></div></article>
+            <article><span>4</span><div><h3>Review or recover captured meaning</h3><p>For voice, correct the original transcript. If transcription fails, the recording remains temporarily in that browser tab so you can retry without repeating yourself. Closing or refreshing the tab clears it.</p></div></article>
+            <article><span>5</span><div><h3>Choose workspace and output</h3><p>The workspace controls the type of repository guidance retrieved. Output type controls whether you receive an answer, summary, analysis, checklist, template or proposal-preparation brief.</p></div></article>
+            <article><span>6</span><div><h3>Check before sending</h3><p>You will see the estimated cost before anything is sent. Supporting evidence and technical details are available if you want them, but they do not interrupt the main answer.</p></div></article>
+            <article><span>7</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
+            <article><span>8</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
+            <article><span>9</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
+            <article><span>10</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
+            <article><span>11</span><div><h3>Use the Workbench from a phone</h3><p>The private route keeps the local server on this computer and uses Tailscale HTTPS between authorised devices. The Workbench, computer and Tailscale must all remain running. Operational activation does not by itself record governance approval.</p></div></article>
+            <article><span>12</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. A revision or rejection automatically enters the founder-feedback queue; Codex can prepare a response for your re-review, while overall brand approval remains a separate explicit decision.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>
@@ -376,6 +453,33 @@
     </main>
   </div>
   <dialog id="preview-dialog"><form method="dialog"><div class="dialog-head"><div><p class="eyebrow">Before sending</p><h2>Ready to send</h2></div><button value="cancel" aria-label="Close">&times;</button></div><div id="dialog-preview"></div><div class="dialog-actions"><button value="cancel" class="ghost">Cancel</button><button value="confirm" class="primary" id="confirm-send">Send now</button></div></form></dialog>
+  <dialog id="work-capture-dialog">
+    <form id="work-capture-form">
+      <div class="dialog-head"><div><p class="eyebrow">Oppa Mate assisted capture</p><h2>What needs attention?</h2></div><button type="button" data-close-work-capture aria-label="Close">&times;</button></div>
+      <p class="capture-intro">Use ordinary language. Oppa Mate will recommend a record type when you leave classification on automatic, and you can correct it at any time.</p>
+      <label class="capture-wide">Short title<input name="title" required maxlength="160" placeholder="For example: Customers cannot complete identity checks"></label>
+      <label class="capture-wide">What is happening or needed?<textarea name="summary" rows="4" placeholder="Include the intended outcome, who is affected and any known deadline or exposure."></textarea></label>
+      <div class="capture-grid">
+        <label>Record type<select name="recordType" id="capture-record-type"><option value="">Let Oppa Mate recommend</option></select></label>
+        <label>Related case<select name="caseId" id="capture-case"><option value="">No case yet</option></select></label>
+        <label>Impact<select name="impact"><option value="2">Low</option><option value="3" selected>Medium</option><option value="4">High</option><option value="5">Critical</option></select></label>
+        <label>Urgency<select name="urgency"><option value="1">Low</option><option value="2" selected>Normal</option><option value="4">High</option><option value="5">Immediate</option></select></label>
+        <label>Due date<input name="dueAt" type="date"></label>
+        <label>Owner<input name="owner" value="Jamie Peppard"></label>
+      </div>
+      <details class="capture-priority-details">
+        <summary>Optional risk and priority detail</summary>
+        <div class="capture-grid">
+          <label>Risk exposure<select name="riskExposure"><option value="1">Low</option><option value="2" selected>Limited</option><option value="3">Material</option><option value="4">High</option><option value="5">Critical</option></select></label>
+          <label>Control implications<select name="controlImplication"><option value="1" selected>None known</option><option value="3">Material</option><option value="5">Critical</option></select></label>
+          <label>Improvement value<select name="strategicValue"><option value="1">Low</option><option value="2" selected>Useful</option><option value="4">High</option><option value="5">Transformative</option></select></label>
+          <label class="check-label"><input name="blocking" type="checkbox"> Blocking other work</label>
+        </div>
+      </details>
+      <div class="capture-boundary"><strong>Classification organises work; it does not approve it.</strong><span>Novel, sensitive or higher-risk action still follows the relevant human or policy gate.</span></div>
+      <div class="dialog-actions"><button type="button" class="ghost" data-close-work-capture>Cancel</button><button type="submit" class="primary">Capture and prioritise</button></div>
+    </form>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="engine.js"></script>

@@ -27,6 +27,10 @@ import {
 } from "./confluence-publication.mjs";
 import { createCredentialStore } from "./credential-store.mjs";
 import voiceCapture from "./voice-capture.js";
+import {
+  BIBLE_BY_TYPE, OPERATIONS_BIBLE, isClosedStatus, priorityFor,
+  sortWorkItems, validateOperateRecord
+} from "./operate-model.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
@@ -172,11 +176,57 @@ db.exec(`
     approval_created INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS operate_records (
+    id TEXT PRIMARY KEY,
+    record_type TEXT NOT NULL,
+    case_id TEXT REFERENCES operate_records(id) ON DELETE SET NULL,
+    parent_id TEXT REFERENCES operate_records(id) ON DELETE SET NULL,
+    title TEXT NOT NULL,
+    summary TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL,
+    owner TEXT NOT NULL DEFAULT '',
+    impact INTEGER NOT NULL DEFAULT 3,
+    urgency INTEGER NOT NULL DEFAULT 2,
+    risk_exposure INTEGER NOT NULL DEFAULT 2,
+    control_implication INTEGER NOT NULL DEFAULT 1,
+    blocking INTEGER NOT NULL DEFAULT 0,
+    strategic_value INTEGER NOT NULL DEFAULT 2,
+    confidence INTEGER NOT NULL DEFAULT 3,
+    due_at TEXT,
+    journey TEXT NOT NULL DEFAULT '',
+    journey_stage TEXT NOT NULL DEFAULT '',
+    product TEXT NOT NULL DEFAULT '',
+    source_type TEXT NOT NULL DEFAULT 'manual',
+    source_id TEXT,
+    automation_mode TEXT NOT NULL DEFAULT 'manual',
+    approval_state TEXT NOT NULL DEFAULT 'not-approved',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS operate_links (
+    id TEXT PRIMARY KEY,
+    from_record_id TEXT NOT NULL REFERENCES operate_records(id) ON DELETE CASCADE,
+    to_record_id TEXT NOT NULL REFERENCES operate_records(id) ON DELETE CASCADE,
+    relationship TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    UNIQUE(from_record_id, to_record_id, relationship)
+  );
+  CREATE TABLE IF NOT EXISTS operate_activity (
+    id TEXT PRIMARY KEY,
+    record_id TEXT NOT NULL REFERENCES operate_records(id) ON DELETE CASCADE,
+    action TEXT NOT NULL,
+    actor TEXT NOT NULL,
+    detail_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL
+  );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
   CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
   CREATE INDEX IF NOT EXISTS brand_review_item_idx ON brand_review_decisions(item_id, created_at);
   CREATE INDEX IF NOT EXISTS brand_review_response_idx ON brand_review_responses(decision_id, created_at);
+  CREATE INDEX IF NOT EXISTS operate_record_type_idx ON operate_records(record_type, status, updated_at);
+  CREATE INDEX IF NOT EXISTS operate_record_case_idx ON operate_records(case_id, updated_at);
+  CREATE INDEX IF NOT EXISTS operate_activity_record_idx ON operate_activity(record_id, created_at);
 `);
 
 function ensureColumn(table, name, definition) {
@@ -471,6 +521,222 @@ function brandReviewData() {
   };
 }
 
+function operateRow(row, { includeRelations = false } = {}) {
+  if (!row) return null;
+  const bible = BIBLE_BY_TYPE.get(row.record_type);
+  const value = {
+    ...row,
+    recordType: row.record_type,
+    caseId: row.case_id,
+    parentId: row.parent_id,
+    riskExposure: row.risk_exposure,
+    controlImplication: row.control_implication,
+    strategicValue: row.strategic_value,
+    dueAt: row.due_at,
+    journeyStage: row.journey_stage,
+    sourceType: row.source_type,
+    sourceId: row.source_id,
+    automationMode: row.automation_mode,
+    approvalState: row.approval_state,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+    blocking: Boolean(row.blocking),
+    bible,
+    priority: priorityFor(row)
+  };
+  if (!includeRelations) return value;
+  const links = db.prepare(`
+    SELECT l.*, source.title AS from_title, source.record_type AS from_type,
+      target.title AS to_title, target.record_type AS to_type
+    FROM operate_links l
+    JOIN operate_records source ON source.id=l.from_record_id
+    JOIN operate_records target ON target.id=l.to_record_id
+    WHERE l.from_record_id=? OR l.to_record_id=?
+    ORDER BY l.created_at
+  `).all(row.id, row.id);
+  const children = db.prepare("SELECT * FROM operate_records WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC").all(row.id, row.id)
+    .map((item) => operateRow(item));
+  const activity = db.prepare("SELECT * FROM operate_activity WHERE record_id=? ORDER BY created_at DESC").all(row.id)
+    .map((item) => ({ ...item, detail: safeJson(item.detail_json, {}) }));
+  return {
+    ...value,
+    case: row.case_id ? operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(row.case_id)) : null,
+    links,
+    children,
+    activity
+  };
+}
+
+function operateRecord(id, options = {}) {
+  return operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(id), options);
+}
+
+function operateRecords({ recordType = "", caseId = "", status = "" } = {}) {
+  const clauses = [];
+  const values = [];
+  if (recordType) { clauses.push("record_type=?"); values.push(recordType); }
+  if (caseId) { clauses.push("(case_id=? OR id=?)"); values.push(caseId, caseId); }
+  if (status) { clauses.push("status=?"); values.push(status); }
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  return db.prepare(`SELECT * FROM operate_records ${where} ORDER BY updated_at DESC`).all(...values)
+    .map((item) => operateRow(item));
+}
+
+function operateInboxItem(record) {
+  return {
+    id: `operate:${record.id}`,
+    source: "Operate",
+    sourceType: "operate-record",
+    sourceId: record.id,
+    routeView: "operate",
+    recordType: record.recordType,
+    typeLabel: record.bible?.label || record.recordType,
+    title: record.title,
+    summary: record.summary || record.bible?.definition || "",
+    status: record.status,
+    owner: record.owner || FOUNDER_NAME,
+    dueAt: record.dueAt,
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+    caseId: record.caseId,
+    actionLabel: "Open work",
+    priority: record.priority,
+    approvalState: record.approvalState
+  };
+}
+
+function syntheticPriority(input) {
+  return priorityFor({
+    impact: input.impact,
+    urgency: input.urgency,
+    risk_exposure: input.risk,
+    control_implication: input.control,
+    strategic_value: input.strategic,
+    confidence: input.confidence ?? 5,
+    blocking: input.blocking,
+    status: input.status,
+    due_at: input.dueAt,
+    created_at: input.createdAt
+  });
+}
+
+function proposalNextAction(proposal) {
+  if (["awaiting-review", "revision-requested", "deferred"].includes(proposal.status)) {
+    return "Decide whether to prepare, revise, reject or defer this proposed change.";
+  }
+  if (proposal.status === "approved-for-preparation") return "Start the bounded implementation handoff when preparation should begin.";
+  if (proposal.status === "implementation-in-progress") return "Complete the bounded draft and record its review evidence.";
+  if (proposal.status === "awaiting-release-approval") return "Review the implementation evidence and make the separate release decision.";
+  return "Review the retained status and decide the governed next action.";
+}
+
+function buildMyWork(order = "recommended") {
+  const items = operateRecords()
+    .filter((record) => !isClosedStatus(record.status))
+    .map(operateInboxItem);
+
+  const proposalValues = db.prepare("SELECT id FROM change_proposals ORDER BY updated_at DESC").all()
+    .map((row) => proposalRecord(row.id))
+    .filter((proposal) => !["implemented", "rejected"].includes(proposal.status));
+  for (const proposal of proposalValues) {
+    const releaseReady = proposal.status === "awaiting-release-approval";
+    const implementationActive = proposal.status === "implementation-in-progress";
+    const priority = syntheticPriority({
+      impact: releaseReady ? 5 : 4,
+      urgency: releaseReady ? 5 : implementationActive ? 3 : 4,
+      risk: proposal.change_kind === "methodology" ? 4 : 3,
+      control: 5,
+      strategic: 4,
+      confidence: proposal.pull_request_url ? 5 : 4,
+      blocking: implementationActive,
+      status: proposal.status,
+      createdAt: proposal.created_at
+    });
+    items.push({
+      id: `decision:${proposal.id}`,
+      source: "Decision inbox",
+      sourceType: "change-proposal",
+      sourceId: proposal.id,
+      routeView: "decisions",
+      typeLabel: releaseReady ? "Release decision" : "Change decision",
+      title: proposal.title,
+      summary: proposalNextAction(proposal),
+      status: proposal.status,
+      owner: FOUNDER_NAME,
+      dueAt: null,
+      createdAt: proposal.created_at,
+      updatedAt: proposal.updated_at,
+      actionLabel: "Review decision",
+      priority,
+      approvalState: proposal.approvalState
+    });
+  }
+
+  const brand = brandReviewData();
+  const latestDecisionByItem = new Map();
+  for (const decision of brand.decisions) {
+    if (!latestDecisionByItem.has(decision.item_id)) latestDecisionByItem.set(decision.item_id, decision);
+  }
+  const feedbackByItem = new Map((brand.feedbackLoop?.items || []).map((item) => [item.itemId, item]));
+  for (const reviewItem of brand.items) {
+    const decision = latestDecisionByItem.get(reviewItem.id);
+    const feedback = feedbackByItem.get(reviewItem.id);
+    if (decision && !["revise", "reject"].includes(decision.action)) continue;
+    const awaitingCodex = feedback?.state === "awaiting-codex-review";
+    const awaitingFounder = Boolean(feedback && !awaitingCodex);
+    const reviewCreatedAt = feedback?.requestedAt || decision?.created_at || "2026-07-25T00:00:00.000Z";
+    const priority = syntheticPriority({
+      impact: 3,
+      urgency: awaitingFounder ? 4 : awaitingCodex ? 2 : 3,
+      risk: 2,
+      control: 3,
+      strategic: 3,
+      confidence: feedback ? 5 : 4,
+      blocking: awaitingCodex,
+      status: awaitingCodex ? "blocked" : "awaiting-review",
+      createdAt: reviewCreatedAt
+    });
+    items.push({
+      id: `brand:${reviewItem.id}`,
+      source: "Brand review",
+      sourceType: "brand-review",
+      sourceId: reviewItem.id,
+      routeView: "brand",
+      typeLabel: awaitingFounder ? "Brand re-review" : awaitingCodex ? "Blocked brand revision" : "Brand review",
+      title: reviewItem.title,
+      summary: feedback?.reason || reviewItem.question,
+      status: awaitingCodex ? "blocked" : "awaiting-review",
+      owner: awaitingCodex ? "Codex" : FOUNDER_NAME,
+      dueAt: null,
+      createdAt: reviewCreatedAt,
+      updatedAt: feedback?.response?.createdAt || reviewCreatedAt,
+      actionLabel: awaitingCodex ? "View blocked work" : "Review branding",
+      priority,
+      approvalState: "not-approved"
+    });
+  }
+
+  const ordered = sortWorkItems(items, order);
+  const doNextCandidates = ordered.filter((item) => !item.priority.blocked);
+  const doNext = (doNextCandidates.length ? doNextCandidates : ordered).slice(0, 5);
+  return {
+    order,
+    doNext,
+    items: ordered,
+    summary: {
+      total: ordered.length,
+      overdue: ordered.filter((item) => item.priority.overdue).length,
+      blocked: ordered.filter((item) => item.priority.blocked).length,
+      decisions: ordered.filter((item) => item.sourceType === "change-proposal").length
+    },
+    prioritisation: {
+      principle: "80:20 impact-first ordering",
+      explanation: "Recommended order weighs impact, urgency, risk, control implications, blocked work, strategic value, age and confidence. Every score remains explainable and correctable.",
+      approvalCreated: false
+    }
+  };
+}
+
 function messagesFor(conversationId) {
   return db.prepare("SELECT * FROM messages WHERE conversation_id=? ORDER BY created_at").all(conversationId)
     .map((row) => ({ ...row, editedAfterCapture: Boolean(row.edited_after_capture), route: safeJson(row.route_json), metadata: safeJson(row.metadata_json) }));
@@ -641,6 +907,181 @@ async function api(request, response, url) {
     db.prepare("UPDATE settings SET value_json=? WHERE id=1").run(JSON.stringify(value));
     audit("settings.updated", "settings", "1", { keys: Object.keys(value) });
     return json(response, 200, { settings: value });
+  }
+  if (method === "GET" && url.pathname === "/api/my-work") {
+    const order = String(url.searchParams.get("order") || "recommended");
+    const allowed = new Set(["recommended", "newest", "oldest", "deadline"]);
+    if (!allowed.has(order)) return json(response, 400, { error: "Choose recommended, newest, oldest or deadline order." });
+    return json(response, 200, buildMyWork(order));
+  }
+  if (method === "GET" && url.pathname === "/api/operate/bible") {
+    return json(response, 200, {
+      status: "proposed-product-dictionary",
+      methodologyBaselineChanged: false,
+      entries: OPERATIONS_BIBLE,
+      relationships: [
+        "Case contains related work without forcing a linear process.",
+        "An Incident or repeated Request may evidence a Problem.",
+        "A Problem, Risk, Finding or Improvement may generate a Change.",
+        "A Finding may result in no action, a Task, Request, Problem, Risk, Change or Improvement.",
+        "Scenario tests can create Findings, Risks, Problems, Tasks, Requests, Changes and Improvements.",
+        "Customer Journey is a classification overlay, not a separate mandatory workflow."
+      ],
+      authority: "The dictionary can recommend classification and routing. It cannot create approval or expand delegated authority."
+    });
+  }
+  if (method === "GET" && url.pathname === "/api/operate/records") {
+    return json(response, 200, {
+      records: operateRecords({
+        recordType: String(url.searchParams.get("type") || ""),
+        caseId: String(url.searchParams.get("caseId") || ""),
+        status: String(url.searchParams.get("status") || "")
+      }),
+      approvalState: "not-approved-by-classification"
+    });
+  }
+  if (method === "POST" && url.pathname === "/api/operate/records") {
+    requireLocalJsonAction(request, "Operational record creation");
+    const input = await jsonBody(request);
+    let value;
+    try { value = validateOperateRecord(input); }
+    catch (error) { return json(response, 400, { error: error.message }); }
+    if (value.recordType === "case") value.caseId = null;
+    if (value.caseId) {
+      const linkedCase = operateRecord(value.caseId);
+      if (!linkedCase || linkedCase.recordType !== "case") {
+        return json(response, 400, { error: "Link work only to an existing Case." });
+      }
+    }
+    if (value.parentId && !operateRecord(value.parentId)) {
+      return json(response, 400, { error: "The selected parent work record does not exist." });
+    }
+    const id = randomUUID();
+    const timestamp = now();
+    db.prepare(`
+      INSERT INTO operate_records(
+        id,record_type,case_id,parent_id,title,summary,status,owner,impact,urgency,
+        risk_exposure,control_implication,blocking,strategic_value,confidence,due_at,
+        journey,journey_stage,product,source_type,source_id,automation_mode,approval_state,
+        created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      id, value.recordType, value.caseId, value.parentId, value.title, value.summary, value.status,
+      value.owner || FOUNDER_NAME, value.impact, value.urgency, value.riskExposure,
+      value.controlImplication, Number(value.blocking), value.strategicValue, value.confidence,
+      value.dueAt, value.journey, value.journeyStage, value.product, "manual", null,
+      value.automationMode, value.approvalState, timestamp, timestamp
+    );
+    db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+      .run(randomUUID(), id, "record.created", FOUNDER_NAME, JSON.stringify({
+        selectedType: value.recordType,
+        recommendedType: value.recommendation.type,
+        recommendationAccepted: value.recommendation.accepted,
+        approvalCreated: false
+      }), timestamp);
+    audit("operate-record.created", value.recordType, id, {
+      caseId: value.caseId,
+      recommendedType: value.recommendation.type,
+      recommendationAccepted: value.recommendation.accepted,
+      approvalCreated: false
+    });
+    return json(response, 201, {
+      record: operateRecord(id, { includeRelations: true }),
+      recommendation: value.recommendation,
+      message: value.recommendation.accepted
+        ? `${BIBLE_BY_TYPE.get(value.recordType).label} captured. Oppa Mate's classification remains correctable.`
+        : `${BIBLE_BY_TYPE.get(value.recordType).label} captured using your classification instead of Oppa Mate's recommendation.`,
+      approvalCreated: false
+    });
+  }
+  const operateRecordMatch = url.pathname.match(/^\/api\/operate\/records\/([^/]+)$/);
+  if (method === "GET" && operateRecordMatch) {
+    const record = operateRecord(operateRecordMatch[1], { includeRelations: true });
+    return record ? json(response, 200, { record }) : json(response, 404, { error: "Operational record not found." });
+  }
+  if (method === "PATCH" && operateRecordMatch) {
+    requireLocalJsonAction(request, "Operational record updates");
+    const existing = operateRecord(operateRecordMatch[1]);
+    if (!existing) return json(response, 404, { error: "Operational record not found." });
+    const input = await jsonBody(request);
+    let value;
+    try {
+      value = validateOperateRecord({
+        ...existing,
+        ...input,
+        recordType: existing.recordType,
+        caseId: input.caseId === undefined ? existing.caseId : input.caseId
+      });
+    } catch (error) {
+      return json(response, 400, { error: error.message });
+    }
+    if (value.caseId) {
+      const linkedCase = operateRecord(value.caseId);
+      if (!linkedCase || linkedCase.recordType !== "case") {
+        return json(response, 400, { error: "Link work only to an existing Case." });
+      }
+    }
+    if (value.parentId === existing.id) {
+      return json(response, 400, { error: "A work record cannot be its own parent." });
+    }
+    if (value.parentId && !operateRecord(value.parentId)) {
+      return json(response, 400, { error: "The selected parent work record does not exist." });
+    }
+    const authorityConfirmations = new Map([
+      ["approval:approved", "Approve"],
+      ["risk:accepted", "Accept risk"]
+    ]);
+    const requiredConfirmation = authorityConfirmations.get(`${value.recordType}:${value.status}`);
+    if (requiredConfirmation && (String(input.actor || "") !== FOUNDER_NAME || String(input.confirmation || "") !== requiredConfirmation)) {
+      return json(response, 403, { error: `${BIBLE_BY_TYPE.get(value.recordType).label} status requires ${FOUNDER_NAME}'s exact "${requiredConfirmation}" confirmation.` });
+    }
+    const timestamp = now();
+    db.prepare(`
+      UPDATE operate_records SET case_id=?,parent_id=?,title=?,summary=?,status=?,owner=?,
+        impact=?,urgency=?,risk_exposure=?,control_implication=?,blocking=?,strategic_value=?,
+        confidence=?,due_at=?,journey=?,journey_stage=?,product=?,automation_mode=?,
+        approval_state=?,updated_at=? WHERE id=?
+    `).run(
+      value.recordType === "case" ? null : value.caseId, value.parentId, value.title, value.summary,
+      value.status, value.owner || FOUNDER_NAME, value.impact, value.urgency, value.riskExposure,
+      value.controlImplication, Number(value.blocking), value.strategicValue, value.confidence,
+      value.dueAt, value.journey, value.journeyStage, value.product, value.automationMode,
+      requiredConfirmation ? "human-confirmed" : value.approvalState, timestamp, existing.id
+    );
+    db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+      .run(randomUUID(), existing.id, "record.updated", String(input.actor || FOUNDER_NAME), JSON.stringify({
+        statusBefore: existing.status,
+        statusAfter: value.status,
+        explicitConfirmation: requiredConfirmation ? requiredConfirmation : "",
+        approvalCreated: Boolean(requiredConfirmation)
+      }), timestamp);
+    audit("operate-record.updated", value.recordType, existing.id, {
+      statusBefore: existing.status,
+      statusAfter: value.status,
+      explicitHumanConfirmation: Boolean(requiredConfirmation)
+    });
+    return json(response, 200, { record: operateRecord(existing.id, { includeRelations: true }) });
+  }
+  if (method === "POST" && url.pathname === "/api/operate/links") {
+    requireLocalJsonAction(request, "Operational record linking");
+    const value = await jsonBody(request);
+    const from = operateRecord(String(value.fromRecordId || ""));
+    const to = operateRecord(String(value.toRecordId || ""));
+    if (!from || !to || from.id === to.id) return json(response, 400, { error: "Choose two different existing operational records." });
+    const relationships = new Set(["contains", "relates-to", "caused-by", "generated", "treats", "implements", "blocks", "evidences", "tests", "improves"]);
+    const relationship = String(value.relationship || "relates-to");
+    if (!relationships.has(relationship)) return json(response, 400, { error: "Choose a relationship defined by the initial Operations Bible." });
+    const id = randomUUID();
+    try {
+      db.prepare("INSERT INTO operate_links VALUES(?,?,?,?,?)").run(id, from.id, to.id, relationship, now());
+    } catch (error) {
+      if (/UNIQUE/.test(error.message)) return json(response, 409, { error: "That relationship is already recorded." });
+      throw error;
+    }
+    audit("operate-record.linked", "operate-link", id, {
+      fromRecordId: from.id, toRecordId: to.id, relationship, approvalCreated: false
+    });
+    return json(response, 201, { link: { id, fromRecordId: from.id, toRecordId: to.id, relationship }, approvalCreated: false });
   }
   if (method === "GET" && url.pathname === "/api/brand-review") {
     return json(response, 200, brandReviewData());
