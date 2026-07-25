@@ -87,6 +87,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(initialBrandReview.response.ok, true);
     assert.equal(initialBrandReview.payload.status, "draft");
     assert.equal(initialBrandReview.payload.approvalState, "not-approved");
+    assert.equal(initialBrandReview.payload.feedbackLoop.awaitingCodexReview, 0);
+    assert.equal(initialBrandReview.payload.feedbackLoop.readyForFounderReview, 0);
     assert.ok(initialBrandReview.payload.items.some((item) => item.id === "master-mark"));
     assert.ok(initialBrandReview.payload.adoption.surfaces.some((surface) => surface.id === "workbench" && surface.status === "pilot-applied"));
 
@@ -104,6 +106,31 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(brandDecision.decision.approvalCreated, false);
     assert.equal(brandDecision.decision.repositoryChanged, false);
     assert.equal(brandDecision.review.approvalState, "not-approved");
+
+    const typographyRevision = await ok("/api/brand-review", {
+      itemId: "typography",
+      action: "revise",
+      reason: "The supporting line is hard to read."
+    });
+    const pendingTypography = typographyRevision.review.feedbackLoop.items.find((item) => item.itemId === "typography");
+    assert.equal(pendingTypography.state, "awaiting-codex-review");
+    assert.equal(typographyRevision.review.feedbackLoop.awaitingCodexReview, 1);
+    const typographyResponse = await ok("/api/brand-review/responses", {
+      decisionId: typographyRevision.decision.id,
+      disposition: "revision-prepared",
+      summary: "Increased the supporting line's size, contrast and visual separation.",
+      affectedFiles: ["app/app.js", "app/styles.css"],
+      sourceRef: "working-tree",
+      repositoryChanged: true
+    });
+    const preparedTypography = typographyResponse.review.feedbackLoop.items.find((item) => item.itemId === "typography");
+    assert.equal(preparedTypography.state, "revision-prepared");
+    assert.equal(preparedTypography.response.approvalCreated, false);
+    assert.equal(preparedTypography.response.automaticRepositoryWrite, false);
+    assert.equal(preparedTypography.response.repositoryChanged, true);
+    assert.equal(typographyResponse.review.feedbackLoop.awaitingCodexReview, 0);
+    assert.equal(typographyResponse.review.feedbackLoop.readyForFounderReview, 1);
+    assert.equal(typographyResponse.review.approvalState, "not-approved");
 
     const unsafeConnectionAction = await fetch(`http://127.0.0.1:${port}/api/connections/confluence/publication-plan`, {
       method: "POST",
@@ -318,7 +345,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
       "release-merge.authorised",
       "repository.reindexed",
       "change.implemented",
-      "brand-review.recorded"
+      "brand-review.recorded",
+      "brand-review.response-recorded"
     ]) assert.ok(auditEvents.some((event) => event.action === action), `${action} should remain auditable`);
     const preparationAudit = auditEvents.find((event) => event.action === "repository-preparation.recorded");
     assert.equal(preparationAudit.detail.branchName, "codex/accountability-wording");

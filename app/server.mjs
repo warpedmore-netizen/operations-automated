@@ -162,10 +162,21 @@ db.exec(`
     repository_changed INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS brand_review_responses (
+    id TEXT PRIMARY KEY, decision_id TEXT NOT NULL, item_id TEXT NOT NULL,
+    disposition TEXT NOT NULL, summary TEXT NOT NULL,
+    affected_files_json TEXT NOT NULL DEFAULT '[]',
+    source_ref TEXT NOT NULL DEFAULT 'working-tree',
+    repository_changed INTEGER NOT NULL DEFAULT 0,
+    automatic_repository_write INTEGER NOT NULL DEFAULT 0,
+    approval_created INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
   CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
   CREATE INDEX IF NOT EXISTS brand_review_item_idx ON brand_review_decisions(item_id, created_at);
+  CREATE INDEX IF NOT EXISTS brand_review_response_idx ON brand_review_responses(decision_id, created_at);
 `);
 
 function ensureColumn(table, name, definition) {
@@ -412,12 +423,49 @@ function brandReviewData() {
       approvalCreated: Boolean(item.approval_created),
       repositoryChanged: Boolean(item.repository_changed)
     }));
+  const responses = db.prepare("SELECT * FROM brand_review_responses ORDER BY created_at DESC").all()
+    .map((item) => ({
+      ...item,
+      affectedFiles: safeJson(item.affected_files_json, []),
+      repositoryChanged: Boolean(item.repository_changed),
+      automaticRepositoryWrite: Boolean(item.automatic_repository_write),
+      approvalCreated: Boolean(item.approval_created)
+    }));
+  const latestDecisionByItem = new Map();
+  const latestResponseByDecision = new Map();
+  for (const decision of decisions) {
+    if (!latestDecisionByItem.has(decision.item_id)) latestDecisionByItem.set(decision.item_id, decision);
+  }
+  for (const response of responses) {
+    if (!latestResponseByDecision.has(response.decision_id)) latestResponseByDecision.set(response.decision_id, response);
+  }
+  const feedbackItems = review.items.flatMap((item) => {
+    const decision = latestDecisionByItem.get(item.id);
+    if (!decision || !["revise", "reject"].includes(decision.action)) return [];
+    const response = latestResponseByDecision.get(decision.id) || null;
+    return [{
+      itemId: item.id,
+      title: item.title,
+      action: decision.action,
+      reason: decision.reason,
+      decisionId: decision.id,
+      requestedAt: decision.created_at,
+      state: response?.disposition || "awaiting-codex-review",
+      response
+    }];
+  });
   return {
     status: manifest.status,
     version: manifest.version,
     adoption,
     items: review.items,
     decisions,
+    responses,
+    feedbackLoop: {
+      items: feedbackItems,
+      awaitingCodexReview: feedbackItems.filter((item) => item.state === "awaiting-codex-review").length,
+      readyForFounderReview: feedbackItems.filter((item) => item.state === "revision-prepared").length
+    },
     boundary: review.boundary,
     approvalState: "not-approved"
   };
@@ -637,6 +685,66 @@ async function api(request, response, url) {
       decision,
       review: brandReviewData(),
       message: "Brand review recorded as evidence. Repository status and publication authority are unchanged."
+    });
+  }
+  if (method === "POST" && url.pathname === "/api/brand-review/responses") {
+    requireLocalJsonAction(request, "Brand review responses");
+    const value = await jsonBody(request);
+    const decision = db.prepare("SELECT * FROM brand_review_decisions WHERE id=?").get(String(value.decisionId || ""));
+    if (!decision || !["revise", "reject"].includes(decision.action)) {
+      throw Object.assign(new Error("Choose a retained revision or rejection request."), { status: 400 });
+    }
+    const latest = db.prepare("SELECT id FROM brand_review_decisions WHERE item_id=? ORDER BY created_at DESC LIMIT 1").get(decision.item_id);
+    if (latest?.id !== decision.id) {
+      throw Object.assign(new Error("This review request has been superseded by a newer founder decision."), { status: 409 });
+    }
+    const allowedDispositions = new Set(["reviewed", "revision-prepared", "no-change", "needs-clarification"]);
+    const disposition = String(value.disposition || "");
+    if (!allowedDispositions.has(disposition)) {
+      throw Object.assign(new Error("Choose a controlled response disposition."), { status: 400 });
+    }
+    const summary = String(value.summary || "").trim();
+    if (summary.length < 3) throw Object.assign(new Error("Summarise how the feedback was handled."), { status: 400 });
+    const affectedFiles = Array.isArray(value.affectedFiles)
+      ? value.affectedFiles.map((item) => String(item).trim()).filter(Boolean).slice(0, 30)
+      : [];
+    const sourceRef = String(value.sourceRef || "working-tree").trim().slice(0, 240) || "working-tree";
+    const reviewResponse = {
+      id: randomUUID(),
+      decisionId: decision.id,
+      itemId: decision.item_id,
+      disposition,
+      summary,
+      affectedFiles,
+      sourceRef,
+      repositoryChanged: Boolean(value.repositoryChanged),
+      automaticRepositoryWrite: false,
+      approvalCreated: false,
+      createdAt: now()
+    };
+    db.prepare(`
+      INSERT INTO brand_review_responses(
+        id,decision_id,item_id,disposition,summary,affected_files_json,source_ref,
+        repository_changed,automatic_repository_write,approval_created,created_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      reviewResponse.id, reviewResponse.decisionId, reviewResponse.itemId,
+      reviewResponse.disposition, reviewResponse.summary, JSON.stringify(reviewResponse.affectedFiles),
+      reviewResponse.sourceRef, Number(reviewResponse.repositoryChanged),
+      Number(reviewResponse.automaticRepositoryWrite), Number(reviewResponse.approvalCreated),
+      reviewResponse.createdAt
+    );
+    audit("brand-review.response-recorded", "brand-review-item", decision.item_id, {
+      decisionId: decision.id,
+      disposition: reviewResponse.disposition,
+      repositoryChanged: reviewResponse.repositoryChanged,
+      automaticRepositoryWrite: false,
+      approvalCreated: false
+    });
+    return json(response, 201, {
+      response: reviewResponse,
+      review: brandReviewData(),
+      message: "Codex response retained. The revised direction still requires founder re-review."
     });
   }
   if (method === "GET" && url.pathname === "/api/connections") {

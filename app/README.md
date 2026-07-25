@@ -57,9 +57,10 @@ The current brand-system branch adds a bounded internal Brand Review area. It:
 - shows visual examples for the mark, palette, typography, connection field, Workbench, documentation, LinkedIn cover and source wording;
 - links to the full live brand board and starter pages through the local Workbench server;
 - displays the project-wide brand adoption register; and
-- records approve-for-internal-use, revise or reject choices in the local Workbench database as review evidence.
+- records approve-for-internal-use, revise or reject choices in the local Workbench database as review evidence; and
+- automatically surfaces revision and rejection notes in a founder-feedback queue, where Codex can retain its response and return a prepared revision for founder re-review.
 
-These item-level choices do not change repository status, merge the brand pull request or authorise publication. The pilot remains proposed until Jamie explicitly decides the draft brand change.
+These item-level choices do not change repository status, merge the brand pull request or authorise publication. A Codex response also remains review evidence: it may reference work prepared on a proposal branch, but it does not create an automatic repository write or approval. The pilot remains proposed until Jamie explicitly decides the draft brand change.
 
 ## Provider setup
 

@@ -580,6 +580,14 @@ const brandDecisionLabels = {
   reject: "Direction rejected"
 };
 
+const brandResponseLabels = {
+  "awaiting-codex-review": "Awaiting Codex review",
+  reviewed: "Reviewed by Codex",
+  "revision-prepared": "Revision prepared · re-review needed",
+  "no-change": "Reviewed · no change recommended",
+  "needs-clarification": "Clarification needed"
+};
+
 function brandPreviewMarkup(item) {
   if (item.preview === "mark") return `
     <div class="brand-preview brand-preview-mark" data-oa-theme="dark">
@@ -597,7 +605,7 @@ function brandPreviewMarkup(item) {
     <div class="brand-preview brand-preview-type">
       <small>OPERATIONS</small>
       <strong>AUTOMATED</strong>
-      <p>Clear operational thinking, expressed in useful language.</p>
+      <p><span>Clear operational thinking</span><span>expressed in useful language.</span></p>
     </div>`;
   if (item.preview === "field") return `
     <div class="brand-preview brand-preview-field oa-connection-field" data-oa-theme="dark">
@@ -636,6 +644,19 @@ function renderBrandReview(value) {
     if (!latest.has(decision.item_id)) latest.set(decision.item_id, decision);
   }
   $("#brand-review-progress").textContent = `${latest.size} of ${value.items.length} reviewed`;
+  const feedbackItems = value.feedbackLoop?.items || [];
+  const awaitingCount = value.feedbackLoop?.awaitingCodexReview || 0;
+  const rereviewCount = value.feedbackLoop?.readyForFounderReview || 0;
+  $("#brand-feedback-count").textContent = feedbackItems.length
+    ? `${awaitingCount} awaiting Codex · ${rereviewCount} ready for you`
+    : "No open revision requests";
+  $("#brand-feedback-list").innerHTML = feedbackItems.length ? feedbackItems.map((item) => `
+    <article class="brand-feedback-${escapeHtml(item.state)}">
+      <div><span>${escapeHtml(item.title)}</span><strong>${escapeHtml(brandResponseLabels[item.state] || item.state)}</strong></div>
+      <blockquote>${escapeHtml(item.reason)}</blockquote>
+      ${item.response ? `<p><b>Codex response:</b> ${escapeHtml(item.response.summary)}</p>` : `<p>Your note is retained and waiting to be reviewed.</p>`}
+    </article>
+  `).join("") : `<div class="brand-feedback-empty"><strong>No revision requests are open.</strong><p>Any future Revise or Reject choice will appear here automatically.</p></div>`;
   $("#brand-adoption-list").innerHTML = value.adoption.surfaces.map((surface) => `
     <article>
       <div><strong>${escapeHtml(surface.name)}</strong><small>${escapeHtml(surface.path)}</small></div>
@@ -645,6 +666,7 @@ function renderBrandReview(value) {
   `).join("");
   $("#brand-review-grid").innerHTML = value.items.map((item) => {
     const decision = latest.get(item.id);
+    const feedback = feedbackItems.find((candidate) => candidate.itemId === item.id);
     const decisionClass = decision ? `brand-review-${decision.action}` : "";
     const decisionText = decision ? brandDecisionLabels[decision.action] : "Awaiting your review";
     return `
@@ -655,6 +677,7 @@ function renderBrandReview(value) {
           <p>${escapeHtml(item.description)}</p>
           <strong class="brand-review-question">${escapeHtml(item.question)}</strong>
           ${decision?.reason ? `<blockquote>${escapeHtml(decision.reason)}</blockquote>` : ""}
+          ${feedback?.response ? `<div class="brand-review-response"><span>${escapeHtml(brandResponseLabels[feedback.state] || feedback.state)}</span><p>${escapeHtml(feedback.response.summary)}</p></div>` : ""}
           <label>What should change or why?
             <textarea rows="2" data-brand-review-note placeholder="Optional when approving; required for revision or rejection."></textarea>
           </label>

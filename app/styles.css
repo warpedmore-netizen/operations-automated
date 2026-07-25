@@ -663,6 +663,25 @@ main { min-width: 0; }
 .brand-review-heading h2 { margin-bottom: 0.65rem; }
 .brand-review-heading > div > p:last-child { max-width: 780px; margin: 0; color: var(--muted); font-size: 0.82rem; line-height: 1.55; }
 .brand-review-boundary { margin-top: 1.2rem; }
+.brand-feedback-loop { margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, #eef7fd, #f8fbfd); border: 1px solid #b9d9ee; border-radius: 10px; }
+.brand-feedback-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.brand-feedback-heading h3 { margin: 0.18rem 0 0; color: var(--oa-navy, #063f72); font: 750 1.05rem/1.15 var(--display-font); }
+.brand-feedback-heading > span { padding: 0.28rem 0.5rem; color: #15567f; background: white; border: 1px solid #bfdaeb; border-radius: 99px; font-size: 0.58rem; font-weight: 850; }
+.brand-feedback-loop > p { margin: 0.55rem 0 0; color: #46627d; font-size: 0.68rem; line-height: 1.5; }
+.brand-feedback-list { display: grid; gap: 0.55rem; margin-top: 0.8rem; }
+.brand-feedback-list article { display: grid; grid-template-columns: minmax(180px, 0.35fr) 1fr minmax(220px, 0.55fr); gap: 0.75rem; align-items: center; padding: 0.72rem 0.8rem; background: white; border: 1px solid #d5e4ef; border-left: 4px solid #d1993f; border-radius: 7px; }
+.brand-feedback-list article > div span, .brand-feedback-list article > div strong { display: block; }
+.brand-feedback-list article > div span { color: var(--muted); font-size: 0.56rem; font-weight: 850; letter-spacing: 0.07em; text-transform: uppercase; }
+.brand-feedback-list article > div strong { margin-top: 0.18rem; color: var(--oa-navy, #063f72); font-size: 0.7rem; }
+.brand-feedback-list blockquote, .brand-feedback-list p { margin: 0; color: #425a72; font-size: 0.64rem; line-height: 1.45; }
+.brand-feedback-list blockquote { padding-left: 0.7rem; border-left: 2px solid #d7e4ed; }
+.brand-feedback-list p b { color: var(--oa-navy, #063f72); }
+.brand-feedback-list .brand-feedback-revision-prepared { border-left-color: #2788bd; }
+.brand-feedback-list .brand-feedback-no-change { border-left-color: #6f879b; }
+.brand-feedback-list .brand-feedback-needs-clarification { border-left-color: #b85f58; }
+.brand-feedback-empty { padding: 0.72rem 0.8rem; color: #42617c; background: rgba(255, 255, 255, 0.7); border: 1px dashed #bdd4e4; border-radius: 7px; }
+.brand-feedback-empty strong, .brand-feedback-empty p { display: block; margin: 0; font-size: 0.65rem; }
+.brand-feedback-empty p { margin-top: 0.2rem; }
 .brand-review-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin: 1rem 0; }
 .brand-review-summary > div { display: grid; gap: 0.18rem; padding: 0.85rem; background: var(--oa-paper, #f5f7fa); border: 1px solid var(--line); border-radius: 8px; }
 .brand-review-summary span, .brand-review-summary small { color: var(--muted); font-size: 0.6rem; }
@@ -706,8 +725,9 @@ main { min-width: 0; }
 .brand-preview-type { display: flex; flex-direction: column; justify-content: center; padding: 2rem; color: white; background: var(--oa-midnight, #03111e); }
 .brand-preview-type small, .brand-preview-type strong { font-family: var(--display-font); text-transform: uppercase; }
 .brand-preview-type small { font-size: 0.8rem; letter-spacing: 0.38em; }
-.brand-preview-type strong { margin-top: 0.2rem; font-size: clamp(2rem, 4vw, 3.5rem); letter-spacing: 0.02em; line-height: 0.95; }
-.brand-preview-type p { max-width: 370px; margin: 1rem 0 0; color: #c3d5e3; font-size: 0.72rem; }
+.brand-preview-type strong { margin-top: 0.2rem; font-size: clamp(1.9rem, 2.65vw, 2.25rem); letter-spacing: 0.02em; line-height: 0.95; }
+.brand-preview-type p { display: grid; gap: 0.12rem; max-width: 420px; margin: 1.1rem 0 0; padding: 0.75rem 0.9rem; color: #eef8fe; background: rgba(255, 255, 255, 0.08); border-left: 3px solid var(--oa-electric, #32b6fe); border-radius: 0 7px 7px 0; font-size: 0.9rem; font-weight: 650; line-height: 1.4; }
+.brand-preview-type p span:last-child { color: #bfe6fb; }
 .brand-preview-field { position: relative; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 2rem; color: white; background-color: var(--oa-obsidian, #01070f); }
 .brand-preview-field span { color: var(--oa-electric, #32b6fe); font-size: 0.67rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 .brand-preview-field strong { margin-top: 0.3rem; font: 750 2rem/1 var(--display-font); }
@@ -750,6 +770,9 @@ main { min-width: 0; }
 .brand-review-content > p { margin: 0.65rem 0; color: var(--muted); font-size: 0.7rem; line-height: 1.5; }
 .brand-review-question { display: block; color: var(--oa-navy, #063f72); font-size: 0.73rem; line-height: 1.45; }
 .brand-review-content blockquote { margin: 0.7rem 0 0; padding: 0.65rem; color: #43586f; background: var(--oa-paper, #f5f7fa); border-left: 3px solid var(--oa-blue, #0b77d2); font-size: 0.65rem; }
+.brand-review-response { margin-top: 0.65rem; padding: 0.65rem; background: #edf7fc; border: 1px solid #c0deee; border-radius: 7px; }
+.brand-review-response span { color: #17628b; font-size: 0.56rem; font-weight: 850; letter-spacing: 0.06em; text-transform: uppercase; }
+.brand-review-response p { margin: 0.25rem 0 0; color: #38566f; font-size: 0.65rem; line-height: 1.45; }
 .brand-review-content label { display: grid; gap: 0.3rem; margin-top: 0.8rem; color: var(--muted); font-size: 0.62rem; font-weight: 800; }
 .brand-review-content textarea { width: 100%; padding: 0.6rem; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 6px; resize: vertical; }
 .brand-review-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.65rem; }
@@ -893,6 +916,8 @@ dialog form { padding: 1.4rem; }
   .preview-grid { grid-template-columns: 1fr; }
   .connection-heading, .connection-status > div:first-child, .publication-heading, .phone-access-heading { align-items: flex-start; flex-direction: column; }
   .brand-review-heading { align-items: flex-start; flex-direction: column; gap: 0.8rem; }
+  .brand-feedback-heading { flex-direction: column; }
+  .brand-feedback-list article { grid-template-columns: 1fr; }
   .brand-review-item { grid-template-columns: 1fr; }
   .brand-preview { min-height: 220px; }
   .brand-review-title { flex-direction: column; gap: 0.5rem; }

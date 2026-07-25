@@ -53,7 +53,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
@@ -84,6 +84,9 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(appSource, /approve-internal/);
   assert.match(appSource, /Revision requested/);
   assert.match(appSource, /Direction rejected/);
+  assert.match(appSource, /Awaiting Codex review/);
+  assert.match(appSource, /Revision prepared · re-review needed/);
+  assert.match(html, /Revision and rejection notes are automatically surfaced for Codex review/);
   assert.match(appSource, /This page is not a valid brand preview until the restart warning has cleared/);
   assert.doesNotMatch(cssSource, /Georgia,\s*serif/);
   assert.match(cssSource, /var\(--oa-midnight,\s*#03111e\)/);
@@ -91,6 +94,9 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(cssSource, /var\(--oa-ink,\s*#102a43\)/);
   assert.match(cssSource, /\.conversation-link\.current[^}]+var\(--oa-electric,\s*#32b6fe\)/s);
   assert.match(cssSource, /-webkit-line-clamp:\s*2/);
+  assert.match(cssSource, /\.brand-preview-type p \{[^}]+font-size:\s*0\.9rem[^}]+font-weight:\s*650/s);
+  assert.match(cssSource, /\.brand-preview-type strong \{[^}]+font-size:\s*clamp\(1\.9rem,\s*2\.65vw,\s*2\.25rem\)/s);
+  assert.match(cssSource, /\.brand-feedback-list article \{[^}]+border-left:\s*4px solid/s);
 });
 
 test("the primary knowledge journey remains readable and touch-usable on a phone", () => {

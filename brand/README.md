@@ -69,7 +69,8 @@ Start the private Workbench with `Launch-Workbench.cmd`, then select **Brand rev
 
 - shows the mark, palette, typography, connection field, application, document, social and wording directions;
 - opens the complete brand board and full-size starter pages without requiring anyone to browse repository folders;
-- records approve-for-internal-use, revise or reject choices locally as review evidence; and
+- records approve-for-internal-use, revise or reject choices locally as review evidence;
+- surfaces revision and rejection notes as pending founder feedback, then shows when Codex has prepared a response for re-review; and
 - shows the adoption status of each controlled project surface.
 
 Those review choices do not change this artefact's draft status, merge a pull request or authorise external publication.
