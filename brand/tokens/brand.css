@@ -1,15 +1,15 @@
 :root {
   color-scheme: light;
 
-  --oa-midnight: #071a2d;
-  --oa-navy: #0b2742;
+  --oa-obsidian: #01070f;
+  --oa-midnight: #03111e;
+  --oa-navy: #063f72;
   --oa-ink: #102a43;
-  --oa-logo-blue: #0c79d8;
+  --oa-loop-blue: #0e5b92;
   --oa-blue: #0b77d2;
-  --oa-flow: #2e9eff;
-  --oa-sky: #68c4ff;
-  --oa-paper: #f7fafc;
-  --oa-canvas: #eef4f8;
+  --oa-electric: #32b6fe;
+  --oa-paper: #f5f7fa;
+  --oa-canvas: #eaf0f5;
   --oa-white: #ffffff;
   --oa-muted: #52677c;
   --oa-line: #cdd9e3;
@@ -24,7 +24,7 @@
   --oa-neutral-soft: #e9eff4;
 
   --oa-font-sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", Arial, sans-serif;
-  --oa-font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --oa-font-display: Montserrat, "Aptos Display", Arial, sans-serif;
   --oa-font-mono: "Cascadia Mono", "SFMono-Regular", Consolas, monospace;
 
   --oa-text-xs: 0.75rem;
@@ -82,11 +82,11 @@
   --oa-text: var(--oa-white);
   --oa-text-muted: #bed0df;
   --oa-border: #34516b;
-  --oa-action: var(--oa-sky);
-  --oa-action-hover: #8ed4ff;
+  --oa-action: var(--oa-electric);
+  --oa-action-hover: #6bcbff;
   --oa-action-text: var(--oa-midnight);
   --oa-focus-inner: var(--oa-midnight);
-  --oa-focus-outer: var(--oa-sky);
+  --oa-focus-outer: var(--oa-electric);
 }
 
 .oa-base {
@@ -137,16 +137,37 @@
   align-items: center;
   gap: var(--oa-space-3);
   color: inherit;
+  font-family: var(--oa-font-display);
   font-size: 1.125rem;
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1;
   text-decoration: none;
 }
 
 .oa-logo img {
-  width: 2rem;
+  width: 2.4rem;
   height: 2rem;
+  object-fit: contain;
   flex: 0 0 auto;
+}
+
+.oa-wordmark {
+  display: grid;
+  gap: 0.05rem;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.oa-wordmark small {
+  font-size: 0.5em;
+  font-weight: 650;
+  letter-spacing: 0.32em;
+}
+
+.oa-wordmark strong {
+  font-size: 1em;
+  font-weight: 800;
+  letter-spacing: 0.025em;
 }
 
 .oa-button {
@@ -234,18 +255,15 @@
 .oa-connection-field {
   background-color: var(--oa-surface);
   background-image:
-    radial-gradient(circle at 78% 18%, rgba(46, 158, 255, 0.14), transparent 26rem),
-    linear-gradient(rgba(12, 121, 216, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(12, 121, 216, 0.055) 1px, transparent 1px);
-  background-size: auto, 4rem 4rem, 4rem 4rem;
+    radial-gradient(circle at 82% 18%, rgba(50, 182, 254, 0.15), transparent 28rem),
+    repeating-radial-gradient(ellipse at 88% 50%, transparent 0 21px, rgba(14, 91, 146, 0.045) 22px 23px);
 }
 
 [data-oa-theme="dark"].oa-connection-field,
 [data-oa-theme="dark"] .oa-connection-field {
   background-image:
-    radial-gradient(circle at 78% 18%, rgba(46, 158, 255, 0.24), transparent 28rem),
-    linear-gradient(rgba(104, 196, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(104, 196, 255, 0.07) 1px, transparent 1px);
+    radial-gradient(circle at 86% 24%, rgba(50, 182, 254, 0.26), transparent 30rem),
+    repeating-radial-gradient(ellipse at 90% 52%, transparent 0 21px, rgba(50, 182, 254, 0.065) 22px 23px);
 }
 
 @media (prefers-reduced-motion: reduce) {

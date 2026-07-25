@@ -71,7 +71,7 @@ button {
 }
 
 .rail nav a span {
-  color: var(--oa-sky);
+  color: var(--oa-electric);
   font: 600 0.65rem/1 var(--oa-font-mono);
 }
 
@@ -82,7 +82,7 @@ button {
 }
 
 .rail nav a.active {
-  box-shadow: inset 3px 0 var(--oa-sky);
+  box-shadow: inset 3px 0 var(--oa-electric);
 }
 
 .rail-boundary {
@@ -100,7 +100,7 @@ button {
   height: 0.55rem;
   margin-top: 0.35rem;
   flex: 0 0 auto;
-  background: var(--oa-sky);
+  background: var(--oa-electric);
   border-radius: 50%;
 }
 
@@ -170,7 +170,7 @@ main {
 .orientation h2 {
   max-width: 820px;
   margin: var(--oa-space-3) 0 var(--oa-space-4);
-  font: 600 clamp(2rem, 4vw, 3.25rem)/1.08 var(--oa-font-serif);
+  font: 750 clamp(2rem, 4vw, 3.25rem)/1.03 var(--oa-font-display);
   letter-spacing: -0.035em;
 }
 
@@ -345,7 +345,7 @@ main {
 }
 
 .decision-panel .eyebrow {
-  color: var(--oa-sky);
+  color: var(--oa-electric);
 }
 
 .decision-panel > p:not(.eyebrow) {

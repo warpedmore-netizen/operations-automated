@@ -17,25 +17,25 @@ date: 2026-07-25
 - It applies proportionately to an individual activity, a team, a service, an organisation or a wider network.
 - It does not assume automation or AI is the answer.
 - User-defined value, evidence, human judgement, visible authority, safe failure and retained learning are approved principles for internal validation.
-- The existing product work uses deep navy, clear blue, editorial space and connected-system imagery.
+- The founder-supplied identity uses an Obsidian field, a continuous blue OA loop, bright cyan movement, geometric type and connected mesh-like texture.
 
 ### Jamie's judgement in the brand brief
 
 - The company is about connectivity, automation, efficiency and delivery for people.
 - It should help people and businesses without segregating itself into one type of organisation or one narrow category.
-- The improved and agreed logo concept should be the basis for the wider brand.
+- The improved and agreed continuous OA logo concept should be the basis for the wider brand.
 - The resulting system must be reusable across websites, applications and documentation.
 
 ### AI interpretation
 
 - “No segregation” should mean an inclusive masterbrand and a method that can scale across contexts; it should not mean making an unsupported claim that every offer fits every buyer.
-- The identity should balance operational confidence with human warmth.
+- The identity should balance operational confidence and premium technical precision with human purpose.
 - Technology should appear as a connected capability, not the hero of the story.
 - Consistency requires shared tokens and templates, but not identical layouts for every medium.
 
-### Assumption to verify
+### Correction retained
 
-The four-part blue connection mark found in the improved prototype is the logo Jamie intended. The system deliberately isolates the mark so it can be replaced without redesigning every template if this assumption is wrong.
+The first brand-system draft incorrectly treated a four-block Connected Governance favicon as the agreed logo. Jamie supplied the actual continuous OA loop mark and initial banner set on 25 July 2026. Those references now govern the working visual direction.
 
 ## Purpose
 
@@ -103,6 +103,7 @@ The promise is about useful operational progress, not guaranteed automation, sav
 |---|---|---|
 | Clear | Plain structure, meaningful labels, the answer before detail | Simplistic certainty or hidden caveats |
 | Connected | Show dependencies, flows and the whole system | Decorative networks with no meaning |
+| Precise | Strong alignment, disciplined spacing and purposeful detail | Cold perfection, visual noise or false certainty |
 | Capable | Form a view, do the analytical work and make action practical | Empty confidence or handing analysis back to the user |
 | Human | Respect context, effort, dignity, judgement and consequence | Sentimentality, blame or people-as-resources language |
 | Challenging | Test assumptions and surface trade-offs constructively | Confrontation for effect or manufactured disagreement |
@@ -126,6 +127,10 @@ Provide a useful answer, artefact or next action. Do not make the user perform t
 ### Calm control
 
 Use status, boundaries and decision points clearly. Consequential moments should feel deliberate rather than urgent by default.
+
+### Controlled energy
+
+Use deep fields, bright movement and connected texture to suggest momentum. Keep the energy directional and bounded; do not imply that speed or autonomy is automatically the goal.
 
 ### Inclusive by default
 

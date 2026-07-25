@@ -7,6 +7,7 @@ These draft starters show how the Operations Automated brand system adapts to di
 | [`website`](website) | Public-page and campaign prototypes | Open space, plain value statement, one clear action, evidence and publication boundary |
 | [`application`](application) | Workspaces, tools and governed product interfaces | Status, orientation, action hierarchy, decision points and recovery |
 | [`documentation`](documentation) | Guidance, proposals, decisions and assurance | Metadata, status, concise conclusion, evidence separation and next governed action |
+| [`social`](social) | Profile and campaign artwork | Platform dimensions, overlay-safe composition and source wording boundaries |
 
 Copy the nearest starter, not this complete folder. Keep `tokens/brand.css` or an equivalent generated platform theme as the source for visual decisions.
 

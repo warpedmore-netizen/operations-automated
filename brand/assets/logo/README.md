@@ -2,41 +2,41 @@
 
 ## Source
 
-The four-part colour mark is reproduced from repository reference:
-
-`1c50729:governance-site/public/favicon.svg`
-
-It is being used as the working source because Jamie directed the wider brand to use the improved and agreed logo concept. Adoption within the master brand remains draft until Jamie confirms the mark in the Brand System v0.1 decision.
+The continuous OA loop is derived from the founder-supplied high-resolution banner in [`../../references`](../../references). It replaces the incorrect four-block favicon assumption in the first draft.
 
 ## Authoritative files
 
-- `mark-colour.svg` — source colours for normal use
-- `mark-navy.svg` — single-colour use on pale backgrounds
-- `mark-white.svg` — single-colour use on dark backgrounds
-- `lockup-colour.svg` — working horizontal composition on pale backgrounds
-- `lockup-white.svg` — working horizontal composition on dark backgrounds
+- `../../references/initial-banner-wide-4200x700.png` — highest-resolution supplied source
+- `../../references/initial-mark-square-400x400.png` — supplied square treatment
+- `../../references/initial-linkedin-profile-cover-1584x396.png` — supplied personal-profile cover
 
-The mark geometry and original three blue values must not change between exports.
+These raster files are working sources, not final vector artwork.
 
 ## Generated files
 
-The `generated` directory contains PNG delivery exports for favicons, applications and documents. Regenerate these with `scripts/build-assets.mjs` after an authoritative SVG changes.
+The `generated` directory contains:
 
-The wordmark in the lock-up SVG uses live type so the typography can still be revised during the draft. Use the generated PNG for a stable internal placement. If the brand is later approved for external distribution, convert the final approved wordmark to vector outlines and retain the source-font licence with the release.
+- transparent colour, deep-blue and white OA marks at 1024 px;
+- contained Obsidian tiles at 32, 192 and 512 px; and
+- no inferred vector master.
+
+Regenerate them with `scripts/build-assets.mjs` after a source image changes. The extraction is deterministic and retains the supplied gradient and geometry.
+
+The wordmark remains accessible live type in the browser templates. If the brand is later approved for external distribution, obtain or create a founder-approved vector master and final outlined wordmark, then retain the source-font licence with the release.
 
 ## Alternative text
 
 When the full name is visible beside the mark:
 
 ```html
-<img src="mark-colour.svg" alt="">
+<img src="generated/mark-colour-transparent-1024.png" alt="">
 <span>Operations Automated</span>
 ```
 
 When the mark is the only identity on first encounter, use:
 
 ```html
-<img src="mark-colour.svg" alt="Operations Automated">
+<img src="generated/mark-colour-transparent-1024.png" alt="Operations Automated">
 ```
 
 Do not repeat the same name in both image alternative text and adjacent visible text.

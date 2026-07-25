@@ -39,6 +39,18 @@ function contrast(foreground, background) {
   return (light + 0.05) / (dark + 0.05);
 }
 
+function pngDimensions(relativePath) {
+  const data = readFileSync(join(brandRoot, relativePath));
+  check(
+    data.length >= 24 && data.subarray(1, 4).toString("ascii") === "PNG",
+    `Invalid PNG file: ${relativePath}`,
+  );
+  return {
+    width: data.readUInt32BE(16),
+    height: data.readUInt32BE(20),
+  };
+}
+
 const expectedFiles = [
   "README.md",
   "foundations.md",
@@ -48,18 +60,18 @@ const expectedFiles = [
   "manifest.json",
   "index.html",
   "site.css",
-  "assets/logo/mark-colour.svg",
-  "assets/logo/mark-navy.svg",
-  "assets/logo/mark-white.svg",
-  "assets/logo/lockup-colour.svg",
-  "assets/logo/lockup-white.svg",
-  "assets/logo/generated/mark-colour-32.png",
-  "assets/logo/generated/mark-colour-192.png",
-  "assets/logo/generated/mark-colour-512.png",
-  "assets/logo/generated/mark-navy-512.png",
-  "assets/logo/generated/mark-white-512.png",
-  "assets/logo/generated/lockup-colour-1200.png",
-  "assets/logo/generated/lockup-white-1200.png",
+  "assets/logo/README.md",
+  "assets/logo/generated/README.md",
+  "assets/logo/generated/mark-colour-transparent-1024.png",
+  "assets/logo/generated/mark-navy-transparent-1024.png",
+  "assets/logo/generated/mark-white-transparent-1024.png",
+  "assets/logo/generated/mark-dark-tile-32.png",
+  "assets/logo/generated/mark-dark-tile-192.png",
+  "assets/logo/generated/mark-dark-tile-512.png",
+  "references/README.md",
+  "references/initial-mark-square-400x400.png",
+  "references/initial-banner-wide-4200x700.png",
+  "references/initial-linkedin-profile-cover-1584x396.png",
   "tokens/brand.tokens.json",
   "tokens/brand.css",
   "tokens/brand.ts",
@@ -69,10 +81,33 @@ const expectedFiles = [
   "templates/application/application.css",
   "templates/documentation/document-template.md",
   "templates/documentation/document.css",
+  "templates/social/README.md",
+  "templates/social/linkedin-profile-cover-1584x396.png",
 ];
 
 for (const path of expectedFiles) {
   check(existsSync(join(brandRoot, path)), `Missing expected brand file: ${path}`);
+}
+
+const expectedPngDimensions = {
+  "references/initial-mark-square-400x400.png": [400, 400],
+  "references/initial-banner-wide-4200x700.png": [4200, 700],
+  "references/initial-linkedin-profile-cover-1584x396.png": [1584, 396],
+  "assets/logo/generated/mark-colour-transparent-1024.png": [1024, null],
+  "assets/logo/generated/mark-navy-transparent-1024.png": [1024, null],
+  "assets/logo/generated/mark-white-transparent-1024.png": [1024, null],
+  "assets/logo/generated/mark-dark-tile-32.png": [32, 32],
+  "assets/logo/generated/mark-dark-tile-192.png": [192, 192],
+  "assets/logo/generated/mark-dark-tile-512.png": [512, 512],
+  "templates/social/linkedin-profile-cover-1584x396.png": [1584, 396],
+};
+
+for (const [path, [expectedWidth, expectedHeight]] of Object.entries(expectedPngDimensions)) {
+  const { width, height } = pngDimensions(path);
+  check(width === expectedWidth, `${path} is ${width} px wide; expected ${expectedWidth} px.`);
+  if (expectedHeight !== null) {
+    check(height === expectedHeight, `${path} is ${height} px high; expected ${expectedHeight} px.`);
+  }
 }
 
 const manifest = JSON.parse(read("manifest.json"));
@@ -83,6 +118,12 @@ check(manifest.status === "draft", "Brand manifest must remain draft until Jamie
 check(tokens.meta.status === manifest.status, "Manifest and token status do not match.");
 check(tokens.meta.version === manifest.version, "Manifest and token versions do not match.");
 
+for (const paths of Object.values(manifest.assets)) {
+  for (const path of paths) {
+    check(existsSync(join(brandRoot, path)), `Manifest references a missing brand file: ${path}`);
+  }
+}
+
 for (const [name, value] of Object.entries(tokens.colour)) {
   check(/^#[0-9a-f]{6}$/i.test(value), `Invalid hexadecimal colour token: ${name} = ${value}`);
   const cssName = name.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
@@ -92,9 +133,10 @@ for (const [name, value] of Object.entries(tokens.colour)) {
 const contrastPairs = [
   ["Ink on Paper", tokens.colour.ink, tokens.colour.paper, 4.5],
   ["Muted text on Paper", tokens.colour.muted, tokens.colour.paper, 4.5],
-  ["White on Signal blue", tokens.colour.white, tokens.colour.blue, 4.5],
+  ["White on Obsidian", tokens.colour.white, tokens.colour.obsidian, 4.5],
   ["White on Midnight", tokens.colour.white, tokens.colour.midnight, 4.5],
-  ["Midnight on Human sky", tokens.colour.midnight, tokens.colour.sky, 4.5],
+  ["White on Action blue", tokens.colour.white, tokens.colour.blue, 4.5],
+  ["Obsidian on Electric cyan", tokens.colour.obsidian, tokens.colour.electric, 4.5],
   ["Decision amber on soft amber", tokens.colour.amber, tokens.colour.amberSoft, 4.5],
   ["Success on success soft", tokens.colour.success, tokens.colour.successSoft, 4.5],
   ["Warning on warning soft", tokens.colour.warning, tokens.colour.warningSoft, 4.5],

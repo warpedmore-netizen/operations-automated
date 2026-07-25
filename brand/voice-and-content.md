@@ -144,6 +144,24 @@ Avoid:
 - **Unlock unprecedented efficiency**
 - **Reimagine what is possible**
 
+## Initial descriptor and strapline
+
+The founder-supplied reference uses:
+
+- **Operations consultancy**
+- **Automate. Autonomise. Empower.**
+
+They establish a concise, confident rhythm but remain draft wording.
+
+**Operations consultancy** may be suitable on Jamie's personal profile, but it should not silently redefine the complete company as consultancy if the methodology, knowledge products and applications remain part of the intended system.
+
+**Autonomise** is distinctive but ambiguous. It may suggest increasing useful operating autonomy; it may also be read as making operations autonomous by default. Before external adoption, decide whether to:
+
+1. retain it with a clear human-led explanation;
+2. replace it with **Understand. Improve. Automate.**;
+3. replace it with **Connect. Improve. Empower.**; or
+4. use the longer working line where the methodology boundary matters.
+
 ## Calls to action
 
 Use the action and expected outcome:

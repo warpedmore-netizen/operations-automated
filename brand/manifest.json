@@ -7,24 +7,27 @@
   "date": "2026-07-25",
   "approvalRequired": true,
   "sourceMark": {
-    "description": "Four-part blue connection mark from the improved prototype",
-    "repositoryReference": "1c50729:governance-site/public/favicon.svg",
-    "adoptionStatus": "draft pending Jamie confirmation"
+    "description": "Continuous OA loop mark in deep blue and electric cyan",
+    "repositoryReference": [
+      "references/initial-mark-square-400x400.png",
+      "references/initial-banner-wide-4200x700.png",
+      "references/initial-linkedin-profile-cover-1584x396.png"
+    ],
+    "adoptionStatus": "founder-supplied draft reference; adoption remains approval-gated"
   },
   "assets": {
     "logo": [
-      "assets/logo/mark-colour.svg",
-      "assets/logo/mark-navy.svg",
-      "assets/logo/mark-white.svg",
-      "assets/logo/lockup-colour.svg",
-      "assets/logo/lockup-white.svg",
-      "assets/logo/generated/mark-colour-32.png",
-      "assets/logo/generated/mark-colour-192.png",
-      "assets/logo/generated/mark-colour-512.png",
-      "assets/logo/generated/mark-navy-512.png",
-      "assets/logo/generated/mark-white-512.png",
-      "assets/logo/generated/lockup-colour-1200.png",
-      "assets/logo/generated/lockup-white-1200.png"
+      "assets/logo/generated/mark-colour-transparent-1024.png",
+      "assets/logo/generated/mark-navy-transparent-1024.png",
+      "assets/logo/generated/mark-white-transparent-1024.png",
+      "assets/logo/generated/mark-dark-tile-32.png",
+      "assets/logo/generated/mark-dark-tile-192.png",
+      "assets/logo/generated/mark-dark-tile-512.png"
+    ],
+    "references": [
+      "references/initial-mark-square-400x400.png",
+      "references/initial-banner-wide-4200x700.png",
+      "references/initial-linkedin-profile-cover-1584x396.png"
     ],
     "tokens": [
       "tokens/brand.tokens.json",
@@ -34,13 +37,15 @@
     "templates": [
       "templates/website/index.html",
       "templates/application/index.html",
-      "templates/documentation/document-template.md"
+      "templates/documentation/document-template.md",
+      "templates/social/linkedin-profile-cover-1584x396.png"
     ]
   },
   "boundaries": [
     "Not approved for external publication",
     "Does not approve product deployment or migration",
     "Does not change methodology meaning",
-    "Does not establish trade-mark clearance"
+    "Does not establish trade-mark clearance",
+    "Does not approve the reference descriptor or strapline as public language"
   ]
 }

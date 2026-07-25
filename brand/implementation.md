@@ -27,7 +27,7 @@ Use one controlled source for identity decisions and adapt the expression to the
 
 1. Include [`tokens/brand.css`](tokens/brand.css).
 2. Use the semantic tokens such as `--oa-surface`, `--oa-text` and `--oa-action`.
-3. Compose the logo from the supplied mark and live text.
+3. Compose the logo from the supplied OA loop derivative and accessible live text.
 4. Use the public-page or application starter as the nearest reference.
 5. Keep the draft or approval boundary visible where the content status matters.
 6. Test keyboard focus, reflow, zoom, reduced motion and the actual first action.
@@ -52,8 +52,8 @@ Use one controlled source for identity decisions and adapt the expression to the
 
 ### Public website
 
-- More open space and editorial typography.
-- Midnight or Paper hero area.
+- Strong geometric hierarchy and controlled negative space.
+- Obsidian or Midnight hero area, with Paper sections where sustained reading begins.
 - One primary action per section.
 - Plain explanation before methodology terms.
 - Evidence and boundaries near claims.
@@ -69,7 +69,7 @@ Use one controlled source for identity decisions and adapt the expression to the
 
 ### Long-form guidance
 
-- Paper background, Ink text and editorial serif for major headings only.
+- Paper background, Ink text and restrained geometric display headings.
 - Narrow reading measure and strong hierarchy.
 - Small metadata layer using sans-serif or monospace.
 - Tables use subtle rules and repeat headers across pages.
@@ -97,8 +97,8 @@ Use the image asset plus live, selectable text:
 
 ```html
 <a class="oa-logo" href="/" aria-label="Operations Automated home">
-  <img src="/brand/assets/logo/mark-colour.svg" alt="">
-  <span>Operations Automated</span>
+  <img src="/brand/assets/logo/generated/mark-colour-transparent-1024.png" alt="">
+  <span class="oa-wordmark"><small>Operations</small><strong>Automated</strong></span>
 </a>
 ```
 
@@ -140,10 +140,11 @@ A product may not, without a brand decision:
 - Record breaking token changes and provide a migration note.
 - Treat screenshots as examples, not sources.
 - Keep logos and fonts free of third-party material unless their use and licence are recorded.
+- Replace raster derivatives with an inferred vector master only after founder comparison and approval.
 
 ## Adoption sequence
 
-1. Review and correct the mark assumption, core idea, palette and type direction.
+1. Confirm the supplied OA loop mark, descriptor, strapline, palette and geometric type direction.
 2. Approve, revise or reject v0.1 for internal use.
 3. Pilot the system on one existing application, one controlled document and one public-page prototype.
 4. Observe comprehension, consistency, accessibility and time to first use.

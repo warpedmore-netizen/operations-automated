@@ -1,9 +1,10 @@
 # Generated logo exports
 
-Run `brand/scripts/build-assets.mjs` with the approved workspace image runtime to generate:
+Run `brand/scripts/build-assets.mjs` with the approved workspace image runtime to derive:
 
-- 32, 192 and 512 pixel colour marks;
-- 512 pixel navy and white marks; and
-- 1200 pixel colour and white horizontal lock-ups.
+- a 1024 pixel transparent colour OA mark;
+- 1024 pixel deep-blue and white monochrome marks;
+- 32, 192 and 512 pixel Obsidian mark tiles; and
+- the corrected 1584 × 396 LinkedIn personal-profile cover in the social template.
 
-The SVG files one directory above remain authoritative. Generated PNGs are delivery assets, not editable sources.
+The founder-supplied raster references remain authoritative for this draft. Generated PNGs are delivery assets, not editable or vector source.

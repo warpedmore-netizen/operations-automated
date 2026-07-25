@@ -13,19 +13,19 @@ date: 2026-07-25
 
 ### The mark
 
-The four-part mark is the primary visual identifier. Distinct modules meet around a shared centre: separate work, people and systems remain recognisable while contributing to a connected whole.
+The continuous OA loop is the primary visual identifier. The O flows into the A as one controlled route: observation becomes action, learning returns to the operation, and connection creates forward movement.
 
-The logo does not represent automation replacing people. It represents:
+The logo does not represent inevitable autonomy or automation replacing people. It represents:
 
-- connected work;
-- different scales and work types;
-- flow between distinct parts;
-- a whole-system view; and
-- movement that retains structure.
+- a whole operation rather than an isolated task;
+- a connected improvement and learning loop;
+- movement from understanding to action;
+- continuity through change; and
+- automation kept inside the wider operational system.
 
 ### Primary lock-up
 
-Use the colour mark to the left of the words **Operations Automated**. The name uses the primary sans-serif typeface at weight 700. Keep the name on one line when space permits.
+Use the colour mark to the left of a two-level wordmark: tracked **OPERATIONS** above bold **AUTOMATED**. Keep the combination horizontal when space permits. The geometric display type should feel precise and contemporary, not futuristic or playful.
 
 Use the mark alone for:
 
@@ -38,31 +38,31 @@ Do not use the mark alone on a first encounter when the name is not otherwise cl
 
 ### Clear space
 
-Keep clear space around the logo equal to the width of one small outer module in the mark. No text, border, photograph, control or other logo enters this space.
+Keep clear space around the logo equal to the thickness of the O ribbon. No text, border, photograph, control or other logo enters this space.
 
 ### Minimum size
 
-- Mark alone: 24 CSS pixels or 8 mm wide.
-- Horizontal lock-up: 160 CSS pixels or 42 mm wide.
-- Below 24 pixels, use the supplied colour or monochrome SVG without effects.
+- Mark alone: 28 CSS pixels or 9 mm wide.
+- Horizontal lock-up: 180 CSS pixels or 48 mm wide.
+- Use the contained dark tile for favicons and very small placements until an approved vector master is available.
 
 ### Approved working variants
 
 | Surface | Asset |
 |---|---|
-| White, paper or pale neutral | Colour mark or navy mark |
-| Midnight or dark photography | Colour mark or white mark |
+| Obsidian, Midnight or dark connected texture | Colour mark and white wordmark |
+| White, paper or pale neutral | Deep-blue monochrome mark or contained dark tile |
 | Single-colour print | Navy mark on light; white mark on dark |
 | Status, alert or product accent | Keep the logo unchanged; change the surrounding component |
 
 ### Do not
 
 - stretch, rotate, skew or crop the mark;
-- separate, reorder or animate individual modules as if they were a different logo;
+- break the continuous loop into unrelated O and A symbols;
 - place the mark in a circle, gear, robot head or generic technology badge;
 - recolour it for status or for different products;
 - add glow, bevel, outline or drop shadow;
-- put detailed imagery or low-contrast colour behind it; or
+- put uncontrolled detailed imagery or low-contrast colour behind it; or
 - recreate the mark from text characters.
 
 ## Colour system
@@ -71,17 +71,18 @@ Keep clear space around the logo equal to the width of one small outer module in
 
 | Name | Hex | Role |
 |---|---|---|
-| Midnight | `#071A2D` | Dark foundation, confident navigation and high-contrast backgrounds |
-| Deep navy | `#0B2742` | Primary brand ink and monochrome logo |
-| Ink | `#102A43` | Main text |
+| Obsidian | `#01070F` | Signature brand field and dark cover background |
+| Midnight | `#03111E` | Dark panels, navigation and textured fields |
+| Deep blue | `#063F72` | Primary monochrome mark and strong structural blue |
+| Ink | `#102A43` | Main text on pale surfaces |
+| Loop blue | `#0E5B92` | Main body of the OA loop and connected graphics |
 | Action blue | `#0B77D2` | Accessible primary action and active state |
-| Flow blue | `#2E9EFF` | Connection, flow and secondary graphical emphasis |
-| Human sky | `#68C4FF` | Open, supportive highlight and the light module of the mark |
-| Paper | `#F7FAFC` | Default background |
-| Canvas | `#EEF4F8` | Section separation and application workspace |
+| Electric cyan | `#32B6FE` | Movement, connection and the bright loop transition |
+| Paper | `#F5F7FA` | Sustained reading and document background |
+| Canvas | `#EAF0F5` | Application workspace and section separation |
 | White | `#FFFFFF` | Cards and reversed text |
 
-The source mark retains its original blue (`#0C79D8`) alongside Flow blue and Human sky. Action blue is a slightly deeper interface derivative so ordinary white button text meets the contrast baseline. It is the only default primary-action colour. Flow blue and Human sky are supporting colours and must not be used for small text on a light surface.
+The raster reference contains subtle tonal variation. The listed loop colours are representative implementation anchors, not permission to flatten or redraw the source art. Action blue is a slightly deeper interface derivative so ordinary white button text meets the contrast baseline. Electric cyan is an accent and must not be used for small text on a light surface.
 
 ### Human decision accent
 
@@ -105,20 +106,20 @@ Always pair state colour with explicit text and, where useful, an icon or patter
 
 ### Proportion
 
-For a typical light surface:
+For a signature or campaign surface:
 
-- 65–75% paper, white and canvas;
-- 15–25% midnight, navy and ink;
-- 5–10% signal and flow blue; and
+- 55–70% Obsidian and Midnight;
+- 15–25% deep and loop blue;
+- 5–10% white, action blue and electric cyan; and
 - less than 5% amber or operational state colours.
 
-This is guidance, not a formula. High-density applications may use more neutral surface colour; campaigns may use a dark foundation.
+For a working document or high-density application, reverse the balance towards Paper, Canvas and White while retaining a dark masthead, OA mark and blue connection accent.
 
 ## Typography
 
 ### Primary sans-serif
 
-**Source Sans 3** is the preferred family for the wordmark, body copy, interfaces, tables and labels. It is direct, open and readable across dense operational material.
+**Source Sans 3** is the preferred family for body copy, interfaces, tables and labels. It is direct, open and readable across dense operational material.
 
 Fallback:
 
@@ -126,14 +127,14 @@ Fallback:
 Source Sans 3, Source Sans Pro, Segoe UI, Arial, sans-serif
 ```
 
-### Editorial serif
+### Geometric display
 
-**Source Serif 4** may be used for major editorial headlines, quotations and long-form chapter openings. It brings human warmth to a technical subject. Do not use it for controls, tables, small labels or dense application navigation.
+**Montserrat** is the preferred display and recreated-wordmark family. Use it for major headings, covers and the two-level OPERATIONS / AUTOMATED composition. Its wide geometry and firm weight match the founder-supplied reference. Do not use heavy display weights for body copy.
 
 Fallback:
 
 ```text
-Source Serif 4, Georgia, Times New Roman, serif
+Montserrat, Aptos Display, Arial, sans-serif
 ```
 
 ### Monospace
@@ -148,7 +149,8 @@ Cascadia Mono, SFMono-Regular, Consolas, monospace
 
 ### Type behaviour
 
-- Use sentence case for headings, controls and navigation.
+- Use sentence case for ordinary headings, controls and navigation.
+- Use tracked uppercase only for the OPERATIONS wordmark line, short cover labels and rare structural eyebrows.
 - Use weight and space before adding another colour or rule.
 - Keep body text at 16 px or larger on websites and 10.5 pt or larger in documents.
 - Keep line length near 55–75 characters for sustained reading.
@@ -177,7 +179,7 @@ Use 24–32 px inside ordinary cards and 64–96 px between major public-page se
 - Feature-panel radius: 20 px.
 - Status pill: fully rounded.
 
-The logo uses softened modules, so components may have gentle corners. Avoid over-rounded “toy” interfaces and avoid sharp-edged layouts that feel punitive.
+The loop mark combines continuous curves with a precise A. Components may use restrained corners, but the system should feel more engineered than playful. Avoid over-rounded “toy” interfaces and avoid sharp-edged layouts that feel punitive.
 
 ### Lines and shadows
 
@@ -190,13 +192,13 @@ Use borders to express structure and shadows only to express elevation.
 
 ## Backgrounds and patterns
 
-### Light connection field
+### Obsidian connection field
 
-Use paper or canvas with two low-opacity linear gradients forming a 64 px grid. Add one or two soft radial blue fields to suggest connection and movement. Keep contrast below the level of body text and never place grid detail behind dense copy.
+Use Obsidian with a low-opacity irregular mesh, fine routes and a controlled blue/cyan edge light. The texture should feel physical and connected rather than like a generic circuit board. Keep the centre quiet enough for the mark and message.
 
-### Midnight connection field
+### Light working field
 
-Use Midnight with a subtle blue radial field and a low-opacity grid. Reserve this for hero areas, navigation, covers and controlled emphasis rather than every page.
+Use Paper or Canvas for long reading, evidence, forms and dense application work. A very faint blue route or mesh may connect sections, but the texture must not reduce reading clarity.
 
 ### Connector motif
 
@@ -251,7 +253,7 @@ If removing animation removes meaning, provide an equivalent static state.
 
 ## Accessibility baseline
 
-The templates target WCAG 2.2 AA contrast for ordinary text and controls. The system also uses a visible two-colour focus treatment and does not use colour alone to identify status.
+The templates target WCAG 2.2 AA contrast for ordinary text and controls. The initial reference art is visually reviewed separately because text baked into an image cannot replace accessible live text. The system also uses a visible two-colour focus treatment and does not use colour alone to identify status.
 
 Reference:
 

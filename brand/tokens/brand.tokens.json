@@ -6,15 +6,15 @@
     "owner": "Jamie Peppard"
   },
   "colour": {
-    "midnight": "#071A2D",
-    "navy": "#0B2742",
+    "obsidian": "#01070F",
+    "midnight": "#03111E",
+    "navy": "#063F72",
     "ink": "#102A43",
-    "logoBlue": "#0C79D8",
+    "loopBlue": "#0E5B92",
     "blue": "#0B77D2",
-    "flow": "#2E9EFF",
-    "sky": "#68C4FF",
-    "paper": "#F7FAFC",
-    "canvas": "#EEF4F8",
+    "electric": "#32B6FE",
+    "paper": "#F5F7FA",
+    "canvas": "#EAF0F5",
     "white": "#FFFFFF",
     "muted": "#52677C",
     "line": "#CDD9E3",
@@ -30,7 +30,7 @@
   },
   "type": {
     "sans": "\"Source Sans 3\", \"Source Sans Pro\", \"Segoe UI\", Arial, sans-serif",
-    "serif": "\"Source Serif 4\", Georgia, \"Times New Roman\", serif",
+    "display": "Montserrat, \"Aptos Display\", Arial, sans-serif",
     "mono": "\"Cascadia Mono\", \"SFMono-Regular\", Consolas, monospace",
     "size": {
       "xs": "0.75rem",

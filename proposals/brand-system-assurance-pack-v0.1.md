@@ -14,47 +14,42 @@ decision_required: approve, revise or reject the draft brand foundation for inte
 
 Jamie is asked to approve, revise or reject **Brand System v0.1 as the internal-validation foundation** for Operations Automated.
 
-The decision has five parts:
+The decision has six parts:
 
-1. confirm that the four-part blue connection mark is the intended agreed logo;
+1. confirm the founder-supplied continuous OA loop as the draft master mark;
 2. confirm or revise the organising idea **Connected operations. Human outcomes.**;
-3. approve or revise the navy, blue, sky and amber colour direction;
-4. approve or revise the Source Sans / Source Serif typography and verbal voice; and
-5. authorise a bounded internal pilot on one application, one controlled document and one public-page prototype.
+3. approve or revise the Obsidian, deep-blue and electric-cyan visual direction;
+4. approve or revise the Montserrat-style display and Source Sans body typography;
+5. decide whether **Operations consultancy** and **Automate. Autonomise. Empower.** are retained, revised or removed; and
+6. authorise a bounded internal pilot on one application, one controlled document and one non-published public-page prototype.
 
 ## AI recommendation
 
-Approve v0.1 for bounded internal validation after confirming the mark assumption. It provides enough coherence to test the brand in real use without prematurely locking every future product or publishing externally.
+Approve the OA loop, visual tone and reusable system for bounded internal validation. Resolve the descriptor and strapline before any public use, and obtain or recreate a controlled vector master before relying on the identity in production.
 
 ## Trigger and founder intent
 
 ### Source
 
-Jamie's direction in the Operations Automated project conversation on 25 July 2026.
+Jamie's direction and three supplied brand references in the Operations Automated project conversation on 25 July 2026.
 
 ### Information boundary
 
-The work uses only the controlled repository, the existing logo asset retained in project history and Jamie's non-confidential brand direction. It contains no employer, client or third-party information.
+The work uses only the controlled repository, Jamie's supplied brand references and non-confidential brand direction. It contains no employer, client or third-party information.
 
 ### Jamie's intent
 
 - Create a dedicated, reusable brand area.
 - Use the improved and agreed logo as the foundation.
 - Make Operations Automated consistent across websites, applications and documentation.
-- Express connectivity, automation, efficiency, delivery for people and broad applicability.
-- Avoid segregating the brand into one organisational type or narrow category.
+- Express connectivity, automation, efficiency, helpful delivery and broad applicability.
+- Avoid segregating the brand around one organisational type or narrow audience.
 
 ## Current position
 
-Before this proposal, Operations Automated had:
+The supplied references establish a continuous OA loop, dark technical surface, deep-blue-to-cyan transition, geometric wordmark and connected-mesh imagery. They supersede the earlier AI assumption that a four-block prototype favicon was the agreed logo.
 
-- an established name;
-- several navy, blue and editorial visual directions across prototypes;
-- a four-part connection mark in the newer prototype;
-- strong approved cultural and methodological principles; and
-- no controlled master brand system, design tokens, logo rules or cross-surface templates.
-
-This meant each new surface could independently reinterpret the brand, create a new logo treatment or lose the human-led operational meaning.
+Before this proposal, those visual choices existed as raster examples rather than a controlled, cross-surface system. The repository had no shared design tokens, usage rules, accessible live-text treatment or reusable templates.
 
 ## Proposed meaning
 
@@ -64,7 +59,7 @@ It presents Operations Automated as:
 
 - a whole-system operational partner;
 - modern and automation-aware without being technology-first;
-- useful to individuals, teams and organisations;
+- useful across different people, teams and organisations;
 - evidence-led, practical and challenging;
 - explicit about people, authority, status and recovery; and
 - capable of adapting across media through one shared token system.
@@ -73,19 +68,20 @@ The proposed primary working line is:
 
 > **See the whole operation. Improve what matters. Automate only when it earns its place.**
 
-This line reflects the approved methodology but remains a draft brand expression rather than an approved external claim.
+This line reflects the approved methodology but remains draft brand expression rather than an approved external claim.
 
 ## What has been created
 
 - A controlled `brand` section with draft status and approval boundary.
 - Brand purpose, promise, position, personality, audience and architecture.
-- Logo meaning, spacing, size, colour and misuse rules.
+- Controlled copies of the three supplied raster references.
+- Logo meaning, spacing, size, colour and misuse rules based on the continuous OA loop.
+- Deterministic colour, navy, white and dark-tile raster derivatives.
 - Colour, typography, spacing, shape, background, imagery and motion guidance.
 - Voice, tone, terminology, headline, action and status guidance.
 - Platform-neutral JSON tokens, CSS variables and typed application tokens.
-- Colour, navy and white marks plus horizontal lock-ups.
 - A visual brand board.
-- Working website, application and documentation starter templates.
+- Working website, application, documentation and LinkedIn profile-cover templates.
 - Asset-generation and validation scripts.
 
 ## Evidence and reasoning
@@ -94,47 +90,60 @@ This line reflects the approved methodology but remains a draft brand expression
 
 - The approved Founder Charter requires purpose before process, people where context and consequence matter, connection across the whole operation and improvement before automation.
 - The approved Human-AI Collaboration Method requires comprehension, decision usefulness, evidence separation, meaningful authority and the smallest suitable representation.
-- Existing prototype styling already uses dark navy, blue, serif/sans contrast and connected-system visual language.
-- The four-part mark supplies a simple, scalable connection motif.
+- The founder-supplied references consistently use the OA loop, Obsidian surface, blue/cyan energy, geometric typography and connected mesh.
+- LinkedIn's current profile-cover guidance recommends 1584 × 396 pixels and warns that display varies with browser and screen size.
 
 ### Jamie's judgement
 
-Connectivity, automation, efficiency, helpful delivery and broad applicability should be central to the company brand.
+Connectivity, automation, efficiency, helpful delivery and broad applicability should be central to the company brand. The supplied images are the initial brand direction to match.
 
 ### AI inference
 
-- A dark navy foundation conveys calm control more appropriately than a black or neon technology identity.
-- The mark's existing blue can communicate flow; a slightly deeper accessible blue can carry interface action, while amber keeps human decision points visually distinct.
-- A humanist sans-serif supports dense operational use; a limited editorial serif adds warmth and prevents the brand feeling like generic enterprise software.
-- Broad applicability is best expressed by an inclusive masterbrand with context-specific messages, not by saying every offer is for everyone.
+- The continuous loop is a stronger expression of connected operations than the previously assumed four-block mark.
+- Obsidian and deep blue communicate calm technical control; electric cyan provides motion and energy.
+- Geometric display type fits the supplied identity, while Source Sans remains legible for working interfaces and documents.
+- Dark signature surfaces should be balanced with light working surfaces so the brand remains helpful rather than cold.
+- Broad applicability is best expressed through an inclusive masterbrand with context-specific offers, not an undifferentiated claim that every service is for everyone.
 
 ### Assumptions
 
-- The mark found at repository reference `1c50729:governance-site/public/favicon.svg` is the intended agreed logo.
-- Source Sans 3 and Source Serif 4 are acceptable future self-hosted typefaces; system fallbacks are used in the current templates.
+- The three founder-supplied raster references are the current visual source of truth for this draft.
+- A final editable vector master is not yet available.
+- Montserrat and Source Sans 3 are acceptable future self-hosted typefaces; system fallbacks are used in the current templates.
 - The brand should lead with the masterbrand and endorse named products rather than create separate product logos immediately.
+
+## Descriptor and strapline assessment
+
+The reference wording has been retained as evidence, not silently approved.
+
+| Wording | Strength | Concern |
+|---|---|---|
+| **Operations consultancy** | Immediately explains a service category | May narrow a future methodology, product and capability platform too early |
+| **Automate. Autonomise. Empower.** | Memorable cadence and close visual fit | “Autonomise” may imply autonomy as a default outcome, while the approved methodology makes autonomy conditional on readiness, authority and control |
+
+Possible working alternatives include **Understand. Improve. Automate.** and **Connect. Improve. Empower.** They are proposals only.
 
 ## Alternatives considered
 
-### 1. Continue allowing each product to define its own identity
+### 1. Preserve the supplied artwork without creating a system
 
-**Benefit:** minimal central work and maximum local freedom.
+**Benefit:** exact continuity with the current images.
 
-**Risk:** inconsistent recognition, repeated design decisions, status colours with different meanings and products drifting away from the human-led methodology.
+**Risk:** inaccessible embedded text, inconsistent recreation, no application or document pattern and no governed source.
 
 **Disposition:** not recommended.
 
-### 2. Create the complete external brand and migrate every surface now
+### 2. Complete the external identity and migrate every surface now
 
 **Benefit:** immediate visual uniformity.
 
-**Risk:** locks untested decisions, creates avoidable migration, confuses technical completion with approval and may require trade-mark, licensing, publication and commercial decisions that have not been made.
+**Risk:** locks untested language and assets, confuses technical readiness with approval and may require trade-mark, licensing, publication and commercial decisions.
 
 **Disposition:** defer.
 
-### 3. Establish a draft core system and test three bounded surfaces
+### 3. Establish a draft core system around the supplied identity and test three bounded surfaces
 
-**Benefit:** creates a usable shared baseline while preserving correction and learning.
+**Benefit:** creates a recognisable shared baseline while preserving correction and learning.
 
 **Risk:** some existing surfaces remain inconsistent during the pilot.
 
@@ -148,46 +157,32 @@ Connectivity, automation, efficiency, helpful delivery and broad applicability s
 | Product prototypes | No automatic migration or deployment |
 | Confluence publication | No write or live publication is authorised |
 | Commercial strategy | Brand breadth does not approve an external audience, offer or price |
-| Fonts and assets | Current templates use local fallbacks; final distribution needs recorded font licences and packaging |
+| Fonts and assets | Final distribution needs recorded font licences, packaging and a controlled vector master |
 | Legal identity | No company-name, domain or trade-mark clearance is claimed |
 
 ## Risks and controls
 
 | Risk | Control |
 |---|---|
-| Wrong source logo is adopted | Jamie confirms the mark before approval; assets are isolated for replacement |
-| “Automation” dominates the human purpose | Human outcomes, judgement and authority are explicit in message, colour and component rules |
-| Broad applicability becomes a generic promise | Masterbrand remains broad; individual offers name a bounded problem and audience |
-| Decorative connection imagery implies false relationships | Connector motif is used only where a real relationship can be explained |
-| Status relies on colour | Templates pair colour with text, icon/shape and programmatic labels |
-| Existing products drift or fork tokens | Machine-readable sources and extension rules define a single baseline |
-| Draft design is mistaken for publication approval | Status and boundary are visible in all three starter templates |
+| Raster artwork becomes the permanent master | Keep derivation explicit and require founder comparison before a vector replacement is adopted |
+| “Automation” dominates the human purpose | Human outcomes, judgement and authority remain explicit in message and component rules |
+| “Autonomise” implies automatic delegation | Keep the strapline unapproved until its meaning is decided |
+| Broad applicability becomes a generic promise | Keep the masterbrand broad; individual offers name a bounded problem and audience |
+| Dark styling becomes cold or hard to use | Pair dark signature surfaces with high-legibility light working surfaces |
+| Decorative connection imagery implies false relationships | Use the motif only where a real relationship can be explained |
+| Status relies on colour | Pair colour with text, icon or shape and programmatic labels |
+| Draft design is mistaken for publication approval | Show status and boundary in all starter templates |
 
 ## Checks completed
 
 - Brand artefacts retain draft or proposed status.
 - Existing approved methodology meaning and terminology were checked.
-- The logo source and assumption are recorded.
+- The founder-supplied sources and superseded logo assumption are recorded.
 - Browser templates use one shared token source and no external runtime dependency.
 - Core text and state pairs are checked against a 4.5:1 contrast baseline.
 - Templates include skip links, visible focus treatment and reduced-motion handling.
-- Local file references, token parity and expected assets are validated automatically.
+- Local file references, manifest assets, token parity and expected assets are validated automatically.
 - The system distinguishes internal approval from publication, migration, deployment and legal clearance.
-
-## What could improve
-
-- Faster creation of recognisably related artefacts.
-- Clearer connection between company, methodology and products.
-- More consistent status, action and human-decision treatment.
-- Lower design and implementation rework.
-- A practical basis for accessibility and first-use testing.
-
-## What could become worse
-
-- A central system can become rigid or ceremonial if every local need requires a brand rule.
-- The editorial serif may feel too formal in some product contexts.
-- A blue-led palette can resemble other enterprise technology brands unless the operational voice and connection motif remain distinctive.
-- The mark may be misinterpreted if it is not the one Jamie intended.
 
 ## Validation plan
 
@@ -205,11 +200,12 @@ If approved for internal validation:
 Approval would authorise:
 
 - Brand System v0.1 as the working internal baseline;
-- reuse of its logo, tokens, voice and templates in bounded internal prototypes; and
+- reuse of its OA loop, tokens, voice and templates in bounded internal prototypes; and
 - the three-surface validation plan.
 
 Approval would not authorise:
 
+- the source descriptor or strapline unless Jamie explicitly includes them in the decision;
 - external publication, marketing, customer use or sales;
 - website or application deployment;
 - migration of existing products or Confluence pages;

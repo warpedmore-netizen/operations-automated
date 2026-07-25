@@ -5,12 +5,16 @@ All material changes to Operations Automated will be recorded here.
 ## Brand system 0.1.0 - draft
 
 - Added a controlled brand area for consistent use across websites, applications and documentation.
-- Reused the four-part blue connection mark as the working logo source, pending Jamie's confirmation that it is the intended agreed asset.
+- Corrected the working identity after Jamie supplied the intended continuous OA loop reference.
+- Added controlled copies of the founder-supplied square mark, wide banner and 1584 × 396 LinkedIn profile cover.
+- Replaced the superseded four-block exports with deterministic colour, navy, white and dark-tile derivatives of the OA loop.
+- Aligned the system to an Obsidian, deep-blue and electric-cyan palette, geometric display typography and restrained connected-mesh backgrounds.
 - Proposed **Connected operations. Human outcomes.** as the organising brand idea.
 - Added logo, colour, typography, layout, imagery, motion, accessibility, voice and naming guidance.
 - Added platform-neutral JSON tokens, reusable CSS variables and typed application tokens.
-- Added a visual brand board and working website, application and documentation templates.
+- Added a visual brand board and working website, application, documentation and social templates.
 - Added logo export generation, automated token, reference and contrast checks, and a plain-English decision pack.
+- Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.
 - Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.
 
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
