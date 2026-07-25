@@ -2,6 +2,17 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.0.0 human publication model - proposed
+
+- Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.
+- Proposed a primary reader layer for book-like methodology guidance, policies, frameworks, product documentation and user guides.
+- Retained Live, Draft and Archived as a secondary controlled-record layer for assurance, traceability and recovery.
+- Proposed publication manifests, document types, source maps and exact curated-page diffs.
+- Proposed one bounded Methodology reading pilot, one Internal task pilot and one manual document-challenge pilot before any complete migration.
+- Proposed that authorised edits, comments and feedback become governed methodology challenge candidates rather than automatic changes.
+- Kept automatic retrieval of document interactions behind a separate permission, confidentiality and retention decision.
+- Kept the current 108 pages unchanged and retained the separate founder confirmation for every live Confluence write.
+
 ## Workbench 0.9.0 - approved for private internal validation
 
 - Reorganised both Confluence reading libraries by lifecycle first: Live, Draft and Archived.
