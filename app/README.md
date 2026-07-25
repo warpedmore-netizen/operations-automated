@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.8.0 was approved and merged for private internal validation through PR #14. Workbench 0.9.0 is a proposed lifecycle-first revision to its Confluence reading structure. Neither is deployed or approved for external use.
+> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. It is not deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -56,7 +56,7 @@ This token-entry route is for Jamie's private local validation only. A customer-
 
 ## Governed documentation publication
 
-Workbench 0.8.0 provides a separate, controlled route for delivering the repository as readable Confluence documentation during private internal validation. Workbench 0.9.0 proposes the lifecycle-first structure requested before the first live publication.
+Workbench 0.9.0 provides a separate, controlled route for delivering the repository as readable lifecycle-first Confluence documentation during private internal validation.
 
 1. Open **Connections** and select **Preview documentation update**.
 2. Review the create, update, unchanged and conflict counts.
