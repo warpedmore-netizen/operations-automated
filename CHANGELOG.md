@@ -2,6 +2,16 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Ideas Space 0.1 - proposed
+
+- Added a structured Ideas Space that preserves ideas without making them commitments.
+- Separated authoritative artefact status from the working lifecycle of an idea.
+- Added capture, relationship, resurfacing and contextual-review guidance.
+- Added a reusable idea-record template and a lightweight local related-idea finder.
+- Added planning instructions to review related ideas during discovery through roadmap planning.
+- Captured the Incident Management Simulation Game as the first raw idea, with its evidence, assumptions, relationships and explicit authority boundary.
+- No product scope, build, external connection, spending, publication or autonomous approval is authorised by this proposal.
+
 ## Workbench 0.9.0 - approved for private internal validation
 
 - Reorganised both Confluence reading libraries by lifecycle first: Live, Draft and Archived.

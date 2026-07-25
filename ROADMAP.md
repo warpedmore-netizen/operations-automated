@@ -58,6 +58,8 @@ Workbench 0.8.0 added the [governed documentation-publication capability](produc
 
 Commercial validation follows evidence from these workstreams; it does not determine the methodology's values or approve external publication.
 
+The proposed [Ideas Space](ideas/README.md) supports all workstreams as a retained memory rather than a fourth delivery commitment. Related ideas should be reviewed when work reaches discovery, research, prioritisation, scoping, design, build, review or roadmap planning. Resurfacing does not itself change priority or authority.
+
 ## Milestones and human control points
 
 | Milestone | Main work | Evidence required | Jamie's decision |
