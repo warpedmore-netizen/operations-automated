@@ -2,6 +2,11 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.1.1 brand rail refresh - proposed
+
+- Replaced the improvised circular OA badge with the controlled continuous-loop mark in the application rail and welcome state.
+- Increased Recent-conversation contrast, type size and spacing, allowed two-line titles and strengthened the current-conversation state.
+
 ## Workbench 1.1.0 mobile knowledge workbench - proposed
 
 - Reframed the founder experience around challenge, defence, retained feedback, readable decisions and governed knowledge publication.

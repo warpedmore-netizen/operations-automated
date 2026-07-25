@@ -74,8 +74,8 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(html, /\/brand-system\/tokens\/brand\.css/);
   assert.match(html + appSource, /\/brand-system\/assets\/logo\/generated\/mark-colour-transparent-1024\.png/);
   assert.match(html, /\/brand-system\/assets\/logo\/generated\/mark-dark-tile-192\.png/);
-  assert.match(html, /class="brand-logo"[^>]*>OA</);
-  assert.doesNotMatch(html, /<img[^>]+class="(?:brand-logo|welcome-logo)"/);
+  assert.match(html, /<img[^>]+class="brand-logo"[^>]+mark-colour-transparent-1024\.png/);
+  assert.match(html, /<img[^>]+class="welcome-logo"[^>]+mark-colour-transparent-1024\.png/);
   assert.match(appSource, /\/api\/brand-review/);
   assert.match(appSource, /approve-internal/);
   assert.match(appSource, /Revision requested/);
@@ -85,6 +85,8 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(cssSource, /var\(--oa-midnight,\s*#03111e\)/);
   assert.match(cssSource, /var\(--oa-font-display,\s*Montserrat/);
   assert.match(cssSource, /var\(--oa-ink,\s*#102a43\)/);
+  assert.match(cssSource, /\.conversation-link\.current[^}]+var\(--oa-electric,\s*#32b6fe\)/s);
+  assert.match(cssSource, /-webkit-line-clamp:\s*2/);
 });
 
 test("the primary knowledge journey remains readable and touch-usable on a phone", () => {
