@@ -2,6 +2,17 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Proposed — Connected Governance business dogfood pilot
+
+- Recovered the preserved Connected Governance domain proof and deployable private test surface into the authoritative proposal branch.
+- Defined the customer methodology, internal methodology-development system, Connected Governance and Incident Manager RPG as connected but separately governed systems.
+- Added an Operations Automated dogfooding profile and durable Governance Authority and Methodology Authority roles.
+- Replaced component-name-only output with ten substantive proposed company-governance documents.
+- Added a controlled Internal Draft hand-off boundary that reuses the private Workbench publication route rather than duplicating credentials.
+- Retained scenario, finding, drift, versioning and AI-without-approval behaviour from the earlier governance proof.
+- Added a dogfooding pilot, feedback record and plain-English assurance pack.
+- No generated company policy, methodology change, Live publication, new connection or external release is approved by this proposal.
+
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.

@@ -86,6 +86,10 @@ Workbench 0.8.0 added [governed Confluence documentation publication](product/co
 
 The first live publication proved the controls and created 108 reconciled pages. Founder review then identified that the result remains a controlled repository mirror rather than a human publication. The [Confluence human publication model](product/confluence-human-publication-model.md) is approved for private internal implementation of three bounded pilots. It adds a curated reader layer for a book-like methodology and organisational policies, frameworks, functionality documentation and user guides, while retaining the lifecycle mirror as a secondary controlled record. Authorised document edits, comments and feedback may enter the governed methodology challenge loop through the approved manual pilot; automatic retrieval remains separately unapproved.
 
+A proposed [connected system architecture](product/operations-automated-system-architecture.md) now distinguishes the customer methodology, internal methodology-development system, Connected Governance product and standalone Incident Manager RPG. Findings may be routed between them, but each retains its own audience, authority, status and output.
+
+The proposed [Connected Governance business dogfood pilot](product/connected-governance-dogfood-pilot.md) recovers the existing domain and hosted prototypes and adds an Operations Automated profile, role-based authority and ten substantive company-governance drafts. The candidate package remains proposed and targets the controlled Internal Draft route. It does not approve policy, change methodology meaning, duplicate the private Confluence credential or promote anything to Live.
+
 ## Repository control
 
 - `main` is the current controlled internal project memory and may contain artefacts at different governance states.

@@ -50,6 +50,8 @@ Workbench 0.8.0 added the [governed documentation-publication capability](produc
 
 The first founder-confirmed publication created 108 pages and the immediate comparison returned all 108 unchanged with no conflict. Founder review found a delivery gap: the result is a governed repository mirror rather than a human methodology book or internal handbook. The [human publication model](product/confluence-human-publication-model.md) and three bounded pilots are approved for private internal implementation pending merge. The model adds a curated reader layer while preserving the lifecycle mirror as a secondary controlled record. Its manual document-challenge pilot routes an authorised test interaction into the methodology challenge loop, while automatic comment and edit retrieval remains behind a separate connection decision.
 
+Founder clarification then separated four connected systems: the customer methodology, its internal development and challenge system, Connected Governance, and the standalone Incident Manager RPG. The proposed [connected system architecture](product/operations-automated-system-architecture.md) records their authority and feedback boundaries. The proposed [Connected Governance dogfood pilot](product/connected-governance-dogfood-pilot.md) is the first product test: use the governance service to create Operations Automated's role-based company-governance foundation and prepare it for the existing controlled Internal Draft publication route.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -87,6 +89,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 9. After the approved model is merged, implement one Methodology reading path, one Internal task path and one manually identified document challenge as bounded private pilots without deleting or moving the current controlled pages or performing a live write without separate confirmation.
+10. Validate the Connected Governance dogfooding route: create substantive proposed company-governance documents, review their role and system boundaries, prepare the controlled Internal Draft hand-off and retain product and methodology findings separately.
 
 ## Application decision
 
