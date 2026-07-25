@@ -735,7 +735,9 @@ function renderConfluencePublicationPlan(plan) {
         <summary><strong>${label}</strong><span>${items.length} pages</span></summary>
         <div>
           ${roots.map(renderItem).join("")}
-          ${(plan.lifecycleOrder?.length ? lifecycleGroups : []).map(([lifecycle, lifecycleLabel]) => {
+          ${(plan.lifecycleOrder?.length
+            ? lifecycleGroups.filter(([lifecycle]) => plan.lifecycleOrder.includes(lifecycle))
+            : []).map(([lifecycle, lifecycleLabel]) => {
             const lifecycleItems = items.filter((item) => item.lifecycle === lifecycle);
             const documentCount = lifecycleItems.filter((item) => item.kind === "controlled-document").length;
             return `<details class="publication-lifecycle" ${lifecycle === "live" ? "open" : ""}>
@@ -746,11 +748,13 @@ function renderConfluencePublicationPlan(plan) {
         </div>
       </details>`;
     }).join("")}
-    <p class="confirmation-phrase">Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong></p>`;
-  form.hidden = !plan.publishable;
+    <p class="confirmation-phrase">${plan.founderConfirmationRequired === false
+      ? "<strong>Draft publication is AI-managed.</strong> No separate founder confirmation is required; promotion to Live remains controlled."
+      : `Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong>`}</p>`;
+  form.hidden = !plan.publishable || plan.founderConfirmationRequired === false;
   form.reset();
   form.actor.value = "Jamie Peppard";
-  form.confirmation.placeholder = plan.confirmationPhrase;
+  form.confirmation.placeholder = plan.confirmationPhrase || "";
 }
 
 async function previewConfluencePublication(publicationKind = "controlled-mirror") {
@@ -765,7 +769,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
     });
     renderConfluencePublicationPlan(result.plan);
     toast(methodologyLab
-      ? "Methodology Lab preview ready. The current pages are unchanged."
+      ? "Methodology Lab Draft preview ready. No Live page was changed."
       : "Publication preview ready. No Confluence page was changed.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";

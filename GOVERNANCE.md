@@ -94,11 +94,13 @@ Jamie should be able to understand the decision without reading code or a raw di
 | Draft a methodology or product change | Allowed | No |
 | Run consistency, governance and technical checks | Allowed | No |
 | Manage branches, commits and draft pull requests | Allowed | No |
+| Publish committed proposed material to a controlled private Confluence Draft parent | Allowed | No |
 | Notify Jamie that a decision is required through an approved channel | Allowed | Channel approval required first |
 | Connect a new feedback, communication, data or business service | Not autonomous | Yes |
 | Collect identifiable analytics or confidential information | Not autonomous | Yes, with an approved data basis |
 | Change authoritative meaning | Propose only | Yes |
 | Change an artefact to Approved or Published | Execute only after explicit authorisation | Yes |
+| Promote Confluence material to Live | Execute only after explicit authorisation | Yes |
 | Merge a reviewed proposal | Execute only after explicit authorisation | Yes |
 | Publish or communicate externally | Not autonomous | Yes |
 | Contact users or customers | Not autonomous | Yes |
@@ -124,6 +126,7 @@ Jamie should be able to understand the decision without reading code or a raw di
 - An approved methodology release should identify affected prompts, templates, checks, products and migration needs.
 - Delivery behaviour must not change silently when authoritative meaning changes.
 - Product feedback should return to the evolution system without automatically editing the method.
+- Draft publication is a review-delivery action, not approval. AI may place committed proposed material beneath a controlled private Confluence Draft parent, but it may not describe that material as Live or infer authority from the publication.
 
 ## Review triggers
 

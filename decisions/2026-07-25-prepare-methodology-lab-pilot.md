@@ -23,11 +23,11 @@ This authorises:
 - implementation on a separate branch;
 - local testing and assurance;
 - creation of a draft pull request; and
-- preparation of a reviewed Confluence plan after the implementation is later merged.
+- AI publication of committed proposed Lab pages beneath the controlled Confluence Draft parent without another confirmation.
 
 ## Selected location
 
-Use a separate managed **Operations Automated Methodology Lab – Pilot 1** root within the existing private Methodology space.
+Use a separate managed **Operations Automated Methodology Lab – Pilot 1** root beneath **Draft** in the existing private Methodology space.
 
 This avoids a new connection or space while keeping the pilot separate from the current controlled mirror.
 
@@ -36,11 +36,11 @@ This avoids a new connection or space while keeping the pilot separate from the 
 This decision does not authorise:
 
 - merging the implementation proposal;
-- a live Confluence write before the exact plan is reviewed;
+- promotion or publication to Live;
 - changing, moving or deleting the current 108 pages;
 - approving the proposed Lab prose as methodology meaning;
 - automatic retrieval of document interactions;
 - external publication; or
 - customer use.
 
-The later live write requires Jamie to enter the plan-specific phrase recorded in the assurance pack.
+AI may prepare, check and publish the Draft plan. Any Confluence conflict stops the write. Jamie retains the decision to approve methodology meaning, merge the implementation and promote material to Live.

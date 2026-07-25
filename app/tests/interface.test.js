@@ -82,11 +82,12 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Windows user-level encryption/i);
   assert.match(html, /never publishes automatically or deletes a Confluence page/i);
   assert.match(html, /Git status remains authoritative/i);
-  assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
+  assert.match(html, /AI may publish committed proposals into Draft for review/i);
+  assert.match(html, /Promotion to Live requires Jamie’s explicit approval/i);
   assert.match(html, /cannot approve a methodology change/i);
   assert.match(html, /organised first into Live, Draft and Archived/i);
   assert.match(html, /Methodology Lab – Pilot 1/i);
-  assert.match(html, /leaves the current 108 pages unchanged/i);
+  assert.match(html, /does not alter Live content/i);
   assert.match(html, /Type the confirmation shown above/i);
   assert.match(appSource, /Use reviewed Git copy/i);
   assert.match(appSource, /publication-conflicts\/reapply/i);

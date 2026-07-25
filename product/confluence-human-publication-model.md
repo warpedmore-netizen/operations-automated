@@ -388,3 +388,5 @@ This approval authorises implementation preparation after the change is merged. 
 A separate connection and data decision is required before automatic retrieval of edits, comments or feedback. The approved third pilot must use manually identified, non-confidential test content until that later decision is made.
 
 PR #17 was explicitly authorised and merged on 2026-07-25. The first Methodology reading-path implementation is now proposed through the [Methodology Lab pilot](methodology-lab-pilot.md); its live Confluence plan remains separately confirmation-gated.
+
+Jamie subsequently clarified the publication authority on 2026-07-25. AI may publish committed proposed documents beneath the controlled private Confluence **Draft** parent without another confirmation. Draft publication exists to make human review easier and does not approve the content. Conflict resolution, methodology meaning, merge and promotion to **Live** remain founder-controlled.

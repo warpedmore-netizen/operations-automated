@@ -4,15 +4,17 @@ All material changes to Operations Automated will be recorded here.
 
 ## Workbench 1.0.0 Methodology Lab - proposed
 
+- Corrected the authority model after founder review: AI may publish committed proposed material beneath controlled Confluence Draft parents without another confirmation; Live promotion remains founder-controlled.
+- Moved the Methodology Lab target beneath the existing Methodology Draft page rather than creating another top-level review area.
 - Added an isolated ten-page Methodology Lab manuscript implementing the approved book-style reader pilot.
 - Added a controlled manifest defining titles, hierarchy, reading order and approved source maps.
 - Added a separate Workbench preview mode that contains only the Lab pages and targets the existing private Methodology space.
 - Added validation that rejects unapproved sources, non-proposed pilot pages, duplicate keys or titles, missing parents and hierarchy cycles.
-- Added the exact confirmation `Publish reviewed methodology lab to Confluence`.
+- Added retained source, conflict, version and audit controls for AI-managed Draft publication.
 - Added a review page that separates methodology, explanation, navigation, product, evidence and no-change feedback.
-- Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no automatic publication.
+- Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no scheduled publication.
 - Added a product specification, feedback record, decision record and assurance pack for the first dogfooding loop.
-- This implementation remains proposed. Merge and the later live Confluence plan each require separate Jamie Peppard decisions.
+- This implementation remains proposed. Draft publication is authorised for review; merge and promotion to Live each remain separate Jamie Peppard decisions.
 
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 

@@ -17,9 +17,9 @@ It is a private dogfooding environment, not a replacement for the authoritative 
 
 ## Location
 
-The pilot uses a separate top-level page tree in the already selected private Methodology space:
+The pilot uses a separate page tree beneath the existing top-level **Draft** page in the private Methodology space:
 
-**Operations Automated Methodology Lab – Pilot 1**
+**Draft → Operations Automated Methodology Lab – Pilot 1**
 
 This is sufficient isolation for the first test without creating:
 
@@ -67,17 +67,16 @@ The Workbench refuses to build the plan when:
 
 ## Governed workflow
 
-1. Run the Workbench from a clean `main`.
-2. Open **Connections**.
-3. Select **Preview Methodology Lab**.
-4. Review the exact create, update, unchanged and conflict results.
-5. Confirm that only the Lab pages are present.
-6. Resolve any managed or unmanaged-page conflict.
-7. Enter **Publish reviewed methodology lab to Confluence** exactly.
-8. Open the returned Lab pages and complete the review page.
-9. Retain the review through the existing feedback and methodology challenge loop.
+1. Commit the proposed Lab source in Git.
+2. Build and inspect the Draft-only plan.
+3. Confirm automatically that every page remains proposed, targets the managed Methodology **Draft** parent and has a controlled source map.
+4. Stop if any managed page, title or Draft-parent conflict exists.
+5. Publish the conflict-free Draft plan under the standing AI draft-publication authority.
+6. Record the source branch, commit, actor, returned page identifiers and versions.
+7. Open the returned Lab pages and complete the review page.
+8. Retain the review through the existing feedback and methodology challenge loop.
 
-Previewing performs no write. A preview expires when the repository or relevant Confluence state changes.
+Draft publication does not require another Jamie confirmation. A preview expires when the repository or relevant Confluence state changes. Promotion to **Live** remains a separate founder-controlled decision.
 
 ## First feedback loop
 
@@ -112,7 +111,8 @@ The first pilot succeeds when:
 - Git remains authoritative.
 - The Lab remains private and proposed.
 - No existing page is deleted, moved, archived or silently overwritten.
-- No automatic publication or interaction retrieval is enabled.
+- AI publication is authorised only for committed proposed material beneath the controlled Draft parent.
+- No scheduled publication, automatic interaction retrieval or Live promotion is enabled.
 - A successful technical publication does not approve the synthesis.
 - A successful founder review does not establish external validity.
 - External publication, customer use and automatic AI publication remain unapproved.

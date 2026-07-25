@@ -2,11 +2,11 @@
 id: OA-PRODUCT-005
 title: Governed Confluence Documentation Publication
 status: approved
-version: 0.2
+version: 0.3
 owner: Jamie Peppard
 date: 2026-07-25
 approval_date: 2026-07-25
-approval_scope: private internal validation
+approval_scope: private internal validation including AI-managed Draft publication
 ---
 
 # Governed Confluence documentation publication
@@ -15,7 +15,7 @@ approval_scope: private internal validation
 
 This Workbench capability makes Operations Automated readable as a structured Confluence library without moving methodology authority away from Git.
 
-It converts controlled Markdown into Confluence storage-format pages, organises those pages for human reading, compares the intended result with previously managed pages, requires founder confirmation and retains the Confluence version returned for every write.
+It converts controlled Markdown into Confluence storage-format pages, organises those pages for human reading, compares the intended result with previously managed pages and retains the Confluence version returned for every write. AI may publish committed proposed material into Draft for review. Founder confirmation is required to promote or publish material to Live.
 
 ## Information architecture
 
@@ -67,7 +67,7 @@ Every page ends with:
 
 A Confluence page with `current` API status may still represent a proposed or draft repository artefact. The visible repository-status panel prevents Confluence visibility from being mistaken for methodology approval or external publication.
 
-## Preview and confirmation
+## Preview and publication authority
 
 The Workbench first performs a read-only comparison and reports:
 
@@ -76,17 +76,19 @@ The Workbench first performs a read-only comparison and reports:
 - unchanged pages; and
 - conflicts requiring attention.
 
-The complete page list is available through progressive disclosure. A publication is blocked unless the Workbench is running from `main` and no conflict remains.
+The complete page list is available through progressive disclosure. Every publication is blocked while controlled source changes are uncommitted or a conflict remains.
 
 The Workbench preview groups each space into Live, Draft and Archived and shows the subject hierarchy beneath each lifecycle. This gives Jamie the same structure that will be created in Confluence.
 
-Jamie must then:
+For a Draft-only plan, AI may publish without another Jamie confirmation when:
 
-1. review the plan;
-2. confirm that the destinations, statuses and conflicts were checked; and
-3. type **Publish reviewed pages to Confluence** exactly.
+- every source artefact remains proposed or draft;
+- the Git source is committed;
+- the destination is an existing controlled private Draft parent;
+- no conflict exists; and
+- the write remains traceable and non-destructive.
 
-This confirmation authorises that plan only. It does not grant standing publication authority.
+For a Live or mixed-lifecycle plan, the Workbench must run from clean `main`. Jamie must review the plan, confirm its destinations, statuses and conflicts, and type **Publish reviewed pages to Confluence** exactly. This confirmation authorises that plan only.
 
 ## Page ownership and conflict handling
 
@@ -105,13 +107,13 @@ Before an update, the Workbench compares the current Confluence version with the
 
 An existing same-title page without a Workbench mapping is also a conflict. The Workbench will not assume that it owns the page.
 
-For a tracked page-version conflict, Jamie can open the changed Confluence page, compare it with the controlled Git source and explicitly choose **Use reviewed Git copy**. The recovery step requires the exact phrase **Use the reviewed Git copy for this page**. It records the current Confluence version as the comparison baseline but performs no write. A fresh preview then shows the Git copy as an update, which still requires the separate publication confirmation.
+For a tracked page-version conflict, Jamie can open the changed Confluence page, compare it with the controlled Git source and explicitly choose **Use reviewed Git copy**. The recovery step requires the exact phrase **Use the reviewed Git copy for this page**. It records the current Confluence version as the comparison baseline but performs no write. A fresh preview then shows the Git copy as an update. Draft standing authority does not allow AI to resolve an independent edit.
 
 Missing, moved and unmanaged same-title pages cannot use that shortcut. They require a separate decision about recovery, ownership, destination or title.
 
 ## Approval-to-publication continuity
 
-When the Workbench records an implemented methodology release, it creates a pending Confluence-publication record. This does not write to Confluence. The pending record is cleared only by a later completed, founder-confirmed publication run.
+When the Workbench records an implemented methodology release, it creates a pending Live-publication record. A Draft-only publication does not clear that record. It is cleared only by a later completed, founder-confirmed controlled-mirror publication run.
 
 The publication run records:
 
@@ -141,14 +143,14 @@ The private token route remains a local founder-testing mechanism. Atlassian rec
 
 ## Not included
 
-- automatic or scheduled publication;
+- scheduled publication or AI promotion to Live;
 - Confluence deletion or archiving;
 - arbitrary editing of non-managed pages;
 - treating Confluence as authoritative methodology memory;
 - importing Confluence edits back into approved methodology;
 - external publication;
 - customer authentication; or
-- bypassing repository review and merge.
+- bypassing merge for approved or Live meaning.
 
 ## Validation
 
@@ -162,9 +164,10 @@ Before release review, confirm:
 - proposed, draft, idea and recorded material cannot appear as approved;
 - Markdown and embedded HTML are safely converted;
 - preview performs no write;
-- branch, actor, reviewed-plan and confirmation checks cannot be bypassed;
+- Draft-only authority cannot target Live, clear a pending release or bypass a conflict;
+- Live branch, actor, reviewed-plan and confirmation checks cannot be bypassed;
 - a version change or unmanaged same-title page blocks publication;
-- a managed version conflict can be prepared for a reviewed Git reapplication without writing or bypassing the later publication confirmation;
+- a managed version conflict can be prepared for a reviewed Git reapplication only through Jamie's separate conflict decision;
 - parents are created before children;
 - page updates use the expected next version;
 - partial success is retained;

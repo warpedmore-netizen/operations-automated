@@ -14,7 +14,7 @@ date: 2026-07-25
 - **Context:** Selecting the first private implementation and feedback loop.
 - **Permission to use:** Retain and use within Operations Automated methodology and product development.
 - **Information boundary:** Controlled, non-confidential Operations Automated repository content and the existing private Confluence connection.
-- **Authority boundary:** Jamie authorised preparation of another location in which the Workbench can create the methodology for assessment. Live Confluence creation remains subject to the approved preview, conflict check and exact plan-specific confirmation.
+- **Authority boundary:** Jamie authorised the Workbench to publish committed proposed documents into the controlled Confluence Draft structure without another confirmation. Promotion to Live remains separately founder-controlled.
 
 ## Signal
 
@@ -34,7 +34,7 @@ The test needs isolation. Publishing directly over the current 108 controlled pa
 - a proposed synthesis from approved source meaning; and
 - a successful technical write from a successful methodology outcome.
 
-The smallest useful location is a separate top-level **Methodology Lab – Pilot 1** tree within the existing private Methodology space. It uses the approved connection without creating another credential, space or data source.
+The smallest useful location is a separate **Methodology Lab – Pilot 1** tree beneath **Draft** in the existing private Methodology space. It uses the approved connection without creating another credential, space or data source.
 
 ## Challenge and counter-test
 
@@ -66,9 +66,9 @@ Prepare:
 
 1. a controlled ten-page Methodology Lab reading path;
 2. a separate Workbench preview mode that targets only those pages;
-3. a plan-specific confirmation phrase;
+3. a bounded AI Draft-publication authority with a separate Live gate;
 4. source maps linking every page to approved repository material;
 5. a review page that begins the first feedback loop; and
 6. an assurance pack and draft pull request.
 
-Do not create the live Lab tree until the implementation is merged, a fresh plan shows its exact actions and Jamie enters the required confirmation.
+Publish the committed proposal to Draft once the bounded plan is conflict-free. Do not promote it to Live, infer approval or overwrite an independently edited page.

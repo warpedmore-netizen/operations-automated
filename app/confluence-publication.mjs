@@ -4,7 +4,6 @@ import { basename, dirname, relative, resolve } from "node:path";
 import { extractFrontMatter } from "./workbench-core.mjs";
 
 export const PUBLICATION_CONFIRMATION = "Publish reviewed pages to Confluence";
-export const METHODOLOGY_LAB_CONFIRMATION = "Publish reviewed methodology lab to Confluence";
 export const CONFLICT_REAPPLY_CONFIRMATION = "Use the reviewed Git copy for this page";
 
 const ROOT_DOCUMENTS = Object.freeze([
@@ -391,8 +390,8 @@ function methodologyLabBody(page, sources, context) {
   ).join("");
   return [
     "<ac:structured-macro ac:name=\"warning\"><ac:rich-text-body>",
-    "<p><strong>Methodology Lab pilot — proposed reading synthesis</strong></p>",
-    "<p>This page is created from controlled Operations Automated sources for private internal evaluation. It does not change approved methodology meaning, replace the controlled record or authorise external publication.</p>",
+    "<p><strong>Methodology Lab pilot — proposed Draft reading synthesis</strong></p>",
+    "<p>This page is published to the controlled Confluence Draft area from Operations Automated sources for private internal review. Draft publication does not change approved methodology meaning, replace the controlled record, promote content to Live or authorise external publication.</p>",
     "</ac:rich-text-body></ac:structured-macro>",
     readable,
     "<hr/>",
@@ -465,9 +464,10 @@ export function buildMethodologyLabPublicationPlan({
       key: `methodology-lab-001:${key}`,
       kind: key === "hub" ? "pilot-hub" : "pilot-page",
       role: "methodology",
-      lifecycle: "",
+      lifecycle: "draft",
       title,
       parentKey: parentKey ? `methodology-lab-001:${parentKey}` : null,
+      externalParentKey: parentKey ? null : "methodology:draft",
       sourcePath: path,
       sourceStatus: "proposed-pilot",
       sourceVersion: String(manifest.version || "0.1"),
@@ -505,9 +505,11 @@ export function buildMethodologyLabPublicationPlan({
   items.forEach(visit);
   const id = hash(JSON.stringify({
     publicationKind: "methodology-lab-pilot",
+    targetLifecycle: "draft",
     sourceBranch,
     sourceCommit,
-    items: ordered.map((item) => [item.key, item.title, item.parentKey, item.sourceHash])
+    parentReference: "methodology:draft",
+    items: ordered.map((item) => [item.key, item.title, item.parentKey, item.externalParentKey, item.sourceHash])
   }));
   return {
     id,
@@ -518,8 +520,16 @@ export function buildMethodologyLabPublicationPlan({
     sourceBranch,
     sourceCommit,
     repositoryUrl,
-    confirmationPhrase: METHODOLOGY_LAB_CONFIRMATION,
-    lifecycleOrder: [],
+    confirmationPhrase: "",
+    lifecycleOrder: ["draft"],
+    targetLifecycle: "draft",
+    founderConfirmationRequired: false,
+    publicationAuthority: "ai-managed-draft",
+    parentReferences: [{
+      key: "methodology:draft",
+      role: "methodology",
+      title: "Draft"
+    }],
     deletionEnabled: false,
     automaticPublication: false,
     existingControlledPagesChanged: false,

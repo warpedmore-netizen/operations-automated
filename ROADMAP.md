@@ -46,7 +46,7 @@ A [provisional self-assessment](pilots/operations-automated-self-assessment-001.
 
 Workbench 0.7.0 adds a founder-authorised, private and read-only [Confluence connected-evidence route](product/confluence-connected-evidence.md). Jamie approved and merged PR #13 for private internal validation on 2026-07-25. It keeps the credential outside the repository with Windows user-level protection and keeps synchronised page bodies in server memory only.
 
-Workbench 0.8.0 added the [governed documentation-publication capability](product/confluence-governed-publication.md) for private internal validation through PR #14. Before the first live publication, Jamie required a lifecycle-first revision: Live, Draft and Archived must sit above the normal Methodology and Internal subject folders. Jamie approved and merged the Workbench 0.9.0 revision through PR #15. Git remains authoritative, and every write still requires a current `main` source, a conflict-free preview and Jamie's exact plan-specific confirmation. Automatic publication, deletion and external release remain disabled.
+Workbench 0.8.0 added the [governed documentation-publication capability](product/confluence-governed-publication.md) for private internal validation through PR #14. Before the first live publication, Jamie required a lifecycle-first revision: Live, Draft and Archived must sit above the normal Methodology and Internal subject folders. Jamie approved and merged the Workbench 0.9.0 revision through PR #15. Git remains authoritative. Jamie has now authorised AI to publish committed proposed material to the controlled Draft structure without another confirmation; Live promotion still requires explicit approval. Conflict protection, version receipts, no deletion and no external release remain in force.
 
 The first founder-confirmed publication created 108 pages and the immediate comparison returned all 108 unchanged with no conflict. Founder review found a delivery gap: the result is a governed repository mirror rather than a human methodology book or internal handbook. The [human publication model](product/confluence-human-publication-model.md) and three bounded pilots were approved and merged through PR #17. The model adds a curated reader layer while preserving the lifecycle mirror as a secondary controlled record. A proposed [Methodology Lab](product/methodology-lab-pilot.md) now implements the first reader path as an isolated ten-page tree and first feedback loop, while automatic comment and edit retrieval remains behind a separate connection decision.
 
@@ -86,7 +86,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
 7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
-9. Review the proposed Methodology Lab implementation, then separately preview and confirm its isolated live plan without deleting, moving or updating the current controlled pages.
+9. Publish the committed Methodology Lab proposal beneath Draft, review it as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
 
 ## Application decision
 
