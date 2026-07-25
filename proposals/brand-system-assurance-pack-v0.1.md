@@ -25,7 +25,7 @@ The decision has six parts:
 
 ## AI recommendation
 
-Approve the OA loop, visual tone and reusable system for bounded internal validation. Resolve the descriptor and strapline before any public use, and obtain or recreate a controlled vector master before relying on the identity in production.
+Approve the OA loop, visual tone, reusable system and Workbench Brand Review pilot for bounded internal validation. Resolve the descriptor and strapline before any public use, and obtain or recreate a controlled vector master before relying on the identity in production.
 
 ## Trigger and founder intent
 
@@ -82,6 +82,9 @@ This line reflects the approved methodology but remains draft brand expression r
 - Platform-neutral JSON tokens, CSS variables and typed application tokens.
 - A visual brand board.
 - Working website, application, documentation and LinkedIn profile-cover templates.
+- A project-wide adoption register linking each controlled surface to the shared source and its next gate.
+- A Workbench Brand Review area that consumes the shared tokens and OA mark, opens the live examples and records item-level feedback locally.
+- A one-click Brand Review launcher and generated review board for contexts that cannot open HTML.
 - Asset-generation and validation scripts.
 
 ## Evidence and reasoning
@@ -169,6 +172,7 @@ Possible working alternatives include **Understand. Improve. Automate.** and **C
 | “Autonomise” implies automatic delegation | Keep the strapline unapproved until its meaning is decided |
 | Broad applicability becomes a generic promise | Keep the masterbrand broad; individual offers name a bounded problem and audience |
 | Dark styling becomes cold or hard to use | Pair dark signature surfaces with high-legibility light working surfaces |
+| An item-level Workbench choice is mistaken for overall approval | Return `approvalCreated: false`, retain the repository status and state the boundary beside every review |
 | Decorative connection imagery implies false relationships | Use the motif only where a real relationship can be explained |
 | Status relies on colour | Pair colour with text, icon or shape and programmatic labels |
 | Draft design is mistaken for publication approval | Show status and boundary in all starter templates |
@@ -182,13 +186,14 @@ Possible working alternatives include **Understand. Improve. Automate.** and **C
 - Core text and state pairs are checked against a 4.5:1 contrast baseline.
 - Templates include skip links, visible focus treatment and reduced-motion handling.
 - Local file references, manifest assets, token parity and expected assets are validated automatically.
+- Workbench tests verify the shared token and logo source, local brand routes, review persistence and non-approval boundary.
 - The system distinguishes internal approval from publication, migration, deployment and legal clearance.
 
 ## Validation plan
 
 If approved for internal validation:
 
-1. apply the system to one bounded application surface;
+1. review the bounded Workbench application pilot through the Brand Review area;
 2. produce one controlled branded document;
 3. prepare one non-published public-page prototype;
 4. ask a person unfamiliar with the design what the organisation does, what action is available and what remains human-controlled;
@@ -201,7 +206,7 @@ Approval would authorise:
 
 - Brand System v0.1 as the working internal baseline;
 - reuse of its OA loop, tokens, voice and templates in bounded internal prototypes; and
-- the three-surface validation plan.
+- the Workbench Brand Review pilot and three-surface validation plan.
 
 Approval would not authorise:
 

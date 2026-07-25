@@ -164,3 +164,16 @@ For each branded artefact, verify:
 - keyboard and reduced-motion behaviour work where relevant;
 - the artefact states its source, status and boundary where material; and
 - a user can reach and begin using it in the target environment.
+
+## Cross-project adoption contract
+
+`brand/adoption.json` is the project-level register for brand use. A controlled surface is interconnected with the brand system only when:
+
+1. it appears in the adoption register;
+2. it consumes the controlled token or asset source rather than copying a new theme;
+3. its local extensions retain the shared semantic roles;
+4. a visual example can be opened from the Workbench Brand Review area;
+5. its review evidence and next gate are visible; and
+6. its actual approval, migration and publication status remain separate.
+
+The Workbench is the first bounded application pilot. It imports `brand/tokens/brand.css`, uses the generated OA mark and exposes `/#brand` for visual review. A new website, application, document family or social surface should be added to the register before it claims brand conformance.

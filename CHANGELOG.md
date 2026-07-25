@@ -13,6 +13,10 @@ All material changes to Operations Automated will be recorded here.
 - Added logo, colour, typography, layout, imagery, motion, accessibility, voice and naming guidance.
 - Added platform-neutral JSON tokens, reusable CSS variables and typed application tokens.
 - Added a visual brand board and working website, application, documentation and social templates.
+- Added a project-wide brand adoption register and visual-review specification.
+- Applied the shared tokens and controlled OA mark to the Workbench as the first bounded application pilot.
+- Added a one-click Brand Review launcher and Workbench area with directly openable examples, per-item review evidence and explicit approval boundaries.
+- Added a generated 1600 × 1000 review board for conversations and other surfaces that cannot open live HTML.
 - Added logo export generation, automated token, reference and contrast checks, and a plain-English decision pack.
 - Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.
 - Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.

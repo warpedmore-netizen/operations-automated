@@ -16,7 +16,7 @@ Start with the [current methodology synthesis and visual map](methodology/curren
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
-The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its logo adoption, visual language, voice and templates remain proposed for internal review and are not approved for external publication.
+The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its [adoption register](brand/adoption.json) connects controlled project surfaces back to the shared tokens, assets and approval boundary. Double-click `Launch-Brand-Review.cmd` to see and review the visual directions without opening repository folders. The system remains proposed for internal review and is not approved for external publication.
 
 ## How the system fits together
 
@@ -34,6 +34,7 @@ The [Operations Automated brand system](brand/README.md) is a draft, reusable id
 | [Activation and first use](methodology/activation-and-first-use.md) | Evidence that the intended user can reach and begin using a deliverable | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
+| [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 

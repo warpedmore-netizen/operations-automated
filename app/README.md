@@ -10,12 +10,25 @@ Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
 - Double-click `Launch-Workbench.cmd` in the repository.
+- Double-click `Launch-Brand-Review.cmd` to open the Workbench directly at the proposed Brand Review area.
 
 The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. Keep the server window open while using the Workbench.
 
 The underlying `.\Start-Workbench.ps1` command remains available for troubleshooting and automation.
 
 The direct `npm start` command remains available for environments where Node.js and npm are already on `PATH`.
+
+## Proposed brand review pilot
+
+The current brand-system branch adds a bounded internal Brand Review area. It:
+
+- consumes the shared `brand/tokens/brand.css` source and controlled OA mark;
+- shows visual examples for the mark, palette, typography, connection field, Workbench, documentation, LinkedIn cover and source wording;
+- links to the full live brand board and starter pages through the local Workbench server;
+- displays the project-wide brand adoption register; and
+- records approve-for-internal-use, revise or reject choices in the local Workbench database as review evidence.
+
+These item-level choices do not change repository status, merge the brand pull request or authorise publication. The pilot remains proposed until Jamie explicitly decides the draft brand change.
 
 ## Provider setup
 

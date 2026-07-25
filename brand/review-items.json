@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "id": "OA-BRAND-008",
+    "name": "Operations Automated visual review items",
+    "status": "draft",
+    "version": "0.1.0",
+    "owner": "Jamie Peppard"
+  },
+  "actions": [
+    "approve-internal",
+    "revise",
+    "reject"
+  ],
+  "items": [
+    {
+      "id": "master-mark",
+      "title": "Continuous OA mark",
+      "question": "Does this mark represent Operations Automated strongly enough to become the controlled master direction?",
+      "description": "The continuous O-to-A loop expresses connection, movement and an operation becoming more capable.",
+      "preview": "mark",
+      "status": "draft"
+    },
+    {
+      "id": "signature-tone",
+      "title": "Signature colour and atmosphere",
+      "question": "Does the Obsidian, deep-blue and electric-cyan direction feel capable, modern and human enough?",
+      "description": "Dark signature surfaces create recognition; light working surfaces protect readability and approachability.",
+      "preview": "tone",
+      "status": "draft"
+    },
+    {
+      "id": "typography",
+      "title": "Typography",
+      "question": "Does geometric display type with a clear sans-serif body match how Operations Automated should communicate?",
+      "description": "Strong display type carries the identity. Source Sans and its fallbacks carry working content.",
+      "preview": "type",
+      "status": "draft"
+    },
+    {
+      "id": "connected-field",
+      "title": "Connected background language",
+      "question": "Does the restrained mesh and connection field add meaning without becoming decorative technology imagery?",
+      "description": "Connection fields should imply relationships and flow, never fictional circuitry or AI magic.",
+      "preview": "field",
+      "status": "draft"
+    },
+    {
+      "id": "application-pilot",
+      "title": "Workbench application pilot",
+      "question": "Does the brand remain practical when applied to a real working application?",
+      "description": "The Workbench is the first bounded application adoption. It uses the shared tokens and controlled OA mark.",
+      "preview": "application",
+      "status": "draft"
+    },
+    {
+      "id": "document-direction",
+      "title": "Documentation direction",
+      "question": "Does the lighter document treatment still feel unmistakably part of Operations Automated?",
+      "description": "Controlled documents prioritise reading, evidence and status while retaining the brand hierarchy.",
+      "preview": "document",
+      "status": "draft"
+    },
+    {
+      "id": "profile-cover",
+      "title": "LinkedIn profile cover",
+      "question": "Is the supplied personal-profile cover the right public-facing composition, subject to wording approval?",
+      "description": "The 1584 × 396 cover keeps the lower-left area comparatively quiet for LinkedIn's profile-photo overlay.",
+      "preview": "social",
+      "status": "draft"
+    },
+    {
+      "id": "source-wording",
+      "title": "Descriptor and strapline",
+      "question": "Should the source wording be retained, revised or rejected before any public use?",
+      "description": "Operations consultancy may narrow the company. Autonomise may imply autonomy as a default rather than a governed option.",
+      "preview": "wording",
+      "status": "draft"
+    }
+  ],
+  "boundary": "An item-level review is retained as evidence. It does not change artefact status, merge the pull request or authorise external publication."
+}

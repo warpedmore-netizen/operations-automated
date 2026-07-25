@@ -21,7 +21,8 @@ const state = {
   capture: null,
   confluence: null,
   confluenceTest: null,
-  confluencePublicationPlan: null
+  confluencePublicationPlan: null,
+  brandReview: null
 };
 
 async function request(path, options = {}) {
@@ -569,7 +570,105 @@ async function loadDecisionInbox(selectedId = state.selectedProposalId, status =
   renderProposalDetail(selected);
 }
 
-const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "usage", "settings", "connections", "guide"]);
+const brandDecisionLabels = {
+  "approve-internal": "Approved for internal validation",
+  revise: "Revision requested",
+  reject: "Direction rejected"
+};
+
+function brandPreviewMarkup(item) {
+  if (item.preview === "mark") return `
+    <div class="brand-preview brand-preview-mark" data-oa-theme="dark">
+      <img src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="Continuous Operations Automated OA loop">
+      <span class="oa-wordmark"><small>Operations</small><strong>Automated</strong></span>
+    </div>`;
+  if (item.preview === "tone") return `
+    <div class="brand-preview brand-preview-tone">
+      <span style="--swatch:#01070f"><b>Obsidian</b><small>#01070F</small></span>
+      <span style="--swatch:#063f72"><b>Deep blue</b><small>#063F72</small></span>
+      <span style="--swatch:#0b77d2"><b>Action blue</b><small>#0B77D2</small></span>
+      <span style="--swatch:#32b6fe"><b>Electric cyan</b><small>#32B6FE</small></span>
+    </div>`;
+  if (item.preview === "type") return `
+    <div class="brand-preview brand-preview-type">
+      <small>OPERATIONS</small>
+      <strong>AUTOMATED</strong>
+      <p>Clear operational thinking, expressed in useful language.</p>
+    </div>`;
+  if (item.preview === "field") return `
+    <div class="brand-preview brand-preview-field oa-connection-field" data-oa-theme="dark">
+      <span>Connected operations</span>
+      <strong>Human outcomes.</strong>
+      <i aria-hidden="true"></i>
+    </div>`;
+  if (item.preview === "application") return `
+    <div class="brand-preview brand-preview-application">
+      <aside><img src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt=""><i></i><i></i><i></i></aside>
+      <main><small>Decision workspace</small><strong>See the whole operation.</strong><div><span>Evidence</span><span>Human decision</span><span>Next action</span></div></main>
+    </div>`;
+  if (item.preview === "document") return `
+    <div class="brand-preview brand-preview-document">
+      <header><img src="/brand-system/assets/logo/generated/mark-navy-transparent-1024.png" alt=""><span>CONTROLLED DOCUMENT</span></header>
+      <strong>Operational decision brief</strong>
+      <p>Conclusion first, then evidence, judgement, uncertainty and the next governed action.</p>
+      <div><i></i><i></i><i></i></div>
+    </div>`;
+  if (item.preview === "social") return `
+    <div class="brand-preview brand-preview-social">
+      <img src="/brand-system/templates/social/linkedin-profile-cover-1584x396.png" alt="Operations Automated LinkedIn profile cover">
+    </div>`;
+  return `
+    <div class="brand-preview brand-preview-wording">
+      <div><small>Current source descriptor</small><strong>Operations consultancy</strong></div>
+      <div><small>Current source strapline</small><strong>Automate. Autonomise. Empower.</strong></div>
+      <p>Alternatives for review: Understand. Improve. Automate. · Connect. Improve. Empower.</p>
+    </div>`;
+}
+
+function renderBrandReview(value) {
+  state.brandReview = value;
+  const latest = new Map();
+  for (const decision of value.decisions) {
+    if (!latest.has(decision.item_id)) latest.set(decision.item_id, decision);
+  }
+  $("#brand-review-progress").textContent = `${latest.size} of ${value.items.length} reviewed`;
+  $("#brand-adoption-list").innerHTML = value.adoption.surfaces.map((surface) => `
+    <article>
+      <div><strong>${escapeHtml(surface.name)}</strong><small>${escapeHtml(surface.path)}</small></div>
+      <span class="adoption-status adoption-${escapeHtml(surface.status)}">${escapeHtml(surface.status.replaceAll("-", " "))}</span>
+      <p>${escapeHtml(surface.nextGate)}</p>
+    </article>
+  `).join("");
+  $("#brand-review-grid").innerHTML = value.items.map((item) => {
+    const decision = latest.get(item.id);
+    const decisionClass = decision ? `brand-review-${decision.action}` : "";
+    const decisionText = decision ? brandDecisionLabels[decision.action] : "Awaiting your review";
+    return `
+      <article class="brand-review-item ${decisionClass}" data-brand-review-item="${escapeHtml(item.id)}">
+        ${brandPreviewMarkup(item)}
+        <div class="brand-review-content">
+          <div class="brand-review-title"><div><span>Review item</span><h3>${escapeHtml(item.title)}</h3></div><em>${escapeHtml(decisionText)}</em></div>
+          <p>${escapeHtml(item.description)}</p>
+          <strong class="brand-review-question">${escapeHtml(item.question)}</strong>
+          ${decision?.reason ? `<blockquote>${escapeHtml(decision.reason)}</blockquote>` : ""}
+          <label>What should change or why?
+            <textarea rows="2" data-brand-review-note placeholder="Optional when approving; required for revision or rejection."></textarea>
+          </label>
+          <div class="brand-review-actions">
+            <button type="button" data-brand-review-action="approve-internal">Approve for internal use</button>
+            <button type="button" data-brand-review-action="revise">Request revision</button>
+            <button type="button" data-brand-review-action="reject">Reject direction</button>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+}
+
+async function loadBrandReview() {
+  renderBrandReview(await request("/api/brand-review"));
+}
+
+const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "brand", "usage", "settings", "connections", "guide"]);
 
 function switchView(name, updateHash = true) {
   if (!validViews.has(name)) return;
@@ -580,6 +679,7 @@ function switchView(name, updateHash = true) {
   if (name === "usage") loadUsage().catch((error) => toast(error.message, true));
   if (name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
   if (name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
+  if (name === "brand") loadBrandReview().catch((error) => toast(error.message, true));
   if (name === "connections") loadConnections().catch((error) => toast(error.message, true));
 }
 
@@ -1170,6 +1270,28 @@ $$("[data-send-challenge]").forEach((button) => button.addEventListener("click",
   sendChallenge(button.dataset.sendChallenge).catch((error) => toast(error.message, true));
 }));
 $$(".nav-item").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+$("#brand-review-grid").addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-brand-review-action]");
+  if (!button) return;
+  const card = button.closest("[data-brand-review-item]");
+  const note = card.querySelector("[data-brand-review-note]").value.trim();
+  card.querySelectorAll("button").forEach((item) => { item.disabled = true; });
+  try {
+    const value = await request("/api/brand-review", {
+      method: "POST",
+      body: JSON.stringify({
+        itemId: card.dataset.brandReviewItem,
+        action: button.dataset.brandReviewAction,
+        reason: note
+      })
+    });
+    renderBrandReview(value.review);
+    toast(value.message);
+  } catch (error) {
+    card.querySelectorAll("button").forEach((item) => { item.disabled = false; });
+    toast(error.message, true);
+  }
+});
 $$("[data-open-guide]").forEach((button) => button.addEventListener("click", () => switchView("guide")));
 $("#details-button").addEventListener("click", () => {
   const panel = $("#context-panel");

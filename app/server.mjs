@@ -29,6 +29,7 @@ import { createCredentialStore } from "./credential-store.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
+const brandRoot = resolve(repoRoot, "brand");
 
 function loadLocalEnvironment() {
   const path = resolve(repoRoot, ".env");
@@ -152,9 +153,17 @@ db.exec(`
     methodology_version TEXT, status TEXT NOT NULL DEFAULT 'pending',
     publication_run_id TEXT, created_at TEXT NOT NULL, published_at TEXT
   );
+  CREATE TABLE IF NOT EXISTS brand_review_decisions (
+    id TEXT PRIMARY KEY, item_id TEXT NOT NULL, action TEXT NOT NULL,
+    actor TEXT NOT NULL, reason TEXT NOT NULL DEFAULT '',
+    approval_created INTEGER NOT NULL DEFAULT 0,
+    repository_changed INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL
+  );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
   CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
+  CREATE INDEX IF NOT EXISTS brand_review_item_idx ON brand_review_decisions(item_id, created_at);
 `);
 
 function ensureColumn(table, name, definition) {
@@ -357,29 +366,59 @@ async function jsonBody(request) {
   catch { throw Object.assign(new Error("Request body must be valid JSON."), { status: 400 }); }
 }
 
-function requireLocalJsonConnectionAction(request) {
+function requireLocalJsonAction(request, actionName = "Local actions") {
   const contentType = String(request.headers["content-type"] || "").toLowerCase();
   if (!contentType.startsWith("application/json")) {
-    throw Object.assign(new Error("Confluence actions require a local Workbench JSON request."), { status: 415 });
+    throw Object.assign(new Error(`${actionName} require a local Workbench JSON request.`), { status: 415 });
   }
   if (String(request.headers["sec-fetch-site"] || "").toLowerCase() === "cross-site") {
-    throw Object.assign(new Error("A different website cannot invoke the local Confluence connection."), { status: 403 });
+    throw Object.assign(new Error(`A different website cannot invoke ${actionName.toLowerCase()}.`), { status: 403 });
   }
   const origin = String(request.headers.origin || "");
   if (!origin) return;
   const allowed = new Set([`http://127.0.0.1:${port}`, `http://localhost:${port}`]);
   if (!allowed.has(origin)) {
-    throw Object.assign(new Error("A different website cannot invoke the local Confluence connection."), { status: 403 });
+    throw Object.assign(new Error(`A different website cannot invoke ${actionName.toLowerCase()}.`), { status: 403 });
   }
 }
 
-function safeStaticPath(pathname) {
+function safePathWithin(root, pathname, defaultFile = "index.html") {
   const decoded = decodeURIComponent(pathname.split("?")[0]);
-  const relative = normalize(decoded === "/" ? "index.html" : decoded.replace(/^\/+/, ""));
-  const candidate = resolve(join(appRoot, relative));
-  const rootWithSeparator = `${appRoot}${sep}`.toLowerCase();
-  if (candidate.toLowerCase() !== appRoot.toLowerCase() && !candidate.toLowerCase().startsWith(rootWithSeparator)) return null;
+  const relative = normalize(decoded === "/" || decoded === "" ? defaultFile : decoded.replace(/^\/+/, ""));
+  const candidate = resolve(join(root, relative));
+  const rootWithSeparator = `${root}${sep}`.toLowerCase();
+  if (candidate.toLowerCase() !== root.toLowerCase() && !candidate.toLowerCase().startsWith(rootWithSeparator)) return null;
   return candidate;
+}
+
+function safeStaticPath(pathname) {
+  return safePathWithin(appRoot, pathname);
+}
+
+function safeBrandPath(pathname) {
+  const relativePath = pathname.replace(/^\/brand-system\/?/, "");
+  return safePathWithin(brandRoot, relativePath);
+}
+
+function brandReviewData() {
+  const manifest = JSON.parse(readFileSync(resolve(brandRoot, "manifest.json"), "utf8"));
+  const adoption = JSON.parse(readFileSync(resolve(brandRoot, "adoption.json"), "utf8"));
+  const review = JSON.parse(readFileSync(resolve(brandRoot, "review-items.json"), "utf8"));
+  const decisions = db.prepare("SELECT * FROM brand_review_decisions ORDER BY created_at DESC").all()
+    .map((item) => ({
+      ...item,
+      approvalCreated: Boolean(item.approval_created),
+      repositoryChanged: Boolean(item.repository_changed)
+    }));
+  return {
+    status: manifest.status,
+    version: manifest.version,
+    adoption,
+    items: review.items,
+    decisions,
+    boundary: review.boundary,
+    approvalState: "not-approved"
+  };
 }
 
 function messagesFor(conversationId) {
@@ -536,7 +575,7 @@ async function openAiResponse({ input, instructions, route, sources, outputType 
 async function api(request, response, url) {
   const method = request.method || "GET";
   if (method !== "GET" && url.pathname.startsWith("/api/connections/confluence")) {
-    requireLocalJsonConnectionAction(request);
+    requireLocalJsonAction(request, "Confluence actions");
   }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
     buildVersion: "0.9.0",
@@ -552,6 +591,51 @@ async function api(request, response, url) {
     db.prepare("UPDATE settings SET value_json=? WHERE id=1").run(JSON.stringify(value));
     audit("settings.updated", "settings", "1", { keys: Object.keys(value) });
     return json(response, 200, { settings: value });
+  }
+  if (method === "GET" && url.pathname === "/api/brand-review") {
+    return json(response, 200, brandReviewData());
+  }
+  if (method === "POST" && url.pathname === "/api/brand-review") {
+    requireLocalJsonAction(request, "Brand review decisions");
+    const value = await jsonBody(request);
+    const review = JSON.parse(readFileSync(resolve(brandRoot, "review-items.json"), "utf8"));
+    const item = review.items.find((candidate) => candidate.id === value.itemId);
+    const allowedActions = new Set(review.actions);
+    if (!item) throw Object.assign(new Error("Choose a controlled brand review item."), { status: 400 });
+    if (!allowedActions.has(value.action)) throw Object.assign(new Error("Choose approve for internal use, revise or reject."), { status: 400 });
+    const reason = String(value.reason || "").trim();
+    if (value.action !== "approve-internal" && reason.length < 3) {
+      throw Object.assign(new Error("Record what should change or why the direction is rejected."), { status: 400 });
+    }
+    const decision = {
+      id: randomUUID(),
+      itemId: item.id,
+      action: value.action,
+      actor: FOUNDER_NAME,
+      reason,
+      approvalCreated: false,
+      repositoryChanged: false,
+      createdAt: now()
+    };
+    db.prepare(`
+      INSERT INTO brand_review_decisions(
+        id,item_id,action,actor,reason,approval_created,repository_changed,created_at
+      ) VALUES(?,?,?,?,?,?,?,?)
+    `).run(
+      decision.id, decision.itemId, decision.action, decision.actor, decision.reason,
+      Number(decision.approvalCreated), Number(decision.repositoryChanged), decision.createdAt
+    );
+    audit("brand-review.recorded", "brand-review-item", item.id, {
+      action: decision.action,
+      actor: decision.actor,
+      approvalCreated: false,
+      repositoryChanged: false
+    });
+    return json(response, 201, {
+      decision,
+      review: brandReviewData(),
+      message: "Brand review recorded as evidence. Repository status and publication authority are unchanged."
+    });
   }
   if (method === "GET" && url.pathname === "/api/connections") {
     let saved = null;
@@ -1423,13 +1507,23 @@ Never claim to approve, publish, merge or edit methodology.`
   return json(response, 404, { error: "API endpoint not found." });
 }
 
-const contentTypes = { ".css": "text/css; charset=utf-8", ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".mjs": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".svg": "image/svg+xml" };
+const contentTypes = {
+  ".css": "text/css; charset=utf-8",
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".svg": "image/svg+xml",
+  ".png": "image/png"
+};
 
 createServer(async (request, response) => {
   try {
     const url = new URL(request.url || "/", `http://${request.headers.host || "127.0.0.1"}`);
     if (url.pathname.startsWith("/api/")) return await api(request, response, url);
-    const path = safeStaticPath(url.pathname);
+    const path = url.pathname === "/brand-system" || url.pathname.startsWith("/brand-system/")
+      ? safeBrandPath(url.pathname)
+      : safeStaticPath(url.pathname);
     if (!path || !(await stat(path)).isFile()) throw Object.assign(new Error("Not found"), { status: 404 });
     response.writeHead(200, { "Cache-Control": "no-store", "Content-Type": contentTypes[extname(path)] || "application/octet-stream" });
     createReadStream(path).pipe(response);

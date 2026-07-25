@@ -40,6 +40,8 @@ The mark used here is the continuous OA loop supplied by Jamie on 25 July 2026. 
 - [Identity and expression](identity.md) defines logo, colour, typography, layout, imagery and motion.
 - [Voice and content](voice-and-content.md) defines how Operations Automated communicates.
 - [Implementation](implementation.md) explains how to use the system across delivery surfaces.
+- [Adoption register](adoption.json) records which project surfaces consume the brand and their next gate.
+- [Visual review items](review-items.json) define the decisions shown in the Workbench Brand Review area.
 - [Initial reference set](references/README.md) retains the founder-supplied source direction and its boundary.
 - [Visual brand board](index.html) shows the current system in one local page.
 - [Decision pack](../proposals/brand-system-assurance-pack-v0.1.md) states the exact approval choices and remaining uncertainty.
@@ -53,11 +55,24 @@ The mark used here is the continuous OA loop supplied by Jamie on 25 July 2026. 
 | [`tokens/brand.tokens.json`](tokens/brand.tokens.json) | Platform-neutral design decisions |
 | [`tokens/brand.css`](tokens/brand.css) | Website and application variables, themes and base styles |
 | [`tokens/brand.ts`](tokens/brand.ts) | Typed application tokens |
+| [`adoption.json`](adoption.json) | Cross-project adoption status and integration contract |
+| [`previews`](previews) | Generated image boards for review where live HTML cannot be opened |
 | [`templates/website`](templates/website) | Responsive public-page starter |
 | [`templates/application`](templates/application) | Accessible application-shell starter |
 | [`templates/documentation`](templates/documentation) | Controlled-document structure and print styling |
 | [`templates/social`](templates/social) | Platform-sized social artwork and safe-area guidance |
 | [`scripts`](scripts) | Asset generation and consistency checks |
+
+## How to review it visually
+
+Start the private Workbench with `Launch-Workbench.cmd`, then select **Brand review**. That area:
+
+- shows the mark, palette, typography, connection field, application, document, social and wording directions;
+- opens the complete brand board and full-size starter pages without requiring anyone to browse repository folders;
+- records approve-for-internal-use, revise or reject choices locally as review evidence; and
+- shows the adoption status of each controlled project surface.
+
+Those review choices do not change this artefact's draft status, merge a pull request or authorise external publication.
 
 ## The working rules
 

@@ -1,13 +1,16 @@
 [CmdletBinding()]
 param(
     [int]$Port = 4173,
+    [ValidateSet("", "brand")]
+    [string]$InitialView = "",
     [switch]$NoBrowser
 )
 
 $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $healthUrl = "http://127.0.0.1:$Port/api/settings"
-$workbenchUrl = "http://127.0.0.1:$Port"
+$workbenchBaseUrl = "http://127.0.0.1:$Port"
+$workbenchUrl = if ($InitialView) { "$workbenchBaseUrl#$InitialView" } else { $workbenchBaseUrl }
 
 try {
     $existingResponse = Invoke-WebRequest -UseBasicParsing -Uri $healthUrl -TimeoutSec 2

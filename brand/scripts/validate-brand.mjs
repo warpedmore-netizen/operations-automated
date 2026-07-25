@@ -58,6 +58,8 @@ const expectedFiles = [
   "voice-and-content.md",
   "implementation.md",
   "manifest.json",
+  "adoption.json",
+  "review-items.json",
   "index.html",
   "site.css",
   "assets/logo/README.md",
@@ -72,6 +74,8 @@ const expectedFiles = [
   "references/initial-mark-square-400x400.png",
   "references/initial-banner-wide-4200x700.png",
   "references/initial-linkedin-profile-cover-1584x396.png",
+  "previews/README.md",
+  "previews/brand-review-board-1600x1000.png",
   "tokens/brand.tokens.json",
   "tokens/brand.css",
   "tokens/brand.ts",
@@ -100,6 +104,7 @@ const expectedPngDimensions = {
   "assets/logo/generated/mark-dark-tile-192.png": [192, 192],
   "assets/logo/generated/mark-dark-tile-512.png": [512, 512],
   "templates/social/linkedin-profile-cover-1584x396.png": [1584, 396],
+  "previews/brand-review-board-1600x1000.png": [1600, 1000],
 };
 
 for (const [path, [expectedWidth, expectedHeight]] of Object.entries(expectedPngDimensions)) {
@@ -111,12 +116,41 @@ for (const [path, [expectedWidth, expectedHeight]] of Object.entries(expectedPng
 }
 
 const manifest = JSON.parse(read("manifest.json"));
+const adoption = JSON.parse(read("adoption.json"));
+const review = JSON.parse(read("review-items.json"));
 const tokens = JSON.parse(read("tokens/brand.tokens.json"));
 const css = read("tokens/brand.css").toLowerCase();
 
 check(manifest.status === "draft", "Brand manifest must remain draft until Jamie approves it.");
 check(tokens.meta.status === manifest.status, "Manifest and token status do not match.");
 check(tokens.meta.version === manifest.version, "Manifest and token versions do not match.");
+check(adoption.meta.status === manifest.status, "Manifest and adoption-register status do not match.");
+check(review.meta.status === manifest.status, "Manifest and visual-review status do not match.");
+
+const allowedAdoptionStatuses = new Set(adoption.statuses);
+const surfaceIds = adoption.surfaces.map((surface) => surface.id);
+check(new Set(surfaceIds).size === surfaceIds.length, "Brand adoption surface IDs must be unique.");
+for (const surface of adoption.surfaces) {
+  check(allowedAdoptionStatuses.has(surface.status), `Invalid adoption status for ${surface.id}: ${surface.status}`);
+  check(existsSync(join(repositoryRoot, surface.path)), `Adoption surface path does not exist: ${surface.path}`);
+  if (surface.reviewRoute.startsWith("/brand-system/")) {
+    const reviewPath = surface.reviewRoute.replace("/brand-system/", "").split("#")[0];
+    check(existsSync(join(brandRoot, reviewPath)), `Adoption review route does not exist: ${surface.reviewRoute}`);
+  } else if (surface.reviewRoute === "/#brand") {
+    check(existsSync(join(repositoryRoot, "app", "index.html")), "Workbench brand-review route has no application entry point.");
+  }
+}
+for (const path of Object.values(adoption.sourceOfTruth)) {
+  check(existsSync(join(repositoryRoot, path)), `Adoption source-of-truth path does not exist: ${path}`);
+}
+
+const reviewIds = review.items.map((item) => item.id);
+check(new Set(reviewIds).size === reviewIds.length, "Brand review item IDs must be unique.");
+check(new Set(review.actions).size === review.actions.length, "Brand review actions must be unique.");
+for (const item of review.items) {
+  check(item.status === manifest.status, `Brand review item must remain ${manifest.status}: ${item.id}`);
+  check(Boolean(item.question && item.description && item.preview), `Brand review item is incomplete: ${item.id}`);
+}
 
 for (const paths of Object.values(manifest.assets)) {
   for (const path of paths) {

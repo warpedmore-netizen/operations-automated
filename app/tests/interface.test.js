@@ -5,8 +5,10 @@ const { resolve } = require("node:path");
 const engine = require("../engine.js");
 
 const appRoot = resolve(__dirname, "..");
+const repoRoot = resolve(appRoot, "..");
 const html = readFileSync(resolve(appRoot, "index.html"), "utf8");
 const appSource = readFileSync(resolve(appRoot, "app.js"), "utf8");
+const cssSource = readFileSync(resolve(appRoot, "styles.css"), "utf8");
 
 function matches(pattern, source) {
   return [...source.matchAll(pattern)].map((match) => match[1]);
@@ -40,14 +42,21 @@ test("local interface assets exist and no external resources are loaded", () => 
   for (const asset of ["styles.css", "engine.js", "storage.js", "app.js"]) {
     assert.equal(existsSync(resolve(appRoot, asset)), true, `${asset} should exist`);
   }
+  for (const asset of [
+    "brand/tokens/brand.css",
+    "brand/assets/logo/generated/mark-colour-transparent-1024.png",
+    "brand/adoption.json",
+    "brand/review-items.json",
+    "Launch-Brand-Review.cmd"
+  ]) assert.equal(existsSync(resolve(repoRoot, asset)), true, `${asset} should exist`);
   assert.doesNotMatch(html, /(?:src|href)="https?:\/\//i);
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
-  for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Cost and usage", "Settings", "Connections", "How this works"]) assert.match(html, new RegExp(label));
+  for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
   assert.match(html, /<main[^>]+id="main"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /lang="en-GB"/);
@@ -59,6 +68,18 @@ test("essential controls and accessibility landmarks are present", () => {
   assert.match(appSource, /userFacingAnswer/);
   assert.match(html + appSource, /Approve and merge/);
   assert.match(html, /Preparation and release are separate decisions/);
+});
+
+test("the Workbench consumes the controlled brand source and exposes visual review", () => {
+  assert.match(html, /\/brand-system\/tokens\/brand\.css/);
+  assert.match(html, /\/brand-system\/assets\/logo\/generated\/mark-colour-transparent-1024\.png/);
+  assert.match(appSource, /\/api\/brand-review/);
+  assert.match(appSource, /approve-internal/);
+  assert.match(appSource, /Revision requested/);
+  assert.match(appSource, /Direction rejected/);
+  assert.doesNotMatch(cssSource, /Georgia,\s*serif/);
+  assert.match(cssSource, /var\(--oa-midnight\)/);
+  assert.match(cssSource, /var\(--oa-font-display\)/);
 });
 
 test("change review and methodology challenge are designed for the founder", () => {
@@ -76,6 +97,8 @@ test("change review and methodology challenge are designed for the founder", () 
 test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Feedback is not approval/i);
   assert.match(html, /No automatic repository writes/i);
+  assert.match(html, /review evidence/i);
+  assert.match(html, /do not merge the pull request, change repository status or authorise external publication/i);
   assert.match(html, /Non-confidential project material only/i);
   assert.match(html, /Not approved/i);
   assert.match(html, /Private · governed publication/i);

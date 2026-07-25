@@ -66,6 +66,36 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(connections.payload.confluence.publication.automaticPublication, false);
     assert.doesNotMatch(JSON.stringify(connections.payload), /apiToken|Authorization/i);
 
+    const brandBoard = await fetch(`http://127.0.0.1:${port}/brand-system/index.html`);
+    assert.equal(brandBoard.ok, true);
+    assert.match(brandBoard.headers.get("content-type"), /text\/html/);
+    assert.match(await brandBoard.text(), /Operations Automated brand system/i);
+    const brandAsset = await fetch(`http://127.0.0.1:${port}/brand-system/assets/logo/generated/mark-colour-transparent-1024.png`);
+    assert.equal(brandAsset.ok, true);
+    assert.equal(brandAsset.headers.get("content-type"), "image/png");
+
+    const initialBrandReview = await call("/api/brand-review");
+    assert.equal(initialBrandReview.response.ok, true);
+    assert.equal(initialBrandReview.payload.status, "draft");
+    assert.equal(initialBrandReview.payload.approvalState, "not-approved");
+    assert.ok(initialBrandReview.payload.items.some((item) => item.id === "master-mark"));
+    assert.ok(initialBrandReview.payload.adoption.surfaces.some((surface) => surface.id === "workbench" && surface.status === "pilot-applied"));
+
+    const unsupportedBrandDecision = await call("/api/brand-review", {
+      method: "POST",
+      body: { itemId: "master-mark", action: "revise", reason: "" }
+    });
+    assert.equal(unsupportedBrandDecision.response.status, 400);
+    const brandDecision = await ok("/api/brand-review", {
+      itemId: "master-mark",
+      action: "approve-internal",
+      reason: ""
+    });
+    assert.equal(brandDecision.decision.actor, "Jamie Peppard");
+    assert.equal(brandDecision.decision.approvalCreated, false);
+    assert.equal(brandDecision.decision.repositoryChanged, false);
+    assert.equal(brandDecision.review.approvalState, "not-approved");
+
     const unsafeConnectionAction = await fetch(`http://127.0.0.1:${port}/api/connections/confluence/publication-plan`, {
       method: "POST",
       headers: {
@@ -278,7 +308,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
       "repository-preparation.recorded",
       "release-merge.authorised",
       "repository.reindexed",
-      "change.implemented"
+      "change.implemented",
+      "brand-review.recorded"
     ]) assert.ok(auditEvents.some((event) => event.action === action), `${action} should remain auditable`);
     const preparationAudit = auditEvents.find((event) => event.action === "repository-preparation.recorded");
     assert.equal(preparationAudit.detail.branchName, "codex/accountability-wording");

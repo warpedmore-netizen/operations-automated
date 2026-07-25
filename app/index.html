@@ -5,19 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A private, governed OPERATE workspace for operational problem solving.">
   <title>OPERATE Workspace</title>
+  <link rel="stylesheet" href="/brand-system/tokens/brand.css">
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="oa-base">
   <a class="skip-link" href="#main">Skip to conversation</a>
   <div class="shell">
     <aside class="rail">
-      <div class="brand"><span class="brand-mark">OA</span><div><strong>Operations Automated</strong><small>Private local workbench</small></div></div>
+      <div class="brand"><img class="brand-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt=""><div><strong>Operations Automated</strong><small>Private local workbench</small></div></div>
       <button class="new-button" id="new-conversation" type="button"><span aria-hidden="true">+</span> New conversation</button>
       <nav aria-label="Workbench">
         <button class="nav-item active" data-view="conversation"><span class="nav-icon" aria-hidden="true">C</span><span>Conversations</span></button>
         <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
+        <button class="nav-item" data-view="brand"><span class="nav-icon" aria-hidden="true">OA</span><span>Brand review</span></button>
         <button class="nav-item" data-view="usage"><span class="nav-icon" aria-hidden="true">U</span><span>Cost and usage</span></button>
         <button class="nav-item" data-view="settings"><span class="nav-icon" aria-hidden="true">S</span><span>Settings</span></button>
         <button class="nav-item" data-view="connections"><span class="nav-icon" aria-hidden="true">↗</span><span>Connections</span></button>
@@ -39,7 +41,7 @@
       <section class="view conversation-view" id="conversation-view">
         <div class="thread-column">
           <div class="welcome" id="welcome">
-            <span class="welcome-mark">OA</span>
+            <img class="welcome-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="">
             <p class="eyebrow">Governed assistance</p>
             <h2>What would you like to work through?</h2>
             <p>Ask a question, talk through an idea, review a document or create something useful. You will see a clear answer first; supporting evidence and system details stay out of the way unless you open them.</p>
@@ -252,6 +254,42 @@
           </div>
         </div>
       </section>
+      <section class="view utility-view brand-review-view" id="brand-view" hidden>
+        <div class="utility-card brand-review-card">
+          <div class="brand-review-heading">
+            <div>
+              <p class="eyebrow">Visual system and adoption</p>
+              <h2>Brand review</h2>
+              <p>See the brand applied to real surfaces, review one decision at a time and track how the shared system connects to the wider Operations Automated project.</p>
+            </div>
+            <span class="status-pill status-awaiting-review">Draft · internal review</span>
+          </div>
+          <div class="plain-explainer brand-review-boundary">
+            <strong>Your choices here are retained as review evidence.</strong>
+            <p>They do not merge the pull request, change repository status or authorise external publication. Overall approval remains a separate founder decision.</p>
+          </div>
+          <div class="brand-review-summary">
+            <div><span>Shared source</span><strong>One controlled brand system</strong><small>Tokens, logo, voice and templates</small></div>
+            <div><span>First live pilot</span><strong>Workbench application</strong><small>Uses shared tokens and the OA mark</small></div>
+            <div><span>Review progress</span><strong id="brand-review-progress">Loading...</strong><small>Latest decision retained per item</small></div>
+          </div>
+          <nav class="brand-preview-links" aria-label="Brand previews">
+            <a href="/brand-system/index.html" target="_blank" rel="noreferrer"><strong>Open full brand board</strong><span>Foundations, identity and components</span></a>
+            <a href="/brand-system/templates/website/index.html" target="_blank" rel="noreferrer"><strong>Open website example</strong><span>Responsive public-page starter</span></a>
+            <a href="/brand-system/templates/application/index.html" target="_blank" rel="noreferrer"><strong>Open application example</strong><span>Generic application-shell starter</span></a>
+            <a href="/brand-system/templates/social/linkedin-profile-cover-1584x396.png" target="_blank" rel="noreferrer"><strong>Open LinkedIn cover</strong><span>1584 × 396 personal-profile artwork</span></a>
+          </nav>
+          <div class="brand-adoption-panel">
+            <div>
+              <p class="eyebrow">Project connection</p>
+              <h3>Adoption register</h3>
+              <p>Every controlled surface must declare whether it is using, testing or waiting for the shared brand source.</p>
+            </div>
+            <div class="brand-adoption-list" id="brand-adoption-list"><p>Loading project surfaces...</p></div>
+          </div>
+          <div class="brand-review-grid" id="brand-review-grid" aria-live="polite"><p>Loading visual review items...</p></div>
+        </div>
+      </section>
       <section class="view utility-view" id="guide-view" hidden>
         <div class="utility-card guide-card">
           <p class="eyebrow">Two-minute guide</p><h2>How the Workbench works</h2>
@@ -264,6 +302,7 @@
             <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
             <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
             <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise read-only evidence or preview a controlled Methodology and Internal page tree. Documentation writes require a reviewed page plan and Jamie Peppard’s exact confirmation; they never create methodology approval or delete a page.</p></div></article>
+            <article><span>9</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. Approve for internal use, request revision or reject each direction; those choices remain evidence until the overall brand decision is explicitly made.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>

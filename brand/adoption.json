@@ -1,0 +1,119 @@
+{
+  "meta": {
+    "id": "OA-BRAND-007",
+    "name": "Operations Automated brand adoption register",
+    "status": "draft",
+    "version": "0.1.0",
+    "owner": "Jamie Peppard",
+    "updated": "2026-07-25"
+  },
+  "sourceOfTruth": {
+    "manifest": "brand/manifest.json",
+    "tokens": "brand/tokens/brand.tokens.json",
+    "browserTokens": "brand/tokens/brand.css",
+    "logoAssets": "brand/assets/logo/generated",
+    "voice": "brand/voice-and-content.md",
+    "approvalRecord": "proposals/brand-system-assurance-pack-v0.1.md"
+  },
+  "requirements": [
+    "Every controlled surface declares its adoption status here.",
+    "Browser surfaces consume the shared tokens rather than copying colour values into a new theme.",
+    "The OA mark comes from the controlled logo assets.",
+    "Local extensions must preserve the semantic roles and record why an extension is needed.",
+    "Visual review evidence does not change repository status or create publication approval.",
+    "External publication, deployment and migration remain separately governed."
+  ],
+  "statuses": [
+    "source",
+    "pilot-applied",
+    "starter-ready",
+    "not-started",
+    "validated",
+    "approved"
+  ],
+  "surfaces": [
+    {
+      "id": "brand-system",
+      "name": "Brand system and review board",
+      "path": "brand",
+      "status": "source",
+      "uses": [
+        "manifest",
+        "tokens",
+        "logo",
+        "voice",
+        "templates"
+      ],
+      "reviewRoute": "/brand-system/index.html",
+      "nextGate": "Founder review of the visual system and wording decisions"
+    },
+    {
+      "id": "workbench",
+      "name": "Operations Automated Workbench",
+      "path": "app",
+      "status": "pilot-applied",
+      "uses": [
+        "browserTokens",
+        "logo",
+        "displayTypography",
+        "workingSurfaces"
+      ],
+      "reviewRoute": "/#brand",
+      "nextGate": "Founder visual review and bounded usability validation"
+    },
+    {
+      "id": "website-starter",
+      "name": "Website starter",
+      "path": "brand/templates/website",
+      "status": "starter-ready",
+      "uses": [
+        "browserTokens",
+        "logo",
+        "voice",
+        "connectionField"
+      ],
+      "reviewRoute": "/brand-system/templates/website/index.html",
+      "nextGate": "Review in a specific non-published website prototype"
+    },
+    {
+      "id": "application-starter",
+      "name": "Application starter",
+      "path": "brand/templates/application",
+      "status": "starter-ready",
+      "uses": [
+        "browserTokens",
+        "logo",
+        "statusSemantics"
+      ],
+      "reviewRoute": "/brand-system/templates/application/index.html",
+      "nextGate": "Superseded by the Workbench pilot when its visual review is accepted"
+    },
+    {
+      "id": "documentation-starter",
+      "name": "Controlled-document starter",
+      "path": "brand/templates/documentation",
+      "status": "starter-ready",
+      "uses": [
+        "documentTokens",
+        "statusSemantics",
+        "voice"
+      ],
+      "reviewRoute": "/brand-system/index.html#templates",
+      "nextGate": "Render and review one real controlled document"
+    },
+    {
+      "id": "social-profile",
+      "name": "LinkedIn personal-profile cover",
+      "path": "brand/templates/social",
+      "status": "starter-ready",
+      "uses": [
+        "logo",
+        "signatureSurface",
+        "sourceWording"
+      ],
+      "reviewRoute": "/brand-system/templates/social/linkedin-profile-cover-1584x396.png",
+      "nextGate": "Decide descriptor and strapline before external upload"
+    }
+  ],
+  "boundary": "A surface not listed here must not claim brand conformance. Inclusion records adoption state; it does not approve or publish the surface."
+}

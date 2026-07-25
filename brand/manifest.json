@@ -34,6 +34,14 @@
       "tokens/brand.css",
       "tokens/brand.ts"
     ],
+    "governance": [
+      "adoption.json",
+      "review-items.json"
+    ],
+    "previews": [
+      "previews/README.md",
+      "previews/brand-review-board-1600x1000.png"
+    ],
     "templates": [
       "templates/website/index.html",
       "templates/application/index.html",
