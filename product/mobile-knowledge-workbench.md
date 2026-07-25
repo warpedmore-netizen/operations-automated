@@ -2,7 +2,7 @@
 id: OA-PRODUCT-010
 title: Mobile Knowledge Workbench and Governed Review Journey
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-25
 ---
@@ -42,7 +42,7 @@ The artefact status remains authoritative. This proposal does not change approve
 
 The current approved product boundary describes a private local application with no accounts or hosted deployment. Governed Confluence publication reads from current `main`, previews create/update/unchanged/conflict outcomes and requires Jamie's plan-specific confirmation.
 
-The running interface can be reached only on `127.0.0.1`. It has no approved phone-access route. An unmerged methodology proposal cannot be published as a Confluence review draft.
+The running interface remains bound to `127.0.0.1`. A tailnet-only Tailscale Serve route has since been observed working between Jamie's computer and Samsung phone, with Funnel disabled. That is operational evidence, not an inferred governance approval. An unmerged methodology proposal cannot be published as a Confluence review draft.
 
 The separate proposed Methodology Lab pilot in draft PR #18 has demonstrated a bounded Draft-only publication route and created a ten-page private Confluence review set without altering the existing managed pages. That route is unmerged and is not part of the current approved Workbench behaviour.
 
@@ -63,6 +63,20 @@ The separate proposed Methodology Lab pilot in draft PR #18 has demonstrated a b
 7. Record how to disable Serve, remove the phone and revoke the connection.
 
 Tailscale Funnel, a public tunnel and router port-forwarding are outside the proposal.
+
+### Recoverable mobile voice
+
+The first real phone pilot reached the recording and Stop states but failed during transcription. The previous implementation did not retain a failed audio blob in the browser or audit the failure stage, so the exact cause cannot be reconstructed.
+
+The proposed recovery increment should:
+
+1. display the selected microphone and a live sound-level signal while recording;
+2. select a supported WebM, MP4/M4A or Ogg recording container where the browser exposes one;
+3. emit regular recording chunks rather than depending only on a final mobile-browser chunk;
+4. validate the received format by MIME type or file signature;
+5. keep failed audio temporarily in the originating tab so transcription can be retried without repeating the recording;
+6. distinguish missing audio, no detected speech, unsupported format, provider rejection, timeout and connection interruption; and
+7. audit only timing, size, format, sound-signal and failure metadata, never the recording or transcript content.
 
 ### Knowledge-first journey
 
@@ -99,6 +113,9 @@ PR #18 records Jamie's standing authority for AI to publish committed proposed m
 ## Evidence
 
 - Jamie's direct founder feedback on intended use and current friction.
+- The first real Samsung-phone attempt reached recording and Stop but did not create a successful transcription record.
+- Tailscale status confirmed the computer and phone online in the same tailnet, Serve marked tailnet-only and Funnel disabled.
+- The prior implementation retained no failed-attempt metadata and discarded the browser's only audio reference after the request failed.
 - Visual inspection at desktop and 390 × 844 phone sizes.
 - HTTP failures for the live brand stylesheet and logo.
 - Existing approved activation, output, challenge, evolution and publication controls.
@@ -148,6 +165,10 @@ Evidence is strong for founder usability and current technical failure. It remai
 - the phone reaches only the private HTTPS Serve address;
 - a non-authorised identity or device is denied;
 - one spoken challenge completes end to end;
+- the selected microphone and live sound-level signal are visible before Stop;
+- a forced transcription failure can be retried from the retained in-tab recording;
+- Android WebM, mobile MP4/M4A, Ogg, missing MIME, empty audio and unsupported audio paths return the intended result;
+- no recording or transcript content enters the audit record;
 - the computer-restart and stale-server recovery route works;
 - Serve can be disabled and the phone removed without repository changes.
 
@@ -171,7 +192,7 @@ Evidence is strong for founder usability and current technical failure. It remai
 
 ## Version impact
 
-- Proposed Workbench build: `1.1.0-mobile-knowledge-draft`
+- Proposed Workbench build: `1.1.2-mobile-voice-recovery-draft`
 - Approved Operations Automated methodology baseline: unchanged at v0.6
 - Approved Confluence publication behaviour: unchanged until a later review-draft decision
 - External publication and customer use: unchanged and unapproved

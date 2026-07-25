@@ -48,3 +48,9 @@ Jamie's direction to proceed authorises controlled preparation and correction of
 4. Each live Confluence publication under the existing plan-specific confirmation.
 
 Continued discussion, use of the local fixes or a successful test does not make any of those decisions.
+
+## Later operational evidence
+
+Jamie installed Tailscale on the Windows computer and Samsung phone and enabled a tailnet-only Serve route. Read-only inspection confirmed both devices online, the Workbench proxy restricted to the tailnet and Funnel disabled. The phone reached the Workbench, but its first recording failed during transcription and triggered decision `OA-DECISION-2026-07-25-007`.
+
+This evidence updates the technical readiness assessment. It does not change `connection_status: not-approved`, authorise broader access or approve release.

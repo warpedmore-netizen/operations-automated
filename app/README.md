@@ -6,7 +6,7 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
-> **Proposed mobile knowledge pilot:** Workbench build `1.1.0-mobile-knowledge-draft` corrects the local reading and phone layout and proposes a Jamie-only Tailscale access route. The layout correction is available on its review branch. Remote access is not enabled, Tailscale is not installed and the connection still needs Jamie's explicit approval.
+> **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
 Use either one-click entry point:
 
@@ -36,7 +36,18 @@ The proportionate founder pilot is Tailscale Serve, not a public tunnel:
 6. Allow microphone access, complete one spoken challenge and confirm that an unauthorised identity cannot connect.
 7. Record and test the Serve-disable and device-removal route.
 
-The computer and Workbench still need to be running. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. No remote access has been activated by this documentation.
+The computer and Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut and keep the server window open. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
+
+## Mobile voice and transcription recovery
+
+1. Select **Record** and confirm that the microphone name and live sound-level bar appear.
+2. Speak, then select **Stop recording**. The browser emits regular audio chunks so a mobile recording is not dependent on one final chunk.
+3. The Workbench selects a supported WebM, MP4/M4A or Ogg container where the phone browser exposes that capability. The server also checks the audio file signature when mobile MIME metadata is missing.
+4. If transcription succeeds, review the editable text before using it.
+5. If transcription fails, do not repeat the recording immediately. The original audio remains temporarily in that browser tab: select **Retry transcription**, or select **Discard and record again**.
+6. Expand **Recording details** only when troubleshooting. It shows duration, size, format, sound detection and a failure reference without retaining the audio on the server.
+
+Temporary audio is held only in the current browser page. Refreshing or closing the page clears it. Successful and failed server attempts retain timing, size, format and error metadata for diagnosis, but not the recording or transcript content.
 
 ## Proposed brand review pilot
 
@@ -60,7 +71,7 @@ Voice transcription, translation and model reasoning require an OpenAI API key w
 4. Close any existing window titled **Operations Automated Workbench - keep open**.
 5. Run `.\Start-Workbench.ps1`.
 6. Open `http://127.0.0.1:4173`. The header should say **Provider connected**.
-7. Select **Record**, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**.
+7. Select **Record**, check the live sound-level bar, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**. If transcription fails, use the retained-recording retry panel before recording again.
 
 The local server loads `.env` itself. The key is read only by the Node.js server and is never returned to the browser, logged, stored in SQLite or included in exports. `.env` is excluded from Git.
 
@@ -125,7 +136,7 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
-- Push-to-record voice capture, transcription and editable transcript review
+- Mobile-aware push-to-record capture with live microphone level, supported-format selection, retained-tab retry and editable transcript review
 - Optional English working translation while retaining the original transcript
 - Working text, Markdown, CSV and JSON attachment extraction, hashing and reuse
 - Reopenable conversation history and clearly explained saved feedback
@@ -136,7 +147,7 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 - Founder-only release confirmation, retained repository references, reindexing and implementation receipts
 - On-demand methodology challenges focused on principles, AI suitability, manual work or delivery capability
 - Plain-language answers with technical traceability collapsed by default
-- Visible recording time and staged request-processing feedback
+- Visible recording time, microphone signal, staged request-processing feedback and metadata-only failure auditing
 - In-product user guide and soft/hard budget explanations
 - Markdown export, usage ledger and audit records
 - Push-to-record browser capture with editable review surface

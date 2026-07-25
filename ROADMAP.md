@@ -50,6 +50,8 @@ Workbench 0.8.0 added the [governed documentation-publication capability](produc
 
 The first founder-confirmed publication created 108 pages and the immediate comparison returned all 108 unchanged with no conflict. Founder review found a delivery gap: the result is a governed repository mirror rather than a human methodology book or internal handbook. The [human publication model](product/confluence-human-publication-model.md) and three bounded pilots are approved for private internal implementation pending merge. The model adds a curated reader layer while preserving the lifecycle mirror as a secondary controlled record. Its manual document-challenge pilot routes an authorised test interaction into the methodology challenge loop, while automatic comment and edit retrieval remains behind a separate connection decision.
 
+The proposed Mobile Knowledge Workbench has now reached Jamie's Samsung phone through a tailnet-only Tailscale Serve route with Funnel disabled. The first real recording failed during transcription and exposed missing format controls, user feedback, retry and failure auditing. Workbench 1.1.2 prepares a recoverable voice route; a post-correction spoken challenge, denied-identity check, connection-governance decision and product release decision remain outstanding.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |

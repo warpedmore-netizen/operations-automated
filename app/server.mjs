@@ -26,6 +26,7 @@ import {
   buildConfluencePublicationPlan, publicPublicationPlan
 } from "./confluence-publication.mjs";
 import { createCredentialStore } from "./credential-store.mjs";
+import voiceCapture from "./voice-capture.js";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
@@ -1003,27 +1004,158 @@ async function api(request, response, url) {
   if (method === "POST" && url.pathname === "/api/audio/transcribe") {
     if (!process.env.OPENAI_API_KEY) return json(response, 503, { error: "Add an OpenAI API key before using voice transcription." });
     const settings = getSettings();
-    const raw = await body(request, Math.min(settings.maximumFileSize, 25_000_000));
-    if (!raw.length) return json(response, 400, { error: "No audio was received." });
-    const mimeType = String(request.headers["content-type"] || "audio/webm").split(";")[0];
-    const extension = mimeType.includes("wav") ? "wav" : mimeType.includes("mpeg") ? "mp3" : mimeType.includes("mp4") ? "m4a" : "webm";
+    const id = randomUUID();
+    const started = Date.now();
+    const declaredType = String(request.headers["content-type"] || "");
+    const suppliedDuration = Number.parseInt(String(request.headers["x-recording-duration-ms"] || "0"), 10);
+    const durationMs = Number.isFinite(suppliedDuration)
+      ? Math.max(0, Math.min(suppliedDuration, settings.maximumAudioDuration * 1000))
+      : 0;
+    const soundDetected = ["true", "false", "unknown"].includes(String(request.headers["x-recording-sound-detected"]))
+      ? String(request.headers["x-recording-sound-detected"])
+      : "unknown";
+    let raw;
+    try {
+      raw = await body(request, Math.min(settings.maximumFileSize, 25_000_000));
+    } catch (error) {
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "upload",
+        code: error.status === 413 ? "AUDIO_TOO_LARGE" : "AUDIO_UPLOAD_FAILED",
+        durationMs,
+        soundDetected,
+        audioRetained: false
+      });
+      throw error;
+    }
+    if (!raw.length) {
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "capture",
+        code: "NO_AUDIO_RECEIVED",
+        durationMs,
+        soundDetected,
+        audioRetained: false
+      });
+      return json(response, 400, {
+        code: "NO_AUDIO_RECEIVED",
+        error: "The phone did not send any audio. Check the microphone permission and record again.",
+        retryable: false
+      });
+    }
+    const format = voiceCapture.resolveAudioFormat(declaredType, raw);
+    if (!format) {
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "format",
+        code: "UNSUPPORTED_AUDIO_FORMAT",
+        declaredType: voiceCapture.normaliseMimeType(declaredType) || "missing",
+        bytes: raw.length,
+        durationMs,
+        soundDetected,
+        audioRetained: false
+      });
+      return json(response, 415, {
+        code: "UNSUPPORTED_AUDIO_FORMAT",
+        error: "The phone created an audio format that the transcription service cannot read.",
+        retryable: true
+      });
+    }
+    audit("audio.transcription.requested", "usage", id, {
+      bytes: raw.length,
+      durationMs,
+      soundDetected,
+      declaredType: voiceCapture.normaliseMimeType(declaredType) || "missing",
+      acceptedType: format.mimeType,
+      formatSource: format.source,
+      audioRetained: false
+    });
     const form = new FormData();
-    form.append("file", new Blob([raw], { type: mimeType }), `recording.${extension}`);
+    form.append("file", new Blob([raw], { type: format.mimeType }), `recording.${format.extension}`);
     form.append("model", process.env.OPENAI_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe");
     form.append("response_format", "json");
-    const started = Date.now();
-    const providerResponse = await fetch("https://api.openai.com/v1/audio/transcriptions", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
-      body: form
-    });
-    const payload = await providerResponse.json();
-    if (!providerResponse.ok) throw Object.assign(new Error(payload.error?.message || "Transcription failed."), { status: 502 });
+    let providerResponse;
+    let payload = {};
+    try {
+      providerResponse = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+        body: form,
+        signal: AbortSignal.timeout(110_000)
+      });
+      payload = safeJson(await providerResponse.text(), {});
+    } catch (error) {
+      const latency = Date.now() - started;
+      db.prepare("INSERT INTO usage_records VALUES(?,?,?,?,?,?,?,?,?,?)")
+        .run(id, null, "openai", process.env.OPENAI_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe", 0, 0, 0, latency, "failed", now());
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "provider-connection",
+        code: error.name === "TimeoutError" ? "TRANSCRIPTION_TIMEOUT" : "TRANSCRIPTION_UNAVAILABLE",
+        latencyMs: latency,
+        bytes: raw.length,
+        audioRetained: false
+      });
+      return json(response, 502, {
+        code: error.name === "TimeoutError" ? "TRANSCRIPTION_TIMEOUT" : "TRANSCRIPTION_UNAVAILABLE",
+        error: error.name === "TimeoutError"
+          ? "The transcription service took too long to respond. Your recording is still available to retry."
+          : "The Workbench could not reach the transcription service. Your recording is still available to retry.",
+        retryable: true
+      });
+    }
+    if (!providerResponse.ok) {
+      const latency = Date.now() - started;
+      const providerStatus = Number(providerResponse.status || 502);
+      const retryable = providerStatus === 408 || providerStatus === 409 || providerStatus === 429 || providerStatus >= 500;
+      const code = providerStatus === 429 ? "TRANSCRIPTION_RATE_LIMITED"
+        : providerStatus === 401 || providerStatus === 403 ? "TRANSCRIPTION_CREDENTIALS_REJECTED"
+          : providerStatus >= 500 ? "TRANSCRIPTION_UNAVAILABLE" : "TRANSCRIPTION_AUDIO_REJECTED";
+      const message = code === "TRANSCRIPTION_RATE_LIMITED"
+        ? "The transcription service is temporarily busy. Your recording is still available to retry."
+        : code === "TRANSCRIPTION_CREDENTIALS_REJECTED"
+          ? "The transcription connection needs attention on the computer. Your recording remains available in this tab."
+          : code === "TRANSCRIPTION_UNAVAILABLE"
+            ? "The transcription service is temporarily unavailable. Your recording is still available to retry."
+            : "The transcription service could not read this recording. The audio remains available to retry or replace.";
+      db.prepare("INSERT INTO usage_records VALUES(?,?,?,?,?,?,?,?,?,?)")
+        .run(id, null, "openai", process.env.OPENAI_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe", 0, 0, 0, latency, "failed", now());
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "provider-response",
+        code,
+        providerStatus,
+        providerErrorType: String(payload.error?.type || "").slice(0, 80),
+        latencyMs: latency,
+        bytes: raw.length,
+        audioRetained: false
+      });
+      return json(response, 502, { code, error: message, retryable });
+    }
     const transcript = String(payload.text || "").trim();
-    const id = randomUUID();
+    if (!transcript) {
+      const latency = Date.now() - started;
+      db.prepare("INSERT INTO usage_records VALUES(?,?,?,?,?,?,?,?,?,?)")
+        .run(id, null, "openai", process.env.OPENAI_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe", 0, 0, 0, latency, "completed-empty", now());
+      audit("audio.transcription.failed", "usage", id, {
+        stage: "result",
+        code: "NO_SPEECH_DETECTED",
+        latencyMs: latency,
+        bytes: raw.length,
+        durationMs,
+        soundDetected,
+        audioRetained: false
+      });
+      return json(response, 422, {
+        code: "NO_SPEECH_DETECTED",
+        error: "The recording arrived, but no clear speech was detected.",
+        retryable: true
+      });
+    }
     db.prepare("INSERT INTO usage_records VALUES(?,?,?,?,?,?,?,?,?,?)")
       .run(id, null, "openai", process.env.OPENAI_TRANSCRIBE_MODEL || "gpt-4o-mini-transcribe", 0, 0, 0, Date.now() - started, "completed", now());
-    audit("audio.transcribed", "usage", id, { audioRetained: false, bytes: raw.length });
+    audit("audio.transcribed", "usage", id, {
+      audioRetained: false,
+      bytes: raw.length,
+      durationMs,
+      soundDetected,
+      acceptedType: format.mimeType
+    });
     return json(response, 200, { transcript, language: detectLanguage(transcript), audioRetained: false });
   }
   if (method === "POST" && url.pathname === "/api/text/translate") {

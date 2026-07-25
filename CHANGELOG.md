@@ -2,6 +2,20 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.1.2 mobile voice recovery - proposed
+
+- Recorded the first real Samsung-phone transcription failure without claiming a cause that the previous telemetry cannot prove.
+- Added explicit mobile-browser selection across supported WebM, MP4/M4A and Ogg recording containers, with file-signature recovery when MIME metadata is absent.
+- Emitted regular recording chunks so mobile capture does not depend only on one final browser event.
+- Added the selected microphone and a live sound-level signal during recording.
+- Kept long conversation history inside its own scroll area and reopened it at the latest message so Record and Send remain immediately reachable on a phone.
+- Kept a failed recording temporarily in the originating browser tab with **Retry transcription** and deliberate discard actions.
+- Added specific recovery messages for empty audio, no detected speech, unsupported audio, connection interruption, timeout, rate limiting and provider rejection.
+- Added metadata-only requested, failed and completed transcription audit events; audio and transcript content remain unretained.
+- Corrected the phone guide to explain Bad Gateway recovery and distinguish an operational Tailscale route from governance approval.
+- Added mobile format, signature detection, empty-audio, unsupported-audio, audit and recovery-interface tests.
+- Kept methodology v0.6, merge, publication, Tailscale permissions and external access unchanged and unapproved.
+
 ## Workbench 1.1.1 brand rail refresh - proposed
 
 - Replaced the improvised circular OA badge with the controlled continuous-loop mark in the application rail and welcome state.

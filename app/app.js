@@ -14,6 +14,9 @@ const state = {
   recordingTimer: null,
   recordingClock: null,
   recordingStartedAt: null,
+  recordingMonitor: null,
+  recordingError: null,
+  pendingRecording: null,
   proposals: [],
   selectedProposalId: null,
   currentUser: "Jamie Peppard",
@@ -1404,28 +1407,148 @@ $("#attachment-name").addEventListener("click", (event) => {
   state.attachments = state.attachments.filter((item) => item.id !== button.dataset.removeAttachment);
   renderAttachments();
 });
-async function transcribeRecording(blob) {
+function recordingDetail(recording, error) {
+  const duration = Math.max(0, Math.round(Number(recording?.durationMs || 0) / 1000));
+  const size = window.WorkbenchVoice?.formatRecordingSize(recording?.blob?.size || 0) || `${recording?.blob?.size || 0} bytes`;
+  const format = recording?.mimeType || "not reported by the browser";
+  const signal = recording?.soundDetected === true
+    ? "Sound level detected"
+    : recording?.soundDetected === false ? "Little or no sound level detected" : "Sound level unavailable";
+  const code = error?.value?.code || error?.code || "TRANSCRIPTION_FAILED";
+  return `Length ${duration}s · ${size} · ${format} · ${signal} · reference ${code}`;
+}
+
+function showVoiceRecovery(error, recording, { retryable = Boolean(recording?.blob?.size) } = {}) {
+  const value = error?.value || {};
+  const code = value.code || error?.code || "TRANSCRIPTION_FAILED";
+  let title = "Your recording is still available";
+  let message = value.error || error?.message || "Transcription did not complete.";
+  if (error?.name === "TypeError" || code === "WORKBENCH_UNREACHABLE") {
+    title = "The Workbench connection was interrupted";
+    message = "The recording stayed on this phone. Check that the computer and Workbench are running, then retry transcription.";
+  } else if (code === "NO_AUDIO_RECEIVED") {
+    title = "No usable audio was captured";
+    message = "Check the phone’s microphone permission and watch the sound-level bar while speaking, then record again.";
+  } else if (code === "NO_SPEECH_DETECTED") {
+    title = "No clear speech was detected";
+    message = "The phone produced an audio file, but no words were detected. Check the sound-level bar, then record again or retry once.";
+  } else if (code === "UNSUPPORTED_AUDIO_FORMAT") {
+    title = "This recording format was not recognised";
+    message = "The audio is still available in this tab. Update or reopen Chrome on the phone, then retry or record again.";
+  }
+  state.pendingRecording = retryable ? recording : null;
+  $("#voice-recovery-title").textContent = title;
+  $("#voice-recovery-message").textContent = message;
+  $("#voice-recovery-details").textContent = recordingDetail(recording, error);
+  $("#retry-transcription").hidden = !retryable;
+  $("#retry-transcription").disabled = false;
+  $("#voice-recovery").hidden = false;
+  $("#record").disabled = true;
+  $("#voice-recovery").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function clearVoiceRecovery({ discardAudio = false } = {}) {
+  if (discardAudio) state.pendingRecording = null;
+  $("#voice-recovery").hidden = true;
+  $("#retry-transcription").disabled = false;
+  $("#record").disabled = !state.apiConfigured;
+}
+
+function startRecordingMonitor(stream) {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  try {
+    const context = new AudioContextClass();
+    const source = context.createMediaStreamSource(stream);
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 256;
+    source.connect(analyser);
+    const samples = new Uint8Array(analyser.fftSize);
+    const monitor = { analyser, context, source, samples, frameId: null, peakLevel: 0, sampledFrames: 0 };
+    const sample = () => {
+      analyser.getByteTimeDomainData(samples);
+      let squareSum = 0;
+      for (const value of samples) {
+        const centred = (value - 128) / 128;
+        squareSum += centred * centred;
+      }
+      const level = Math.min(1, Math.sqrt(squareSum / samples.length) * 5);
+      monitor.peakLevel = Math.max(monitor.peakLevel, level);
+      monitor.sampledFrames += 1;
+      $("#recording-level").style.width = `${Math.max(3, Math.round(level * 100))}%`;
+      monitor.frameId = requestAnimationFrame(sample);
+    };
+    Promise.resolve(context.resume?.()).catch(() => {});
+    monitor.frameId = requestAnimationFrame(sample);
+    return monitor;
+  } catch {
+    return null;
+  }
+}
+
+async function stopRecordingMonitor() {
+  const monitor = state.recordingMonitor;
+  state.recordingMonitor = null;
+  if (!monitor) return { soundDetected: null, peakLevel: null };
+  cancelAnimationFrame(monitor.frameId);
+  try { monitor.source.disconnect(); } catch {}
+  try { await monitor.context.close(); } catch {}
+  $("#recording-level").style.width = "3%";
+  return {
+    soundDetected: monitor.sampledFrames ? monitor.peakLevel >= 0.025 : null,
+    peakLevel: monitor.sampledFrames ? monitor.peakLevel : null
+  };
+}
+
+async function transcribeRecording(recording = state.pendingRecording) {
+  if (!recording?.blob?.size) {
+    showVoiceRecovery(Object.assign(new Error("No audio was received."), { code: "NO_AUDIO_RECEIVED" }), recording, { retryable: false });
+    return false;
+  }
+  state.pendingRecording = recording;
+  $("#voice-recovery").hidden = true;
   $("#record").disabled = true;
   $("#record").textContent = "Transcribing...";
-  setProcessing(true, "Transcribing your recording", "Audio is being converted to editable text. It is not being reasoned over yet...");
+  $("#retry-transcription").disabled = true;
+  setProcessing(true, "Transcribing your recording", "The recording is safely held in this browser tab while it is converted to editable text...");
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 120_000);
   try {
     const response = await fetch("/api/audio/transcribe", {
       method: "POST",
-      headers: { "Content-Type": blob.type || "audio/webm" },
-      body: blob
+      headers: {
+        "Content-Type": recording.mimeType || recording.blob.type || "application/octet-stream",
+        "X-Recording-Duration-Ms": String(Math.max(0, Math.round(recording.durationMs || 0))),
+        "X-Recording-Sound-Detected": recording.soundDetected === null ? "unknown" : String(Boolean(recording.soundDetected))
+      },
+      body: recording.blob,
+      signal: controller.signal
     });
     const value = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(value.error || "Transcription failed.");
-    state.capture = { originalText: value.transcript, workingText: value.transcript, language: value.language, translated: false };
-    $("#transcript").value = value.transcript;
+    if (!response.ok) throw Object.assign(new Error(value.error || "Transcription did not complete."), { status: response.status, value });
+    const transcript = String(value.transcript || "").trim();
+    if (!transcript) throw Object.assign(new Error("No clear speech was detected."), { value: { code: "NO_SPEECH_DETECTED" } });
+    state.capture = { originalText: transcript, workingText: transcript, language: value.language, translated: false };
+    state.pendingRecording = null;
+    $("#transcript").value = transcript;
     $("#translation").value = "";
     $("#translation-field").hidden = true;
     $("#language-label").textContent = `Detected language: ${value.language}`;
     $("#capture-review").hidden = false;
+    clearVoiceRecovery();
     toast("Transcription complete. Review it before using it.");
+    return true;
+  } catch (error) {
+    if (error.name === "AbortError") {
+      error = Object.assign(new Error("Transcription took too long to respond. Your recording is still available to retry."), { code: "TRANSCRIPTION_TIMEOUT" });
+    }
+    showVoiceRecovery(error, recording);
+    toast("Transcription did not complete. Your recording has not been lost.", true);
+    return false;
   } finally {
+    clearTimeout(timeout);
     setProcessing(false);
-    $("#record").disabled = !state.apiConfigured;
+    $("#record").disabled = !state.apiConfigured || Boolean(state.pendingRecording);
     $("#record").textContent = "Record";
     $("#record").setAttribute("aria-label", "Start voice recording");
   }
@@ -1435,6 +1558,7 @@ function stopRecording() {
   if (state.recording?.state === "recording") {
     $("#record").disabled = true;
     $("#record").textContent = "Stopping...";
+    try { state.recording.requestData(); } catch {}
     state.recording.stop();
   }
 }
@@ -1451,29 +1575,68 @@ $("#record").addEventListener("click", async () => {
   if (state.recording?.state === "recording") return stopRecording();
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) return toast("This browser does not support microphone recording.", true);
   try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
+    clearVoiceRecovery({ discardAudio: true });
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true }
+    });
+    const audioTrack = stream.getAudioTracks()[0];
+    if (!audioTrack) {
+      stream.getTracks().forEach((track) => track.stop());
+      throw Object.assign(new Error("The browser did not provide a microphone audio track."), { code: "NO_AUDIO_TRACK" });
+    }
+    const preferredMimeType = window.WorkbenchVoice?.selectRecorderMimeType(window.MediaRecorder) || "";
+    let recorder;
+    try {
+      recorder = preferredMimeType ? new MediaRecorder(stream, { mimeType: preferredMimeType }) : new MediaRecorder(stream);
+    } catch {
+      recorder = new MediaRecorder(stream);
+    }
     state.recording = recorder;
     state.recordingStream = stream;
     state.recordingChunks = [];
+    state.recordingError = null;
+    state.recordingMonitor = startRecordingMonitor(stream);
+    $("#recording-device").textContent = `${audioTrack.label || "Phone microphone"} connected. Speak now, then select Stop.`;
+    audioTrack.onmute = () => { $("#recording-device").textContent = "The microphone stopped sending audio. Check the phone permission or another app using it."; };
+    audioTrack.onunmute = () => { $("#recording-device").textContent = `${audioTrack.label || "Phone microphone"} connected. Speak now, then select Stop.`; };
     recorder.ondataavailable = (event) => { if (event.data.size) state.recordingChunks.push(event.data); };
+    recorder.onerror = (event) => {
+      state.recordingError = Object.assign(new Error(event.error?.message || "The phone stopped recording unexpectedly."), { code: "RECORDER_ERROR" });
+    };
     recorder.onstop = async () => {
       clearTimeout(state.recordingTimer);
       clearInterval(state.recordingClock);
+      const durationMs = Math.max(0, Date.now() - state.recordingStartedAt);
+      const signal = await stopRecordingMonitor();
+      audioTrack.onmute = null;
+      audioTrack.onunmute = null;
       stream.getTracks().forEach((track) => track.stop());
       $("#recording-status").hidden = true;
       $("#record").classList.remove("recording");
       $("#record").textContent = "Record";
       $("#record").disabled = false;
       $("#record").setAttribute("aria-label", "Start voice recording");
-      const blob = new Blob(state.recordingChunks, { type: recorder.mimeType || "audio/webm" });
+      const mimeType = recorder.mimeType || state.recordingChunks.find((chunk) => chunk.type)?.type || preferredMimeType || "application/octet-stream";
+      const blob = new Blob(state.recordingChunks, { type: mimeType });
+      const recording = { blob, durationMs, mimeType, soundDetected: signal.soundDetected, peakLevel: signal.peakLevel };
+      const recordingError = state.recordingError;
       state.recording = null;
       state.recordingStream = null;
       state.recordingChunks = [];
       state.recordingStartedAt = null;
-      try { await transcribeRecording(blob); } catch (error) { toast(error.message, true); }
+      state.recordingError = null;
+      if (blob.size < 256) {
+        showVoiceRecovery(Object.assign(new Error("The phone created an empty recording."), { code: "NO_AUDIO_RECEIVED" }), recording, { retryable: false });
+        return;
+      }
+      state.pendingRecording = recording;
+      if (recordingError) {
+        showVoiceRecovery(recordingError, recording);
+        return;
+      }
+      await transcribeRecording(recording);
     };
-    recorder.start();
+    try { recorder.start(1000); } catch { recorder.start(); }
     state.recordingStartedAt = Date.now();
     $("#recording-time").textContent = "00:00";
     $("#recording-status").hidden = false;
@@ -1484,8 +1647,28 @@ $("#record").addEventListener("click", async () => {
     state.recordingTimer = setTimeout(stopRecording, state.settings.maximumAudioDuration * 1000);
     toast("Recording. Press Stop when you have finished.");
   } catch (error) {
-    toast(error.name === "NotAllowedError" ? "Microphone access was not granted." : error.message, true);
+    await stopRecordingMonitor();
+    state.recordingStream?.getTracks().forEach((track) => track.stop());
+    state.recording = null;
+    state.recordingStream = null;
+    state.recordingChunks = [];
+    state.recordingStartedAt = null;
+    $("#recording-status").hidden = true;
+    $("#record").classList.remove("recording");
+    $("#record").disabled = !state.apiConfigured;
+    $("#record").textContent = "Record";
+    const message = error.name === "NotAllowedError"
+      ? "Microphone access was not granted. Allow it in the phone browser’s site settings, then try again."
+      : error.name === "NotReadableError"
+        ? "The microphone is being used by another app or is unavailable. Close the other recording app and try again."
+        : error.message;
+    toast(message, true);
   }
+});
+$("#retry-transcription").addEventListener("click", () => transcribeRecording());
+$("#discard-recording").addEventListener("click", () => {
+  clearVoiceRecovery({ discardAudio: true });
+  toast("Temporary recording discarded. You can record again.");
 });
 $("#translate-transcript").addEventListener("click", async () => {
   const originalText = $("#transcript").value.trim();

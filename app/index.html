@@ -76,8 +76,13 @@
           <div class="composer-wrap">
             <div class="recording-status" id="recording-status" hidden role="status">
               <span class="recording-pulse" aria-hidden="true"></span>
-              <div><strong>Recording in progress</strong><span>Speak now, then select Stop.</span></div>
+              <div class="recording-copy"><strong>Recording in progress</strong><span id="recording-device">Microphone connected. Speak now, then select Stop.</span><span class="recording-meter" aria-hidden="true"><span id="recording-level"></span></span></div>
               <time id="recording-time">00:00</time>
+            </div>
+            <div class="voice-recovery" id="voice-recovery" hidden role="alert" aria-live="assertive">
+              <div><strong id="voice-recovery-title">Your recording is still available</strong><span id="voice-recovery-message">Transcription did not complete. You can retry without recording it again.</span></div>
+              <div class="voice-recovery-actions"><button class="primary" id="retry-transcription" type="button">Retry transcription</button><button class="ghost" id="discard-recording" type="button">Discard and record again</button></div>
+              <details><summary>Recording details</summary><p id="voice-recovery-details">No diagnostic details are available.</p></details>
             </div>
             <div class="capture-review" id="capture-review" hidden>
               <div><strong>Review captured text before reasoning</strong><span id="language-label">Detected language: pending</span></div>
@@ -183,11 +188,11 @@
           <section class="phone-access-panel" aria-labelledby="phone-access-heading">
             <div class="phone-access-heading">
               <div><p class="eyebrow">Anywhere challenge access</p><h3 id="phone-access-heading">Secure phone access</h3></div>
-              <span class="status-pill status-awaiting-review">Proposed connection · not enabled</span>
+              <span class="status-pill status-awaiting-review">Governance status · approval not inferred</span>
             </div>
             <p>The Workbench currently listens only on this computer. The recommended private route is Tailscale Serve: the Workbench stays bound to localhost, Tailscale supplies an HTTPS address inside Jamie’s private tailnet, and the phone signs in to the same identity. Do not use a public tunnel or router port-forward.</p>
             <div class="phone-readiness-grid">
-              <article><span>Computer</span><strong>Workbench and Tailscale running</strong><p>The computer must be on. Tailscale is not currently installed, so remote access cannot yet work.</p></article>
+              <article><span>Computer</span><strong>Workbench and Tailscale running</strong><p>The computer must be on and awake. If the phone shows Bad Gateway, double-click the desktop Workbench shortcut and keep its server window open.</p></article>
               <article><span>Phone</span><strong>Tailscale app and same sign-in</strong><p>Open the private HTTPS address in Safari or Chrome, then add it to the home screen.</p></article>
               <article><span>Voice</span><strong>HTTPS microphone permission</strong><p>The secure address lets the browser request microphone access; the reviewed transcript still appears before reasoning.</p></article>
             </div>
@@ -341,15 +346,15 @@
         <div class="utility-card guide-card">
           <p class="eyebrow">Two-minute guide</p><h2>How the Workbench works</h2>
           <div class="guide-steps">
-            <article><span>1</span><div><h3>Choose your input</h3><p>Type directly, attach a text/Markdown/CSV/JSON document, or select <strong>Record</strong>. Voice is transcribed first so you can correct it before any reasoning call.</p></div></article>
-            <article><span>2</span><div><h3>Review captured meaning</h3><p>For voice, correct the original transcript. If needed, create and edit an English working translation. Only the reviewed working text continues.</p></div></article>
+            <article><span>1</span><div><h3>Choose your input</h3><p>Type directly, attach a text/Markdown/CSV/JSON document, or select <strong>Record</strong>. The live level confirms that the microphone is receiving sound. Voice is transcribed first so you can correct it before any reasoning call.</p></div></article>
+            <article><span>2</span><div><h3>Review or recover captured meaning</h3><p>For voice, correct the original transcript. If transcription fails, the recording remains temporarily in that browser tab so you can retry without repeating yourself. Closing or refreshing the tab clears it.</p></div></article>
             <article><span>3</span><div><h3>Choose workspace and output</h3><p>The workspace controls the type of repository guidance retrieved. Output type controls whether you receive an answer, summary, analysis, checklist, template or proposal-preparation brief.</p></div></article>
             <article><span>4</span><div><h3>Check before sending</h3><p>You will see the estimated cost before anything is sent. Supporting evidence and technical details are available if you want them, but they do not interrupt the main answer.</p></div></article>
             <article><span>5</span><div><h3>Review and classify saved feedback</h3><p>Open <strong>Was this useful?</strong> beneath an answer. Your reaction is stored under <strong>Saved feedback</strong>. Review it there and classify it as an answer correction, context, memory, evidence, a methodology candidate, a product candidate or no action.</p></div></article>
             <article><span>6</span><div><h3>Use the Decision inbox for controlled change</h3><p>A candidate can be prepared, revised, rejected or deferred. Preparation creates an instruction for a new branch and draft pull request. Only a separate, explicit release decision by Jamie Peppard can authorise a methodology merge.</p></div></article>
             <article><span>7</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
             <article><span>8</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
-            <article><span>9</span><div><h3>Use the Workbench from a phone</h3><p>The proposed route keeps the local server private and uses Tailscale HTTPS between authorised devices. It is not enabled yet because a new access and security connection requires Jamie’s separate approval.</p></div></article>
+            <article><span>9</span><div><h3>Use the Workbench from a phone</h3><p>The private route keeps the local server on this computer and uses Tailscale HTTPS between authorised devices. The Workbench, computer and Tailscale must all remain running. Operational activation does not by itself record governance approval.</p></div></article>
             <article><span>10</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. Approve for internal use, request revision or reject each direction; those choices remain evidence until the overall brand decision is explicitly made.</p></div></article>
           </div>
           <div class="guide-reference">
@@ -367,6 +372,7 @@
 
   <script src="engine.js"></script>
   <script src="storage.js"></script>
+  <script src="voice-capture.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

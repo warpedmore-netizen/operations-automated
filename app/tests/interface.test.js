@@ -39,7 +39,7 @@ test("every form binding maps to the workspace schema", () => {
 });
 
 test("local interface assets exist and no external resources are loaded", () => {
-  for (const asset of ["styles.css", "engine.js", "storage.js", "app.js", "build-version.txt", "manifest.webmanifest"]) {
+  for (const asset of ["styles.css", "engine.js", "storage.js", "voice-capture.js", "app.js", "build-version.txt", "manifest.webmanifest"]) {
     assert.equal(existsSync(resolve(appRoot, asset)), true, `${asset} should exist`);
   }
   for (const asset of [
@@ -53,7 +53,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
@@ -62,6 +62,10 @@ test("essential controls and accessibility landmarks are present", () => {
   assert.match(html, /lang="en-GB"/);
   assert.match(html, /Translate to English/);
   assert.match(html, /Review captured text before reasoning/);
+  assert.match(html, /Retry transcription/);
+  assert.match(html, /recording remains temporarily in that browser tab/i);
+  assert.match(appSource, /recorder\.start\(1000\)/);
+  assert.match(appSource, /Your recording has not been lost/);
   assert.match(html, /hard budget blocks further paid requests/i);
   assert.match(html, /id="context-panel"[^>]+hidden/);
   assert.match(appSource, /Behind this answer/);
@@ -93,13 +97,16 @@ test("the primary knowledge journey remains readable and touch-usable on a phone
   assert.match(html, /This is the knowledge control room/);
   assert.match(html, /data-route-view="feedback"/);
   assert.match(html, /Secure phone access/);
-  assert.match(html, /Proposed connection · not enabled/);
+  assert.match(html, /Governance status · approval not inferred/);
   assert.match(html, /tailscale serve --bg 4173/);
   assert.match(cssSource, /@media \(max-width: 700px\)/);
   assert.match(cssSource, /\.rail nav > \.nav-item > span:last-child \{ display: block; \}/);
   assert.match(cssSource, /min-height: 44px/);
   assert.match(cssSource, /100dvh/);
   assert.match(cssSource, /overflow-wrap: anywhere/);
+  assert.match(cssSource, /\.thread-column \{[^}]*min-height:\s*0/s);
+  assert.match(cssSource, /\.messages \{[^}]*min-height:\s*0[^}]*overflow:\s*auto/s);
+  assert.match(cssSource, /\.composer-tools button, \.composer-tools select \{ min-height: 44px; \}/);
 });
 
 test("change review and methodology challenge are designed for the founder", () => {
@@ -127,7 +134,7 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Git status remains authoritative/i);
   assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
   assert.match(html, /cannot approve a methodology change/i);
-  assert.match(html, /new access and security connection requires Jamie’s separate approval/i);
+  assert.match(html, /Operational activation does not by itself record governance approval/i);
   assert.match(html, /Do not use a public tunnel or router port-forward/i);
   assert.match(html, /organised first into Live, Draft and Archived/i);
   assert.match(html, /Type the confirmation shown above/i);

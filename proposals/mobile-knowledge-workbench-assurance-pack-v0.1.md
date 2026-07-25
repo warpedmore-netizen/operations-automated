@@ -25,19 +25,19 @@ date: 2026-07-25
 | | Current approved position | Proposed product position |
 |---|---|---|
 | Primary job | Private local AI conversation and governed repository/Confluence controls | Mobile-friendly challenge, knowledge development, readable decisions and controlled publication |
-| Access | Local computer only | Jamie-only private HTTPS phone pilot through Tailscale Serve |
+| Access | Server remains local; tailnet-only Serve is now operational evidence, but its governance approval is not inferred | Jamie-only private HTTPS phone pilot through Tailscale Serve |
 | Review | Workbench brief and GitHub pull request | Workbench current-versus-proposed brief, GitHub trace and the bounded PR #18 Confluence Draft route |
 | Authority | Git status authoritative; preparation, release and publication separate | Unchanged |
 | Availability | Computer and local server must be running | Still true for the pilot; hosted service remains a later decision |
 
 ## Evidence and limitations
 
-- **Recorded evidence:** broken live brand resources; unreadable transparent rail; missing image; unusable 390 × 844 layout; Tailscale absent; direct founder non-use.
+- **Recorded evidence:** broken live brand resources; unreadable transparent rail; missing image; unusable 390 × 844 layout; direct founder non-use; later tailnet-only phone access; and a first real phone recording that failed during transcription.
 - **Related product evidence:** proposed draft PR #18 has already demonstrated AI-managed publication into Confluence Draft. It remains unmerged and does not change the current approved Workbench boundary.
 - **User judgement:** Jamie values mobile spoken challenge and knowledge control more than product-building controls in this application.
 - **AI inference:** a private tailnet is the proportionate first route.
 - **Assumption:** Jamie is willing to install one private-network app on the computer and phone if the boundary is approved.
-- **Limitations:** no live phone, access-denial or independent-user test has run.
+- **Limitations:** phone access has run, but the spoken challenge did not complete because transcription failed. A post-fix retry, access-denial test and independent-user test have not run.
 
 ## Strongest alternative
 
@@ -85,7 +85,14 @@ The main tension is between a Confluence-first reading experience and Git-first 
 - 390 × 844 live inspection before correction: complete and failed.
 - Automated interface, server and governance checks: required before review.
 - Desktop and phone-sized visual inspection after correction: required.
-- Real phone and denied-identity pilot: not run; connection not approved.
+- Real phone reachability: complete through tailnet-only Serve; this is evidence, not approval.
+- Real phone transcription before correction: failed and triggered the recoverable-voice increment.
+- Automated mobile-format, empty-audio, unsupported-audio and metadata-only audit checks: complete for the proposed correction.
+- Complete automated suite: 60 of 60 checks passed.
+- Live 390 × 844 browser check: no horizontal overflow; long history scrolls independently; the latest message and composer are restored together; Record, Attach and Send are each 44 pixels high.
+- Live provider-path check with generated non-speech WAV: upload reached the configured transcription model and returned the intended `NO_SPEECH_DETECTED` recovery; the audit retained size, timing, format and result metadata with `audioRetained: false`.
+- Post-correction Samsung-phone transcription and retained-audio retry: required.
+- Denied-identity pilot: not run; connection governance approval is not recorded.
 - Confluence Review Draft write test: not run; action not approved.
 
 ## Exact approval boundary
