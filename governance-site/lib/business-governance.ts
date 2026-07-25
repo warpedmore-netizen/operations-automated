@@ -25,7 +25,7 @@ export type GovernanceComponent = {
   status: "candidate" | "accepted";
   content: string;
   sources: string[];
-  destination: "Internal / Draft";
+  destination: string;
 };
 
 export const defaultAuthority: AuthorityProfile = {
@@ -401,11 +401,12 @@ export function buildGovernanceComponents(
   titles: string[],
   profile: OrganisationProfile,
   authority: AuthorityProfile,
+  destination = "Internal / Draft",
 ): GovernanceComponent[] {
   return titles.map((title, index) => {
     const documentType = types[title] || "Register";
     const builder = builders[title];
-    const content = builder
+    const draftContent = builder
       ? builder(profile, authority)
       : `${frontMatter(title, documentType, authority)}
 
@@ -414,6 +415,10 @@ export function buildGovernanceComponents(
 This candidate component was requested through the proportionate governance assessment. Its detailed requirements, source rules, controls and evidence still require authoring and review.
 
 ${commonReview(authority)}`;
+    const content =
+      destination === "Internal / Draft"
+        ? draftContent
+        : draftContent.replaceAll("Internal / Draft", destination);
     const summary = content
       .split("\n")
       .find((line) => line && !line.startsWith("#") && !line.startsWith("---") && !line.startsWith(">") && !line.includes(":"))
@@ -430,7 +435,7 @@ ${commonReview(authority)}`;
         "Accepted governance recommendation",
         "Controlled Operations Automated project memory",
       ],
-      destination: "Internal / Draft",
+      destination,
     };
   });
 }

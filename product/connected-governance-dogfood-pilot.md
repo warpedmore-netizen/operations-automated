@@ -2,7 +2,7 @@
 id: OA-PRODUCT-009
 title: Connected Governance Business Dogfood Pilot
 status: proposed
-version: 0.1
+version: 0.2
 owner: Operations Automated Product Authority
 date: 2026-07-25
 ---
@@ -45,18 +45,48 @@ Each document remains `proposed`, names organisational roles rather than an indi
 
 ## First controlled route
 
-1. Select the Operations Automated dogfooding context.
-2. Inspect and amend the organisation and authority profiles.
-3. Review the current-document inventory and known gaps.
-4. Accept, defer or reject the proposed foundation.
-5. Assemble substantive candidate documents.
-6. Read each document and include suitable candidates in the Draft hand-off.
-7. Commit the proposed source and inspect the Confluence comparison.
-8. Publish a conflict-free Draft-only plan through the existing private Workbench connection.
-9. Review the human reading result.
-10. Classify findings as company-governance, product, methodology or explanation issues.
+1. Load the known Operations Automated context without retyping retained project memory.
+2. Inspect and amend the organisation profile with field-level explanations.
+3. Confirm the role-based authority model in plain language.
+4. Choose the authorised knowledge source separately from the Confluence Draft destination.
+5. Inspect the automatically prepared current-document inventory and known gaps.
+6. Review the proposed foundation, its evidence, owner, outputs, destination and acceptance meaning.
+7. Select, defer or reject draft generation.
+8. Generate and read the substantive proposed documents.
+9. Include suitable documents in a credential-free Workbench review package.
+10. Commit the proposed source and inspect the Confluence comparison when the controlled import route exists.
+11. Publish a conflict-free Draft-only plan through the existing private Workbench connection.
+12. Review the human reading result.
+13. Classify findings as company-governance, product, methodology, explanation or brand issues.
 
-The first implementation prepares the structured candidate package and Draft hand-off. It does not silently reuse a local credential in the hosted product. The existing private Workbench remains the controlled publication boundary while the products are separate.
+The proposed 0.2 implementation prepares the structured candidate package and Draft hand-off. It records the source scope and destination but does not silently reuse a local credential in the hosted product. The existing private Workbench remains the controlled publication boundary while the products are separate.
+
+Direct hosted-to-Workbench import is not active because the local Workbench blocks cross-site requests. A separately reviewed import or broker is needed before the two applications can complete the hand-off without a manual transfer.
+
+## Guided-use contract
+
+Every material step should tell the user:
+
+- what they are deciding;
+- why the information is required;
+- what evidence or output the system creates;
+- what happened after an action;
+- what the next useful action is; and
+- what remains outside the action's authority.
+
+Save feedback appears beside the relevant action and offers an explicit continuation. The interface does not force an immediate transition that could hide the result.
+
+## Brand pilot
+
+Connected Governance pilots the separate draft Operations Automated brand system:
+
+- the founder-supplied continuous OA mark;
+- Obsidian, Midnight, blue, electric cyan, Paper and Canvas;
+- sentence-case interface language and outcome-led actions;
+- explicit status, authority, failure and recovery wording; and
+- the endorsed relationship **Connected Governance — by Operations Automated**.
+
+This creates review evidence. It does not approve the brand system or authorise external use.
 
 ## Scenario feedback
 
@@ -74,6 +104,9 @@ The result may create policy, procedure, control, product or methodology candida
 ## Success measures
 
 - The tester reaches the Operations Automated profile without retyping its context.
+- The tester can explain the difference between source, inventory, recommendation, draft and destination.
+- Every primary field explains its meaning and expected answer.
+- Every save creates an obvious confirmation and useful next action.
 - The interface distinguishes company governance from methodology meaning.
 - Candidate documents contain usable prose rather than document names only.
 - Every candidate declares proposed status, authority, source and Draft destination.
@@ -81,6 +114,7 @@ The result may create policy, procedure, control, product or methodology candida
 - The existing private Confluence credential is not exposed or duplicated.
 - Draft publication remains conflict-protected and does not promote content to Live.
 - At least one retained finding is routed to the correct system.
+- The application is recognisably Operations Automated without implying that the draft brand is approved.
 
 ## Boundaries
 
@@ -89,5 +123,7 @@ The result may create policy, procedure, control, product or methodology candida
 - No methodology meaning changes.
 - No automatic retrieval of regulatory sources, comments or scenario results.
 - No new external connection or permission.
+- No hosted copy of the private Workbench credential.
+- No claim that direct Workbench import is active.
 - No Live, external or customer publication.
 - No deletion or silent overwrite.

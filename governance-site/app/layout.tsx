@@ -5,10 +5,11 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://northstar-governance-lab.warpedmore.chatgpt.site"),
   title: "Operations Automated — Connected Governance",
   description:
-    "Connect operational knowledge, build proportionate governance and keep every decision traceable.",
+    "Turn operating context into explained, reviewable governance while keeping approval human.",
   openGraph: {
     title: "Operations Automated — Connected Governance",
-    description: "Connect operational knowledge, build proportionate governance and keep every decision traceable.",
+    description:
+      "Turn operating context into explained, reviewable governance while keeping approval human.",
     images: [
       {
         url: "/og.png",
@@ -19,8 +20,8 @@ export const metadata: Metadata = {
     ],
   },
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: "/brand-favicon.png",
+    shortcut: "/brand-favicon.png",
   },
 };
 

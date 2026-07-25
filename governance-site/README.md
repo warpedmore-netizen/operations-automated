@@ -1,37 +1,44 @@
 # Operations Automated — Connected Governance
 
-Deployable external-testing surface for the Operations Automated connected-governance proof of concept.
+Private, deployable testing surface for the proposed Connected Governance service.
 
-The service starts with an organisation's operating context and existing documentation, proposes a proportionate route, records human dispositions, assembles candidate governance components, and retains an audit trail. Five fictional organisations make it possible to test the approach without company data.
+The service now guides a tester from operating context to readable proposed governance:
 
-Operations Automated is also the first bounded dogfooding organisation. Its workspace creates a proposed business-governance foundation using role-based authority, keeps every component readable in the application and produces a credential-free Draft hand-off for the private AI Workbench. The hand-off does not approve, publish, delete or promote anything to Live.
+1. describe the organisation and intended outcome;
+2. define who may approve, own, draft and publish;
+3. separate the knowledge source from the Confluence Draft destination;
+4. inspect the current-document inventory and known gaps;
+5. review an explained recommendation;
+6. generate and read the actual proposed documents; and
+7. prepare a credential-free package for later private Workbench review.
 
-The complete product, connector-selection, multi-tenant and AI-provider scope is in [`docs/product-scope-and-enablement.md`](docs/product-scope-and-enablement.md).
+Operations Automated is the first bounded dogfooding organisation. Its known context and inventory can be loaded without retyping project memory. The interface also retains fictional organisations for safe testing.
 
-## Release boundaries
+## Status and authority
 
-- ChatGPT sign-in is required.
-- Each tester's D1 workspace is isolated by a one-way hash of their authenticated email.
-- External testers are told to use fictional or non-confidential data.
-- Recommendations and assembled components remain candidates; the application does not grant approval.
-- The Operations Automated dogfooding package remains `proposed`; authority is expressed through roles rather than founder-specific prose.
-- The downloadable Draft hand-off contains governance content and control metadata, but no credentials.
-- Connector secrets stay server-side.
-- Live connector reads remain disabled until test credentials are configured.
-- Live connector writes remain release-gated and are not enabled by this release.
+- This product increment is proposed for private internal validation.
+- Generated documents remain `proposed`; selecting them for Workbench review does not approve them.
+- Company governance and customer-methodology authority remain separate.
+- The private Workbench retains the protected Confluence credential.
+- The hosted product records source scope and destination but does not ask for or store an API key.
+- Direct hosted-to-Workbench import is not active in this increment.
+- Live publication, external release, automatic publication, deletion and silent overwrite remain disabled.
 
-## Connector contracts
+## Brand pilot
 
-The deployable surface contains one platform-neutral connector status/probe API and four adapters:
+This interface pilots the separate draft Operations Automated brand system:
 
-| Connector | Read probe | Future governed publication |
-| --- | --- | --- |
-| Confluence | Page, body and version metadata | Version-aware page update |
-| Notion | Page metadata and edit timestamp | Property and block reconciliation |
-| Google Docs | Document structure and revision ID | Atomic batch update with revision control |
-| Word / Microsoft 365 | Graph drive-item metadata | Controlled DOCX upload |
+- the founder-supplied continuous OA mark;
+- Obsidian, Midnight, blue and electric-cyan identity colours;
+- Paper and Canvas working surfaces;
+- explicit status, human decision and recovery language; and
+- the endorsed product relationship **Connected Governance — by Operations Automated**.
 
-Set the server-side bindings listed in `.env.example` to activate a read probe. Use minimum-permission test tenants and never put tokens in browser storage or committed files.
+This adoption does not approve the brand system for internal or external use. It creates an application pilot that Jamie can review alongside the brand proposal.
+
+## Connector boundary
+
+The deployable surface retains provider-neutral read-probe contracts for Confluence, Notion, Google Drive and Docs, and Microsoft 365. Confluence through the private Workbench is the only current internal route. A future integration must add an authorised broker or import route without exposing the local credential or weakening the Workbench cross-site protection.
 
 ## Local verification
 
@@ -39,14 +46,12 @@ Node.js 22.13 or newer and pnpm are required.
 
 ```bash
 pnpm install
-pnpm run db:generate
+pnpm run lint
 pnpm test
 ```
 
-To download the current user's accepted candidate package for controlled Draft publication, use **Package → Prepare Draft hand-off**. The authenticated endpoint is `GET /api/governance-package`; an empty package is rejected until at least one candidate component has been accepted.
-
-The build is powered by vinext and Cloudflare Workers. D1 schema changes generate migrations in `drizzle/`.
+The build uses vinext and Cloudflare Workers. D1 schema changes generate migrations in `drizzle/`.
 
 ## Deployment
 
-`.openai/hosting.json` links this directory to the existing OpenAI Sites project. Deployment must use the Sites source-repository, saved-version, and deployment flow so source, archive, migration and deployed version remain traceable.
+`.openai/hosting.json` links this directory to the existing private OpenAI Sites project. Deployment must use the Sites source-repository, saved-version and private-deployment flow so the deployed application remains traceable to the validated source.

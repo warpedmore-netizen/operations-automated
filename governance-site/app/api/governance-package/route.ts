@@ -14,6 +14,14 @@ type PackageDocument = {
   destination?: unknown;
 };
 
+function safeLabel(value: unknown, fallback: string) {
+  const label = String(value || "")
+    .replace(/[\u0000-\u001f\u007f]/g, " ")
+    .trim()
+    .slice(0, 160);
+  return label || fallback;
+}
+
 export async function GET() {
   try {
     const user = await getChatGPTUser();
@@ -30,8 +38,41 @@ export async function GET() {
     const workspace = JSON.parse(record.state) as {
       organisation?: Record<string, unknown>;
       authority?: Record<string, unknown>;
+      knowledge?: {
+        sourceMode?: unknown;
+        sourceSpace?: unknown;
+        sourceRoot?: unknown;
+        includeDescendants?: unknown;
+        destinationPlatform?: unknown;
+        destinationSpace?: unknown;
+        destinationLifecycle?: unknown;
+        destinationParent?: unknown;
+        confirmed?: unknown;
+      };
       package?: PackageDocument[];
     };
+    if (!workspace.knowledge?.confirmed) {
+      return Response.json(
+        { error: "Confirm the knowledge source and Draft destination first" },
+        { status: 409 },
+      );
+    }
+    if (
+      workspace.knowledge.destinationLifecycle &&
+      String(workspace.knowledge.destinationLifecycle).toLowerCase() !== "draft"
+    ) {
+      return Response.json(
+        { error: "This private hand-off can target the Draft lifecycle only" },
+        { status: 409 },
+      );
+    }
+
+    const destinationSpace = safeLabel(workspace.knowledge.destinationSpace, "Internal");
+    const destinationParent = safeLabel(
+      workspace.knowledge.destinationParent,
+      "Company Governance",
+    );
+    const destinationLabel = `Confluence through private Workbench / ${destinationSpace} / Draft / ${destinationParent}`;
     const documents = (Array.isArray(workspace.package) ? workspace.package : [])
       .filter((item) => item?.status === "accepted")
       .map((item) => ({
@@ -39,7 +80,7 @@ export async function GET() {
         title: String(item.title || ""),
         documentType: String(item.documentType || ""),
         status: "proposed",
-        destination: "Internal / Draft",
+        destination: destinationLabel,
         sources: Array.isArray(item.sources) ? item.sources.map(String) : [],
         content: String(item.content || ""),
       }))
@@ -54,7 +95,19 @@ export async function GET() {
       generatedAt: new Date().toISOString(),
       organisation: workspace.organisation || {},
       authority: workspace.authority || {},
-      destination: { role: "internal", lifecycle: "draft" },
+      sourceScope: {
+        mode: safeLabel(workspace.knowledge.sourceMode, "not-recorded"),
+        space: safeLabel(workspace.knowledge.sourceSpace, ""),
+        root: safeLabel(workspace.knowledge.sourceRoot, ""),
+        includeDescendants: Boolean(workspace.knowledge?.includeDescendants),
+      },
+      destination: {
+        platform: "Confluence through private Workbench",
+        space: destinationSpace,
+        lifecycle: "Draft",
+        parent: destinationParent,
+        confirmed: true,
+      },
       documents,
       controls: {
         approvalGranted: false,

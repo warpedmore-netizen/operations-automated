@@ -2,6 +2,19 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Proposed — Connected Governance guided journey and brand pilot
+
+- Added a guided six-step journey from operating context to readable proposed documents.
+- Added accessible field explanations, examples, prominent save results and explicit next actions.
+- Explained company-governance, methodology, document, control, AI-drafting and publication authority in plain language.
+- Separated authorised knowledge sources, discovered inventory and the Confluence Draft destination.
+- Added the known Operations Automated inventory from retained project context without requiring re-entry.
+- Expanded recommendations to show evidence, owner, full output, destination and the exact consequence of selection.
+- Added the selected source scope and full Draft destination to the credential-free Workbench hand-off contract.
+- Piloted the separate draft Operations Automated mark, semantic palette, voice and endorsed product relationship without treating the brand as approved.
+- Recorded that direct hosted-to-Workbench import remains inactive and needs a separate reviewed connection design.
+- No generated company policy, brand approval, methodology change, new connection, Live publication or external release is approved by this proposal.
+
 ## Proposed — Connected Governance business dogfood pilot
 
 - Recovered the preserved Connected Governance domain proof and deployable private test surface into the authoritative proposal branch.
