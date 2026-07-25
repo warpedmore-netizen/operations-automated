@@ -1,17 +1,19 @@
 ---
 id: OA-PRODUCT-005
 title: Governed Confluence Documentation Publication
-status: proposed
+status: approved
 version: 0.2
 owner: Jamie Peppard
 date: 2026-07-25
+approval_date: 2026-07-25
+approval_scope: private internal validation
 ---
 
 # Governed Confluence documentation publication
 
 ## Purpose
 
-This proposed Workbench increment makes Operations Automated readable as a structured Confluence library without moving methodology authority away from Git.
+This Workbench capability makes Operations Automated readable as a structured Confluence library without moving methodology authority away from Git.
 
 It converts controlled Markdown into Confluence storage-format pages, organises those pages for human reading, compares the intended result with previously managed pages, requires founder confirmation and retains the Confluence version returned for every write.
 

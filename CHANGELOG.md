@@ -2,7 +2,7 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## Workbench 0.9.0 - proposed
+## Workbench 0.9.0 - approved for private internal validation
 
 - Reorganised both Confluence reading libraries by lifecycle first: Live, Draft and Archived.
 - Placed the normal Methodology and Internal subject folders beneath each lifecycle folder.
@@ -11,7 +11,9 @@ All material changes to Operations Automated will be recorded here.
 - Added lifecycle placement to every controlled page and to the Workbench publication preview.
 - Preserved Git authority, plan-specific founder confirmation, conflict protection, returned version receipts and the no-delete boundary.
 - Recorded Jamie Peppard's lifecycle-first information-architecture correction before the first live publication.
+- Jamie Peppard approved the lifecycle-first structure and authorised merge of PR #15 on 2026-07-25; it was merged as commit `5d6ac1af47708cabdd011782162b6c35ff819ab9`.
 - The first live Confluence document creation remains separately confirmation-gated.
+- The approval did not authorise automatic publication, deletion, external release or customer use.
 
 ## Workbench 0.8.0 - approved for private internal validation
 

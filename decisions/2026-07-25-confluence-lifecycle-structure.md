@@ -2,10 +2,12 @@
 id: OA-DECISION-2026-07-25-002
 title: Prepare the Lifecycle-First Confluence Library
 status: recorded
-decision: approved-for-preparation
+decision: approved-for-private-internal-validation
 decision_maker: Jamie Peppard
 date: 2026-07-25
-release_status: pending
+release_status: merged-for-private-internal-validation
+release_pull_request: 15
+release_commit: 5d6ac1af47708cabdd011782162b6c35ff819ab9
 ---
 
 # Prepare the lifecycle-first Confluence library
@@ -22,7 +24,9 @@ The required top-level lifecycle folders are:
 
 The normal Methodology and Internal subject folders then sit beneath each lifecycle folder.
 
-This authorises preparation, testing, a separate branch and a draft pull request for the structural correction. It does not itself authorise merging an unreviewed revision, publishing a changed page plan, deleting a page, external release or customer use.
+This initially authorised preparation, testing, a separate branch and a draft pull request for the structural correction. Jamie then approved the lifecycle-first structure and explicitly authorised merge of PR #15 on 2026-07-25. It was merged for private internal validation as commit `5d6ac1af47708cabdd011782162b6c35ff819ab9`.
+
+The approval does not authorise a particular live page plan, automatic publication, deletion, external release or customer use.
 
 ## Placement rule
 
@@ -62,6 +66,6 @@ Under each Internal lifecycle folder:
 - Page identifiers and returned versions remain recorded.
 - Automatic publication and deletion remain disabled.
 
-## Decision still required
+## Publication decision still required
 
-Jamie must review and approve or revise the lifecycle-first implementation before merge. After merge, Jamie must separately confirm the exact first live publication plan.
+The lifecycle-first implementation is approved and merged for private internal validation. Jamie must still review and separately confirm each exact live publication plan using the Workbench's required confirmation.
