@@ -16,7 +16,7 @@ Start with the [current methodology synthesis and visual map](methodology/curren
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
-The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its [adoption register](brand/adoption.json) connects controlled project surfaces back to the shared tokens, assets and approval boundary. Double-click `Launch-Brand-Review.cmd` to see and review the visual directions without opening repository folders. The system remains proposed for internal review and is not approved for external publication.
+The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its [adoption register](brand/adoption.json) connects controlled project surfaces back to the shared tokens, assets and approval boundary. Double-click `Launch-Brand-Review.cmd` to see and review the visual directions without opening repository folders; the launcher safely refreshes a recognised older local Workbench before opening the review. The system remains proposed for internal review and is not approved for external publication.
 
 ## How the system fits together
 

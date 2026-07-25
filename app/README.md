@@ -12,7 +12,9 @@ Use either one-click entry point:
 - Double-click `Launch-Workbench.cmd` in the repository.
 - Double-click `Launch-Brand-Review.cmd` to open the Workbench directly at the proposed Brand Review area.
 
-The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. Keep the server window open while using the Workbench.
+The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. Keep the server window open while using the Workbench.
+
+The page and server compare a controlled build marker. A persistent restart warning replaces misleading partial or indefinitely loading Brand Review content if their versions ever differ.
 
 The underlying `.\Start-Workbench.ps1` command remains available for troubleshooting and automation.
 

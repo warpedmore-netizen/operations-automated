@@ -30,6 +30,7 @@ import { createCredentialStore } from "./credential-store.mjs";
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
 const brandRoot = resolve(repoRoot, "brand");
+const buildVersion = readFileSync(resolve(appRoot, "build-version.txt"), "utf8").trim();
 
 function loadLocalEnvironment() {
   const path = resolve(repoRoot, ".env");
@@ -578,7 +579,7 @@ async function api(request, response, url) {
     requireLocalJsonAction(request, "Confluence actions");
   }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
-    buildVersion: "0.9.0",
+    buildVersion,
     settings: getSettings(),
     apiConfigured: providerConfigured(2),
     mode: providerConfigured(2) ? "provider" : "local-grounded",
@@ -1513,6 +1514,7 @@ const contentTypes = {
   ".js": "text/javascript; charset=utf-8",
   ".mjs": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".webmanifest": "application/manifest+json; charset=utf-8",
   ".svg": "image/svg+xml",
   ".png": "image/png"
 };

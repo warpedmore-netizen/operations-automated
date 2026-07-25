@@ -16,6 +16,7 @@ All material changes to Operations Automated will be recorded here.
 - Added a project-wide brand adoption register and visual-review specification.
 - Applied the shared tokens and controlled OA mark to the Workbench as the first bounded application pilot.
 - Added a one-click Brand Review launcher and Workbench area with directly openable examples, per-item review evidence and explicit approval boundaries.
+- Added a controlled Workbench build marker, safe stale-server replacement and a persistent mismatch warning so missing brand assets cannot appear to be a valid visual proposal.
 - Added a generated 1600 × 1000 review board for conversations and other surfaces that cannot open live HTML.
 - Added logo export generation, automated token, reference and contrast checks, and a plain-English decision pack.
 - Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.

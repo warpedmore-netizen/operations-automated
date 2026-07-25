@@ -173,6 +173,7 @@ Possible working alternatives include **Understand. Improve. Automate.** and **C
 | Broad applicability becomes a generic promise | Keep the masterbrand broad; individual offers name a bounded problem and audience |
 | Dark styling becomes cold or hard to use | Pair dark signature surfaces with high-legibility light working surfaces |
 | An item-level Workbench choice is mistaken for overall approval | Return `approvalCreated: false`, retain the repository status and state the boundary beside every review |
+| An older local server makes the current brand look broken or incomplete | Compare the controlled build marker, safely refresh only a recognised Workbench process and show a persistent restart warning instead of a partial review |
 | Decorative connection imagery implies false relationships | Use the motif only where a real relationship can be explained |
 | Status relies on colour | Pair colour with text, icon or shape and programmatic labels |
 | Draft design is mistaken for publication approval | Show status and boundary in all starter templates |
@@ -187,6 +188,7 @@ Possible working alternatives include **Understand. Improve. Automate.** and **C
 - Templates include skip links, visible focus treatment and reduced-motion handling.
 - Local file references, manifest assets, token parity and expected assets are validated automatically.
 - Workbench tests verify the shared token and logo source, local brand routes, review persistence and non-approval boundary.
+- The live Workbench build, shared brand stylesheet, controlled logo and Brand Review API were verified together after a stale-server replacement.
 - The system distinguishes internal approval from publication, migration, deployment and legal clearance.
 
 ## Validation plan

@@ -22,7 +22,8 @@ const state = {
   confluence: null,
   confluenceTest: null,
   confluencePublicationPlan: null,
-  brandReview: null
+  brandReview: null,
+  serverCompatible: true
 };
 
 async function request(path, options = {}) {
@@ -664,8 +665,35 @@ function renderBrandReview(value) {
   }).join("");
 }
 
+function renderBrandReviewUnavailable(progress, heading, message) {
+  $("#brand-review-progress").textContent = progress;
+  $("#brand-adoption-list").innerHTML = "";
+  $("#brand-review-grid").innerHTML = `
+    <div class="brand-review-unavailable" role="status">
+      <strong>${escapeHtml(heading)}</strong>
+      <p>${message}</p>
+    </div>`;
+}
+
 async function loadBrandReview() {
-  renderBrandReview(await request("/api/brand-review"));
+  if (!state.serverCompatible) {
+    renderBrandReviewUnavailable(
+      "Restart required",
+      "The controlled brand system has not loaded.",
+      "Close the existing Workbench server window, then run <code>Launch-Brand-Review.cmd</code> again. This page is not a valid brand preview until the restart warning has cleared."
+    );
+    return;
+  }
+  try {
+    renderBrandReview(await request("/api/brand-review"));
+  } catch (error) {
+    renderBrandReviewUnavailable(
+      "Review unavailable",
+      "The visual review could not be loaded.",
+      "The page has stopped instead of presenting incomplete branding. Run <code>Launch-Brand-Review.cmd</code> again; if this message remains, share it with Codex."
+    );
+    throw error;
+  }
 }
 
 const validViews = new Set(["conversation", "challenges", "feedback", "decisions", "brand", "usage", "settings", "connections", "guide"]);
@@ -1095,6 +1123,19 @@ async function attachFile(file) {
 
 async function init() {
   const config = await request("/api/settings");
+  try {
+    const versionResponse = await fetch("/build-version.txt", { cache: "no-store" });
+    if (versionResponse.ok) {
+      const expectedBuildVersion = (await versionResponse.text()).trim();
+      state.serverCompatible = !expectedBuildVersion || config.buildVersion === expectedBuildVersion;
+      if (!state.serverCompatible) {
+        $("#server-version-message").textContent = `The browser is using Workbench ${config.buildVersion || "from an older build"}, while these page files require ${expectedBuildVersion}. Close the existing Workbench server window, then run Launch-Brand-Review.cmd again.`;
+      }
+    }
+  } catch {
+    // A missing build marker must not prevent the otherwise usable Workbench from opening.
+  }
+  $("#server-version-warning").hidden = state.serverCompatible;
   state.settings = config.settings;
   state.apiConfigured = config.apiConfigured;
   state.currentUser = config.currentUser || "Jamie Peppard";
@@ -1270,6 +1311,7 @@ $$("[data-send-challenge]").forEach((button) => button.addEventListener("click",
   sendChallenge(button.dataset.sendChallenge).catch((error) => toast(error.message, true));
 }));
 $$(".nav-item").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.view)));
+$$("[data-route-view]").forEach((button) => button.addEventListener("click", () => switchView(button.dataset.routeView)));
 $("#brand-review-grid").addEventListener("click", async (event) => {
   const button = event.target.closest("[data-brand-review-action]");
   if (!button) return;

@@ -39,7 +39,7 @@ test("every form binding maps to the workspace schema", () => {
 });
 
 test("local interface assets exist and no external resources are loaded", () => {
-  for (const asset of ["styles.css", "engine.js", "storage.js", "app.js"]) {
+  for (const asset of ["styles.css", "engine.js", "storage.js", "app.js", "build-version.txt"]) {
     assert.equal(existsSync(resolve(appRoot, asset)), true, `${asset} should exist`);
   }
   for (const asset of [
@@ -53,7 +53,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
@@ -72,14 +72,16 @@ test("essential controls and accessibility landmarks are present", () => {
 
 test("the Workbench consumes the controlled brand source and exposes visual review", () => {
   assert.match(html, /\/brand-system\/tokens\/brand\.css/);
-  assert.match(html, /\/brand-system\/assets\/logo\/generated\/mark-colour-transparent-1024\.png/);
+  assert.match(html + appSource, /\/brand-system\/assets\/logo\/generated\/mark-colour-transparent-1024\.png/);
   assert.match(appSource, /\/api\/brand-review/);
   assert.match(appSource, /approve-internal/);
   assert.match(appSource, /Revision requested/);
   assert.match(appSource, /Direction rejected/);
+  assert.match(appSource, /This page is not a valid brand preview until the restart warning has cleared/);
   assert.doesNotMatch(cssSource, /Georgia,\s*serif/);
-  assert.match(cssSource, /var\(--oa-midnight\)/);
+  assert.match(cssSource, /var\(--oa-midnight,\s*#03111e\)/);
   assert.match(cssSource, /var\(--oa-font-display\)/);
+  assert.match(cssSource, /var\(--oa-ink,\s*#102a43\)/);
 });
 
 test("change review and methodology challenge are designed for the founder", () => {

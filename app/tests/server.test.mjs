@@ -55,6 +55,11 @@ test("local API persists governed conversations and the complete feedback-to-cha
     return result.payload;
   };
   try {
+    const settings = await call("/api/settings");
+    const expectedBuildVersion = (await readFile(new URL("../build-version.txt", import.meta.url), "utf8")).trim();
+    assert.equal(settings.response.ok, true);
+    assert.equal(settings.payload.buildVersion, expectedBuildVersion);
+
     const connections = await call("/api/connections");
     assert.equal(connections.response.ok, true);
     assert.equal(connections.payload.confluence.boundary.readOnlyEvidenceSync, true);
