@@ -1,18 +1,20 @@
 ---
 id: OA-ASSURANCE-CONFLUENCE-HUMAN-PUBLICATION-001
 title: Confluence Human Publication Model Assurance Pack
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-25
+approval_date: 2026-07-25
+approval_scope: private internal implementation of three bounded pilots
 ---
 
 # Confluence human publication model assurance pack
 
 ## Decision in one sentence
 
-- **Decision Jamie is being asked to make:** Approve, revise or reject the human-first Confluence publication and document-challenge model as the basis for bounded private pilots.
+- **Decision recorded:** Jamie approved the human-first Confluence publication and document-challenge model, with the stated conditions, as the basis for three bounded private pilots.
 - **AI recommendation:** Approve with conditions.
-- **Assurance position:** Ready for a design decision; not ready for live migration or publication.
+- **Assurance position:** Approved for bounded private implementation after merge; not approved for live migration or publication.
 
 ## Trigger and founder intent
 
@@ -21,9 +23,9 @@ date: 2026-07-25
 - **What AI inferred:** Confluence needs a curated reader layer, not merely better folder names. Lifecycle and source traceability should remain available as a secondary controlled-record layer. Authorised document interactions should enter the governed challenge loop as evidence, not automatic changes.
 - **What remains uncertain:** Preferred chapter length, the first policy set, future placement of the current lifecycle pages, the independent pilot audience, and the future comment/edit permissions and retention model.
 
-## Current and proposed meaning
+## Current and approved pilot meaning
 
-| | Current approved position | Proposed position |
+| | Current approved position | Approved private implementation position |
 |---|---|---|
 | Plain-English meaning | Every controlled repository document is published as a readable page under Live, Draft or Archived. | Confluence publishes authored reader journeys and keeps the complete repository mirror as a secondary controlled record. |
 | User effect | A reader can find controlled material but must understand project structure and choose their own order. | A reader receives a starting point, intentional sequence, document types, explanations, examples and task guidance. |
@@ -56,7 +58,7 @@ This is a product and publication-model change. It does not change the approved 
 | Check | Result | Evidence or limitation |
 |---|---|---|
 | Founder intent preserved | Pass | Primary reader journeys and organisational document types are explicit. |
-| Approved and proposed states clear | Pass | Current mirror remains approved; human-first model and pilots remain proposed. |
+| Approved and proposed states clear | Pass | Current mirror remains approved; the human-first model and three pilots are approved only for private internal implementation. |
 | Duplication and contradiction review | Pass with condition | Reader and record layers overlap by design; manifests and source maps must prevent silent divergence. |
 | Cross-method dependency review | Pass | Aligns with output contract, activation, delivery system and evolution controls. |
 | Human authority and consequence review | Pass | Policy, methodology meaning, migration and each publication remain founder-controlled. |
@@ -64,7 +66,7 @@ This is a product and publication-model change. It does not change the approved 
 | UK English and plain-language review | Pass | Proposal uses UK English and defines document types in ordinary language. |
 | Links, structure and technical checks | Pending implementation | No production code or Confluence change is included in this proposal. |
 | Pilot or scenario validation | Missing | One methodology chapter journey, one Workbench task journey and one manual document-challenge journey are proposed. |
-| Recovery and review trigger | Pass | Current pages stay in place; no move or deletion; review after both pilots. |
+| Recovery and review trigger | Pass | Current pages stay in place; no move or deletion; review after all three pilots. |
 
 ## Trade-offs and residual risk
 
@@ -78,7 +80,7 @@ This is a product and publication-model change. It does not change the approved 
 
 1. Treat the reader layer and controlled-record layer as distinct but linked products.
 2. Keep Live, Draft and Archived available for governance rather than deleting them.
-3. Pilot only one methodology reading path and one internal task path first.
+3. Limit the first implementation to one methodology reading path, one internal task path and one manually identified document-challenge path.
 4. Require source maps and exact page diffs for curated content.
 5. Do not label a document as policy until its requirements, owner, exceptions and authority are explicitly approved.
 6. Test with at least one reader who did not design the structure before expanding the full library.
@@ -89,7 +91,7 @@ This is a product and publication-model change. It does not change the approved 
 
 ## Exact approval boundary
 
-If Jamie approves, the following becomes approved:
+Jamie approved:
 
 - the human-first, two-layer publication model as the design basis for private internal validation;
 - preparation of the three bounded pilots on a separate implementation branch; and
@@ -100,7 +102,7 @@ Approval would not authorise:
 - changing approved methodology meaning;
 - declaring new policies approved;
 - deleting, moving or archiving the current 108 pages;
-- publishing either pilot to Confluence without a fresh plan and exact confirmation;
+- publishing any pilot to Confluence without a fresh plan and exact confirmation;
 - external publication or customer use;
 - a new connection, space, permission or data source; or
 - automatic retrieval, retention or monitoring of Confluence edits, comments or feedback;
@@ -108,8 +110,8 @@ Approval would not authorise:
 
 ## Decision
 
-- **Decision:** Pending
+- **Decision:** Approved with conditions for private internal implementation
 - **Approver:** Jamie Peppard
-- **Date:**
-- **Conditions or requested revisions:**
-- **Review trigger:** After Jamie's design decision and again after the three bounded pilots.
+- **Date:** 2026-07-25
+- **Conditions or requested revisions:** Apply the ten conditions above. Keep the implementation to the three bounded pilots; retain the current pages; require source maps and exact diffs; use only manually identified, non-confidential test content for the document-challenge pilot; and seek separate approval for every live write and any automatic interaction retrieval.
+- **Review trigger:** After all three bounded pilots, or earlier if a material authority, confidentiality, traceability or usability failure occurs.

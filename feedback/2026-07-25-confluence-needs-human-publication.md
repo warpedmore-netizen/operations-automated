@@ -1,9 +1,11 @@
 ---
 id: OA-FEEDBACK-2026-07-25-003
 title: Confluence needs a human publication model, not a repository mirror
-status: proposed
+status: approved
 owner: Jamie Peppard
 date: 2026-07-25
+approval_date: 2026-07-25
+approval_scope: resulting model and three bounded private pilots
 ---
 
 # Confluence needs a human publication model, not a repository mirror
@@ -15,7 +17,7 @@ date: 2026-07-25
 - **Context:** Founder review of the private Methodology and Internal Confluence spaces.
 - **Permission to use:** Retain and use within Operations Automated product and methodology development.
 - **Information boundary:** Non-confidential Operations Automated material already held in the controlled repository and private Confluence spaces.
-- **Authority boundary:** This feedback authorises analysis and proposal preparation. It does not approve a changed page structure, migration, deletion, external publication or methodology meaning.
+- **Authority boundary at intake:** This feedback initially authorised analysis and proposal preparation. Jamie later approved the resulting model and three bounded pilots for private internal implementation. That later approval does not authorise migration, deletion, a live Confluence write, automatic interaction retrieval, external publication or methodology-meaning changes.
 
 ## Signal
 
@@ -86,7 +88,7 @@ These questions affect implementation detail but do not prevent a bounded model 
 
 ## Disposition
 
-**Material product proposal.**
+**Material product proposal approved for private internal implementation.**
 
 Prepare a human-first publication model and assurance pack. Recommend a two-layer structure:
 
@@ -102,4 +104,4 @@ Add a governed document-to-challenge route:
 5. give the item a controlled disposition; and
 6. prepare a methodology proposal only where the evidence justifies one.
 
-Do not change or delete the current 108 pages until Jamie approves the model and reviews a separate migration and publication plan.
+Jamie approved the resulting model and three bounded pilots on 2026-07-25. Do not change or delete the current 108 pages. Each live write, any migration and any automatic retrieval of document interactions still requires its separate governed decision.

@@ -1,17 +1,19 @@
 ---
 id: OA-PRODUCT-006
 title: Confluence Human Publication Model
-status: proposed
+status: approved
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-25
+approval_date: 2026-07-25
+approval_scope: private internal implementation of three bounded pilots
 ---
 
 # Confluence human publication model
 
 ## Purpose
 
-This proposal separates the controlled repository from the human reading experience without separating either from governance.
+This model separates the controlled repository from the human reading experience without separating either from governance.
 
 - **Git remains the authoritative source:** complete project memory, status, changes, evidence and technical trace.
 - **Confluence becomes the human publication:** curated methodology, organisational documentation and task-focused guidance.
@@ -45,7 +47,7 @@ flowchart LR
 
 The Methodology space should teach Operations Automated rather than expose its repository modules in alphabetical or lifecycle order.
 
-### Proposed primary tree
+### Approved primary tree
 
 1. **Start here**
    - What Operations Automated is
@@ -105,7 +107,7 @@ It should be written as a coherent manuscript. Concatenating existing repository
 
 The Internal space should explain how Operations Automated works as an organisation, product and controlled service.
 
-### Proposed primary tree
+### Approved primary tree
 
 1. **Start here**
    - Purpose of the Internal space
@@ -372,13 +374,15 @@ The model is useful when:
 - Existing pages are not deleted or silently overwritten.
 - External publication, customer use and automatic publication remain unapproved.
 
-## Decisions required before implementation
+## Approved implementation boundary
 
-Jamie should decide whether:
+Jamie Peppard approved the following for private internal implementation on 2026-07-25:
 
 1. the reader layer becomes the primary Confluence route;
-2. Live, Draft and Archived move conceptually to a secondary controlled-record route;
-3. the three bounded pilots are the right first implementation; and
+2. Live, Draft and Archived remain available as a conceptually secondary controlled-record route;
+3. the three bounded pilots are the first implementation; and
 4. short connected chapters are preferred over a small number of very long pages.
 
-A separate connection decision is required before automatic retrieval of edits, comments or feedback. The recommended third pilot may use manually identified, non-confidential test content until that decision is made.
+This approval authorises implementation preparation after the change is merged. It does not itself authorise a live Confluence write, migration of the current 108 pages, policy approval, methodology-meaning change or external publication.
+
+A separate connection and data decision is required before automatic retrieval of edits, comments or feedback. The approved third pilot must use manually identified, non-confidential test content until that later decision is made.

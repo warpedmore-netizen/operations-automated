@@ -2,7 +2,7 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## Workbench 1.0.0 human publication model - proposed
+## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.
 - Proposed a primary reader layer for book-like methodology guidance, policies, frameworks, product documentation and user guides.
@@ -12,6 +12,8 @@ All material changes to Operations Automated will be recorded here.
 - Proposed that authorised edits, comments and feedback become governed methodology challenge candidates rather than automatic changes.
 - Kept automatic retrieval of document interactions behind a separate permission, confidentiality and retention decision.
 - Kept the current 108 pages unchanged and retained the separate founder confirmation for every live Confluence write.
+- Jamie Peppard approved the human-first publication model and all three bounded pilots for private internal implementation on 2026-07-25.
+- Merge, live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
 
 ## Workbench 0.9.0 - approved for private internal validation
 
