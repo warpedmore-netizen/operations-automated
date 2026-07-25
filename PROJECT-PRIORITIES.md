@@ -2,7 +2,7 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.4
+version: 0.5
 owner: Jamie Peppard
 last_updated: 2026-07-25
 ---
@@ -16,7 +16,7 @@ last_updated: 2026-07-25
 - **Separate service proof of concept:** operational governance as code in draft PR #8; built but not approved or merged.
 - **Older pilot draft:** change-workflow evidence in draft PR #3; not approved and now requires a deliberate keep, supersede or close decision.
 - **Application position:** the original application remains parked as learning. No production application, external release or commercial offer is approved.
-- **Confluence position:** the private read-only connection is approved for internal validation. A governed human-readable publication workflow is proposed; automatic publication, deletion and external use remain unapproved.
+- **Confluence position:** the private connection and governed publication mechanics are approved for internal validation. A lifecycle-first Live, Draft and Archived reading structure is proposed before the first document publication; automatic publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
 
@@ -113,7 +113,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Proposed method added; founder evidence only | Review after seven materially different interactions or an earlier material failure |
 | Methodology navigation | Keep the concise visual synthesis aligned with approved and proposed components | Initial visual synthesis added | Check it during every material methodology proposal |
-| Confluence reading library | Review the proposed ordered Methodology and Internal page tree, then test one founder-confirmed initial publication and later incremental update | Workbench 0.8.0 proposed; live write deliberately blocked during development | Jamie reviews the draft PR, then separately confirms the exact live publication plan after merge |
+| Confluence reading library | Organise each space by Live, Draft and Archived before its subject folders, then test one founder-confirmed initial publication and later incremental update | Workbench 0.8.0 approved for private validation; lifecycle-first Workbench 0.9.0 revision proposed; no live pages created | Jamie reviews the lifecycle structure, then separately confirms the exact live publication plan after merge |
 
 ## Next sequence when work resumes
 

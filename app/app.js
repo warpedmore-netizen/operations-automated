@@ -686,6 +686,11 @@ function renderConfluencePublicationPlan(plan) {
     ["methodology", "Methodology space"],
     ["internal", "Internal space"]
   ];
+  const lifecycleGroups = [
+    ["live", "Live"],
+    ["draft", "Draft"],
+    ["archived", "Archived"]
+  ];
   area.className = `publication-status ${summary.conflict ? "error" : "connected"}`;
   area.innerHTML = `
     <strong>${plan.items.length} controlled pages reviewed against Confluence.</strong>
@@ -704,10 +709,17 @@ function renderConfluencePublicationPlan(plan) {
     </div>
     ${groups.map(([role, label]) => {
       const items = plan.items.filter((item) => item.role === role);
-      return `<details class="publication-tree">
-        <summary><strong>${label}</strong><span>${items.length} pages</span></summary>
-        <div>${items.map((item) => `
-          <article class="publication-item action-${escapeHtml(item.action)}">
+      const itemByKey = new Map(items.map((item) => [item.key, item]));
+      const renderItem = (item) => {
+        let depth = 0;
+        let parentKey = item.parentKey;
+        while (parentKey && itemByKey.has(parentKey)) {
+          depth += 1;
+          parentKey = itemByKey.get(parentKey).parentKey;
+        }
+        const level = Math.max(0, depth - 1);
+        return `
+          <article class="publication-item action-${escapeHtml(item.action)}" data-level="${level}">
             <span class="publication-action">${escapeHtml(publicationActionLabel(item.action))}</span>
             <div>
               <strong>${escapeHtml(item.title)}</strong>
@@ -716,7 +728,22 @@ function renderConfluencePublicationPlan(plan) {
               ${item.action === "conflict" && item.webUrl ? `<a class="publication-conflict-link" href="${escapeHtml(item.webUrl)}" target="_blank" rel="noreferrer">Open the changed Confluence page</a>` : ""}
               ${item.conflictType === "managed-page-version" ? `<button class="ghost publication-conflict-action" data-reapply-conflict="${escapeHtml(item.key)}" type="button">Use reviewed Git copy</button>` : ""}
             </div>
-          </article>`).join("")}</div>
+          </article>`;
+      };
+      const roots = items.filter((item) => !item.lifecycle);
+      return `<details class="publication-tree">
+        <summary><strong>${label}</strong><span>${items.length} pages</span></summary>
+        <div>
+          ${roots.map(renderItem).join("")}
+          ${lifecycleGroups.map(([lifecycle, lifecycleLabel]) => {
+            const lifecycleItems = items.filter((item) => item.lifecycle === lifecycle);
+            const documentCount = lifecycleItems.filter((item) => item.kind === "controlled-document").length;
+            return `<details class="publication-lifecycle" ${lifecycle === "live" ? "open" : ""}>
+              <summary><strong>${lifecycleLabel}</strong><span>${documentCount} document${documentCount === 1 ? "" : "s"}</span></summary>
+              <div>${lifecycleItems.map(renderItem).join("")}</div>
+            </details>`;
+          }).join("")}
+        </div>
       </details>`;
     }).join("")}
     <p class="confirmation-phrase">Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong></p>`;

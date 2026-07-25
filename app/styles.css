@@ -388,7 +388,12 @@ main { min-width: 0; }
 .publication-tree summary { display: flex; justify-content: space-between; gap: 1rem; padding: 0.75rem; color: #294e75; font-size: 0.72rem; cursor: pointer; }
 .publication-tree summary span { color: var(--muted); font-weight: 650; }
 .publication-tree > div { border-top: 1px solid #e7edf4; }
+.publication-lifecycle { margin: 0.55rem; border: 1px solid #dfe8f1; border-radius: 6px; overflow: hidden; }
+.publication-lifecycle > summary { padding: 0.6rem 0.7rem; background: #f5f8fb; color: #244d76; }
+.publication-lifecycle > div { border-top: 1px solid #e3eaf2; }
 .publication-item { display: grid; grid-template-columns: 75px 1fr; gap: 0.65rem; padding: 0.7rem; border-bottom: 1px solid #edf1f5; }
+.publication-item[data-level="1"] { margin-left: 1rem; border-left: 2px solid #dce8f4; }
+.publication-item[data-level="2"] { margin-left: 2rem; border-left: 2px solid #cbdced; }
 .publication-item:last-child { border-bottom: 0; }
 .publication-action { align-self: start; padding: 0.25rem 0.35rem; color: #315d88; background: var(--blue-soft); border-radius: 5px; font-size: 0.56rem; font-weight: 850; text-align: center; text-transform: uppercase; }
 .publication-item.action-conflict .publication-action { color: #8b3731; background: #ffe3df; }

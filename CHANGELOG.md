@@ -2,7 +2,18 @@
 
 All material changes to Operations Automated will be recorded here.
 
-## Workbench 0.8.0 - proposed
+## Workbench 0.9.0 - proposed
+
+- Reorganised both Confluence reading libraries by lifecycle first: Live, Draft and Archived.
+- Placed the normal Methodology and Internal subject folders beneath each lifecycle folder.
+- Derived lifecycle placement only from the repository artefact status.
+- Mapped approved, published and recorded material to Live; idea, draft, proposed and unrecognised material to Draft; and superseded or rejected material to Archived.
+- Added lifecycle placement to every controlled page and to the Workbench publication preview.
+- Preserved Git authority, plan-specific founder confirmation, conflict protection, returned version receipts and the no-delete boundary.
+- Recorded Jamie Peppard's lifecycle-first information-architecture correction before the first live publication.
+- The first live Confluence document creation remains separately confirmation-gated.
+
+## Workbench 0.8.0 - approved for private internal validation
 
 - Added a human-readable Confluence information architecture covering the Methodology and Internal spaces.
 - Added controlled Markdown-to-Confluence conversion with visible repository status, approval boundary, source version, commit and hash.
@@ -16,6 +27,8 @@ All material changes to Operations Automated will be recorded here.
 - Added a pending-publication queue when an implemented methodology release is recorded through the Workbench.
 - Kept automatic publication, deletion, archiving, external publication and general Confluence editing disabled.
 - Added a governed product proposal, decision record, feedback record and validation tests.
+- Jamie Peppard approved and merged PR #14 for private internal validation on 2026-07-25 as commit `4a308a9add1fc3189cdd8122f67287ee947a2e4d`.
+- The approval did not authorise automatic publication, deletion, external release or customer use.
 - The approved Operations Automated methodology v0.6 baseline remains unchanged.
 
 ## Workbench 0.7.0 - approved for private internal validation

@@ -539,7 +539,7 @@ async function api(request, response, url) {
     requireLocalJsonConnectionAction(request);
   }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
-    buildVersion: "0.8.0",
+    buildVersion: "0.9.0",
     settings: getSettings(),
     apiConfigured: providerConfigured(2),
     mode: providerConfigured(2) ? "provider" : "local-grounded",
