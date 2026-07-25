@@ -2,7 +2,7 @@
 id: OA-PRODUCT-005
 title: Governed Confluence Documentation Publication
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-25
 ---
@@ -17,30 +17,40 @@ It converts controlled Markdown into Confluence storage-format pages, organises 
 
 ## Information architecture
 
+Both spaces use lifecycle as the first navigation decision:
+
+1. **Live** — approved, published and recorded material active for its stated scope;
+2. **Draft** — ideas, drafts, proposals and unrecognised working states; and
+3. **Archived** — superseded and rejected material retained for history.
+
+The document's repository `status` determines its location. A merge does not move a proposed document into Live. Unknown or compound states default to Draft because that is the safer interpretation.
+
+The normal subject structure appears beneath each lifecycle folder.
+
 ### Methodology space
 
-1. Start here
-2. Core methodology
-3. Principles
-4. Evolution and governance
-5. Practical tools
-6. Working proposals and assurance
+- Core methodology
+- Principles
+- Evolution and governance
+- Practical tools
+- Proposals and assurance
 
 ### Internal space
 
-1. Governance and direction
-2. Decisions
-3. Product and delivery
-4. Change history and assurance
-5. Feedback and validation evidence
+- Governance and direction
+- Decisions
+- Product and delivery
+- Change history and assurance
+- Feedback and validation evidence
 
-Generated navigation pages explain the section and list its controlled children. Source pages carry their repository title and are rendered as readable headings, paragraphs, lists, tables, links and code blocks.
+Generated navigation pages explain the lifecycle and subject, then list their controlled children. Subject titles include their lifecycle in brackets so they remain unambiguous and unique within a Confluence space. Source pages carry their repository title and are rendered as readable headings, paragraphs, lists, tables, links and code blocks.
 
 ## Status and authority
 
 Every controlled source page begins with:
 
 - repository status;
+- the Live, Draft or Archived reading location derived from that status;
 - a plain-language explanation of that status;
 - approval or decision scope where recorded; and
 - a reminder that Git remains authoritative.
@@ -65,6 +75,8 @@ The Workbench first performs a read-only comparison and reports:
 - conflicts requiring attention.
 
 The complete page list is available through progressive disclosure. A publication is blocked unless the Workbench is running from `main` and no conflict remains.
+
+The Workbench preview groups each space into Live, Draft and Archived and shows the subject hierarchy beneath each lifecycle. This gives Jamie the same structure that will be created in Confluence.
 
 Jamie must then:
 
@@ -141,6 +153,10 @@ The private token route remains a local founder-testing mechanism. Atlassian rec
 Before release review, confirm:
 
 - the page tree covers the agreed source categories in a normal reading order;
+- lifecycle is the first level below each space hub;
+- approved, published and recorded map to Live;
+- idea, draft, proposed and unrecognised states map to Draft;
+- superseded and rejected map to Archived;
 - proposed, draft, idea and recorded material cannot appear as approved;
 - Markdown and embedded HTML are safely converted;
 - preview performs no write;

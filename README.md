@@ -8,7 +8,7 @@ This repository is the controlled source for the methodology, its principles, go
 
 > **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. A governed Confluence documentation-publication capability is being proposed separately; no automatic or external publication is approved.
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. Governed Confluence publication mechanics are approved for private internal validation; their lifecycle-first reading structure is proposed separately. No automatic or external publication is approved.
 >
 > **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
 
@@ -82,7 +82,7 @@ Private testing demonstrated useful record, approval and export mechanics but al
 
 The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. Workbench 0.7.0 added a private [Confluence connected-evidence route](product/confluence-connected-evidence.md) that Jamie approved and merged for private internal validation through PR #13.
 
-A proposed Workbench 0.8.0 increment adds [governed Confluence documentation publication](product/confluence-governed-publication.md). It treats Git as authoritative, previews a readable Methodology and Internal page tree, requires Jamie's plan-specific confirmation, checks tracked Confluence versions and records page receipts. Automatic publication, page deletion, external release and customer use remain unapproved.
+Workbench 0.8.0 added [governed Confluence documentation publication](product/confluence-governed-publication.md) for private internal validation through PR #14. A proposed 0.9.0 revision organises each Methodology and Internal library into Live, Draft and Archived before its normal subject folders, using repository status as the only placement authority. Plan-specific confirmation, tracked page versions and publication receipts remain required. Automatic publication, page deletion, external release and customer use remain unapproved.
 
 ## Repository control
 

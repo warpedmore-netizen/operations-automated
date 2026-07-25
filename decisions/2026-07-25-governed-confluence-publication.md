@@ -2,10 +2,12 @@
 id: OA-DECISION-2026-07-25-001
 title: Prepare Governed Confluence Documentation Publication
 status: recorded
-decision: approved-for-preparation
+decision: approved-for-private-internal-validation
 decision_maker: Jamie Peppard
 date: 2026-07-25
-release_status: pending
+release_status: merged-for-private-internal-validation
+release_pull_request: 14
+release_commit: 4a308a9add1fc3189cdd8122f67287ee947a2e4d
 ---
 
 # Prepare governed Confluence documentation publication
@@ -14,7 +16,9 @@ release_status: pending
 
 Jamie Peppard instructed Codex to build a Workbench capability that converts the controlled Operations Automated project memory into readable Confluence documentation. It should cover methodology, decisions, policies and related records, and methodology approvals should create a traceable need for a Confluence update.
 
-This authorises design, implementation, testing, a separate branch and a draft pull request. It does not itself authorise a live page write, merge, external release, general customer use or Confluence deletion.
+This initially authorised design, implementation, testing, a separate branch and a draft pull request. Jamie later explicitly approved and merged PR #14 for private internal validation on 2026-07-25 as commit `4a308a9add1fc3189cdd8122f67287ee947a2e4d`.
+
+The merge approved the controlled publication capability for private internal validation. It did not authorise a particular live page plan, automatic publication, deletion, external release or general customer use.
 
 ## Intended outcome
 
@@ -56,6 +60,8 @@ The following remain disabled:
 - A failed publication records a bounded error, not a page body or credential.
 - No compensating deletion is attempted.
 
-## Decision still required
+## Release decision
 
-Jamie must review the draft change and explicitly approve or reject merge for private internal validation. After merge, the first real publication remains a separate, plan-specific confirmation inside the Workbench.
+Approved and merged for private internal validation only.
+
+After merge, Jamie clarified that the first live publication must use a lifecycle-first hierarchy: Live, Draft and Archived, followed by the normal subject structure. That revision is governed separately. The first real publication remains a plan-specific confirmation inside the Workbench after the corrected structure is reviewed and merged.

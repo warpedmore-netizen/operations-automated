@@ -6,7 +6,8 @@ import { join } from "node:path";
 import {
   PUBLICATION_CONFIRMATION,
   buildConfluencePublicationPlan,
-  markdownToConfluenceStorage
+  markdownToConfluenceStorage,
+  publicationLifecycle
 } from "../confluence-publication.mjs";
 import {
   inspectConfluencePublication,
@@ -31,7 +32,7 @@ function connection() {
   };
 }
 
-test("publication plan creates an ordered human reading structure with source status", async () => {
+test("publication plan creates a lifecycle-first human reading structure with source status", async () => {
   const root = await mkdtemp(join(tmpdir(), "oa-publication-plan-"));
   try {
     await mkdir(join(root, "methodology"), { recursive: true });
@@ -44,6 +45,11 @@ test("publication plan creates an ordered human reading structure with source st
     await writeFile(
       join(root, "principles", "learning.md"),
       "---\ntitle: Learn Safely\nstatus: proposed\nversion: 0.1\n---\n# Learn safely\n\nProposed content.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "principles", "old-learning.md"),
+      "---\ntitle: Old Learning Rule\nstatus: superseded\nversion: 0.1\n---\n# Old learning rule\n\nHistorical content.\n",
       "utf8"
     );
     await writeFile(join(root, "GOVERNANCE.md"), "# Governance\n\nHuman authority.", "utf8");
@@ -60,14 +66,47 @@ test("publication plan creates an ordered human reading structure with source st
     assert.equal(plan.deletionEnabled, false);
     assert.equal(plan.items[0].key, "methodology:hub");
     assert.ok(plan.items.find((item) => item.title === "01 — Start here: Current methodology"));
+    assert.deepEqual(plan.lifecycleOrder, ["live", "draft", "archived"]);
+    const approved = plan.items.find((item) => item.sourcePath === "methodology/current-methodology-synthesis.md");
+    assert.equal(approved.lifecycle, "live");
+    assert.equal(approved.parentKey, "methodology:live:core");
     const proposed = plan.items.find((item) => item.sourcePath === "principles/learning.md");
-    assert.equal(proposed.parentKey, "methodology:principles");
+    assert.equal(proposed.lifecycle, "draft");
+    assert.equal(proposed.parentKey, "methodology:draft:principles");
     assert.match(proposed.bodyStorage, /Proposed — complete enough for review but not approved/);
+    assert.match(proposed.bodyStorage, /Reading location:<\/strong> Draft/);
     assert.match(proposed.bodyStorage, /Source commit/);
     assert.match(proposed.bodyStorage, /Git remains authoritative/);
+    const archived = plan.items.find((item) => item.sourcePath === "principles/old-learning.md");
+    assert.equal(archived.lifecycle, "archived");
+    assert.equal(archived.parentKey, "methodology:archived:principles");
+    assert.match(archived.bodyStorage, /Superseded — retained for history but no longer current/);
+    for (const role of ["methodology", "internal"]) {
+      for (const lifecycle of ["live", "draft", "archived"]) {
+        assert.ok(plan.items.find((item) => item.key === `${role}:${lifecycle}`));
+      }
+    }
+    const titlesByRole = new Set();
+    for (const item of plan.items) {
+      const key = `${item.role}:${item.title.toLowerCase()}`;
+      assert.equal(titlesByRole.has(key), false, `duplicate title ${key}`);
+      titlesByRole.add(key);
+    }
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("repository statuses map conservatively to Live, Draft and Archived", () => {
+  assert.equal(publicationLifecycle("approved"), "live");
+  assert.equal(publicationLifecycle("published"), "live");
+  assert.equal(publicationLifecycle("recorded"), "live");
+  assert.equal(publicationLifecycle("idea"), "draft");
+  assert.equal(publicationLifecycle("draft"), "draft");
+  assert.equal(publicationLifecycle("proposed"), "draft");
+  assert.equal(publicationLifecycle("approved for preparation, not approved for release"), "draft");
+  assert.equal(publicationLifecycle("superseded"), "archived");
+  assert.equal(publicationLifecycle("rejected"), "archived");
 });
 
 test("Markdown conversion produces readable storage markup and escapes executable HTML", () => {

@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.7.0 was approved and merged for private internal validation through PR #13. Workbench 0.8.0 is a proposed governed Confluence documentation-publication increment. Neither is deployed or approved for external use.
+> **Status:** Workbench 0.8.0 was approved and merged for private internal validation through PR #14. Workbench 0.9.0 is a proposed lifecycle-first revision to its Confluence reading structure. Neither is deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -54,23 +54,29 @@ The approved-for-private-validation v0.7 evidence route exposes no Confluence cr
 
 This token-entry route is for Jamie's private local validation only. A customer-facing integration must use Atlassian's supported app authentication, such as OAuth 2.0 or Forge, rather than collecting customer API tokens.
 
-## Proposed governed documentation publication
+## Governed documentation publication
 
-Workbench 0.8.0 proposes a separate, controlled route for delivering the repository as readable Confluence documentation.
+Workbench 0.8.0 provides a separate, controlled route for delivering the repository as readable Confluence documentation during private internal validation. Workbench 0.9.0 proposes the lifecycle-first structure requested before the first live publication.
 
 1. Open **Connections** and select **Preview documentation update**.
 2. Review the create, update, unchanged and conflict counts.
-3. Expand the Methodology and Internal page lists when detailed review is needed.
+3. Expand the Methodology and Internal page lists, then review Live, Draft and Archived within each space.
 4. Resolve any conflict; the Workbench will not overwrite a page that changed independently or adopt an unmanaged same-title page. A tracked version conflict offers a separate **Use reviewed Git copy** recovery after both versions have been reviewed; that preparation performs no write and does not replace the later publication confirmation.
 5. After the capability is approved, merged and running from `main`, confirm the reviewed plan and type **Publish reviewed pages to Confluence** exactly.
 6. The Workbench creates parents before children, updates only tracked pages and retains the returned Confluence page versions.
 
-The page tree is:
+Each space is organised first by lifecycle:
 
-- **Methodology:** start here, core method, principles, evolution and governance, practical tools, and working proposals.
+- **Live:** approved, published and recorded material active for its stated scope.
+- **Draft:** ideas, drafts, proposals and unrecognised working states.
+- **Archived:** superseded and rejected material retained for history.
+
+The normal subject structure sits beneath each lifecycle folder:
+
+- **Methodology:** core methodology, principles, evolution and governance, practical tools, and proposals and assurance.
 - **Internal:** governance and direction, decisions, product and delivery, change history and assurance, and feedback and validation evidence.
 
-Each controlled document displays its repository status, approval or decision boundary, source path, source version, source commit and source hash. Git remains authoritative.
+Each controlled document displays its repository status, derived lifecycle location, approval or decision boundary, source path, source version, source commit and source hash. Git remains authoritative. A merge does not move a proposed artefact into Live.
 
 An implemented methodology release recorded through the Workbench creates a pending Confluence-publication item. It does not write automatically. A later founder-confirmed publication clears the pending item.
 

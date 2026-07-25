@@ -84,6 +84,7 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Git status remains authoritative/i);
   assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
   assert.match(html, /cannot approve a methodology change/i);
+  assert.match(html, /organised first into Live, Draft and Archived/i);
   assert.match(html, /Type the confirmation shown above/i);
   assert.match(appSource, /Use reviewed Git copy/i);
   assert.match(appSource, /publication-conflicts\/reapply/i);

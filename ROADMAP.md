@@ -2,7 +2,7 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.6
+version: 0.7
 owner: Jamie Peppard
 last_updated: 2026-07-25
 ---
@@ -46,7 +46,7 @@ A [provisional self-assessment](pilots/operations-automated-self-assessment-001.
 
 Workbench 0.7.0 adds a founder-authorised, private and read-only [Confluence connected-evidence route](product/confluence-connected-evidence.md). Jamie approved and merged PR #13 for private internal validation on 2026-07-25. It keeps the credential outside the repository with Windows user-level protection and keeps synchronised page bodies in server memory only.
 
-The proposed Workbench 0.8.0 [governed documentation-publication capability](product/confluence-governed-publication.md) would turn the controlled repository into an ordered Methodology and Internal Confluence reading library. Git would remain authoritative. Every write would require a current `main` source, a conflict-free preview and Jamie's exact plan-specific confirmation. Automatic publication, deletion and external release would remain disabled.
+Workbench 0.8.0 added the [governed documentation-publication capability](product/confluence-governed-publication.md) for private internal validation through PR #14. Before the first live publication, Jamie required a lifecycle-first revision: Live, Draft and Archived must sit above the normal Methodology and Internal subject folders. The proposed Workbench 0.9.0 revision derives that placement from repository status. Git remains authoritative, and every write still requires a current `main` source, a conflict-free preview and Jamie's exact plan-specific confirmation. Automatic publication, deletion and external release remain disabled.
 
 ## Three workstreams developed in tandem
 
@@ -84,7 +84,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
 7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
-9. Review the proposed Confluence publication workflow; if approved and merged, run one founder-confirmed private publication and verify the page tree, status labels, versions and conflict recovery.
+9. Review the proposed lifecycle-first Confluence structure; if approved and merged, run one founder-confirmed private publication and verify Live, Draft and Archived placement, subject folders, status labels, versions and conflict recovery.
 
 ## Application decision
 

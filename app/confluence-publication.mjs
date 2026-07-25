@@ -7,111 +7,114 @@ export const PUBLICATION_CONFIRMATION = "Publish reviewed pages to Confluence";
 export const CONFLICT_REAPPLY_CONFIRMATION = "Use the reviewed Git copy for this page";
 
 const ROOT_DOCUMENTS = Object.freeze([
-  ["CHARTER.md", "internal", "internal:governance"],
-  ["GOVERNANCE.md", "internal", "internal:governance"],
-  ["ROADMAP.md", "internal", "internal:governance"],
-  ["PROJECT-PRIORITIES.md", "internal", "internal:governance"],
-  ["CHANGELOG.md", "internal", "internal:assurance"]
+  ["CHARTER.md", "internal", "governance"],
+  ["GOVERNANCE.md", "internal", "governance"],
+  ["ROADMAP.md", "internal", "governance"],
+  ["PROJECT-PRIORITIES.md", "internal", "governance"],
+  ["CHANGELOG.md", "internal", "assurance"]
 ]);
 
 const FOLDER_ROUTES = Object.freeze({
-  methodology: { role: "methodology", parentKey: "methodology:core" },
-  principles: { role: "methodology", parentKey: "methodology:principles" },
-  evolution: { role: "methodology", parentKey: "methodology:evolution" },
-  templates: { role: "methodology", parentKey: "methodology:tools" },
-  proposals: { role: "methodology", parentKey: "methodology:proposals" },
-  decisions: { role: "internal", parentKey: "internal:decisions" },
-  product: { role: "internal", parentKey: "internal:product" },
-  feedback: { role: "internal", parentKey: "internal:evidence" },
-  pilots: { role: "internal", parentKey: "internal:evidence" }
+  methodology: { role: "methodology", sectionKey: "core" },
+  principles: { role: "methodology", sectionKey: "principles" },
+  evolution: { role: "methodology", sectionKey: "evolution" },
+  templates: { role: "methodology", sectionKey: "tools" },
+  proposals: { role: "methodology", sectionKey: "proposals" },
+  decisions: { role: "internal", sectionKey: "decisions" },
+  product: { role: "internal", sectionKey: "product" },
+  feedback: { role: "internal", sectionKey: "evidence" },
+  pilots: { role: "internal", sectionKey: "evidence" }
 });
 
-const NAVIGATION = Object.freeze([
-  {
-    key: "methodology:hub",
-    role: "methodology",
+const ROLE_DEFINITIONS = Object.freeze({
+  methodology: {
     title: "Operations Automated Methodology",
-    parentKey: null,
-    description: "The readable methodology library, ordered for people rather than repository navigation."
+    description: "The readable methodology library, organised first by lifecycle and then by subject.",
+    sections: [
+      ["core", "01 — Core methodology", "How Operations Automated understands, improves and prepares operations for proportionate automation, AI and agentic operation."],
+      ["principles", "02 — Principles", "The working principles that constrain how the methodology defines value, automation, learning and human factors."],
+      ["evolution", "03 — Evolution and governance", "How feedback, challenge, evidence and human decisions become controlled methodology change."],
+      ["tools", "04 — Practical tools", "Templates and decision aids that help a person apply the methodology without needing to become a methodology specialist."],
+      ["proposals", "05 — Proposals and assurance", "Proposals and assurance records retained with their repository status."]
+    ]
   },
-  {
-    key: "methodology:core",
-    role: "methodology",
-    title: "02 — Core methodology",
-    parentKey: "methodology:hub",
-    description: "How Operations Automated understands, improves and prepares operations for proportionate automation, AI and agentic operation."
-  },
-  {
-    key: "methodology:principles",
-    role: "methodology",
-    title: "03 — Principles",
-    parentKey: "methodology:hub",
-    description: "The working principles that constrain how the methodology defines value, automation, learning and human factors."
-  },
-  {
-    key: "methodology:evolution",
-    role: "methodology",
-    title: "04 — Evolution and governance",
-    parentKey: "methodology:hub",
-    description: "How feedback, challenge, evidence and human decisions become controlled methodology change."
-  },
-  {
-    key: "methodology:tools",
-    role: "methodology",
-    title: "05 — Practical tools",
-    parentKey: "methodology:hub",
-    description: "Templates and decision aids that help a person apply the methodology without needing to become a methodology specialist."
-  },
-  {
-    key: "methodology:proposals",
-    role: "methodology",
-    title: "06 — Working proposals and assurance",
-    parentKey: "methodology:hub",
-    description: "Proposals and assurance records retained with their repository status. Proposed content is not presented as approved guidance."
-  },
-  {
-    key: "internal:hub",
-    role: "internal",
+  internal: {
     title: "Operations Automated — Internal project memory",
-    parentKey: null,
-    description: "The readable internal record of governance, decisions, product development, assurance and evidence."
+    description: "The readable internal record of governance, decisions, product development, assurance and evidence, organised first by lifecycle.",
+    sections: [
+      ["governance", "01 — Governance and direction", "Authority, project direction, roadmap and current priorities."],
+      ["decisions", "02 — Decisions", "Recorded founder decisions and their exact approval boundaries."],
+      ["product", "03 — Product and delivery", "How the methodology is delivered and how the private Workbench is being developed."],
+      ["assurance", "04 — Change history and assurance", "Release history and records used to assure controlled change."],
+      ["evidence", "05 — Feedback and validation evidence", "Founder feedback and pilot evidence. These records inform change but do not approve it."]
+    ]
+  }
+});
+
+const LIFECYCLE_DEFINITIONS = Object.freeze([
+  {
+    key: "live",
+    title: "Live",
+    description: "Approved, published and recorded material that is active for its stated scope. Live does not imply approval for external publication."
   },
   {
-    key: "internal:governance",
-    role: "internal",
-    title: "01 — Governance and direction",
-    parentKey: "internal:hub",
-    description: "Authority, project direction, roadmap and current priorities."
+    key: "draft",
+    title: "Draft",
+    description: "Ideas, drafts, proposals and unlabelled working material. Nothing in this folder is approved merely because it is readable in Confluence."
   },
   {
-    key: "internal:decisions",
-    role: "internal",
-    title: "02 — Decisions",
-    parentKey: "internal:hub",
-    description: "Recorded founder decisions and their exact approval boundaries."
-  },
-  {
-    key: "internal:product",
-    role: "internal",
-    title: "03 — Product and delivery",
-    parentKey: "internal:hub",
-    description: "How the methodology is delivered and how the private Workbench is being developed."
-  },
-  {
-    key: "internal:assurance",
-    role: "internal",
-    title: "04 — Change history and assurance",
-    parentKey: "internal:hub",
-    description: "Release history and records used to assure controlled change."
-  },
-  {
-    key: "internal:evidence",
-    role: "internal",
-    title: "05 — Feedback and validation evidence",
-    parentKey: "internal:hub",
-    description: "Founder feedback and pilot evidence. These records inform change but do not approve it."
+    key: "archived",
+    title: "Archived",
+    description: "Superseded and rejected material retained for history. It is not current guidance."
   }
 ]);
+
+export function publicationLifecycle(status) {
+  const normalised = String(status || "unlabelled").trim().toLowerCase();
+  if (["approved", "published", "recorded"].includes(normalised)) return "live";
+  if (["superseded", "rejected"].includes(normalised)) return "archived";
+  return "draft";
+}
+
+function navigationDefinitions() {
+  const items = [];
+  for (const [role, definition] of Object.entries(ROLE_DEFINITIONS)) {
+    items.push({
+      key: `${role}:hub`,
+      kind: "hub",
+      role,
+      lifecycle: "",
+      title: definition.title,
+      parentKey: null,
+      description: definition.description
+    });
+    for (const lifecycle of LIFECYCLE_DEFINITIONS) {
+      items.push({
+        key: `${role}:${lifecycle.key}`,
+        kind: "lifecycle",
+        role,
+        lifecycle: lifecycle.key,
+        title: lifecycle.title,
+        parentKey: `${role}:hub`,
+        description: lifecycle.description
+      });
+      for (const [sectionKey, sectionTitle, description] of definition.sections) {
+        items.push({
+          key: `${role}:${lifecycle.key}:${sectionKey}`,
+          kind: "section",
+          role,
+          lifecycle: lifecycle.key,
+          title: `${sectionTitle} (${lifecycle.title})`,
+          parentKey: `${role}:${lifecycle.key}`,
+          description
+        });
+      }
+    }
+  }
+  return items;
+}
+
+const NAVIGATION = Object.freeze(navigationDefinitions());
 
 function hash(value) {
   return createHash("sha256").update(String(value)).digest("hex").slice(0, 12);
@@ -146,6 +149,8 @@ function statusMeaning(status) {
   if (normalised === "proposed") return "Proposed — complete enough for review but not approved.";
   if (normalised === "draft") return "Draft — still being developed and not approved.";
   if (normalised === "idea") return "Idea — retained as an unassessed signal, not guidance.";
+  if (normalised === "superseded") return "Superseded — retained for history but no longer current.";
+  if (normalised === "rejected") return "Rejected — considered and deliberately not adopted.";
   return "Status is not labelled as approved. Treat this as working material.";
 }
 
@@ -299,6 +304,7 @@ export function markdownToConfluenceStorage(markdown, options = {}) {
 function controlledPageBody(source, context) {
   const metadata = source.metadata || {};
   const status = source.status || "unlabelled";
+  const lifecycle = publicationLifecycle(status);
   const approval = metadata.approval_scope || metadata.decision || statusMeaning(status);
   const contentWithoutRepeatedTitle = stripFrontMatter(source.content).replace(/^#\s+[^\r\n]+(?:\r?\n)+/, "");
   const readable = markdownToConfluenceStorage(contentWithoutRepeatedTitle, {
@@ -311,6 +317,7 @@ function controlledPageBody(source, context) {
     "<ac:structured-macro ac:name=\"info\"><ac:rich-text-body>",
     `<p><strong>Controlled Operations Automated reading copy</strong></p>`,
     `<p><strong>Repository status:</strong> ${escapeHtml(status)} — ${escapeHtml(statusMeaning(status))}</p>`,
+    `<p><strong>Reading location:</strong> ${escapeHtml(lifecycle[0].toUpperCase() + lifecycle.slice(1))}. Placement is derived from the repository status.</p>`,
     `<p><strong>Approval or decision scope:</strong> ${escapeHtml(approval)}</p>`,
     "</ac:rich-text-body></ac:structured-macro>",
     readable,
@@ -339,30 +346,32 @@ function navigationBody(item, children, context) {
 
 export function scanPublicationSources(repositoryRoot) {
   const sources = [];
-  const add = (path, role, parentKey) => {
+  const add = (path, role, sectionKey) => {
     const fullPath = resolve(repositoryRoot, path);
     if (!existsSync(fullPath) || !statSync(fullPath).isFile()) return;
     const content = readFileSync(fullPath, "utf8");
     const metadata = extractFrontMatter(content);
+    const status = String(metadata.status || (path === "CHANGELOG.md" ? "recorded" : "unlabelled")).toLowerCase();
     sources.push({
       path: path.replaceAll("\\", "/"),
       role,
-      parentKey,
+      sectionKey,
       metadata,
-      status: String(metadata.status || (path === "CHANGELOG.md" ? "recorded" : "unlabelled")).toLowerCase(),
+      status,
+      lifecycle: publicationLifecycle(status),
       version: String(metadata.version || "unknown"),
       title: titleFromContent(path, content, metadata),
       hash: hash(content),
       content
     });
   };
-  for (const [path, role, parentKey] of ROOT_DOCUMENTS) add(path, role, parentKey);
+  for (const [path, role, sectionKey] of ROOT_DOCUMENTS) add(path, role, sectionKey);
   for (const [folder, route] of Object.entries(FOLDER_ROUTES)) {
     const directory = resolve(repositoryRoot, folder);
     if (!existsSync(directory)) continue;
     for (const file of readdirSync(directory).filter((name) => name.endsWith(".md")).sort((a, b) => a.localeCompare(b, "en-GB"))) {
       const fullPath = resolve(directory, file);
-      if (statSync(fullPath).isFile()) add(relative(repositoryRoot, fullPath), route.role, route.parentKey);
+      if (statSync(fullPath).isFile()) add(relative(repositoryRoot, fullPath), route.role, route.sectionKey);
     }
   }
   return sources;
@@ -396,8 +405,9 @@ export function buildConfluencePublicationPlan({
       key: `source:${source.path}`,
       kind: "controlled-document",
       role: source.role,
+      lifecycle: source.lifecycle,
       title,
-      parentKey: source.path === "methodology/current-methodology-synthesis.md" ? "methodology:hub" : source.parentKey,
+      parentKey: `${source.role}:${source.lifecycle}:${source.sectionKey}`,
       sourcePath: source.path,
       sourceStatus: source.status,
       sourceVersion: source.version,
@@ -420,7 +430,6 @@ export function buildConfluencePublicationPlan({
     }));
     return {
       ...item,
-      kind: item.parentKey ? "section" : "hub",
       sourcePath: "",
       sourceStatus: "navigation",
       sourceVersion: "generated",
@@ -461,6 +470,7 @@ export function buildConfluencePublicationPlan({
     sourceCommit,
     repositoryUrl,
     confirmationPhrase: PUBLICATION_CONFIRMATION,
+    lifecycleOrder: LIFECYCLE_DEFINITIONS.map((item) => item.key),
     deletionEnabled: false,
     automaticPublication: false,
     items: ordered
