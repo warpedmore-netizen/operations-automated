@@ -390,7 +390,7 @@ function methodologyLabBody(page, sources, context) {
   ).join("");
   return [
     "<ac:structured-macro ac:name=\"warning\"><ac:rich-text-body>",
-    "<p><strong>Operations Automated — proposed Draft reading synthesis for the consolidated methodology</strong></p>",
+    "<p><strong>Operations Automated — proposed Draft reading synthesis for the end-to-end methodology</strong></p>",
     "<p>This page is published to the controlled Confluence Draft area from Operations Automated sources for private internal review. Draft publication does not change approved methodology meaning, replace the controlled record, promote content to Live or authorise external publication.</p>",
     "</ac:rich-text-body></ac:structured-macro>",
     readable,

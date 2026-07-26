@@ -44,7 +44,7 @@ The current approved product boundary describes a private local application with
 
 The running interface remains bound to `127.0.0.1`. A tailnet-only Tailscale Serve route has since been observed working between Jamie's computer and Samsung phone, with Funnel disabled. That is operational evidence, not an inferred governance approval. A committed methodology proposal may be published only beneath the controlled private Confluence Draft parent.
 
-The separate proposed Methodology Lab pilot first demonstrated the bounded Draft-only publication route in draft PR #18 and created a ten-page private Confluence review set without altering the existing managed pages. That capability is now reconciled into the consolidated Workbench source. It remains a proposed private-review behaviour and does not approve the published methodology.
+The separate proposed Methodology Lab pilot first demonstrated the bounded Draft-only publication route in draft PR #18 and created a ten-page private Confluence review set without altering the existing lifecycle mirror. Founder review later found that reader too light, so the same governed route is being expanded to a 20-chapter end-to-end v0.8 Draft. The capability remains a proposed private-review behaviour and does not approve the published methodology.
 
 ## Proposed wording and behaviour
 
@@ -192,7 +192,7 @@ Evidence is strong for founder usability and current technical failure. It remai
 
 ## Version impact
 
-- Consolidated Workbench build: `1.5.0-consolidated-methodology-draft`
+- End-to-end methodology Draft build: `1.5.1-end-to-end-methodology-draft`
 - Approved Operations Automated methodology baseline: unchanged at v0.7
 - Private Draft publication behaviour: integrated under the recorded standing authority
 - External publication and customer use: unchanged and unapproved

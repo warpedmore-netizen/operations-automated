@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import {
   PUBLICATION_CONFIRMATION,
   buildConfluencePublicationPlan,
@@ -180,6 +180,32 @@ test("methodology lab plan is isolated, source-mapped and authorised only for Dr
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test("repository end-to-end methodology reader remains a controlled 20-page Draft", () => {
+  const repositoryRoot = resolve(import.meta.dirname, "..", "..");
+  const plan = buildMethodologyLabPublicationPlan({
+    repositoryRoot,
+    sourceBranch: "codex/methodology-depth-v0.8",
+    sourceCommit: "c".repeat(40),
+    generatedAt: "2026-07-26T12:00:00.000Z"
+  });
+
+  const keys = plan.items.map((item) => item.key);
+  assert.equal(plan.items.length, 20);
+  assert.equal(new Set(keys).size, 20);
+  assert.equal(plan.items[0].title, "Operations Automated Methodology – End-to-End Draft v0.8");
+  assert.ok(keys.includes("methodology-lab-001:people"));
+  assert.ok(keys.includes("methodology-lab-001:governance-risk"));
+  assert.ok(keys.includes("methodology-lab-001:target-design"));
+  assert.ok(keys.includes("methodology-lab-001:implementation"));
+  assert.ok(keys.includes("methodology-lab-001:human-ai"));
+  assert.ok(keys.includes("methodology-lab-001:routes-toolkit"));
+  assert.ok(plan.items.every((item) => item.lifecycle === "draft"));
+  assert.ok(plan.items.every((item) => item.sourceStatus === "proposed-pilot"));
+  assert.ok(plan.items.every((item) => /Controlled source map/i.test(item.bodyStorage)));
+  assert.equal(plan.publicationAuthority, "ai-managed-draft");
+  assert.equal(plan.deletionEnabled, false);
 });
 
 test("repository statuses map conservatively to Live, Draft and Archived", () => {

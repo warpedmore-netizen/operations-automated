@@ -1596,7 +1596,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
     toast(error.message, true);
   } finally {
     button.disabled = false;
-    button.textContent = methodologyLab ? "Preview methodology draft" : "Preview documentation update";
+    button.textContent = methodologyLab ? "Preview end-to-end methodology" : "Preview documentation update";
   }
 }
 
@@ -1631,7 +1631,7 @@ async function publishConfluenceDocumentation(event) {
     form.hidden = true;
     state.confluencePublicationPlan = null;
     toast(result.publicationKind === "methodology-lab-pilot"
-      ? "Consolidated methodology draft published for private review."
+      ? "End-to-end methodology Draft published for private review."
       : "Reviewed methodology documentation published to Confluence.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";

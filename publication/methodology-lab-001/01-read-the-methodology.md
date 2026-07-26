@@ -1,72 +1,87 @@
 ---
 id: OA-METHODOLOGY-LAB-001-READ
-title: Read the Methodology
+title: The Complete Method Map
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Read the methodology
+# The complete method map
 
 ## The central idea
 
-Operations are connected systems through which people, information, decisions and technology turn demand into outcomes. Improving one activity without understanding the surrounding journey can move delay, cost or risk elsewhere.
+An operation is a connected system through which people, information, decisions, technology, assets and partners turn demand into outcomes. Local activity can look efficient while the complete journey becomes slower, riskier or less valuable. Operations Automated therefore begins outside-in, follows the journey into the work, and only then decides what should change.
 
-Operations Automated therefore begins with purpose and the person receiving value, follows their journey into the operation, examines the complete operating system and only then decides what should be simplified, redesigned, automated or delegated.
+OPERATE — Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve — is the improvement and implementation cycle inside the wider methodology. It is not the whole method.
 
-OPERATE — Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve — is the improvement and implementation cycle inside that wider method.
+## Ten connected stages
 
-## The six-part reading path
+### 1. Establish mandate, context and outcomes
 
-### Part I – Purpose, value, responsibility and accountability
+Clarify why the work exists, who should benefit, what outcome and minimum outcome matter, what is in and out of scope, what obligations apply, and who can decide. A useful provisional answer can be returned before everything is known, but a consequential design should not proceed with unclear authority or unacceptable consequences.
 
-Define why the work exists, who should benefit, what value means, who is responsible for each contribution and who has authority and accountability when outcomes conflict.
+### 2. Follow journeys, demand and value
 
-### Part II – Start with the journey
+Start with the primary user or stakeholder journey. Understand the initiating need, experience, effort, delay, failure and recovery. Distinguish value demand, failure demand, standard work, exceptions and meaningful variation. Follow the journey to the first operational event.
 
-Begin with the customer, service user or stakeholder experience. Follow what they are trying to achieve and where their experience reveals an operational need.
+### 3. Understand the connected operating system
 
-### Part III – Understand the connected operation
+Map only enough of the operation to explain how outcomes are produced. Connect purpose, demand, work, decisions, roles, information, technology, assets, suppliers, controls, resilience, performance and learning. Trace causes across team and functional boundaries.
 
-Examine people, demand, work types, flow, decisions, dependencies, risk, information, technology, performance and learning as a system.
+### 4. Diagnose performance, exposure and readiness
 
-### Part IV – Improve and implement with OPERATE
+Separate recorded evidence, human judgement, AI inference, assumptions and recommendations. Test causes and competing explanations. Assess readiness as a profile across work clarity, authority, capability, information, control, technology, recovery and evidence of value.
 
-Use Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve to turn evidence into a tested and retained change.
+### 5. Design the target operation and allocate work
 
-### Part V – Become ready for automation, AI and agents
+Remove work that should not exist, simplify before adding technology, generate genuinely different options, and design roles, flows, information, decisions, controls and recovery together. Choose deliberately among manual work, AI assistance, rules automation, bounded agents and not ready.
 
-Choose deliberately between manual work, AI assistance, rules-based automation, bounded agents and “not ready”. Readiness is an evidence profile, not a race towards autonomy.
+### 6. Prioritise, justify and plan
 
-### Part VI – Govern, learn and evolve
+Compare options using user and organisational value, obligations, exposure, feasibility, reversibility, time to learning and opportunity cost. Make capacity and displaced work visible. Create a proportionate case for change, dependencies, decision gates and roadmap.
 
-Keep human authority visible, explain effects before action, learn from bounded failure and turn useful feedback into controlled methodology proposals and releases.
+### 7. Implement and learn through OPERATE
 
-## What v0.8 proposes
+Use the seven OPERATE disciplines to turn evidence into a bounded working intervention. Delivery increments must be operationally usable, not merely technically complete. New evidence can return the work to an earlier stage.
 
-The approved v0.7 outside-in sequence remains unchanged. The proposed additions make several boundaries explicit:
+### 8. Release, activate and transfer capability
 
-- AI should challenge, analyse and execute authorised work, and is responsible for the quality and honesty of its contribution.
-- An authorised human or organisation remains accountable for consequential operational outcomes.
-- Human review requires evidence, time, authority and a real challenge route.
-- Manual work can be the intended design where judgement, empathy, tacit knowledge, physical presence or accountability creates value.
-- Operational, product, technical and specialist expertise should shape material delivery early.
-- Completion includes activation and capability transfer.
-- Main answers should lead in plain language, with technical trace available through progressive disclosure.
-- Before any feedback, approval or publication action, the user should know what it will and will not do.
+Test normal, boundary, exceptional, degraded and recovery behaviour. Prepare the receiving operation, make the first useful action clear, observe early use and transfer the ability to operate, challenge, maintain, recover and improve the change.
 
-## What a complete application should leave behind
+### 9. Run, govern, measure and improve
 
-A proportionate use of the method should produce:
+Use a balanced operating rhythm across outcomes, demand, flow, quality, capacity, cost, control, adoption, resilience and learning. Review exceptions and unintended consequences. Improve, stabilise or retire work when the evidence justifies it.
 
-- a clear scope, beneficiary and value definition;
-- an evidence-based picture of current work and its connections;
-- a readiness position for the relevant work types;
-- prioritised opportunities and visible trade-offs;
-- a recommended target state and implementation route;
-- defined human and technology responsibilities;
-- named authority and accountability for consequential outcomes;
-- risks, controls, tests, measures and recovery; and
-- activated use, capability transfer, retained decisions and learning.
+### 10. Retain evidence and evolve
 
-The output should be no larger than the need. A small reversible decision may need one page; a consequential cross-team or agentic change needs stronger evidence and assurance.
+Distinguish a local correction, contextual learning, reusable working agreement, product issue and methodology-change candidate. Material methodology change requires retained evidence, challenge, a separate proposal, checks, assurance and explicit human approval.
+
+## How the method scales
+
+| Situation | Responsible minimum |
+|---|---|
+| Quick operational question | Frame the outcome, use the material lenses, test answerability, give a provisional recommendation and next action |
+| Improvement diagnosis | Add the journey, connected current state, causal assessment and prioritised intervention |
+| Full operating-model assessment | Use all system lenses, specialist interfaces, readiness, target design, option comparison and roadmap |
+| Change implementation | Add OPERATE, acceptance evidence, release, activation, recovery and capability transfer |
+| Governance decision | Make evidence, alternatives, authority, conditions, residual exposure and review triggers explicit |
+| Incident or urgent failure | Stabilise and protect first, establish authority, recover, then diagnose and retain learning |
+
+Scale depth with consequence, uncertainty, dependencies, novelty, reversibility, obligations and contested authority. Do not use a heavyweight artefact merely because it exists; do not use a lightweight answer to conceal a consequential unresolved decision.
+
+## Standard output
+
+The main answer or deliverable should lead with:
+
+1. current understanding and boundary;
+2. material evidence and interpretation;
+3. uncertainty, assumptions and trade-offs;
+4. a recommendation and next governed action;
+5. the human decision or control point; and
+6. what evidence, decision or learning will be retained.
+
+Detailed technical trace should remain inspectable without obscuring meaning.
+
+## Completion questions
+
+Before calling the work complete, ask whether the outcome is explicit, the material system is understood, evidence is traceable, credible alternatives were considered, the right people decided, controls and recovery are proportionate, the receiver can use the result, the operation can sustain it, and learning will be retained. A failed material test means continue the work or record the blocker honestly.

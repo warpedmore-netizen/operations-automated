@@ -1,59 +1,101 @@
 ---
-id: OA-METHODOLOGY-LAB-001-PART-6
-title: Part VI – Govern, Learn and Evolve
+id: OA-METHODOLOGY-LAB-001-RUN-EVOLVE
+title: Run, Govern, Measure and Improve
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Part VI – Govern, learn and evolve
+# Run, govern, measure and improve
 
-## What this part establishes
+## The operating model continues after release
 
-Operations and the methodology used to improve them must both learn.
+Running the operation means repeatedly creating the intended outcome while managing demand, capability, obligations, exceptions and change. Governance should make the operation observable and decisions legitimate. Improvement should respond to evidence, not depend on occasional projects.
 
-Failure is expected, but it should be bounded, observable, proportionate and recoverable where possible. Review should examine the conditions, decisions, controls and assumptions that shaped the outcome rather than defaulting to blame. Failure without a retained lesson, decision or improvement is repetition.
+## Establish an operating rhythm
 
-Feedback, questions, operational outcomes, research and contradictions enter a governed evolution loop:
+Choose rhythms appropriate to the work and consequence. A useful rhythm covers:
 
-1. capture the signal and its information boundary;
-2. classify, connect and prioritise it;
-3. compare it with approved content and evidence;
-4. test alternative and contrary interpretations;
-5. propose the smallest coherent change where justified;
-6. check meaning, dependencies, risk and governance;
-7. ask the authorised human to approve, revise or reject;
-8. release only after explicit authority; and
-9. observe the result and retain learning.
+- current outcomes and minimum-outcome failures;
+- demand, variation, queues and capacity;
+- quality, rework, complaints and exceptions;
+- cost, resource and supplier performance;
+- control, security, privacy, safety and compliance signals;
+- incidents, degraded service and recovery;
+- adoption, overrides and workarounds;
+- benefits and unintended consequences of recent changes;
+- capability, knowledge and key-person dependencies; and
+- prioritised improvement, maintenance and retirement work.
 
-AI may organise evidence, draft analysis, challenge assumptions, prepare changes and run checks. It cannot treat feedback as truth, infer approval or acquire authority from technical capability.
+Each review should have a purpose, evidence, decision owner and follow-through. Meetings that repeatedly note the same problem without changing authority, capacity or action are not effective governance.
 
-## Explain effects before action
+## Use balanced measures
 
-Before asking someone to save feedback, create a change review, authorise implementation, publish or accept consequence, state:
+Connect activity to the system outcome. Review a proportionate mix of:
 
-- what the action will create or change;
-- what remains unchanged;
-- whether it is reversible;
-- what evidence will be retained; and
-- the next separate authority gate.
+- intended outcome and user-defined value;
+- access, experience, effort and recovery;
+- demand and failure demand;
+- flow, delay, work-in-progress and completion;
+- quality, error, rework and exception;
+- capacity, workload and cost;
+- control and obligation performance;
+- resilience and recovery;
+- adoption, override and trust; and
+- learning and capability.
 
-Main answers should lead with the useful meaning, uncertainty, recommendation and next action. Source paths, hashes, statuses and implementation controls remain inspectable without dominating the reading experience.
+Segment where averages hide meaningful differences. Check whether targets create gaming, deferred work, risk transfer or exclusion. Use control limits, trends or ranges where appropriate rather than reacting to every fluctuation.
 
-## Workbench-supported evolution
+## Manage exceptions and incidents
 
-The Workbench may:
+Define how the operation detects, records, owns, prioritises and resolves exceptions. Protect people and critical outcomes first. Preserve evidence without delaying necessary stabilisation.
 
-- capture and classify feedback;
-- retain its source and strongest reasonable interpretation;
-- separate answer correction, reusable context, methodology evidence and product evidence;
-- prepare a change review and implementation brief;
-- connect the reviewed Git branch and checks;
-- record the human release decision; and
-- publish a committed proposal beneath Confluence Draft.
+For material incidents:
 
-It cannot approve methodology meaning, accept risk, infer convergence or promote Draft content to Live.
+1. establish command, authority and communication;
+2. contain harm and restore a safe or usable state;
+3. understand affected users, work, data and obligations;
+4. maintain a decision and action record;
+5. test recovery and return-to-normal criteria;
+6. examine system causes without reducing the event to individual blame; and
+7. implement and verify corrective and preventive action.
 
-## Next
+Route formal reporting and specialist investigation through the appropriate authority.
 
-Use **Review the consolidated draft** to assess the proposed meaning, reading experience and Workbench-supported release route.
+## Realise and challenge benefits
+
+Compare observed outcomes with the original value and change hypotheses. Identify whether improvement came from the intervention, surrounding change or demand variation. Look for displaced cost, effort, risk and failure.
+
+Benefit owners should decide whether to sustain, expand, revise or stop. Continuing investment because a delivery commitment was made is not evidence of value.
+
+## Maintain the operating system
+
+Plan recurring maintenance of:
+
+- work instructions, policies and decision rules;
+- data definitions, quality, access and retention;
+- models, prompts, automation and configuration;
+- systems, assets, integrations and supplier services;
+- controls, monitoring and assurance;
+- roles, access, skills and recovery capability; and
+- documentation, knowledge and contact routes.
+
+Review when strategy, demand, obligation, technology, supplier or risk changes. Retire obsolete work and technology deliberately, including data, access, contracts and controls.
+
+## Improve through the appropriate loop
+
+Use a light action loop for a bounded correction: understand, act, check, retain. Use OPERATE when the intervention changes the operating design or carries material consequence. Use formal governance where spending, risk acceptance, policy, employment, legal obligation or release authority requires it.
+
+Keep an improvement portfolio that exposes capacity, dependency and priority. Operational teams need protected capacity to improve; relying only on spare time makes recurring failure rational.
+
+## Retain feedback and learning
+
+Capture evidence in a form usable by the receiver. Distinguish local correction, contextual learning, reusable guidance, product change and methodology change. Record no-change reasoning so the same issue is not repeatedly reopened without new evidence.
+
+Do not infer convergence from silence, short replies, repetition, deference or fatigue. A decision is made only by the authorised person through an explicit route.
+
+## Outputs and gate
+
+Maintain an operational performance and control view, action and decision record, incident and recovery learning, benefit review, improvement portfolio, lifecycle and retirement plan, capability and knowledge view, and review triggers.
+
+The operation remains fit when it produces the intended outcome within obligations and tolerances, can detect and recover from failure, and can adapt without losing accountability. Otherwise stabilise, redesign or retire the relevant arrangement.
