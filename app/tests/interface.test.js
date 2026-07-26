@@ -224,6 +224,9 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(appSource, /\/api\/operate\/records\/\$\{encodeURIComponent\(record\.id\)\}\/actions/);
   assert.match(appSource, /workflow\.action-completed/);
   assert.match(appSource, /Record the evidence, outcome or reason/);
+  assert.match(appSource, /record-reference/);
+  assert.match(appSource, /Completed record/);
+  assert.match(appSource, /You do not need to confirm or enter anything else/);
   assert.match(appSource, /Suggested by Oppa Mate/);
   assert.match(appSource, /Relationship rejected and retained in activity history/);
   assert.match(appSource, /Linked source/);

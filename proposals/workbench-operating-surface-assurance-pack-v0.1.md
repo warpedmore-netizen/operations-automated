@@ -2,7 +2,7 @@
 id: OA-ASSURANCE-WORKBENCH-OPERATING-SURFACE-001
 title: Workbench Operating Surface Assurance Pack
 status: proposed
-version: 0.4
+version: 0.5
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -37,6 +37,8 @@ date: 2026-07-26
 | Feedback completion | Ordinary retained feedback could remain presented as an open review | Corrections and context complete on save; a real change candidate opens one review automatically |
 | Build hand-off | Preparation and receipt capture appeared as separate technical work for Jamie | Preparation creates one linked Codex-owned Build Job automatically and the implementation fields stay with Codex |
 | Conversation isolation | Work help could reuse the current long conversation | Each work item and each daily challenge uses a distinct, named conversation |
+| Record identity | Operational records exposed titles and internal UUIDs only | Stable type-specific references such as `CASE-001`, `TASK-001`, `INC-001` and `APP-001` are retained and shown on working surfaces |
+| Terminal actions | A completed Approval could still be described as Jamie's next step | Records with no next action are not human-action items and show the recorded outcome plus where to verify retained activity |
 
 No approved methodology wording changes in this proposal.
 
@@ -126,10 +128,12 @@ Approved or published methodology may be normative within its stated scope. Prop
 - **Automation obscures ownership:** every automatic bounded transition names its owner, completion condition and return point; it cannot create preparation or release approval.
 - **Completed feedback becomes invisible:** it leaves My Work but remains in Saved Feedback and the source audit trail.
 - **Daily-challenge duplication:** the Workbench uses one dated conversation and the previous Codex schedule is removed only after this route is verified.
+- **Reference migration:** the UUID remains the relational key; a unique additive reference is backfilled in creation order and does not rewrite links or activity history.
 
 ## Verification
 
-- full automated Workbench suite: **77 passed, 0 failed**;
+- full automated Workbench suite: **79 passed, 0 failed**;
+- isolated browser verification showed `CASE-001`, `TASK-001` and `APP-010` on My Work and Cases & Work, and the completed Approval stated that no further confirmation or data entry was required;
 - explicit regression coverage confirms the daily challenge enters My Work, AI-owned build work stays out of **Do Next**, and the one automatic Build Job remains linked to its Change;
 - the retained founder database showed two genuine Jamie actions, two AI-owned items being handled, no blocker and no duplicate Change card alongside its Build Job;
 - the live Case routed to its one open Task; the Task named Operations Automated AI as owner and exposed no Jamie completion control;

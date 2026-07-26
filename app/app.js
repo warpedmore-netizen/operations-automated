@@ -171,7 +171,19 @@ function workflowMarkup(record) {
     ...(record.bible?.completionEvidence || []),
     ...(record.profile?.completionEvidence || [])
   ].filter(Boolean))];
-  const steps = workflowSteps(record);
+  const steps = workflowSteps(record).map((step) => terminal ? { ...step, state: "complete" } : step);
+  if (terminal) {
+    return `<section class="work-now work-now-complete" aria-label="Completed workflow">
+      <span>Completed record</span>
+      <h4>${escapeHtml(record.bible?.label || record.recordType)} ${escapeHtml(statusLabel(record.status))}</h4>
+      <p>The outcome has already been recorded. You do not need to confirm or enter anything else for this item.</p>
+      <dl><div><dt>Recorded owner</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div><div><dt>Where to verify it</dt><dd>Open Recent activity below to see the action, actor, date and retained reason or evidence.</dd></div></dl>
+    </section>
+    <section class="workflow-progress" aria-label="Workflow progress">
+      <div class="workflow-heading"><span>Workflow complete</span><strong>${escapeHtml(record.profile?.label || record.bible?.label || "Work")}</strong></div>
+      <ol>${steps.map((step) => `<li class="workflow-step-complete"><span aria-hidden="true">&#10003;</span><p>${escapeHtml(step.label)}</p><small>Done</small></li>`).join("")}</ol>
+    </section>`;
+  }
   return `<section class="work-now" aria-label="Current workflow step">
     <span>${terminal ? "Completed" : aiOwned ? "Being handled" : "Your next step"}</span>
     <h4>${escapeHtml(terminal ? "Outcome and evidence retained" : next.label || "Review this work")}</h4>
@@ -241,6 +253,7 @@ function workItemMarkup(item, compact = false) {
   const aiOwned = item.humanActionRequired === false;
   return `<article class="work-item-wrap ${compact ? "work-item-wrap-compact" : ""}"><button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
     <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
+    ${item.reference ? `<span class="record-reference">${escapeHtml(item.reference)}</span>` : ""}
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
       ${item.reference ? `<small class="work-reference">${escapeHtml(item.reference)}</small>` : ""}
@@ -258,6 +271,7 @@ function recordAsWorkItem(record) {
     source: "Operate",
     sourceType: "operate-record",
     sourceId: record.id,
+    reference: record.reference,
     routeView: "operate",
     recordType: record.recordType,
     typeLabel: record.bible?.label || record.recordType,
@@ -372,7 +386,7 @@ function operateActionMarkup(record) {
     </section>`;
   }
   if (!actions.length) {
-    return `<section class="work-action-panel work-action-complete"><span>Current outcome</span><h4>No further action is due</h4><p>This record is complete or terminal. Its evidence and relationships remain available.</p></section>`;
+    return `<section class="work-action-panel work-action-complete"><span>Recorded outcome</span><h4>${escapeHtml(record.bible?.label || record.recordType)} ${escapeHtml(statusLabel(record.status))}</h4><p>This item is already complete. No further confirmation or data entry is required. Recent activity retains who acted, when and any recorded evidence or rationale.</p></section>`;
   }
   const nextAction = record.nextAction || actions[0];
   const noteRequired = actions.some((item) => item.noteRequired);
@@ -438,8 +452,8 @@ function renderWorkDetail(item, record = null) {
       <div><dt>Due</dt><dd>${escapeHtml(formatDateOnly(record.dueAt))}</dd></div>
       <div><dt>Automation</dt><dd>${escapeHtml(record.automationMode || "manual")}</dd></div>
       ${record.profile ? `<div><dt>Work profile</dt><dd>${escapeHtml(record.profile.label)}</dd></div>` : ""}
-      ${record.case ? `<div><dt>Case</dt><dd>${escapeHtml(record.case.title)}</dd></div>` : ""}
-      ${record.parent ? `<div><dt>Parent work</dt><dd>${escapeHtml(record.parent.title)}</dd></div>` : ""}
+      ${record.case ? `<div><dt>Case</dt><dd>${escapeHtml(record.case.reference ? `${record.case.reference} · ` : "")}${escapeHtml(record.case.title)}</dd></div>` : ""}
+      ${record.parent ? `<div><dt>Parent work</dt><dd>${escapeHtml(record.parent.reference ? `${record.parent.reference} · ` : "")}${escapeHtml(record.parent.title)}</dd></div>` : ""}
       ${record.journey ? `<div><dt>Journey</dt><dd>${escapeHtml(record.journey)}${record.journeyStage ? ` · ${escapeHtml(record.journeyStage)}` : ""}</dd></div>` : ""}
     </dl>
     ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
@@ -473,7 +487,7 @@ function renderWorkDetail(item, record = null) {
     : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
   $("#work-detail").innerHTML = `
     <div class="work-detail-heading">
-      <div><span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span><h3>${escapeHtml(item.title)}</h3></div>
+      <div><span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>${item.reference ? `<span class="record-reference">${escapeHtml(item.reference)}</span>` : ""}<h3>${escapeHtml(item.title)}</h3></div>
       <span class="priority-score priority-${escapeHtml(priority.band || "planned")}"><b>${Number(priority.score || 0)}</b><small>Priority</small></span>
     </div>
     <p class="work-detail-summary">${escapeHtml(item.summary || "No additional summary was recorded.")}</p>
@@ -675,14 +689,14 @@ function populateCaptureSelectors() {
   const selectedCase = caseSelect.value;
   const cases = state.operateRecords.filter((record) => record.recordType === "case" && !["closed"].includes(record.status));
   caseSelect.innerHTML = '<option value="">No case yet</option>'
-    + cases.map((record) => `<option value="${record.id}">${escapeHtml(record.title)}</option>`).join("");
+    + cases.map((record) => `<option value="${record.id}">${escapeHtml(record.reference ? `${record.reference} · ` : "")}${escapeHtml(record.title)}</option>`).join("");
   if ([...caseSelect.options].some((option) => option.value === selectedCase)) caseSelect.value = selectedCase;
   const parentSelect = $("#capture-parent");
   const selectedParent = parentSelect.value;
   parentSelect.innerHTML = '<option value="">No parent work</option>'
     + state.operateRecords
       .filter((record) => !["closed", "done", "cancelled", "completed", "rejected"].includes(record.status))
-      .map((record) => `<option value="${record.id}">${escapeHtml(record.bible?.label || record.recordType)} · ${escapeHtml(record.title)}</option>`).join("");
+      .map((record) => `<option value="${record.id}">${escapeHtml(record.reference ? `${record.reference} · ` : "")}${escapeHtml(record.bible?.label || record.recordType)} · ${escapeHtml(record.title)}</option>`).join("");
   if ([...parentSelect.options].some((option) => option.value === selectedParent)) parentSelect.value = selectedParent;
 }
 
@@ -766,7 +780,7 @@ function renderOperate() {
   $("#operate-record-count").textContent = `${linkedWork.length} operational ${linkedWork.length === 1 ? "record" : "records"}`;
   $("#case-register").innerHTML = cases.length ? cases.map((record) => `
     <button class="case-card" data-open-operate-record="${record.id}">
-      <span>${escapeHtml(statusLabel(record.status))}</span>
+      <span>${escapeHtml(record.reference)} &middot; ${escapeHtml(statusLabel(record.status))}</span>
       <strong>${escapeHtml(record.title)}</strong>
       <p>${escapeHtml(record.summary || "No case summary recorded.")}</p>
       <small>${records.filter((candidate) => candidate.caseId === record.id).length} linked records &middot; priority ${record.priority.score}</small>
@@ -774,6 +788,7 @@ function renderOperate() {
   $("#operate-record-list").innerHTML = linkedWork.length ? linkedWork.map((record) => `
     <button data-open-operate-record="${record.id}">
       <span class="work-type work-type-${workTypeClass(record.recordType)}">${escapeHtml(record.bible?.label || record.recordType)}</span>
+      <span class="record-reference">${escapeHtml(record.reference)}</span>
       <strong>${escapeHtml(record.title)}</strong>
       <small>${escapeHtml(statusLabel(record.status))} &middot; priority ${record.priority.score}${record.caseId ? " &middot; linked to case" : ""}</small>
     </button>`).join("") : '<div class="empty-records"><strong>No operational work yet.</strong><p>Capture a Request or Task directly, or connect it to a Case.</p></div>';
@@ -833,7 +848,7 @@ function openLinkCapture(record) {
   const target = $("#work-link-target");
   target.innerHTML = state.operateRecords
     .filter((candidate) => candidate.id !== record.id)
-    .map((candidate) => `<option value="${candidate.id}">${escapeHtml(candidate.bible?.label || candidate.recordType)} · ${escapeHtml(candidate.title)}</option>`)
+    .map((candidate) => `<option value="${candidate.id}">${escapeHtml(candidate.reference ? `${candidate.reference} · ` : "")}${escapeHtml(candidate.bible?.label || candidate.recordType)} · ${escapeHtml(candidate.title)}</option>`)
     .join("");
   form.reset();
   $("#work-link-dialog").showModal();
