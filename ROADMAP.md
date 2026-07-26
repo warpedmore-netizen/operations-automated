@@ -68,6 +68,8 @@ The approved internal-validation catalogue makes omissions visible; it does not 
 
 Further founder use showed that joined records are not the same as a completed workflow. My Work still mixed Jamie's actions with AI-owned work, Cases pointed at closure rather than their open contents, saved feedback could remain in review, preparation exposed developer receipt fields and unrelated discussions accumulated in one long conversation. The proposed Workbench 1.5.1 correction makes ownership, current step, completion evidence and the return point explicit; automates bounded transitions; and brings the daily methodology challenge into its own Workbench conversation. This is a product workflow correction, not an approved methodology change or product release.
 
+Founder testing then exposed a deeper ownership failure: labelling an item as AI-owned did not wake an AI worker, so Tasks and approved-preparation Build Jobs could remain indefinitely in **Being handled**. The proposed Workbench 1.5.3 correction adds a local claimable queue, structured completion return and recurring Codex worker. It uses scheduled polling because no supported event-driven Workbench-to-Codex connection is currently configured. Consequential actions remain behind their existing founder gates, and the worker depends on the computer, Codex app and local Workbench being available.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |

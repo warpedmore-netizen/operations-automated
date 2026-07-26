@@ -224,6 +224,8 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(appSource, /data-back-to-work-item/);
   assert.match(appSource, /Being handled/);
   assert.match(appSource, /Nothing to fill in now/);
+  assert.match(appSource, /Outcome and evidence retained/);
+  assert.match(appSource, /Returned evidence/);
   assert.match(appSource, /Daily methodology challenge/);
   assert.match(appSource, /Work ·/);
   assert.doesNotMatch(appSource, /name="branchName"[\s\S]{0,800}waiting-on-codex/);

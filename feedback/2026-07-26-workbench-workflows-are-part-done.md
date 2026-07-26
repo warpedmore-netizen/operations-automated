@@ -115,3 +115,32 @@ Prepare the smallest coherent Workbench correction that:
 8. moves the 08:00 daily methodology challenge into My Work before retiring the duplicate Codex automation.
 
 The change should return for founder review as a draft pull request. Passing tests or technical readiness must not approve merge or product release.
+
+## Second founder review: assignment is not execution
+
+Jamie clarified that a ticket must be tailored around its intended outcome and make the next move self-evident. If Jamie must use Codex manually for now, the Workbench must say so, supply the complete prompt and any questions, record that the Codex task was started and then accept the result back for review. A nominal AI owner or queue entry is not evidence that work has begun.
+
+The same rule applies to Build Jobs. When a PR is returned, the ticket must link directly to it and explain what Jamie needs to review. Release approval must lead to the next bounded action, not another unexplained status. Changes, Improvement initiatives and Operations Bible definitions must also be visible in dedicated registers. A configurable workflow and automation engine is a later product initiative, not something the current Workbench may pretend already exists.
+
+### Revised assessment
+
+The earlier correction still relied too heavily on ownership labels. A machine-readable queue is useful infrastructure, but no local recurring automation was present when checked. The dependable current workflow is therefore an explicit manual Codex bridge with an automatic return API and a paste-back fallback.
+
+### Revised bounded change
+
+1. Give every ticket a readable reference, outcome, current position, next owner, exact next action and success checks.
+2. Put unclaimed AI work in Jamie's **Do Next** list as **Start this task in Codex**.
+3. Supply one copy-ready prompt containing context, material questions, authority boundary and structured return instructions.
+4. Record **I've started this in Codex**, then move the ticket to **Being handled**.
+5. Allow Codex to update the ticket directly; retain **I've done this — review the outcome** as a fallback.
+6. Close a routine Task only when the returned reference, evidence and every success criterion pass; otherwise keep it open and explain the gap.
+7. Make Build Jobs follow the same pattern through build, PR review, release decision, authorised merge and receipt.
+8. Add dedicated Improvement, Change and Operations Bible registers and retain the general workflow engine as a visible future initiative.
+
+### Disposition after the second review
+
+**Continue the bounded product change; no methodology change.** The correction implements the approved methodology's existing human-readable action and authority principles more faithfully. It does not approve the product, configure a recurring runner, merge a PR or publish anything.
+
+## Later follow-on
+
+Jamie later gave separate direction to configure the recurring AI-owner worker. That later finding, authority boundary and live verification are retained in [AI-owned work needs a reliable worker](2026-07-26-ai-owned-work-needs-a-worker.md). This section remains the historical basis for the manual recovery route; it is no longer the current statement that no runner is configured.

@@ -110,6 +110,13 @@ function isAiOwner(owner) {
   return /\b(?:codex|oppa mate|operations automated ai|ai owner)\b/i.test(String(owner || ""));
 }
 
+function isTerminalRecordStatus(status) {
+  return new Set([
+    "closed", "done", "cancelled", "completed", "rejected", "no-action",
+    "decided", "superseded", "approved", "expired", "implemented"
+  ]).has(String(status || "").toLowerCase());
+}
+
 function workflowSteps(record) {
   const job = record.implementationJob;
   if (job) {
@@ -129,19 +136,21 @@ function workflowSteps(record) {
   }
   if (record.recordType === "case") {
     const current = record.status === "open" ? 0 : record.openChildren ? 1 : ["resolved", "closed"].includes(record.status) ? 2 : 1;
+    const terminal = isTerminalRecordStatus(record.status);
     return [
       ["Outcome and scope recorded", 0],
       ["Contained work completed", 1],
       ["Outcome reviewed and Case closed", 2]
-    ].map(([label, position]) => ({ label, state: position < current ? "complete" : position === current ? "current" : "upcoming" }));
+    ].map(([label, position]) => ({ label, state: terminal && position <= current ? "complete" : position < current ? "complete" : position === current ? "current" : "upcoming" }));
   }
   if (record.recordType === "task") {
     const current = record.status === "to-do" ? 0 : ["in-progress", "blocked"].includes(record.status) ? 1 : 2;
+    const terminal = isTerminalRecordStatus(record.status);
     return [
       ["Task ready for its owner", 0],
       ["Work carried out", 1],
       ["Completion evidence retained", 2]
-    ].map(([label, position]) => ({ label, state: position < current ? "complete" : position === current ? "current" : "upcoming" }));
+    ].map(([label, position]) => ({ label, state: terminal && position <= current ? "complete" : position < current ? "complete" : position === current ? "current" : "upcoming" }));
   }
   return [
     { label: "Work and evidence recorded", state: "complete" },
@@ -152,7 +161,9 @@ function workflowSteps(record) {
 
 function workflowMarkup(record) {
   const next = record.nextAction || {};
-  const aiOwned = next.authority === "ai-owner" || isAiOwner(record.owner);
+  const terminal = isTerminalRecordStatus(record.status);
+  const aiOwned = !terminal && (next.authority === "ai-owner" || isAiOwner(record.owner));
+  const completedReview = terminal ? record.codexHandoff?.lastReview : null;
   const completionEvidence = [...new Set([
     ...(record.implementationJob?.acceptanceCriteria || []),
     ...(record.bible?.completionEvidence || []),
@@ -160,10 +171,10 @@ function workflowMarkup(record) {
   ].filter(Boolean))];
   const steps = workflowSteps(record);
   return `<section class="work-now" aria-label="Current workflow step">
-    <span>${aiOwned ? "Being handled" : "Your next step"}</span>
-    <h4>${escapeHtml(next.label || "Review this work")}</h4>
-    <p>${escapeHtml(next.outcome || "Review the recorded outcome, evidence and owner before acting.")}</p>
-    <dl><div><dt>Owner now</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div><div><dt>Your part</dt><dd>${aiOwned ? "Nothing to fill in now. This returns to you only if a decision or clarification is needed." : "Complete the one action shown here; the Workbench will retain the result and update what comes next."}</dd></div></dl>
+    <span>${terminal ? "Completed" : aiOwned ? "Being handled" : "Your next step"}</span>
+    <h4>${escapeHtml(terminal ? "Outcome and evidence retained" : next.label || "Review this work")}</h4>
+    <p>${escapeHtml(terminal ? completedReview?.outcome || "This record reached its terminal state and its completion evidence remains available." : next.outcome || "Review the recorded outcome, evidence and owner before acting.")}</p>
+    <dl><div><dt>${terminal ? "Completed by" : "Owner now"}</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div><div><dt>${terminal ? "What now" : "Your part"}</dt><dd>${terminal ? "No further action is due. Reopen or create governed follow-up work only if the retained outcome proves incomplete." : aiOwned ? "Nothing to fill in now. This returns to you only if a decision or clarification is needed." : "Complete the one action shown here; the Workbench will retain the result and update what comes next."}</dd></div></dl>
   </section>
   <section class="workflow-progress" aria-label="Workflow progress">
     <div class="workflow-heading"><span>Workflow</span><strong>${escapeHtml(record.profile?.label || record.bible?.label || "Work")}</strong></div>
@@ -225,11 +236,12 @@ function inlineWorkHelpMarkup(record) {
 
 function workItemMarkup(item, compact = false) {
   const reasons = item.priority?.reasons || [];
-  const aiOwned = item.nextAction?.authority === "ai-owner" || isAiOwner(item.owner) || item.humanActionRequired === false;
+  const aiOwned = item.humanActionRequired === false;
   return `<article class="work-item-wrap ${compact ? "work-item-wrap-compact" : ""}"><button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
     <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
+      ${item.reference ? `<small class="work-reference">${escapeHtml(item.reference)}</small>` : ""}
       ${compact ? "" : `<small>${escapeHtml(item.summary || "Open the underlying record for context.")}</small>`}
       <span class="work-item-next">${aiOwned ? "With its owner" : "Next for you"}: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` · blocked — ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
       <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
@@ -263,7 +275,8 @@ function recordAsWorkItem(record) {
     workProfile: record.workProfile,
     workProfileLabel: record.profile?.label || record.workProfile,
     sourceContext: record.sourceContext,
-    implementationJob: record.implementationJob
+    implementationJob: record.implementationJob,
+    reference: record.reference
   };
 }
 
@@ -275,11 +288,64 @@ function activitySummary(activity) {
   if (activity.action === "record.created") return "Work record created.";
   if (activity.action === "relationship.confirmed") return "Related work confirmed.";
   if (activity.action === "relationship.rejected") return `Relationship rejected${detail.reason ? ` — ${detail.reason}` : ""}.`;
+  if (activity.action === "ai-handoff.sent") return `Started in Codex${detail.codexTaskReference ? ` — ${detail.codexTaskReference}` : ""}.`;
+  if (activity.action === "ai-handoff.reviewed") return detail.result === "completed"
+    ? "Codex return checked against the success criteria; task completed."
+    : detail.result === "needs-more-work"
+      ? `Codex return reviewed; more work needed${detail.missing?.length ? ` — ${detail.missing.join(" ")}` : ""}.`
+      : "Codex return checked and ready for the next governed action.";
+  if (activity.action === "implementation-job.sent") return `${detail.phase === "merge" ? "Authorised merge" : "Build"} started in Codex${detail.codexTaskReference ? ` — ${detail.codexTaskReference}` : ""}.`;
   return activity.action.replaceAll(".", " ").replaceAll("-", " ");
+}
+
+function codexTaskHandoffMarkup(record) {
+  const handoff = record.codexHandoff;
+  if (!handoff || ["completed", "ready-for-founder-review"].includes(handoff.status)) return "";
+  if (handoff.status === "needs-clarification") {
+    return `<section class="codex-handoff-panel codex-handoff-ready">
+      <div class="work-action-heading"><span>Clarification needed</span><h4>The AI owner needs one missing outcome detail</h4><p>${escapeHtml(handoff.questions[0] || "Clarify the intended outcome before this task can run.")}</p></div>
+      <p class="work-action-authority">The scheduled worker will not claim this task until the missing information is recorded.</p>
+    </section>`;
+  }
+  const queued = ["ready-for-codex", "needs-more-work"].includes(handoff.status);
+  return `<section class="codex-handoff-panel ${queued ? "codex-handoff-ready" : "codex-handoff-running"}">
+    <div class="work-action-heading">
+      <span>${queued ? "Queued for the AI owner" : "With the AI owner"}</span>
+      <h4>${queued ? (handoff.status === "needs-more-work" ? "The corrected task is ready for automatic retry" : "The scheduled worker will pick up this task") : "The AI owner has claimed this task"}</h4>
+      <p>${queued ? "Nothing needs copying during the normal route. The worker will claim the task, carry it out and return evidence here." : "When the AI owner finishes it can update this ticket automatically. If that return fails, the result can still be pasted below."}</p>
+    </div>
+    <dl class="handoff-outcome">
+      <div><dt>Ticket</dt><dd>${escapeHtml(handoff.reference)}</dd></div>
+      <div><dt>Outcome</dt><dd>${escapeHtml(record.summary || record.title)}</dd></div>
+      <div><dt>Done when</dt><dd><ul>${handoff.criteria.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></dd></div>
+      <div><dt>Questions before starting</dt><dd>${handoff.questions.length ? `<ul>${handoff.questions.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "Nothing else is needed from you."}</dd></div>
+    </dl>
+    ${queued ? `<details><summary>Manual fallback if the scheduled worker is unavailable</summary><label class="codex-prompt">Ready-to-copy Codex task
+      <textarea readonly rows="18" data-codex-task-prompt>${escapeHtml(handoff.prompt)}</textarea>
+    </label><div class="work-action-buttons"><button class="primary" type="button" data-copy-codex-task>Copy Codex task</button></div>
+    <label class="codex-task-reference">Codex task name or link <small>Optional, but useful if you want to return to it.</small><input maxlength="500" data-codex-task-reference placeholder="Paste the Codex task name or link"></label>
+    <button class="primary" type="button" data-mark-codex-task-sent>I've started this in Codex</button></details>` : `<p class="work-action-authority">Recorded Codex task: ${escapeHtml(handoff.lastSent?.codexTaskReference || "Scheduled AI-owner worker")}</p>`}
+    <form class="codex-return-form" data-codex-task-review="${escapeHtml(record.id)}">
+      <label>Codex finished but did not update this ticket?
+        <textarea name="outcomeText" rows="7" required placeholder="Paste the complete Codex final response, including the OA_WORKBENCH_RETURN block."></textarea>
+      </label>
+      <button class="ghost" type="submit">I've done this — review the outcome</button>
+    </form>
+    ${handoff.lastReview?.missing?.length ? `<div class="handoff-gaps"><strong>What still needs fixing</strong><ul>${handoff.lastReview.missing.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul></div>` : ""}
+    <p class="work-action-authority">Assignment and claiming are not completion. The ticket closes only after returned evidence passes the success checks.</p>
+  </section>`;
 }
 
 function operateActionMarkup(record) {
   const actions = record.actions || [];
+  if (isTerminalRecordStatus(record.status)) {
+    const review = record.codexHandoff?.lastReview;
+    const evidence = Array.isArray(review?.evidence) ? review.evidence.filter(Boolean) : [];
+    return `<section class="work-action-panel work-action-complete"><span>Completed outcome</span><h4>No further action is due</h4><p>${escapeHtml(review?.outcome || "This record is complete or terminal. Its evidence and relationships remain available.")}</p>${evidence.length ? `<strong>Returned evidence</strong><ul>${evidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : ""}</section>`;
+  }
+  if (record.codexHandoff && !["completed", "ready-for-founder-review"].includes(record.codexHandoff.status)) {
+    return codexTaskHandoffMarkup(record);
+  }
   if (record.sourceBacked && record.nextAction) {
     const routeButton = record.nextAction.implementationJobId
       ? `<button class="ghost" data-open-implementation-job="${escapeHtml(record.nextAction.implementationJobId)}">Open Codex build</button>`
@@ -363,7 +429,9 @@ function renderWorkDetail(item, record = null) {
   const recordBody = record ? `
     ${workflowMarkup(record)}
     <dl class="work-detail-facts">
-      <div><dt>Owner</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div>
+      <div><dt>Ticket</dt><dd>${escapeHtml(record.reference || "Not assigned")}</dd></div>
+      <div><dt>Who acts next</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div>
+      ${record.assignedOwner && record.assignedOwner !== record.owner ? `<div><dt>Work owner</dt><dd>${escapeHtml(record.assignedOwner)}</dd></div>` : ""}
       <div><dt>Status</dt><dd>${escapeHtml(statusLabel(record.status))}</dd></div>
       <div><dt>Due</dt><dd>${escapeHtml(formatDateOnly(record.dueAt))}</dd></div>
       <div><dt>Automation</dt><dd>${escapeHtml(record.automationMode || "manual")}</dd></div>
@@ -418,17 +486,46 @@ function linesMarkup(values) {
   return (values || []).map((value) => `<li>${escapeHtml(value)}</li>`).join("");
 }
 
+function returnedJson(text) {
+  const value = String(text || "").trim();
+  const start = value.indexOf("{");
+  const end = value.lastIndexOf("}");
+  if (start < 0 || end <= start) throw new Error("The returned Codex response does not contain a complete JSON result.");
+  try { return JSON.parse(value.slice(start, end + 1)); }
+  catch { throw new Error("The returned Codex JSON could not be read. Copy the complete final result and try again."); }
+}
+
 function implementationReceiptMarkup(job) {
-  if (job.status === "waiting-on-codex") {
-    return `<section class="work-action-panel work-action-owned">
-      <div class="work-action-heading"><span>With Codex</span><h4>You have finished this step</h4><p>Codex must return the branch, draft pull request, commit, changed files, tests, validation, risks and version impact. Those are implementation evidence, not fields for Jamie to complete.</p></div>
-      <p class="work-action-authority">The build stays out of Do Next while Codex owns it. It returns automatically when the separate release decision is ready.</p>
+  if (["waiting-on-codex", "release-authorised"].includes(job.status)) {
+    const queued = job.handoff?.status !== "in-codex";
+    const mergePhase = job.handoff?.phase === "merge";
+    return `<section class="codex-handoff-panel ${queued ? "codex-handoff-ready" : "codex-handoff-running"}">
+      <div class="work-action-heading">
+        <span>${queued ? "Queued for the AI owner" : "With the AI owner"}</span>
+        <h4>${queued ? (mergePhase ? "The authorised merge is ready for automatic pickup" : "The prepared build is ready for automatic pickup") : (mergePhase ? "Codex is carrying out the authorised merge" : "Codex is preparing and testing the draft")}</h4>
+        <p>${queued ? "Nothing needs copying during the normal route. The scheduled worker will claim the exact prompt and return the required evidence." : "The next Workbench step begins when Codex returns the required evidence. If automatic return fails, paste the final JSON below."}</p>
+      </div>
+      <dl class="handoff-outcome">
+        <div><dt>Ticket</dt><dd>${escapeHtml(job.handoff?.reference || "Build reference unavailable")}</dd></div>
+        <div><dt>Outcome</dt><dd>${escapeHtml(mergePhase ? `Merge only the approved commit ${job.commitSha}.` : job.approvedRequirement)}</dd></div>
+        <div><dt>Done when</dt><dd>${escapeHtml(mergePhase ? "The exact merge receipt is returned and the repository is re-indexed." : "A draft PR, commit, changed-file list, tests, validation, risks and version impact are returned.")}</dd></div>
+      </dl>
+      ${queued ? `<details><summary>Manual fallback if the scheduled worker is unavailable</summary><label class="codex-prompt">Ready-to-copy Codex task<textarea readonly rows="20" data-build-handoff-prompt>${escapeHtml(job.handoff?.prompt || job.briefText)}</textarea></label>
+      <button class="primary" type="button" data-copy-build-handoff>Copy Codex task</button>
+      <label class="codex-task-reference">Codex task name or link <small>Optional.</small><input maxlength="500" data-build-task-reference></label><button class="primary" type="button" data-mark-build-sent>I've started this in Codex</button></details>` : `<p class="work-action-authority">Recorded Codex task: ${escapeHtml(job.handoff?.lastSent?.codexTaskReference || "Scheduled AI-owner worker")}</p>`}
+      <form class="codex-return-form" data-build-return="${escapeHtml(job.id)}" data-build-return-phase="${escapeHtml(job.handoff?.phase || "implementation")}">
+        <label>Codex finished but did not update this ticket?<textarea name="outcomeText" rows="7" required placeholder="Paste the completed OA_WORKBENCH_${mergePhase ? "MERGE" : "BUILD"}_RETURN JSON."></textarea></label>
+        <button class="ghost" type="submit">I've done this — review the outcome</button>
+      </form>
+      <p class="work-action-authority">Assignment and claiming do not mark the job complete. Returned evidence must pass the next workflow check.</p>
     </section>`;
   }
   if (job.status === "waiting-for-review") {
     return `<section class="release-decision-panel">
-      <span>Separate release approval</span>
-      <h4>Jamie decides whether this exact commit may merge</h4>
+      <span>PR ready for your review</span>
+      <h4>Review the linked pull request, then decide whether this exact commit may merge</h4>
+      ${job.pullRequestUrl ? `<a class="primary text-link" href="${escapeHtml(job.pullRequestUrl)}" target="_blank" rel="noreferrer">Open the pull request</a>` : ""}
+      <ul class="release-review-checklist"><li>Does the change deliver the outcome above?</li><li>Do the tests and visible journey checks pass?</li><li>Are the unresolved risks acceptable for this release decision?</li><li>Does the PR still contain commit ${escapeHtml(job.commitSha)}?</li></ul>
       <label>Decision reason<textarea data-release-reason rows="3" placeholder="Required for request changes, reject or defer."></textarea></label>
       <label>Exact confirmation<input data-release-confirmation autocomplete="off" placeholder="Type Approve release"></label>
       <div class="work-action-buttons">
@@ -437,15 +534,7 @@ function implementationReceiptMarkup(job) {
         <button class="danger-outline" data-build-release-action="reject">Reject</button>
         <button class="ghost" data-build-release-action="defer">Defer</button>
       </div>
-      <p>Approval authorises only ${escapeHtml(job.commitSha)} in the linked pull request. The Workbench does not merge it.</p>
-    </section>`;
-  }
-  if (job.status === "release-authorised") {
-    return `<section class="release-decision-panel">
-      <span>Release authorised</span>
-      <h4>Codex owns the authorised merge and receipt</h4>
-      <p>${escapeHtml(job.releaseApproval?.authorised_transition || "")}</p>
-      <p>Jamie does not enter the merged commit or GitHub receipt. Codex must return the exact authorised result; the Workbench then completes and reindexes the Change.</p>
+      <p>Approval authorises only ${escapeHtml(job.commitSha)} in the linked pull request. The next screen supplies the exact Codex merge command; external publication remains separate.</p>
     </section>`;
   }
   return "";
@@ -466,25 +555,25 @@ function renderImplementationJobDetail(item, job) {
     ${workflowMarkup({
       recordType: "change",
       status: job.status,
-      owner: job.status === "waiting-for-review" ? "Jamie Peppard" : "Codex",
+      owner: item.owner,
       nextAction: item.nextAction,
       implementationJob: job,
       profile: { label: "Product or application build", completionEvidence: ["implementation receipt reviewed", "separate release outcome retained"] }
     })}
     ${sourceWorkPackageMarkup(item.sourceContext)}
     <dl class="work-detail-facts">
-      <div><dt>Owner now</dt><dd>${job.status === "waiting-on-codex" || job.status === "release-authorised" ? "Codex" : "Jamie Peppard"}</dd></div>
-      <div><dt>Change</dt><dd>${escapeHtml(job.changeId)}</dd></div>
+      <div><dt>Ticket</dt><dd>${escapeHtml(job.handoff?.reference || item.reference || "Not assigned")}</dd></div>
+      <div><dt>Who acts next</dt><dd>${escapeHtml(item.owner)}</dd></div>
       <div><dt>Branch</dt><dd>${escapeHtml(job.branchName || "Not returned yet")}</dd></div>
       <div><dt>Commit</dt><dd>${escapeHtml(job.commitSha || "Not returned yet")}</dd></div>
     </dl>
     <div class="record-boundary"><strong>Authority boundary</strong><p>${escapeHtml(job.authorityBoundary)}</p></div>
     <details class="implementation-brief">
-      <summary>Technical: complete Codex handoff brief</summary>
+      <summary>Technical: original governed build brief</summary>
       <textarea readonly rows="18">${escapeHtml(job.briefText)}</textarea>
       <button class="ghost" type="button" data-copy-build-brief>Copy brief</button>
     </details>
-    ${job.pullRequestUrl ? `<p><a class="primary text-link" href="${escapeHtml(job.pullRequestUrl)}" target="_blank" rel="noreferrer">Open draft pull request</a></p>` : ""}
+    ${job.pullRequestUrl ? `<p class="build-pr-link"><a class="primary text-link" href="${escapeHtml(job.pullRequestUrl)}" target="_blank" rel="noreferrer">Open and review the pull request</a><small>This is the exact PR linked to this Build Job.</small></p>` : ""}
     ${job.filesChanged?.length ? `<details class="build-evidence" open><summary>Implementation receipt</summary>
       <h4>Files changed</h4><ul>${linesMarkup(job.filesChanged)}</ul>
       <h4>Tests</h4><ul>${linesMarkup(job.tests)}</ul>
@@ -656,6 +745,14 @@ function renderOperate() {
   const records = state.operateRecords;
   const cases = records.filter((record) => record.recordType === "case");
   const linkedWork = records.filter((record) => record.recordType !== "case");
+  const improvements = records.filter((record) => record.recordType === "improvement");
+  const changes = records.filter((record) => record.recordType === "change");
+  const registerMarkup = (items, emptyLabel) => items.length ? items.map((record) => `
+    <button data-open-operate-record="${record.id}">
+      <span class="work-type work-type-${workTypeClass(record.recordType)}">${escapeHtml(record.reference || record.bible?.label || record.recordType)}</span>
+      <strong>${escapeHtml(record.title)}</strong>
+      <small>${escapeHtml(statusLabel(record.status))} &middot; next: ${escapeHtml(record.nextAction?.label || "No further action")}</small>
+    </button>`).join("") : `<div class="empty-records"><strong>No ${escapeHtml(emptyLabel)} yet.</strong><p>Capture or generate one and it will remain visible here throughout its workflow.</p></div>`;
   $("#case-register-count").textContent = `${cases.length} ${cases.length === 1 ? "case" : "cases"}`;
   $("#operate-record-count").textContent = `${linkedWork.length} operational ${linkedWork.length === 1 ? "record" : "records"}`;
   $("#case-register").innerHTML = cases.length ? cases.map((record) => `
@@ -671,6 +768,10 @@ function renderOperate() {
       <strong>${escapeHtml(record.title)}</strong>
       <small>${escapeHtml(statusLabel(record.status))} &middot; priority ${record.priority.score}${record.caseId ? " &middot; linked to case" : ""}</small>
     </button>`).join("") : '<div class="empty-records"><strong>No operational work yet.</strong><p>Capture a Request or Task directly, or connect it to a Case.</p></div>';
+  $("#improvement-register-count").textContent = `${improvements.length}`;
+  $("#change-register-count").textContent = `${changes.length}`;
+  $("#improvement-register").innerHTML = registerMarkup(improvements, "improvement initiatives");
+  $("#change-register").innerHTML = registerMarkup(changes, "Changes");
   $("#bible-boundary").innerHTML = '<strong>The Operations Bible recommends classification, routing and automation eligibility.</strong><span>It remains a proposed product dictionary and does not change the approved methodology baseline.</span>';
   $("#operations-bible").innerHTML = state.operationsBible.map((entry) => `
     <article>
@@ -2250,7 +2351,7 @@ for (const selector of ["#do-next-list", "#work-inbox-list"]) {
     if (item) openWorkItem(item.dataset.workItemId).catch((error) => toast(error.message, true));
   });
 }
-for (const selector of ["#case-register", "#operate-record-list"]) {
+for (const selector of ["#case-register", "#operate-record-list", "#improvement-register", "#change-register"]) {
   $(selector).addEventListener("click", (event) => {
     const item = event.target.closest("[data-open-operate-record]");
     if (item) openOperateRecord(item.dataset.openOperateRecord).catch((error) => toast(error.message, true));
@@ -2293,6 +2394,70 @@ $("#work-detail").addEventListener("click", async (event) => {
     $("#input").focus();
     return;
   }
+  const copyCodexTask = event.target.closest("[data-copy-codex-task]");
+  if (copyCodexTask && state.currentOperateRecord?.codexHandoff) {
+    try {
+      await navigator.clipboard.writeText(state.currentOperateRecord.codexHandoff.prompt);
+      toast("Complete Codex task copied.");
+    } catch {
+      const field = $("#work-detail").querySelector("[data-codex-task-prompt]");
+      field?.select();
+      document.execCommand("copy");
+      toast("Complete Codex task copied.");
+    }
+    return;
+  }
+  const markCodexTask = event.target.closest("[data-mark-codex-task-sent]");
+  if (markCodexTask && state.currentOperateRecord) {
+    markCodexTask.disabled = true;
+    try {
+      const codexTaskReference = $("#work-detail").querySelector("[data-codex-task-reference]")?.value.trim() || "";
+      const value = await request(`/api/operate/records/${encodeURIComponent(state.currentOperateRecord.id)}/codex-handoff`, {
+        method: "POST",
+        body: JSON.stringify({ codexTaskReference })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      renderWorkDetail(recordAsWorkItem(value.record), value.record);
+      toast(value.message);
+    } catch (error) {
+      markCodexTask.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const copyBuildHandoff = event.target.closest("[data-copy-build-handoff]");
+  if (copyBuildHandoff && state.selectedImplementationJob?.handoff) {
+    try {
+      await navigator.clipboard.writeText(state.selectedImplementationJob.handoff.prompt);
+      toast("Complete Codex build task copied.");
+    } catch {
+      const field = $("#work-detail").querySelector("[data-build-handoff-prompt]");
+      field?.select();
+      document.execCommand("copy");
+      toast("Complete Codex build task copied.");
+    }
+    return;
+  }
+  const markBuildSent = event.target.closest("[data-mark-build-sent]");
+  if (markBuildSent && state.selectedImplementationJob) {
+    markBuildSent.disabled = true;
+    try {
+      const jobId = state.selectedImplementationJob.id;
+      const codexTaskReference = $("#work-detail").querySelector("[data-build-task-reference]")?.value.trim() || "";
+      const value = await request(`/api/implementation-jobs/${encodeURIComponent(jobId)}/mark-sent`, {
+        method: "POST",
+        body: JSON.stringify({ codexTaskReference })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      const retained = state.myWork.items.find((item) => item.id === `implementation-job:${jobId}`);
+      if (retained) renderImplementationJobDetail(retained, value.job);
+      toast(value.message);
+    } catch (error) {
+      markBuildSent.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   const copyBrief = event.target.closest("[data-copy-build-brief]");
   if (copyBrief && state.selectedImplementationJob) {
     try {
@@ -2331,7 +2496,7 @@ $("#work-detail").addEventListener("click", async (event) => {
       });
       await Promise.all([loadOperate(), loadMyWork()]);
       await openWorkItem(`implementation-job:${value.job.id}`);
-      toast("Complete Build Job prepared for Codex. Release remains separately controlled.");
+      toast("Build task prepared. Copy it into Codex and record that you have started it; release remains separately controlled.");
     } catch (error) {
       prepareBuild.disabled = false;
       toast(error.message, true);
@@ -2537,6 +2702,51 @@ $("#work-detail").addEventListener("submit", async (event) => {
         workItemId: state.currentWorkItem?.id || null
       });
     } catch (error) {
+      toast(error.message, true);
+    }
+    return;
+  }
+  const codexTaskReviewForm = event.target.closest("[data-codex-task-review]");
+  if (codexTaskReviewForm) {
+    event.preventDefault();
+    const submit = codexTaskReviewForm.querySelector('[type="submit"]');
+    const outcomeText = new FormData(codexTaskReviewForm).get("outcomeText")?.trim() || "";
+    submit.disabled = true;
+    try {
+      const value = await request(`/api/operate/records/${encodeURIComponent(codexTaskReviewForm.dataset.codexTaskReview)}/codex-review`, {
+        method: "POST",
+        body: JSON.stringify({ outcomeText })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      if (value.review.result === "completed") renderWorkDetail(null);
+      else renderWorkDetail(recordAsWorkItem(value.record), value.record);
+      toast(value.message, value.review.result === "needs-more-work");
+    } catch (error) {
+      submit.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const buildReturnForm = event.target.closest("[data-build-return]");
+  if (buildReturnForm) {
+    event.preventDefault();
+    const submit = buildReturnForm.querySelector('[type="submit"]');
+    submit.disabled = true;
+    try {
+      const result = returnedJson(new FormData(buildReturnForm).get("outcomeText"));
+      const phase = buildReturnForm.dataset.buildReturnPhase;
+      const endpoint = phase === "merge" ? "merge-receipt" : "receipt";
+      const value = await request(`/api/implementation-jobs/${encodeURIComponent(buildReturnForm.dataset.buildReturn)}/${endpoint}`, {
+        method: "POST",
+        body: JSON.stringify(result)
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      const retained = state.myWork.items.find((item) => item.id === `implementation-job:${value.job.id}`);
+      if (retained) renderImplementationJobDetail(retained, value.job);
+      else renderWorkDetail(null);
+      toast(value.message);
+    } catch (error) {
+      submit.disabled = false;
       toast(error.message, true);
     }
     return;

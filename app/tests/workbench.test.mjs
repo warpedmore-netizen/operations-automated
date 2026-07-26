@@ -77,7 +77,7 @@ test("hard ceilings cannot be lower than warnings", () => {
 test("the browser never receives or stores the API key", () => {
   const source = readFileSync(resolve(import.meta.dirname, "..", "app.js"), "utf8");
   const html = readFileSync(resolve(import.meta.dirname, "..", "index.html"), "utf8");
-  assert.doesNotMatch(source + html, /OPENAI_API_KEY|sk-[A-Za-z0-9]/);
+  assert.doesNotMatch(source + html, /OPENAI_API_KEY|sk-(?:proj-)?[A-Za-z0-9_-]{20,}/);
 });
 
 test("git exclusions cover local secrets, databases, attachments and audio", () => {

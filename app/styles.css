@@ -959,6 +959,27 @@ main { min-width: 0; }
 .why-recommended li span, .why-recommended li code { display: block; margin-top: 0.12rem; }
 .implementation-brief textarea { width: 100%; margin-top: 0.65rem; padding: 0.65rem; color: #29465d; background: white; border: 1px solid var(--line); border-radius: 6px; font: 0.58rem/1.5 Consolas, monospace; resize: vertical; }
 .implementation-brief button { margin-top: 0.45rem; }
+.work-reference { color: var(--oa-blue, #0877bd); font-weight: 800; letter-spacing: 0.04em; }
+.codex-handoff-panel { margin: 1rem 0; padding: 1rem; border: 2px solid #8cb9d7; border-radius: 10px; background: #f5fbff; }
+.codex-handoff-running { border-color: #9eb9ac; background: #f6fbf8; }
+.handoff-outcome { display: grid; gap: 0.55rem; margin: 0.8rem 0; }
+.handoff-outcome > div { display: grid; grid-template-columns: minmax(6.5rem, 0.35fr) 1fr; gap: 0.65rem; padding: 0.55rem 0; border-bottom: 1px solid var(--line); }
+.handoff-outcome dt { color: #526b7c; font-size: 0.62rem; font-weight: 850; text-transform: uppercase; letter-spacing: 0.04em; }
+.handoff-outcome dd, .handoff-outcome ul { margin: 0; }
+.codex-prompt, .codex-task-reference, .codex-return-form label { display: grid; gap: 0.35rem; color: var(--oa-navy, #063f72); font-size: 0.68rem; font-weight: 800; }
+.codex-prompt textarea, .codex-return-form textarea { width: 100%; box-sizing: border-box; padding: 0.7rem; border: 1px solid #8cb9d7; border-radius: 7px; background: white; color: #29465d; font: 0.62rem/1.5 Consolas, monospace; resize: vertical; }
+.codex-task-reference { margin: 0.75rem 0 0.45rem; }
+.codex-task-reference input { padding: 0.6rem; border: 1px solid var(--line); border-radius: 6px; }
+.codex-task-reference small { color: #607889; font-weight: 500; }
+.codex-return-form { display: grid; gap: 0.55rem; margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--line); }
+.handoff-gaps { margin-top: 0.75rem; padding: 0.7rem; border-left: 4px solid #bb5a38; background: #fff8f5; }
+.handoff-gaps ul, .release-review-checklist { margin: 0.45rem 0 0; padding-left: 1.15rem; }
+.build-pr-link { display: grid; gap: 0.25rem; justify-items: start; }
+.build-pr-link small { color: #607889; }
+.governed-work-registers { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.governed-register-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.governed-register-grid > section { min-width: 0; padding: 0.8rem; border: 1px solid var(--line); border-radius: 8px; background: #fbfcfd; }
+@media (max-width: 760px) { .governed-register-grid { grid-template-columns: 1fr; } }
 .build-evidence h4 { margin: 0.65rem 0 0.25rem; color: var(--ink); font-size: 0.61rem; }
 .universal-control dl { display: grid; gap: 0.4rem; margin: 0.65rem 0 0; }
 .universal-control dl div { padding: 0.5rem; background: white; border-radius: 5px; }

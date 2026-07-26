@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.7
+version: 0.8
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -23,6 +23,8 @@ The approved v0.6 repository baseline remains authoritative. The connected-work 
 
 Classification, recommendation, a passing scenario test and technical readiness do not create approval.
 
+The AI-owner queue responds to the recorded founder finding that [AI-owned work needs a reliable worker](../feedback/2026-07-26-ai-owned-work-needs-a-worker.md). The queue is a machine-readable integration contract. A recurring local Codex worker has now been configured and its bounded prompt has been exercised through one live Task. The manual hand-off remains the recovery route. Queue availability alone still does not prove a claim, active work or completion.
+
 ## Current and proposed position
 
 | | Current Workbench | Proposed Operate MVP |
@@ -36,6 +38,7 @@ Classification, recommendation, a passing scenario test and technical readiness 
 | Authority | Named human controls | Unchanged and made explicit in record transitions |
 | Knowledge | File-level repository extracts | Governed source manifest, heading chunks, authority labels and exact cited snapshots |
 | Build delivery | Specialist proposal handoff | First-class external-Codex Build Job, receipt and separate release approval |
+| AI-owned execution | Ownership label with no reliable wake-up | Recurring local worker, conflict-safe claim, structured evidence return, manual recovery and human-control routing |
 
 ## Workbench operating surface
 
@@ -75,9 +78,17 @@ Each work detail leads with five questions in ordinary language:
 4. what steps lead to completion; and
 5. what evidence means it is done.
 
-**Do Next** contains only non-blocked work that genuinely requires Jamie. AI-owned work remains visible through **Being handled** and the full inbox, but it cannot ask Jamie to mark the AI's task complete or fill in the AI's implementation receipt. A Case with open contained work routes to that work and cannot be resolved or closed first.
+**Do Next** contains only non-blocked work that genuinely requires Jamie. An AI-owned item that is ready for the configured worker is labelled **Queued for the AI owner**, not described as active work. The successful claim changes it to **AI owner is working on this task** and retains the worker reference. If the worker is unavailable, Jamie can expand the manual fallback, copy the same complete prompt and record the hand-off. Missing information or a consequential decision routes back to Jamie. A Case with open contained work routes to that work and cannot be resolved or closed first.
 
 Work-item help creates or reuses a conversation for that work item rather than appending every question to the most recently open conversation. The daily methodology challenge appears after 08:00 UK time as one 10-minute My Work item and starts its own dated conversation. Once Jamie answers, that item leaves My Work and any useful correction can follow the ordinary retained-feedback and change route.
+
+### Outcome ticket and manual Codex bridge
+
+Every ticket must answer four questions before exposing technical trace: what outcome is required, what has already happened, who acts next and the exact next action.
+
+An AI-owned ticket receives a readable reference, outcome, success criteria, material questions and one ready-to-copy Codex task. **I've started this in Codex** records the hand-off; it does not mark the work complete. Codex is instructed to return a structured result to the local Workbench. If that automatic return is unavailable, Jamie can paste the final response and choose **I've done this — review the outcome**.
+
+The Workbench checks the ticket reference, specific evidence, every success criterion and reported remaining work. A routine Task closes only when those checks pass. An inadequate return stays open and produces a corrected prompt. A non-routine or consequential record returns to Jamie's governed action rather than letting AI approve its own work.
 
 ## Configurable definitions and Work Profiles
 
@@ -95,7 +106,9 @@ Existing feedback, Decision Inbox, Brand Review and Confluence publication recor
 
 A Build Job is available only after the linked Change is explicitly approved for preparation. That preparation decision creates the one linked job automatically. It contains the approved requirement, context, methodology and governance constraints, affected components, acceptance criteria, test expectations and authority boundary.
 
-The job moves through **Waiting on Codex**, **Waiting for review** and, only after Jamie types the exact release confirmation, **Release authorised**. The returned receipt retains the branch, draft pull request, commit, changed files, tests, validation, unresolved risks and version impact. Those receipt fields belong to Codex, not Jamie. The Workbench does not pretend to run Codex or merge the branch.
+The job moves through **Ready to start in Codex**, **In Codex**, **PR ready for review** and, only after Jamie types the exact release confirmation, **Release authorised**. The returned receipt retains the branch, draft pull request, commit, changed files, tests, validation, unresolved risks and version impact. Those receipt fields belong to Codex, not Jamie.
+
+The Workbench exposes authorised build and merge steps through the same hand-off contract and local AI-owner queue. The configured worker may claim only the phase already authorised; the complete copy-ready Codex command remains available as recovery. When the build returns, the Workbench provides the direct PR link, exact commit, intended outcome, test evidence, unresolved risks and a short review checklist. Approval creates the next bounded Codex merge command; it does not silently mean publication. The queue never creates preparation or release authority: it can expose a merge step only after Jamie's exact release decision has already been retained.
 
 After Codex records a successful authorised external merge, the Workbench reindexes the repository, retains the merged receipt and queues an applicable Confluence update. Publication remains a later, separate controlled decision.
 
@@ -115,6 +128,8 @@ The intended loop is:
 The system should therefore optimise for information returned, not records collected. A field, tier or link is useful only when it improves understanding, routing, a decision or a governed next action.
 
 Oppa Mate is the primary Operations Automated service-account identity across this model. The identity makes his activity recognisable and traceable; it does not itself grant access, approval authority or permission to execute consequential work.
+
+Changes and Continual Improvements have dedicated registers alongside the complete operational register. The Operations Bible remains a separate visible dictionary. The longer-term direction is a configurable workflow and automation engine beneath these records, comparable in role to a service-management workflow layer. The present product supplies explicit state, action, hand-off and return contracts; it does not claim that the general workflow engine exists.
 
 AI-suggested links remain inference. They join the active graph only after human confirmation in this MVP, and an incorrect confirmed relationship is rejected rather than silently deleted so its correction remains traceable.
 
@@ -238,6 +253,10 @@ Implemented in this proposal:
 - consequence-first answer feedback, saved-feedback actions and first-use guidance;
 - current owner, Jamie's part, workflow progress and completion evidence on each work detail;
 - AI-owned work excluded from **Do Next** without disappearing from the full inbox;
+- readable ticket references, copy-ready Codex tasks, recorded hand-offs and structured completion review for AI-owned work;
+- direct PR review links, plain-English review checks and a post-approval Codex merge prompt;
+- dedicated Improvement, Change and Operations Bible registers;
+- one local AI-owner queue contract covering bounded operational Tasks and authorised Build Job phases, with claim, retry and structured return evidence; the recurring worker is configured separately and no claim is inferred from queue availability;
 - automatic ordinary-feedback completion and automatic change-review creation where applicable;
 - automatic one-job Codex handoff following an explicit preparation decision;
 - separate work-item and dated daily-challenge conversations;
@@ -248,11 +267,11 @@ Represented but not claimed as complete:
 
 - independently validated Incident, Problem and Change workflows beyond the bounded scenarios;
 - automatic creation of every action or decision identified during AI analysis;
-- a direct authenticated Codex connection;
+- an event-driven or directly authenticated Codex connection that does not depend on scheduled local polling;
 - automatic parent progress, service-level timing, assignment and escalation;
 - scenario-test execution and comparison;
 - customer-journey analytics;
-- automatic assignment, notifications or operational execution;
+- guaranteed pickup while the computer, Codex app or Workbench is unavailable;
 - external business-system connections;
 - multi-user access, role administration or customer deployment; and
 - productised continual-improvement reporting.
@@ -285,6 +304,7 @@ The proposal is ready for private technical review. It is not yet ready for broa
 
 - a numerical score can create false confidence;
 - a dense or weakly governed graph can create confident noise;
+- scheduled polling introduces a bounded delay and depends on Jamie's computer, Codex app and local Workbench being available;
 - the full dictionary may feel larger than the immediate MVP;
 - Case can become a catch-all if boundaries are not learned through use;
 - a unified inbox can become noisy without ownership and status discipline; and
@@ -316,6 +336,9 @@ The mitigation is progressive disclosure, explainability, optional links, visibl
 19. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
 20. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
 21. Run one independent-user capture, linking, action and prioritisation test before any broader use.
+22. Assign a bounded Task to Operations Automated AI, confirm the scheduled worker claims it only once, returns evidence against every success criterion and removes it from open work only after that evidence passes.
+23. Approve one Build Job for preparation, confirm the worker can claim the build but cannot release it, then confirm an authorised merge appears only after Jamie's separate exact release decision.
+24. Stop the Workbench during a scheduled check, confirm no item is lost or falsely completed, then restart it and verify safe later pickup or manual recovery.
 
 ## Decision required
 
