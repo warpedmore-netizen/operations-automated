@@ -58,6 +58,8 @@ A follow-on founder usability correction now reduces capture to one description,
 
 Founder use then exposed a source-continuity failure: PR-backed work named the pull request without carrying a direct link or adequate review package, and Oppa Mate help left My Work without visibly retaining its origin. The proposed 1.4.2 correction puts the source, summary, exact decision and authority boundary into My Work, provides help inside the item and makes any full-conversation handoff visibly reversible. This is a product-delivery correction under private validation; approved methodology, product approval, merge and release remain unchanged.
 
+Founder clarification then separated four connected systems: the customer methodology, its internal development and challenge system, Connected Governance, and the standalone Incident Manager RPG. The proposed [connected system architecture](product/operations-automated-system-architecture.md) records their authority and feedback boundaries. The proposed [Connected Governance dogfood pilot](product/connected-governance-dogfood-pilot.md) is the first product test: use the governance service to create Operations Automated's role-based company-governance foundation and prepare it for the existing controlled Internal Draft publication route.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -96,6 +98,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 9. Publish the committed Methodology Lab proposal beneath Draft, review it as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
 10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
+11. Validate the Connected Governance dogfooding route: create substantive proposed company-governance documents, review their role and system boundaries, prepare the controlled Internal Draft hand-off and retain product and methodology findings separately.
 
 ## Application decision
 

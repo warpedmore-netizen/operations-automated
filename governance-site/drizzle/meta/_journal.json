@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1784834583647,
+      "tag": "0000_quiet_ghost_rider",
+      "breakpoints": true
+    }
+  ]
+}

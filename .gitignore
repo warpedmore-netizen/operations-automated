@@ -11,3 +11,4 @@ app/uploads/
 *.mp3
 .pnpm-store/
 .codex-worktrees/
+dist/

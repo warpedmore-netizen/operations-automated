@@ -150,6 +150,43 @@ All material changes to Operations Automated will be recorded here.
 - Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.
 - Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.
 
+## Proposed — Connected Governance conversational journey
+
+- Reframed Authority as six plain decision and ownership questions.
+- Added founder-led, leadership-team and committee-led starter structures with recognisable job-title examples and editable wording.
+- Made recommendations workable: users may rename, rewrite, reprioritise, change outputs or add another proposed route.
+- Clear stale recommendation selections and generated documents when a recommendation's meaning changes.
+- Added a retained ask, suggest or challenge discussion to every application page.
+- Labelled immediate page responses as controlled guidance rather than connected generative AI.
+- Replaced the JSON-first handoff with a clear human review completion and honest current stopping point.
+- Retained the credential-free JSON package only as an advanced future-import artefact.
+- Preserved the positively validated draft brand pilot without representing the brand as approved.
+- No generated company policy, brand approval, AI provider connection, direct Workbench import, Confluence publication, Live promotion or external release is approved by this proposal.
+
+## Proposed — Connected Governance guided journey and brand pilot
+
+- Added a guided six-step journey from operating context to readable proposed documents.
+- Added accessible field explanations, examples, prominent save results and explicit next actions.
+- Explained company-governance, methodology, document, control, AI-drafting and publication authority in plain language.
+- Separated authorised knowledge sources, discovered inventory and the Confluence Draft destination.
+- Added the known Operations Automated inventory from retained project context without requiring re-entry.
+- Expanded recommendations to show evidence, owner, full output, destination and the exact consequence of selection.
+- Added the selected source scope and full Draft destination to the credential-free Workbench hand-off contract.
+- Piloted the separate draft Operations Automated mark, semantic palette, voice and endorsed product relationship without treating the brand as approved.
+- Recorded that direct hosted-to-Workbench import remains inactive and needs a separate reviewed connection design.
+- No generated company policy, brand approval, methodology change, new connection, Live publication or external release is approved by this proposal.
+
+## Proposed — Connected Governance business dogfood pilot
+
+- Recovered the preserved Connected Governance domain proof and deployable private test surface into the authoritative proposal branch.
+- Defined the customer methodology, internal methodology-development system, Connected Governance and Incident Manager RPG as connected but separately governed systems.
+- Added an Operations Automated dogfooding profile and durable Governance Authority and Methodology Authority roles.
+- Replaced component-name-only output with ten substantive proposed company-governance documents.
+- Added a controlled Internal Draft hand-off boundary that reuses the private Workbench publication route rather than duplicating credentials.
+- Retained scenario, finding, drift, versioning and AI-without-approval behaviour from the earlier governance proof.
+- Added a dogfooding pilot, feedback record and plain-English assurance pack.
+- No generated company policy, methodology change, Live publication, new connection or external release is approved by this proposal.
+
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.

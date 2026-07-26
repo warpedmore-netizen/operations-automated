@@ -97,6 +97,10 @@ The first live publication proved the controls and created 108 reconciled pages.
 
 Jamie approved and merged that model through PR #17. The proposed [Methodology Lab pilot](product/methodology-lab-pilot.md) implements the first reader path as a separate managed tree beneath Draft in the private Methodology space. Its ten proposed pages use approved source maps and end with a structured review for the first methodology-and-Workbench feedback loop. The first Draft publication completed successfully and is [ready to read in Confluence](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+Lab+Pilot+1). Neither the implementation nor the Lab prose is approved as Live methodology.
 
+A proposed [connected system architecture](product/operations-automated-system-architecture.md) now distinguishes the customer methodology, internal methodology-development system, Connected Governance product and standalone Incident Manager RPG. Findings may be routed between them, but each retains its own audience, authority, status and output.
+
+The proposed [Connected Governance business dogfood pilot](product/connected-governance-dogfood-pilot.md) recovers the existing domain and hosted prototypes and adds an Operations Automated profile, plain-language role-based authority, editable recommendations, page-level discussion and ten substantive company-governance drafts. The candidate package remains proposed and targets the controlled Internal Draft route. Connected generative AI and direct Workbench import are not active. The pilot does not approve policy, change methodology meaning, duplicate the private Confluence credential or promote anything to Live.
+
 ## Repository control
 
 - `main` is the current controlled internal project memory and may contain artefacts at different governance states.
