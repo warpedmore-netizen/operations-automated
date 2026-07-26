@@ -160,44 +160,91 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(inbox.response.ok, true);
     assert.ok(inbox.payload.items.some((item) => item.sourceId === requestResult.record.id));
     assert.ok(inbox.payload.doNext.slice(0, 3).some((item) => item.sourceId === requestResult.record.id));
+    assert.equal(inbox.payload.items.every((item) => item.nextAction?.label), true);
     assert.match(inbox.payload.prioritisation.explanation, /impact, urgency, risk/i);
     assert.equal(inbox.payload.prioritisation.approvalCreated, false);
 
-    const completed = await call(`/api/operate/records/${taskResult.record.id}`, {
-      method: "PATCH",
-      body: { status: "done", actor: "Jamie Peppard" }
+    const bypassedTaskStatus = await call(`/api/operate/records/${taskResult.record.id}`, {
+      method: "PATCH", body: { status: "done", actor: "Jamie Peppard" }
+    });
+    assert.equal(bypassedTaskStatus.response.status, 409);
+    assert.match(bypassedTaskStatus.payload.error, /governed work action/i);
+
+    const completed = await call(`/api/operate/records/${taskResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "complete-task", actor: "Jamie Peppard" }
     });
     assert.equal(completed.response.ok, true);
     assert.equal(completed.payload.record.status, "done");
+    assert.ok(completed.payload.record.activity.some((item) =>
+      item.action === "workflow.action-completed" && item.detail.actionId === "complete-task"));
     const afterCompletion = await call("/api/my-work?order=recommended");
     assert.equal(afterCompletion.payload.items.some((item) => item.sourceId === taskResult.record.id), false);
 
+    const jumpedApproval = await call("/api/operate/records", {
+      method: "POST",
+      body: { title: "Bypass approval lifecycle", recordType: "approval", status: "approved" }
+    });
+    assert.equal(jumpedApproval.response.status, 409);
+    assert.match(jumpedApproval.payload.error, /starts at its initial/i);
+
     const approvalResult = await create({ title: "Authorise a sensitive release", recordType: "approval" });
-    const unsafeApproval = await call(`/api/operate/records/${approvalResult.record.id}`, {
-      method: "PATCH",
-      body: { status: "approved", actor: "Jamie Peppard" }
+    const readyApproval = await call(`/api/operate/records/${approvalResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "ready-approval", actor: "Jamie Peppard", note: "Scope and evidence prepared." }
+    });
+    assert.equal(readyApproval.response.ok, true);
+    const unsafeApproval = await call(`/api/operate/records/${approvalResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "approve", actor: "Jamie Peppard", note: "Evidence reviewed." }
     });
     assert.equal(unsafeApproval.response.status, 403);
-    const explicitApproval = await call(`/api/operate/records/${approvalResult.record.id}`, {
-      method: "PATCH",
-      body: { status: "approved", actor: "Jamie Peppard", confirmation: "Approve" }
+    const approvalWithoutReason = await call(`/api/operate/records/${approvalResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "approve", actor: "Jamie Peppard", confirmation: "Approve" }
+    });
+    assert.equal(approvalWithoutReason.response.status, 400);
+    const explicitApproval = await call(`/api/operate/records/${approvalResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "approve", actor: "Jamie Peppard", confirmation: "Approve", note: "Evidence and scope reviewed." }
     });
     assert.equal(explicitApproval.response.ok, true);
     assert.equal(explicitApproval.payload.record.approvalState, "human-confirmed");
+    assert.equal(explicitApproval.payload.decisionRecorded, true);
 
     const riskResult = await create({ title: "Loss of recovery evidence", recordType: "risk" });
-    const unsafeAcceptance = await call(`/api/operate/records/${riskResult.record.id}`, {
-      method: "PATCH",
-      body: { status: "accepted", actor: "Jamie Peppard" }
+    const assessingRisk = await call(`/api/operate/records/${riskResult.record.id}/actions`, {
+      method: "POST", body: { actionId: "assess-risk", actor: "Jamie Peppard" }
+    });
+    assert.equal(assessingRisk.response.ok, true);
+    const openRisk = await call(`/api/operate/records/${riskResult.record.id}/actions`, {
+      method: "POST", body: { actionId: "register-risk", actor: "Jamie Peppard", note: "Credible exposure with named ownership." }
+    });
+    assert.equal(openRisk.response.ok, true);
+    const unsafeAcceptance = await call(`/api/operate/records/${riskResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "accept-risk", actor: "Jamie Peppard", note: "Residual exposure understood." }
     });
     assert.equal(unsafeAcceptance.response.status, 403);
-    const explicitAcceptance = await call(`/api/operate/records/${riskResult.record.id}`, {
-      method: "PATCH",
-      body: { status: "accepted", actor: "Jamie Peppard", confirmation: "Accept risk" }
+    const explicitAcceptance = await call(`/api/operate/records/${riskResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "accept-risk", actor: "Jamie Peppard", confirmation: "Accept risk", note: "Residual exposure and review trigger understood." }
     });
     assert.equal(explicitAcceptance.response.ok, true);
     const acceptedInbox = await call("/api/my-work?order=recommended");
     assert.equal(acceptedInbox.payload.items.some((item) => item.sourceId === riskResult.record.id), true);
+
+    await call(`/api/operate/records/${caseResult.record.id}/actions`, {
+      method: "POST", body: { actionId: "start-case", actor: "Jamie Peppard" }
+    });
+    await call(`/api/operate/records/${caseResult.record.id}/actions`, {
+      method: "POST", body: { actionId: "resolve-case", actor: "Jamie Peppard", note: "Primary outcome restored." }
+    });
+    const blockedCaseClosure = await call(`/api/operate/records/${caseResult.record.id}/actions`, {
+      method: "POST", body: { actionId: "close-case", actor: "Jamie Peppard", note: "Attempt closure." }
+    });
+    assert.equal(blockedCaseClosure.response.status, 409);
+    assert.match(blockedCaseClosure.payload.error, /contained records remain open/i);
 
     const invalidCaseLink = await call(`/api/operate/records/${requestResult.record.id}`, {
       method: "PATCH",

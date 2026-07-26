@@ -52,7 +52,7 @@ The first founder-confirmed publication created 108 pages and the immediate comp
 
 The proposed Mobile Knowledge Workbench has now reached Jamie's Samsung phone through a tailnet-only Tailscale Serve route with Funnel disabled. The first real recording failed during transcription and exposed missing format controls, user feedback, retry and failure auditing. Workbench 1.1.2 prepares a recoverable voice route; a post-correction spoken challenge, denied-identity check, connection-governance decision and product release decision remain outstanding.
 
-The proposed Operate internal workbench now frames its distinctive value as a governed operational graph rather than a larger ticket register. The bounded draft provides **My Work**, optional multi-tier parent work, human-created and Oppa Mate-suggested relationships, provenance, correction and initial network signals. Real-work calibration, independent-user validation, product approval, release and merge remain outstanding.
+The proposed Operate internal workbench now frames its distinctive value as a governed operational graph rather than a larger ticket register. Founder use exposed that the first draft still behaved as a passive attention register. The corrected proposal adds a governed action loop: every open item has a working next action, consequential transitions require explicit authority and rationale, direct status bypass is prevented and outcomes remain in activity history. Real-work action testing, calibration, independent-user validation, product approval, release and merge remain outstanding.
 
 ## Three workstreams developed in tandem
 

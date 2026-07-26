@@ -10,6 +10,7 @@ import {
   DEFAULT_SETTINGS, buildContextPreview, buildLocalSynthesis, chooseRoute,
   estimateCost, safeJson, validateSettings
 } from "./workbench-core.mjs";
+import { actionsForOperateRecord } from "./operate-actions.mjs";
 import {
   FOUNDER_NAME, buildImplementationInstruction, buildStructuredProposal, isChangeCandidate,
   preparationTransition, releaseTransition, suggestedClassification, validateClassification,
@@ -457,6 +458,58 @@ function requireLocalJsonAction(request, actionName = "Local actions") {
   }
 }
 
+function performOperateAction(recordId, input) {
+  const existing = operateRecord(recordId, { includeRelations: true });
+  if (!existing) return { status: 404, value: { error: "Operational record not found." } };
+  const selectedAction = existing.actions.find((item) => item.id === String(input.actionId || ""));
+  if (!selectedAction) {
+    return { status: 409, value: { error: "That action is not available from the record's current status. Refresh the work item and choose a current action." } };
+  }
+  if (selectedAction.disabled) {
+    return { status: 409, value: { error: selectedAction.unavailableReason || "That action is currently blocked." } };
+  }
+  const actor = String(input.actor || FOUNDER_NAME).trim().slice(0, 120) || FOUNDER_NAME;
+  if (selectedAction.authority === "founder" && actor !== FOUNDER_NAME) {
+    return { status: 403, value: { error: `This action requires ${FOUNDER_NAME}'s authority.` } };
+  }
+  if (selectedAction.confirmation && String(input.confirmation || "") !== selectedAction.confirmation) {
+    return { status: 403, value: { error: `Type "${selectedAction.confirmation}" exactly to record this action.` } };
+  }
+  const note = String(input.note || "").trim().slice(0, 2000);
+  if (selectedAction.noteRequired && note.length < 3) {
+    return { status: 400, value: { error: "Record the evidence, outcome or reason before taking this action." } };
+  }
+  const timestamp = now();
+  const humanConfirmed = selectedAction.authority === "founder" || Boolean(selectedAction.confirmation);
+  const approvalState = humanConfirmed ? "human-confirmed" : existing.approvalState;
+  db.prepare("UPDATE operate_records SET status=?,approval_state=?,updated_at=? WHERE id=?")
+    .run(selectedAction.targetStatus, approvalState, timestamp, existing.id);
+  const detail = {
+    actionId: selectedAction.id,
+    actionLabel: selectedAction.label,
+    statusBefore: existing.status,
+    statusAfter: selectedAction.targetStatus,
+    outcome: selectedAction.outcome,
+    note,
+    authority: selectedAction.authority,
+    exactConfirmation: selectedAction.confirmation || "",
+    decisionRecorded: selectedAction.decision,
+    approvalCreated: false
+  };
+  db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+    .run(randomUUID(), existing.id, "workflow.action-completed", actor, JSON.stringify(detail), timestamp);
+  audit("operate-record.action-completed", existing.recordType, existing.id, detail);
+  return {
+    status: 200,
+    value: {
+      record: operateRecord(existing.id, { includeRelations: true }),
+      action: selectedAction,
+      decisionRecorded: selectedAction.decision,
+      approvalCreated: false
+    }
+  };
+}
+
 function safePathWithin(root, pathname, defaultFile = "index.html") {
   const decoded = decodeURIComponent(pathname.split("?")[0]);
   const relative = normalize(decoded === "/" || decoded === "" ? defaultFile : decoded.replace(/^\/+/, ""));
@@ -589,8 +642,26 @@ function operateRow(row, { includeRelations = false } = {}) {
   };
 }
 
+function actionableOperateRow(row, options = {}) {
+  const value = operateRow(row, options);
+  if (!value) return null;
+  const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(value.id, value.id)
+    .filter((item) => !isClosedStatus(item.status)).length;
+  const actions = value.sourceBacked ? (value.actions || []) : actionsForOperateRecord(value, { openChildren });
+  const nextAction = value.sourceBacked ? value.nextAction : (actions[0] || null);
+  const priority = nextAction?.disabled
+    ? {
+        ...value.priority,
+        blocked: true,
+        reasons: ["blocked next action", ...value.priority.reasons].slice(0, 3),
+        explanation: `${value.priority.explanation} Next action blocked: ${nextAction.unavailableReason}`
+      }
+    : value.priority;
+  return { ...value, actions, nextAction, priority, openChildren };
+}
+
 function operateRecord(id, options = {}) {
-  return operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(id), options);
+  return actionableOperateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(id), options);
 }
 
 function operateRecords({ recordType = "", caseId = "", status = "" } = {}) {
@@ -601,7 +672,7 @@ function operateRecords({ recordType = "", caseId = "", status = "" } = {}) {
   if (status) { clauses.push("status=?"); values.push(status); }
   const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
   return db.prepare(`SELECT * FROM operate_records ${where} ORDER BY updated_at DESC`).all(...values)
-    .map((item) => operateRow(item));
+    .map((item) => actionableOperateRow(item));
 }
 
 function operateNetwork() {
@@ -655,7 +726,9 @@ function operateInboxItem(record) {
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
     caseId: record.caseId,
-    actionLabel: "Open work",
+    actionLabel: record.nextAction?.label || "Review work",
+    nextAction: record.nextAction,
+    decisionRequired: Boolean(record.nextAction?.decision),
     priority: record.priority,
     approvalState: record.approvalState
   };
@@ -723,6 +796,15 @@ function buildMyWork(order = "recommended") {
       createdAt: proposal.created_at,
       updatedAt: proposal.updated_at,
       actionLabel: "Review decision",
+      nextAction: {
+        id: "review-decision",
+        label: "Review decision",
+        outcome: proposalNextAction(proposal),
+        authority: "founder",
+        decision: true,
+        routeView: "decisions"
+      },
+      decisionRequired: true,
       priority,
       approvalState: proposal.approvalState
     });
@@ -767,6 +849,17 @@ function buildMyWork(order = "recommended") {
       createdAt: reviewCreatedAt,
       updatedAt: feedback?.response?.createdAt || reviewCreatedAt,
       actionLabel: awaitingCodex ? "View blocked work" : "Review branding",
+      nextAction: {
+        id: awaitingCodex ? "view-blocked-brand-work" : "review-branding",
+        label: awaitingCodex ? "View blocked work" : "Review branding",
+        outcome: awaitingCodex
+          ? "Inspect the retained revision request and its current response state."
+          : "Open the bounded Brand Review decision and record an explicit response.",
+        authority: awaitingCodex ? "ai-owner" : "founder",
+        decision: !awaitingCodex,
+        routeView: "brand"
+      },
+      decisionRequired: !awaitingCodex,
       priority,
       approvalState: "not-approved"
     });
@@ -783,7 +876,7 @@ function buildMyWork(order = "recommended") {
       total: ordered.length,
       overdue: ordered.filter((item) => item.priority.overdue).length,
       blocked: ordered.filter((item) => item.priority.blocked).length,
-      decisions: ordered.filter((item) => item.sourceType === "change-proposal").length
+      decisions: ordered.filter((item) => item.decisionRequired).length
     },
     prioritisation: {
       principle: "80:20 impact-first ordering",
@@ -964,6 +1057,12 @@ async function api(request, response, url) {
     audit("settings.updated", "settings", "1", { keys: Object.keys(value) });
     return json(response, 200, { settings: value });
   }
+  const operateActionMatch = url.pathname.match(/^\/api\/operate\/records\/([^/]+)\/actions$/);
+  if (method === "POST" && operateActionMatch) {
+    requireLocalJsonAction(request, "Governed operational actions");
+    const result = performOperateAction(operateActionMatch[1], await jsonBody(request));
+    return json(response, result.status, result.value);
+  }
   if (method === "GET" && url.pathname === "/api/my-work") {
     const order = String(url.searchParams.get("order") || "recommended");
     const allowed = new Set(["recommended", "newest", "oldest", "deadline"]);
@@ -1008,6 +1107,10 @@ async function api(request, response, url) {
     let value;
     try { value = validateOperateRecord(input); }
     catch (error) { return json(response, 400, { error: error.message }); }
+    if (input.status !== undefined && value.status !== BIBLE_BY_TYPE.get(value.recordType).defaultStatus) {
+      return json(response, 409, { error: "New work starts at its initial Operations Bible status. Use governed actions to progress it." });
+    }
+    value.approvalState = "not-approved";
     if (value.recordType === "case") value.caseId = null;
     const parentResult = resolveOperateParent(value);
     if (parentResult.error) return json(response, 400, { error: parentResult.error });
@@ -1066,6 +1169,12 @@ async function api(request, response, url) {
     const existing = operateRecord(operateRecordMatch[1]);
     if (!existing) return json(response, 404, { error: "Operational record not found." });
     const input = await jsonBody(request);
+    if (Object.prototype.hasOwnProperty.call(input, "status") && String(input.status || "").toLowerCase() !== existing.status) {
+      return json(response, 409, { error: "Use a governed work action to change status so the transition, authority and outcome are retained." });
+    }
+    if (Object.prototype.hasOwnProperty.call(input, "approvalState") || Object.prototype.hasOwnProperty.call(input, "approval_state")) {
+      return json(response, 409, { error: "Approval state is set only by a governed action." });
+    }
     let value;
     try {
       value = validateOperateRecord({

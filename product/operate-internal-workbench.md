@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.2
+version: 0.3
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -30,6 +30,7 @@ Classification, recommendation, a passing scenario test and technical readiness 
 | Primary entry point | Conversations and specialist governance areas | One **My Work** inbox and short **Do Next** list |
 | Operational records | Feedback, decisions and specialist local records | Cases, Requests and Tasks, with the wider dictionary available |
 | Relationships | Present in methodology and specialist workflows | Visible, queryable links between operational records |
+| Progression | Specialist workflows and one Task completion action | Every open item exposes a working governed action and retained outcome |
 | Priority | Area-specific order | Explainable impact-first recommendation |
 | Service-account user | Conversation and bounded governance support | Oppa Mate is the recognisable company service account and may recommend type, route and next action within assigned permissions |
 | Authority | Named human controls | Unchanged and made explicit in record transitions |
@@ -52,6 +53,34 @@ The system should therefore optimise for information returned, not records colle
 Oppa Mate is the primary Operations Automated service-account identity across this model. The identity makes his activity recognisable and traceable; it does not itself grant access, approval authority or permission to execute consequential work.
 
 AI-suggested links remain inference. They join the active graph only after human confirmation in this MVP, and an incorrect confirmed relationship is rejected rather than silently deleted so its correction remains traceable.
+
+## Governed action loop
+
+The operational graph is supporting infrastructure until it helps the user make progress. Operate must enact the approved methodology output contract:
+
+> Every open item in My Work has a real current action, an accountable route and a retained outcome.
+
+A material decision, review, approval or follow-up still owed by Jamie is work and should enter the attention system as a durable item. Proportionality remains essential: a routine reversible choice may stay in the work activity history, while a judgement affecting value, risk, control, release, spending, authority or meaningful progress should have a Decision, Approval or other suitable record.
+
+Each actionable item exposes:
+
+- its source, owner and current status;
+- one recommended next action and any credible alternative action;
+- what the action changes and what remains unchanged;
+- the evidence, outcome or rationale required;
+- the authority and inline exact confirmation required where consequence matters; and
+- the retained actor, previous state, resulting state, note and timestamp.
+
+Existing specialist items do not need to duplicate their source workflow. A methodology release decision routes from My Work into the Decision Inbox. A Brand Review item routes into Brand Review. Native Operate records progress through a type-and-status action contract.
+
+Direct status changes cannot bypass that contract. The initial action vocabulary remains proposed product behaviour, but automated tests require every open Operations Bible state to expose at least one valid action. Consequential founder-controlled actions currently include:
+
+- approving an Approval with exact **Approve** confirmation;
+- accepting a Risk with exact **Accept risk** confirmation;
+- approving and scheduling a Change with exact **Approve change** confirmation; and
+- recording a material Decision with exact **Record decision** confirmation.
+
+Each also requires a retained evidence, outcome or reason. Oppa Mate may recommend or prepare an action, but does not provide Jamie's confirmation. A Case cannot close while contained work remains open.
 
 ## Initial Operations Bible
 
@@ -114,7 +143,7 @@ The activity record retains the recommended type, selected type and whether the 
 Implemented in this proposal:
 
 - unified **My Work** and **Do Next**;
-- Cases, Requests and Tasks end to end;
+- governed actions across every open state in the initial twelve-record dictionary;
 - durable initial dictionary for all twelve record types;
 - record details and related-work display;
 - optional parent work for a bounded multi-tier structure;
@@ -126,13 +155,18 @@ Implemented in this proposal:
 - explainable priority;
 - optional Case, journey and product classification;
 - existing Decision Inbox and Brand Review items in the unified inbox;
-- task completion;
-- exact founder confirmation for an Approval to become approved or a Risk to become accepted; and
+- action labels on every My Work item, specialist workflow routing and visible retained activity;
+- direct-status bypass protection;
+- proportionate Task completion and type-specific lifecycle progression;
+- exact founder confirmation and retained rationale for Approval, Risk acceptance, Change authorisation and material Decision actions;
+- Case-closure protection while contained work remains open; and
 - local audit/activity evidence with no delete route.
 
 Represented but not claimed as complete:
 
 - mature Incident, Problem and Change workflows;
+- automatic creation of every action or decision identified during AI analysis;
+- automatic parent progress, service-level timing, assignment and escalation;
 - scenario-test execution and comparison;
 - customer-journey analytics;
 - automatic assignment, notifications or operational execution;
@@ -145,7 +179,7 @@ Represented but not claimed as complete:
 - **Value and outcomes:** Do Next should direct attention to meaningful outcomes, not record volume.
 - **Demand and work types:** ordinary-language capture preserves incoming demand before classification.
 - **Flow and dependencies:** Cases and links show connected work without one mandatory sequence.
-- **People and authority:** ownership and approval remain explicit and separate.
+- **People and authority:** ownership, next action and consequential confirmation remain explicit and separate.
 - **Risk and controls:** risk and control implications affect attention across every work type.
 - **Information and knowledge:** the Operations Bible makes the vocabulary visible and correctable.
 - **Technology:** local SQLite and existing Workbench controls are sufficient for a reversible pilot.
@@ -171,6 +205,7 @@ The proposal is ready for private technical review. It is not yet ready for broa
 - the full dictionary may feel larger than the immediate MVP;
 - Case can become a catch-all if boundaries are not learned through use;
 - a unified inbox can become noisy without ownership and status discipline; and
+- too many formal Decision or Approval records can turn proportionate control into administrative noise;
 - founder-specific tuning may not transfer to another user.
 
 The mitigation is progressive disclosure, explainability, optional links, visible provenance, human confirmation of AI suggestions, retained correction and a bounded private pilot using real non-confidential work.
@@ -183,11 +218,16 @@ The mitigation is progressive disclosure, explainability, optional links, visibl
 4. Confirm an AI-suggested link cannot enter the active graph without exact human confirmation and retains both parties' provenance.
 5. Confirm a rejected relationship leaves activity evidence but no longer affects active network signals.
 6. Confirm completed work leaves the open inbox.
-7. Confirm an Approval and accepted Risk reject missing or incorrect founder confirmation.
-8. Review the interface at desktop and phone widths.
-9. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
-10. Record misclassification, false urgency, missing relationships, false links, missed links and inappropriate derived signals.
-11. Run one independent-user capture, linking and prioritisation test before any broader use.
+7. Confirm every open Operations Bible state exposes at least one valid action.
+8. Confirm direct status changes are rejected in favour of the governed action route.
+9. Confirm an Approval, accepted Risk, authorised Change and material Decision reject missing or incorrect founder confirmation and rationale.
+10. Confirm Case closure is blocked while contained work remains open.
+11. Confirm specialist inbox items route into working source decisions rather than duplicating them.
+12. Review the interface and action controls at desktop and phone widths.
+13. Have Jamie complete or reject at least one Task, Approval, Decision and non-terminal transition through My Work.
+14. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
+15. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
+16. Run one independent-user capture, linking, action and prioritisation test before any broader use.
 
 ## Decision required
 
@@ -198,6 +238,7 @@ Jamie should review whether this is the right bounded private-pilot model, espec
 - the priority factors and their relative weight;
 - the separation of classification, prioritisation, approval and risk acceptance; and
 - the proposition that the governed operational graph, rather than the ticket register, is the distinctive product value; and
+- the rule that every open item must provide a working governed action and retained outcome;
 - the decision to defer external connections and advanced automation.
 
 Release, merge and any broader use remain separate decisions.

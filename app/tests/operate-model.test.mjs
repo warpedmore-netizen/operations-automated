@@ -4,6 +4,7 @@ import {
   isClosedStatus, OPERATIONS_BIBLE, priorityFor, recommendRecordType,
   sortWorkItems, suggestOperateLinks, summariseOperateNetwork, validateOperateRecord
 } from "../operate-model.mjs";
+import { actionsForOperateRecord } from "../operate-actions.mjs";
 
 test("the initial Operations Bible covers the requested operational records in plain language", () => {
   const types = new Set(OPERATIONS_BIBLE.map((entry) => entry.type));
@@ -74,6 +75,29 @@ test("invalid due dates are rejected before they can break ordering or display",
     recordType: "task",
     dueAt: "not-a-date"
   }), /valid due date/i);
+});
+
+test("every open Operations Bible state has a working governed action", () => {
+  for (const entry of OPERATIONS_BIBLE) {
+    for (const status of entry.statuses.filter((value) => !isClosedStatus(value))) {
+      const actions = actionsForOperateRecord({ recordType: entry.type, status });
+      assert.ok(actions.length > 0, `${entry.type}:${status} should expose an action`);
+      for (const item of actions) assert.ok(entry.statuses.includes(item.targetStatus));
+    }
+  }
+  const approval = actionsForOperateRecord({ recordType: "approval", status: "ready" })
+    .find((item) => item.id === "approve");
+  assert.equal(approval.confirmation, "Approve");
+  assert.equal(approval.noteRequired, true);
+  assert.equal(approval.decision, true);
+});
+
+test("a Case cannot close while contained work remains open", () => {
+  const actions = actionsForOperateRecord({ recordType: "case", status: "resolved" }, { openChildren: 2 });
+  const close = actions.find((item) => item.id === "close-case");
+  assert.equal(close.disabled, true);
+  assert.match(close.unavailableReason, /2 contained records remain open/i);
+  assert.equal(actions.find((item) => item.id === "reopen-case").disabled, false);
 });
 
 test("Oppa Mate suggests typed links only inside shared operational context", () => {

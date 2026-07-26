@@ -2,6 +2,20 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.3.0 Operate governed action loop - proposed
+
+- Corrected the passive Operate inbox so every open item exposes a working next action rather than only status and context.
+- Added a tested type-and-status action contract across all open states in the twelve-record Operations Bible.
+- Routed repository-change and Brand Review items from My Work into their existing governed source workflows.
+- Added retained action evidence covering actor, prior status, resulting status, outcome, note, authority and exact confirmation.
+- Required a reason and Jamie Peppard's exact confirmation before approving an Approval, accepting Risk, authorising a Change or recording a material Decision.
+- Prevented direct status updates from bypassing the governed action route.
+- Prevented Case closure while contained work remains open.
+- Made the recommended next action visible on each inbox card and added working action controls and recent activity to record detail.
+- Retained proportionality: routine Task completion remains direct, while material judgement receives explicit evidence and authority controls.
+- Recorded the founder feedback, product-delivery correction, preparation authority and separate assurance decision without changing approved methodology meaning.
+- Kept product approval, merge, release, external connections, autonomous execution and customer use unchanged and unapproved.
+
 ## Workbench 1.2.0 Operate internal workbench - proposed
 
 - Made **My Work** the ordinary entry point, with a short **Do Next** list and one inbox spanning operational records, open change decisions and Brand Review work.

@@ -171,3 +171,11 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(appSource, /Relationship rejected and retained in activity history/);
   assert.match(cssSource, /min-height:\s*42px/);
 });
+  assert.match(appSource, /Governed next action/);
+  assert.match(appSource, /data-operate-action/);
+  assert.match(appSource, /data-operate-action-confirmation/);
+  assert.doesNotMatch(appSource, /window\.prompt\(`Type "\$\{action\.confirmation\}/);
+  assert.match(appSource, /\/api\/operate\/records\/\$\{encodeURIComponent\(record\.id\)\}\/actions/);
+  assert.match(appSource, /workflow\.action-completed/);
+  assert.match(appSource, /Record the evidence, outcome or reason/);
+  assert.match(cssSource, /\.work-action-panel/);

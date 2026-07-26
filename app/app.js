@@ -108,6 +108,7 @@ function workItemMarkup(item, compact = false) {
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
       ${compact ? "" : `<small>${escapeHtml(item.summary || "Open the underlying record for context.")}</small>`}
+      <span class="work-item-next">Next: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` ? blocked ? ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
       <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
     </span>
     <span class="priority-score priority-${escapeHtml(item.priority?.band || "planned")}"><b>${Number(item.priority?.score || 0)}</b><small>${item.priority?.overdue ? "Overdue" : reasons[0] || "Priority"}</small></span>
@@ -130,10 +131,56 @@ function recordAsWorkItem(record) {
     dueAt: record.dueAt,
     createdAt: record.createdAt,
     updatedAt: record.updatedAt,
-    actionLabel: "Open work",
+    actionLabel: record.nextAction?.label || "Review work",
+    nextAction: record.nextAction,
+    decisionRequired: Boolean(record.nextAction?.decision),
     priority: record.priority,
     approvalState: record.approvalState
   };
+}
+
+function activitySummary(activity) {
+  const detail = activity.detail || {};
+  if (activity.action === "workflow.action-completed") {
+    return `${detail.actionLabel || "Action completed"}: ${statusLabel(detail.statusBefore)} to ${statusLabel(detail.statusAfter)}${detail.note ? ` ? ${detail.note}` : ""}`;
+  }
+  if (activity.action === "record.created") return "Work record created.";
+  if (activity.action === "relationship.confirmed") return "Related work confirmed.";
+  if (activity.action === "relationship.rejected") return `Relationship rejected${detail.reason ? ` ? ${detail.reason}` : ""}.`;
+  return activity.action.replaceAll(".", " ").replaceAll("-", " ");
+}
+
+function operateActionMarkup(record) {
+  const actions = record.actions || [];
+  if (!actions.length) {
+    return `<section class="work-action-panel work-action-complete"><span>Current outcome</span><h4>No further action is due</h4><p>This record is complete or terminal. Its evidence and relationships remain available.</p></section>`;
+  }
+  const nextAction = record.nextAction || actions[0];
+  const noteRequired = actions.some((item) => item.noteRequired);
+  const confirmations = [...new Set(actions.map((item) => item.confirmation).filter(Boolean))];
+  return `<section class="work-action-panel">
+    <div class="work-action-heading"><span>Governed next action</span><h4>${escapeHtml(nextAction.label)}</h4><p>${escapeHtml(nextAction.outcome)}</p></div>
+    <label class="work-action-note">Evidence, outcome or reason
+      <textarea rows="3" maxlength="2000" data-operate-action-note placeholder="${noteRequired ? "Required when the selected action is consequential or asks for a reason." : "Optional context for the retained activity history."}"></textarea>
+    </label>
+    ${confirmations.length ? `<label class="work-action-confirmation">Exact confirmation
+      <input maxlength="100" data-operate-action-confirmation autocomplete="off" placeholder="Type ${escapeHtml(confirmations.join(" or "))} for the consequential action">
+      <small>The action remains unavailable unless the wording matches exactly.</small>
+    </label>` : ""}
+    <div class="work-action-buttons">${actions.map((item) => `<button
+      class="${item.style === "primary" ? "primary" : item.style === "danger" ? "danger-outline" : "ghost"}"
+      data-operate-action="${escapeHtml(item.id)}"
+      ${item.disabled ? "disabled" : ""}
+      title="${escapeHtml(item.unavailableReason || item.outcome)}">${escapeHtml(item.label)}</button>`).join("")}</div>
+    ${actions.filter((item) => item.disabled).map((item) => `<p class="work-action-blocked"><strong>${escapeHtml(item.label)} is blocked.</strong> ${escapeHtml(item.unavailableReason)}</p>`).join("")}
+    <p class="work-action-authority">${nextAction.authority === "founder" ? "This action requires Jamie Peppard?s explicit authority." : "This action records progress; it does not create wider approval."}</p>
+  </section>`;
+}
+
+function operateActivityMarkup(record) {
+  const activities = (record.activity || []).slice(0, 8);
+  if (!activities.length) return "";
+  return `<details class="work-activity"><summary>Recent activity</summary><ol>${activities.map((activity) => `<li><span>${escapeHtml(activitySummary(activity))}</span><small>${escapeHtml(activity.actor)} ? ${escapeHtml(formatDate(activity.created_at))}</small></li>`).join("")}</ol></details>`;
 }
 
 function renderWorkDetail(item, record = null) {
@@ -170,8 +217,9 @@ function renderWorkDetail(item, record = null) {
       return `<div class="relationship-row"><span><small>${escapeHtml(link.relationship.replaceAll("-", " "))}</small><strong>${escapeHtml(otherTitle)}</strong><em>${escapeHtml(provenance)}</em></span><details class="link-correction"><summary>Correct</summary><label>Why is this link wrong?<input data-link-rejection-reason="${link.id}" maxlength="500"></label><button class="link-reject" data-reject-operate-link="${link.id}">Reject link</button></details></div>`;
     }).join("")}</section>` : ""}
     ${record.linkSuggestions?.length ? `<section class="link-suggestions"><div><h4>Oppa Mate sees possible connections</h4><p>These are inferences from record types and shared context. Accept only when the relationship is operationally true.</p></div>${record.linkSuggestions.map((suggestion, index) => `<article><span class="work-type work-type-${workTypeClass(suggestion.otherType)}">${escapeHtml(suggestion.otherType)}</span><strong>${escapeHtml(suggestion.otherTitle)}</strong><p>${escapeHtml(suggestion.rationale)}</p><button class="ghost" data-accept-link-suggestion="${index}">Confirm link</button></article>`).join("")}</section>` : ""}
+    ${operateActionMarkup(record)}
     <button class="ghost link-work-action" data-link-operate-record="${record.id}">Link related work</button>
-    ${record.recordType === "task" && !["done", "cancelled"].includes(record.status) ? `<button class="primary" data-complete-task="${record.id}">Mark task done</button>` : ""}
+    ${operateActivityMarkup(record)}
   ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
   $("#work-detail").innerHTML = `
     <div class="work-detail-heading">
@@ -1663,6 +1711,41 @@ $("#work-detail").addEventListener("click", async (event) => {
     return;
   }
   const related = event.target.closest("[data-open-operate-record]");
+  const actionButton = event.target.closest("[data-operate-action]");
+  if (actionButton) {
+    const record = state.currentOperateRecord;
+    const action = record?.actions?.find((item) => item.id === actionButton.dataset.operateAction);
+    if (!record || !action || action.disabled) return;
+    const note = $("#work-detail").querySelector("[data-operate-action-note]")?.value.trim() || "";
+    if (action.noteRequired && note.length < 3) {
+      toast("Record the evidence, outcome or reason before taking this action.", true);
+      return;
+    }
+    let confirmation = "";
+    if (action.confirmation) {
+      const confirmationInput = $("#work-detail").querySelector("[data-operate-action-confirmation]");
+      confirmation = confirmationInput?.value.trim() || "";
+      if (confirmation !== action.confirmation) {
+        toast(`Type "${action.confirmation}" exactly before taking this action.`, true);
+        confirmationInput?.focus();
+        return;
+      }
+    }
+    actionButton.disabled = true;
+    try {
+      const value = await request(`/api/operate/records/${encodeURIComponent(record.id)}/actions`, {
+        method: "POST",
+        body: JSON.stringify({ actionId: action.id, actor: state.currentUser, note, confirmation })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      renderWorkDetail(recordAsWorkItem(value.record), value.record);
+      toast(`${action.label} recorded. ${action.outcome}`);
+    } catch (error) {
+      actionButton.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   if (related) {
     await openOperateRecord(related.dataset.openOperateRecord);
     return;
@@ -1719,23 +1802,6 @@ $("#work-detail").addEventListener("click", async (event) => {
       toast(error.message, true);
     }
     return;
-  }
-  const complete = event.target.closest("[data-complete-task]");
-  if (complete) {
-    complete.disabled = true;
-    try {
-      await request(`/api/operate/records/${encodeURIComponent(complete.dataset.completeTask)}`, {
-        method: "PATCH",
-        body: JSON.stringify({ status: "done", actor: state.currentUser })
-      });
-      state.selectedWorkItemId = null;
-      await Promise.all([loadOperate(), loadMyWork()]);
-      renderWorkDetail(null);
-      toast("Task completed. The related Case and activity history remain available.");
-    } catch (error) {
-      complete.disabled = false;
-      toast(error.message, true);
-    }
   }
 });
 $$('[data-close-work-link]').forEach((button) => button.addEventListener("click", () => $("#work-link-dialog").close()));
