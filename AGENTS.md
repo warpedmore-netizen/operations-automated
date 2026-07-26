@@ -51,4 +51,12 @@ Do not mistake silence, short replies, repetition, deference or fatigue for conv
 - Rotate across the methodology and avoid repeatedly testing the same topic.
 - Do not edit the repository during the scheduled research check-in. The user's reply begins the controlled feedback task.
 
+## Brand review feedback
+
+- Before material brand work or branded-surface changes, query the local Workbench `GET http://127.0.0.1:4173/api/brand-review` when it is available.
+- Treat each latest `revise` or `reject` decision as pending founder feedback, not as approval. Separate Jamie's wording, AI interpretation, the response disposition and the affected files.
+- Apply a clear bounded revision on the current proposal branch when the request is unambiguous and within scope. Record the response through `POST /api/brand-review/responses` when that endpoint is available, then return the item for founder re-review.
+- If the Workbench is unavailable, use retained repository feedback and say that the local queue could not be checked. Do not claim there is no pending feedback.
+- A Workbench response record does not approve the brand, write to the repository automatically, merge a pull request or authorise publication.
+
 Use UK English and communicate for a problem solver who does not need to operate developer tooling.

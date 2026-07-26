@@ -16,6 +16,8 @@ Start with the [current methodology synthesis and visual map](methodology/curren
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
+The [Operations Automated brand system](brand/README.md) is a draft, reusable identity foundation for websites, applications and documentation. Its [adoption register](brand/adoption.json) connects controlled project surfaces back to the shared tokens, assets and approval boundary. Double-click `Launch-Brand-Review.cmd` to see and review the visual directions without opening repository folders; the launcher safely refreshes a recognised older local Workbench before opening the review. The system remains proposed for internal review and is not approved for external publication.
+
 ## How the system fits together
 
 | Component | Purpose | Status |
@@ -32,6 +34,7 @@ The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES
 | [Activation and first use](methodology/activation-and-first-use.md) | Evidence that the intended user can reach and begin using a deliverable | Approved for internal validation |
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
+| [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 
@@ -81,6 +84,14 @@ The [OPERATE Workspace MVP 0.1](app/README.md) remains approved only for private
 Private testing demonstrated useful record, approval and export mechanics but also showed that the application mainly reorganises user input rather than returning genuine AI analysis. The v0.4 decision parks it as a retained learning experiment while the methodology and output model are validated. Its code is not deleted, and the unapproved interface experiment remains preserved on its separate branch.
 
 The later proposed governed AI Workbench adds in-context AI analysis and a founder-controlled feedback-to-change loop. Workbench 0.7.0 added a private [Confluence connected-evidence route](product/confluence-connected-evidence.md) that Jamie approved and merged for private internal validation through PR #13.
+
+The proposed [Mobile Knowledge Workbench](product/mobile-knowledge-workbench.md) reframes the founder experience around spoken challenge, retained learning, readable decisions and governed knowledge publication. Its local reading, phone layout and recoverable mobile-transcription corrections are prepared for review. A tailnet-only Tailscale Serve route has been observed working between Jamie's devices with Funnel disabled; that operational evidence does not infer the still-separate connection-governance decision. A Confluence Review Draft route also remains a separate, unapproved publication decision.
+
+The proposed [Operate internal workbench](product/operate-internal-workbench.md) adds one **My Work** inbox and a governed operational graph over the existing Workbench. People and Oppa Mate can create or suggest traceable relationships between Cases, Requests, Tasks and the wider operational dictionary; derived network signals remain inspectable inferences rather than approvals or facts. The proposed governed action loop requires every open item to provide a real next action, routes specialist decisions into their controlled workflows and retains actor, evidence, authority and outcome. The model is prepared for bounded private review and has not been approved or released.
+
+The proposed Workbench 1.4 operating-surface increment joins that graph to governed repository retrieval, conversation continuity, versioned Operations Bible and Work Profile definitions, one shared Decision/Approval model and a complete external-Codex Build Job loop. Existing feedback, proposal, brand and publication histories remain in their specialist stores while appearing through My Work. The increment is implemented on a proposal branch for review; it does not approve merge, release, publication, autonomous Codex access or customer use.
+
+The proposed Workbench 1.4 operating-surface increment joins that graph to governed repository retrieval, conversation continuity, versioned Operations Bible and Work Profile definitions, one shared Decision/Approval model and a complete external-Codex Build Job loop. Existing feedback, proposal, brand and publication histories remain in their specialist stores while appearing through My Work. The increment is implemented on a proposal branch for review; it does not approve merge, release, publication, autonomous Codex access or customer use.
 
 Workbench 0.8.0 added [governed Confluence documentation publication](product/confluence-governed-publication.md) for private internal validation through PR #14. Jamie approved and merged the 0.9.0 lifecycle-first revision through PR #15: each Methodology and Internal library is organised into Live, Draft and Archived before its normal subject folders, using repository status as the only placement authority. Plan-specific confirmation, tracked page versions and publication receipts remain required. Automatic publication, page deletion, external release and customer use remain unapproved.
 

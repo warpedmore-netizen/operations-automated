@@ -1,0 +1,59 @@
+{
+  "id": "OA-BRAND-001",
+  "name": "Operations Automated Brand System",
+  "status": "draft",
+  "version": "0.1.0",
+  "owner": "Jamie Peppard",
+  "date": "2026-07-25",
+  "approvalRequired": true,
+  "sourceMark": {
+    "description": "Continuous OA loop mark in deep blue and electric cyan",
+    "repositoryReference": [
+      "references/initial-mark-square-400x400.png",
+      "references/initial-banner-wide-4200x700.png",
+      "references/initial-linkedin-profile-cover-1584x396.png"
+    ],
+    "adoptionStatus": "founder-supplied draft reference; adoption remains approval-gated"
+  },
+  "assets": {
+    "logo": [
+      "assets/logo/generated/mark-colour-transparent-1024.png",
+      "assets/logo/generated/mark-navy-transparent-1024.png",
+      "assets/logo/generated/mark-white-transparent-1024.png",
+      "assets/logo/generated/mark-dark-tile-32.png",
+      "assets/logo/generated/mark-dark-tile-192.png",
+      "assets/logo/generated/mark-dark-tile-512.png"
+    ],
+    "references": [
+      "references/initial-mark-square-400x400.png",
+      "references/initial-banner-wide-4200x700.png",
+      "references/initial-linkedin-profile-cover-1584x396.png"
+    ],
+    "tokens": [
+      "tokens/brand.tokens.json",
+      "tokens/brand.css",
+      "tokens/brand.ts"
+    ],
+    "governance": [
+      "adoption.json",
+      "review-items.json"
+    ],
+    "previews": [
+      "previews/README.md",
+      "previews/brand-review-board-1600x1000.png"
+    ],
+    "templates": [
+      "templates/website/index.html",
+      "templates/application/index.html",
+      "templates/documentation/document-template.md",
+      "templates/social/linkedin-profile-cover-1584x396.png"
+    ]
+  },
+  "boundaries": [
+    "Not approved for external publication",
+    "Does not approve product deployment or migration",
+    "Does not change methodology meaning",
+    "Does not establish trade-mark clearance",
+    "Does not approve the reference descriptor or strapline as public language"
+  ]
+}

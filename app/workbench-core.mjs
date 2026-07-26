@@ -97,15 +97,13 @@ function citations(sources) {
 
 export function buildLocalSynthesis({ input, sources, outputType = "answer", attachmentText = "" }) {
   const evidence = evidenceItems(sources);
-  const nonApproved = sources.filter((source) => source.status !== "approved");
   const evidenceList = evidence.length
     ? evidence.slice(0, 5).map((item) => `- ${item.text}`).join("\n")
     : "- There is not enough relevant information yet to give a confident answer.";
-  const proposedNote = nonApproved.length
-    ? "\n\nSome supporting material is proposed or comes from connected external evidence. Treat it as evidence to examine, not an agreed methodology change."
-    : "";
+  const proposedNote = "";
   const attachmentNote = attachmentText ? "\n\nI also took the attached material into account." : "";
   const accountabilityRequest = /accountab|responsib|human intervention|human approval|human decision/i.test(input);
+  const operationalTestRequest = /(?:test|trial|pilot|validate|verify)[\s\S]{0,80}(?:change|process|operation|workflow)|(?:change|process|operation|workflow)[\s\S]{0,80}(?:test|trial|pilot|validate|verify)/i.test(input);
 
   if (accountabilityRequest && outputType === "answer") {
     return `## Straight answer
@@ -126,6 +124,25 @@ You are right: AI can be responsible for carrying out a task, producing analysis
 ## What to do next
 
 Define the points where human acceptance is mandatory, then make the system show the accountable person before the work can move on.${proposedNote}${attachmentNote}`;
+  }
+
+  if (operationalTestRequest && outputType === "answer") {
+    return `## Straight answer
+
+Test the change on a small, reversible scale before relying on it. Decide in advance what success, failure and unacceptable harm look like, then compare the result with the current way of working.
+
+## A practical test
+
+1. State the outcome the change should improve and who may be affected.
+2. Record the current result so you have a fair comparison.
+3. Choose a bounded test with a named owner and a safe way to stop or reverse it.
+4. Test normal work, likely exceptions and one credible failure.
+5. Watch the outcome, workload, delays, errors, risk and any effects on people.
+6. Record what happened, what remains uncertain and what you would change before a wider trial.
+
+## What to do next
+
+Write one sentence for the intended improvement, one measure that would show it and one condition that would stop the test. Then choose the smallest real case that can produce useful evidence.${proposedNote}${attachmentNote}`;
   }
 
   if (outputType === "summary") {

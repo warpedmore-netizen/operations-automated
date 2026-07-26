@@ -6,16 +6,71 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
+> **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
+
+> **Proposed Operate pilot:** Workbench build `1.3.0-operate-action-loop-draft` adds a unified **My Work** inbox, explainable **Do Next** order, the initial Operations Bible and a governed action loop. Every open item exposes a working next action. Oppa Mate suggests names and safe defaults; ordinary approvals use explicit labelled choices, material decisions require an outcome and higher-consequence Risk acceptance retains its stronger confirmation. This is prepared product behaviour, not an approved methodology or release.
+
+> **Proposed operating-surface increment:** Workbench build `1.4.0-workbench-operating-surface-draft` joins governed knowledge, conversation continuity, configurable record and Work Profile definitions, the shared Decision/Approval model and the external-Codex Build Job loop. It is implemented for review on a proposal branch; it is not approved for merge, release, publication or customer use.
+
+> **Proposed usability follow-on:** Workbench build `1.4.1-assisted-capture-actions-draft` lets Oppa Mate suggest an editable name and populated defaults, keeps optional detail collapsed, uses labelled clicks for ordinary Approval and requires a selected outcome for a material Decision. Risk acceptance keeps its stronger typed control. This is prepared for private review only.
+
+> **Proposed source-context follow-on:** Workbench build `1.4.2-source-context-inline-help-draft` makes PR-backed work self-contained in **My Work**. It adds a safe direct source link, plain-English review package and exact decision; Oppa Mate help now opens inside the work item. A full conversation visibly retains the originating work, source and route back. This is prepared for private review only.
+
+> **Proposed plain-language follow-on:** Workbench build `1.4.3-plain-language-user-journeys-draft` keeps the main Oppa Mate answer and feedback journey in ordinary user language. Source paths, status and control trace remain available in optional detail. Every feedback and guide action explains its result before the user chooses it. The change preserves existing local data and does not amend approved methodology meaning.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
 - Double-click `Launch-Workbench.cmd` in the repository.
+- Double-click `Launch-Brand-Review.cmd` to open the Workbench directly at the proposed Brand Review area.
 
-The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. Keep the server window open while using the Workbench.
+The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. Keep the server window open while using the Workbench.
+
+The page and server compare a controlled build marker. A persistent restart warning replaces misleading partial or indefinitely loading Brand Review content if their versions ever differ.
 
 The underlying `.\Start-Workbench.ps1` command remains available for troubleshooting and automation.
 
 The direct `npm start` command remains available for environments where Node.js and npm are already on `PATH`.
+
+The launcher checks the running server build before opening the page. If an older recognised Workbench is still using port 4173, it verifies that the listener is the local Node Workbench, stops it and starts the selected repository build. This prevents an apparently running page from silently using missing or stale assets.
+
+## Proposed phone access
+
+The proportionate founder pilot is Tailscale Serve, not a public tunnel:
+
+1. Jamie explicitly approves the private access connection and Jamie-only identity boundary.
+2. Install Tailscale from its official source on this Windows computer and on the phone.
+3. Sign in to both devices with the same authorised account.
+4. Keep the Workbench listening only on `127.0.0.1:4173`.
+5. Run `tailscale serve --bg 4173` and use the returned private HTTPS `*.ts.net` address on the phone.
+6. Allow microphone access, complete one spoken challenge and confirm that an unauthorised identity cannot connect.
+7. Record and test the Serve-disable and device-removal route.
+
+The computer and Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut and keep the server window open. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
+
+## Mobile voice and transcription recovery
+
+1. Select **Record** and confirm that the microphone name and live sound-level bar appear.
+2. Speak, then select **Stop recording**. The browser emits regular audio chunks so a mobile recording is not dependent on one final chunk.
+3. The Workbench selects a supported WebM, MP4/M4A or Ogg container where the phone browser exposes that capability. The server also checks the audio file signature when mobile MIME metadata is missing.
+4. If transcription succeeds, review the editable text before using it.
+5. If transcription fails, do not repeat the recording immediately. The original audio remains temporarily in that browser tab: select **Retry transcription**, or select **Discard and record again**.
+6. Expand **Recording details** only when troubleshooting. It shows duration, size, format, sound detection and a failure reference without retaining the audio on the server.
+
+Temporary audio is held only in the current browser page. Refreshing or closing the page clears it. Successful and failed server attempts retain timing, size, format and error metadata for diagnosis, but not the recording or transcript content.
+
+## Proposed brand review pilot
+
+The current brand-system branch adds a bounded internal Brand Review area. It:
+
+- consumes the shared `brand/tokens/brand.css` source and controlled OA mark;
+- shows visual examples for the mark, palette, typography, connection field, Workbench, documentation, LinkedIn cover and source wording;
+- links to the full live brand board and starter pages through the local Workbench server;
+- displays the project-wide brand adoption register; and
+- records approve-for-internal-use, revise or reject choices in the local Workbench database as review evidence; and
+- automatically surfaces revision and rejection notes in a founder-feedback queue, where Codex can retain its response and return a prepared revision for founder re-review.
+
+These item-level choices do not change repository status, merge the brand pull request or authorise publication. A Codex response also remains review evidence: it may reference work prepared on a proposal branch, but it does not create an automatic repository write or approval. The pilot remains proposed until Jamie explicitly decides the draft brand change.
 
 ## Provider setup
 
@@ -27,7 +82,7 @@ Voice transcription, translation and model reasoning require an OpenAI API key w
 4. Close any existing window titled **Operations Automated Workbench - keep open**.
 5. Run `.\Start-Workbench.ps1`.
 6. Open `http://127.0.0.1:4173`. The header should say **Provider connected**.
-7. Select **Record**, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**.
+7. Select **Record**, check the live sound-level bar, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**. If transcription fails, use the retained-recording retry panel before recording again.
 
 The local server loads `.env` itself. The key is read only by the Node.js server and is never returned to the browser, logged, stored in SQLite or included in exports. `.env` is excluded from Git.
 
@@ -84,26 +139,46 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 
 ## Implemented MVP boundary
 
+### Oppa Mate identity pilot
+
+Oppa Mate is presented as the primary Operations Automated service-account user rather than a product sub-brand. The pilot uses a controlled **OM** avatar, the full name **Oppa Mate** and the role descriptor **Operations Automated service account**. The identity makes account activity recognisable but does not itself grant access, approval authority or permission to act. It remains draft and has its own item in Brand Review for founder approval, revision or rejection.
+
+- Proposed unified **My Work** inbox across operational records, open change decisions and Brand Review work
+- Search plus Blocked, Waiting on Jamie, Waiting on Codex, Work Profile and record-type filters
+- Proposed explainable 80:20 priority and a five-item **Do Next** list
+- Proposed Cases, Requests and Tasks with optional relationships, journey and product overlays
+- Proposed Operations Bible covering Case, Request, Task, Incident, Problem, Change, Risk, Finding, Improvement, Scenario Test, Decision and Approval
+- Versioned JSON Operations Bible and seven configurable Work Profiles loaded directly by the Workbench
+- Correctable Oppa Mate record-type recommendation from ordinary-language capture
+- One-description capture with an editable suggested name, visible type/profile recommendation and optional detail behind progressive disclosure
+- Separate correctable Work Profile recommendation, retained correction memory and material follow-up questions
+- Working type-and-status actions for every open Operations Bible state, with retained actor, evidence and outcome
+- Safe action notes are suggested where possible; ordinary Approval is a labelled click, Decision outcome is mandatory and Risk acceptance retains exact confirmation
+- Source-backed methodology and Brand Review items route into their existing governed action workflows
+- Direct status changes cannot bypass the governed action route; Cases cannot close while contained work remains open
 - Typed conversations with pre-send context preview
+- Recent-message, rolling-summary and active Case/work continuity, including short follow-ups such as “yes, do that”
 - Local SQLite persistence and restart recovery
-- Status-aware, heading-level repository retrieval
+- Governed knowledge manifest, heading-level SQLite FTS5 retrieval, optional embeddings and exact cited knowledge snapshots
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
 - Proposed human-readable Confluence page planning, founder-confirmed managed-page publication, optimistic conflict checks and version receipts
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
-- Push-to-record voice capture, transcription and editable transcript review
+- Mobile-aware push-to-record capture with live microphone level, supported-format selection, retained-tab retry and editable transcript review
 - Optional English working translation while retaining the original transcript
 - Working text, Markdown, CSV and JSON attachment extraction, hashing and reuse
 - Reopenable conversation history and clearly explained saved feedback
 - Seven-way feedback classification covering corrections, context, memory, evidence, methodology candidates, product candidates and no action
 - Decision Inbox with separate preparation and release decisions
+- Universal Decision and Approval records projected into My Work while specialist histories remain intact
+- First-class Implementation Jobs with a copyable Codex brief, structured return receipt, separate release approval and authorised merge receipt
 - Plain-English decision briefs and a prominent link to the exact draft change on GitHub
 - Bounded implementation instructions requiring a new branch, draft pull request, decision record, changelog, version impact and test evidence
 - Founder-only release confirmation, retained repository references, reindexing and implementation receipts
 - On-demand methodology challenges focused on principles, AI suitability, manual work or delivery capability
 - Plain-language answers with technical traceability collapsed by default
-- Visible recording time and staged request-processing feedback
+- Visible recording time, microphone signal, staged request-processing feedback and metadata-only failure auditing
 - In-product user guide and soft/hard budget explanations
 - Markdown export, usage ledger and audit records
 - Push-to-record browser capture with editable review surface

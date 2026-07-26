@@ -37,6 +37,9 @@ These are required to preserve the intended method or unblock the next justified
 11. **Prove activation and first use.** A created artefact is incomplete until its intended user can reach and begin using it, or the blocker and recovery route are explicit.
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
 13. **Keep authoritative change and human delivery aligned.** Git remains authoritative, while any Confluence reading copy must retain source, status, approval boundary, conflict protection and a traceable publication receipt.
+14. **Turn unresolved material judgement into actionable work.** Every open inbox item must have a working next action, authority route and retained outcome; routine reversible choices should not be inflated into formal approvals.
+15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and external-Codex handoffs should remain connected while Git retains methodology authority and SQLite retains operational memory.
+15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and external-Codex handoffs should remain connected while Git retains methodology authority and SQLite retains operational memory.
 
 ## Should
 
@@ -55,6 +58,8 @@ These materially improve usefulness, validation or control but do not all block 
 11. Pilot the proposed collaboration method across different tasks, formats, disagreements and control points.
 12. Measure first-use success rather than relying only on construction tests.
 13. Validate one complete repository-to-Confluence publication and one later incremental update, including an independent-edit conflict and recovery.
+14. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
+14. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
 
 ## Could
 
@@ -103,6 +108,8 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Product definition | Specify the smallest useful AI-assisted product from validated outputs | Not started; earlier application parked | Jamie approves scope after repeatable value is shown |
 | Embedded AI | Add real AI analysis, provenance, evidence separation and human gates to a future product | Not implemented in the parked application | Product, provider, data and security decisions |
 | Workspaces | Support multiple titled workspaces, grouping, shared principles and retained context | Discussed; not implemented in approved product | Validate user need during product definition |
+| Mobile knowledge pilot | Validate private phone challenge, voice capture, retained transcription recovery and readable decisions | Tailnet-only phone reachability proved; first phone transcription failed; recovery correction prepared and automatically tested | Jamie completes one post-correction spoken challenge and one retry test |
+| Operate internal workbench | Validate whether a governed operational graph and action loop return more useful progress than an isolated ticket register | Unified inbox, optional tiers, human/AI link provenance, initial network signals and working governed actions prepared as a proposal | Jamie completes or rejects a Task, Approval, Decision and non-terminal transition before any private-pilot release decision |
 | Security and operations | Define identity, access, privacy, storage, retention, audit, monitoring, recovery, hosting and support | Not started for production | Required before any external or real-data use |
 | Feedback and notifications | Move beyond the local Codex schedule to approved mobile, email or in-product feedback and decision routes | Discussed; no external connection approved | Separate connection and data decision |
 | Commercial validation | Test the narrow buyer, problem, promise, willingness to pay and economics | Strategy proposed; no market test, prices or sales approved | Separate external-contact and offer approval |

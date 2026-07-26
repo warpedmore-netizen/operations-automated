@@ -1,24 +1,61 @@
 [CmdletBinding()]
 param(
     [int]$Port = 4173,
+    [ValidateSet("", "brand")]
+    [string]$InitialView = "",
     [switch]$NoBrowser
 )
 
 $ErrorActionPreference = "Stop"
 $repositoryRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $healthUrl = "http://127.0.0.1:$Port/api/settings"
-$workbenchUrl = "http://127.0.0.1:$Port"
+$workbenchBaseUrl = "http://127.0.0.1:$Port"
+$workbenchUrl = if ($InitialView) { "$workbenchBaseUrl#$InitialView" } else { $workbenchBaseUrl }
+$expectedBuildVersion = (Get-Content -LiteralPath (Join-Path $repositoryRoot "app\build-version.txt") -Raw).Trim()
 
+function Get-ListeningProcessId {
+    param([int]$PortNumber)
+    $pattern = "^\s*TCP\s+\S+:$PortNumber\s+\S+\s+LISTENING\s+(\d+)\s*$"
+    foreach ($line in (& netstat -ano -p TCP)) {
+        if ($line -match $pattern) { return [int]$Matches[1] }
+    }
+    return $null
+}
+
+$recognisedWorkbench = $false
 try {
     $existingResponse = Invoke-WebRequest -UseBasicParsing -Uri $healthUrl -TimeoutSec 2
     if ($existingResponse.StatusCode -eq 200) {
-        Write-Host "Operations Automated Workbench is already running:"
-        Write-Host $workbenchUrl
-        if (-not $NoBrowser) { Start-Process $workbenchUrl }
-        exit 0
+        $existingSettings = $existingResponse.Content | ConvertFrom-Json
+        if ($existingSettings.buildVersion -eq $expectedBuildVersion) {
+            Write-Host "Operations Automated Workbench is already running:"
+            Write-Host $workbenchUrl
+            if (-not $NoBrowser) { Start-Process $workbenchUrl }
+            exit 0
+        }
+        if (-not $existingSettings.buildVersion -or -not $existingSettings.currentUser) {
+            throw "Port $Port is responding, but it is not a recognised Operations Automated Workbench."
+        }
+        $recognisedWorkbench = $true
+        $listenerProcessId = Get-ListeningProcessId -PortNumber $Port
+        $listenerProcess = if ($listenerProcessId) { Get-Process -Id $listenerProcessId -ErrorAction SilentlyContinue } else { $null }
+        if (-not $listenerProcess -or $listenerProcess.ProcessName -ne "node") {
+            throw "An outdated Workbench is responding on port $Port, but its server process could not be verified safely. Close the existing Workbench server window and run the launcher again."
+        }
+        Write-Host "Refreshing outdated Workbench server $($existingSettings.buildVersion) to $expectedBuildVersion..."
+        Stop-Process -Id $listenerProcessId -ErrorAction Stop
+        for ($attempt = 0; $attempt -lt 20; $attempt++) {
+            Start-Sleep -Milliseconds 100
+            try {
+                $null = Invoke-WebRequest -UseBasicParsing -Uri $healthUrl -TimeoutSec 1
+            } catch {
+                break
+            }
+        }
     }
 } catch {
-    # No healthy Workbench is currently responding.
+    if ($recognisedWorkbench -or $_.Exception.Message -match "not a recognised") { throw }
+    # No healthy Workbench is currently responding, or the verified stale server has stopped.
 }
 
 $nodeCommand = Get-Command node -ErrorAction SilentlyContinue

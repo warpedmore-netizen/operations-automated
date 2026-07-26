@@ -1,6 +1,139 @@
 # Changelog
 
+## Workbench 1.4.3 plain-language user journeys - proposed
+
+- Made the main Oppa Mate answer lead with plain-language meaning and the next action while moving source paths, status labels and control mechanics into one optional detail panel.
+- Added a defensive display layer for older and provider-generated answers so raw repository paths, status lines and internal delivery labels do not dominate the user response.
+- Made every answer-feedback choice explain what it will save or start before Jamie selects it.
+- Reworded feedback classifications around their user outcome and added a live explanation before **Save this use** or **Create change review**.
+- Reworked the first-use guide to describe the result of sending, saving feedback, creating a review and preparing a change before asking the user to act.
+- Preserved exact source evidence, status, authority and knowledge snapshots in optional detail and retained records; no SQLite schema change or approved methodology change was introduced.
+
+## Workbench 1.4.2 source context and inline help - proposed
+
+- Added safe, clickable GitHub pull-request links to PR-backed My Work cards and detail views.
+- Added a plain-English source work package covering why the source exists, what changes, the exact decision, evidence, options, risk and remaining authority boundary when retained data is available.
+- Replaced contextless **Discuss with Oppa Mate** navigation with inline work-item help and one-click summary, decision, risk and evidence prompts.
+- Carried the active record, source and authority boundary into connected-model and deterministic local-response context.
+- Added a visible originating-work banner, source link and **Back to work item** action when the full conversation is opened.
+- Added API, interface and live isolated-browser checks while keeping approval, merge, release and publication separate.
+
 All material changes to Operations Automated will be recorded here.
+
+## Workbench 1.4.1 assisted capture and actions - proposed
+
+- Reduced ordinary work capture to one required description and generated an editable work-type-aware name.
+- Showed Oppa Mate's record-type and Work Profile suggestions before capture while keeping them correctable.
+- Moved populated relationship, priority and ownership fields behind optional progressive detail.
+- Added safe, editable suggested notes for preparatory and bounded approval actions.
+- Made ordinary Approval an explicit labelled click instead of requiring the button label to be retyped.
+- Required a material Decision outcome before the record action becomes available.
+- Retained exact typed confirmation and substantive evidence for higher-consequence Risk acceptance.
+- Recorded the founder usability correction and kept methodology meaning, merge, release and specific decisions separately controlled.
+
+## Workbench 1.4.0 operating surface - proposed
+
+- Made **My Work** the searchable and filterable common operating layer for operational work, specialist reviews, documentation decisions, Codex handoffs and separate release approvals.
+- Added a governed knowledge-source manifest covering approved methodology, project context, retained decisions and learning, proposed material and connected external evidence.
+- Replaced file-level retrieval with heading-level SQLite FTS5 chunks carrying artefact ID, status, version, hash, authority, effective state and indexed commit; added optional OpenAI embeddings without a separate vector service.
+- Stored exact knowledge snapshots and citations for material responses, classifications, proposals and Build Jobs, with plain-English recommendation reasons and progressively disclosed source evidence.
+- Added conversation continuity using recent messages, a rolling summary, active Case and work context, existing controls and retained corrections.
+- Moved the Operations Bible and seven seeded Work Profiles into versioned JSON definitions loaded directly by the application.
+- Kept record type and Work Profile recommendations separate, correctable and reusable without creating approval.
+- Added universal Decision and Approval records with bounded scope, evidence, recommendation, alternatives, conditions, exact confirmation, result, authorised transition and explicit remaining limits.
+- Migrated feedback, change proposals, Brand Review and Confluence publication queues into source-backed Operate records without deleting specialist history.
+- Added first-class Implementation Jobs: complete copyable Codex brief, Waiting on Codex state, structured receipt, Waiting for Review state, exact founder release confirmation and authorised external merge receipt.
+- Reindexed the repository after a retained authorised merge receipt and queued an applicable Confluence update while keeping publication separate.
+- Added Waiting on Jamie, Waiting on Codex and Blocked views, profile/type filters, conversation handoff and source-backed specialist actions.
+- Added clean-database, legacy-database, restart and ten-journey operating-surface tests; the complete automated Workbench suite passes.
+- Kept methodology v0.6, merge, release, publication, new connections, autonomous execution and customer use unchanged and unapproved.
+
+## Workbench 1.3.0 Operate governed action loop - proposed
+
+- Corrected the passive Operate inbox so every open item exposes a working next action rather than only status and context.
+- Added a tested type-and-status action contract across all open states in the twelve-record Operations Bible.
+- Routed repository-change and Brand Review items from My Work into their existing governed source workflows.
+- Added retained action evidence covering actor, prior status, resulting status, outcome, note, authority and exact confirmation.
+- Required a reason and Jamie Peppard's exact confirmation before approving an Approval, accepting Risk, authorising a Change or recording a material Decision.
+- Prevented direct status updates from bypassing the governed action route.
+- Prevented Case closure while contained work remains open.
+- Made the recommended next action visible on each inbox card and added working action controls and recent activity to record detail.
+- Retained proportionality: routine Task completion remains direct, while material judgement receives explicit evidence and authority controls.
+- Recorded the founder feedback, product-delivery correction, preparation authority and separate assurance decision without changing approved methodology meaning.
+- Kept product approval, merge, release, external connections, autonomous execution and customer use unchanged and unapproved.
+
+## Workbench 1.2.0 Operate internal workbench - proposed
+
+- Made **My Work** the ordinary entry point, with a short **Do Next** list and one inbox spanning operational records, open change decisions and Brand Review work.
+- Added explainable 80:20 priority using impact, urgency, risk, control implications, blocked work, strategic value, age and confidence.
+- Added durable Cases, Requests and Tasks with optional ownership, deadline, Case, journey and product classifications.
+- Added the initial twelve-record Operations Bible with plain definitions, use and avoid guidance, statuses and human/automation boundaries.
+- Added ordinary-language capture with correctable Oppa Mate classification and retained recommendation evidence.
+- Added visible relationships between records without imposing one linear process.
+- Clarified the proposed product differentiator as a governed operational graph that returns information, rather than a larger ticket register.
+- Added optional parent work so useful multi-tier structures can emerge without one compulsory hierarchy.
+- Added interface-created relationships and type-safe Oppa Mate suggestions inside shared operational context.
+- Retained whether a person or Oppa Mate proposed each link, together with rationale, confidence and the human confirmer.
+- Required exact founder confirmation before an AI-suggested link enters the active graph and retained rejected links as correction evidence rather than deleting them.
+- Added bounded network signals for unconnected open work, blocked flow, risks without linked treatment and cases concentrating attention.
+- Added explicit exact founder confirmation before an Approval becomes approved or a Risk becomes accepted.
+- Added API, model and interface tests covering capture, linking, inbox ordering, completion and authority controls.
+- Retained the wider Incident, Problem, Change, Risk, Finding, Improvement and Scenario Test model without claiming complete workflows.
+- Kept methodology v0.6, release, merge, publication, new connections, autonomous execution and customer use unchanged and unapproved.
+
+## Workbench 1.1.2 mobile voice recovery - proposed
+
+- Recorded the first real Samsung-phone transcription failure without claiming a cause that the previous telemetry cannot prove.
+- Added explicit mobile-browser selection across supported WebM, MP4/M4A and Ogg recording containers, with file-signature recovery when MIME metadata is absent.
+- Emitted regular recording chunks so mobile capture does not depend only on one final browser event.
+- Added the selected microphone and a live sound-level signal during recording.
+- Kept long conversation history inside its own scroll area and reopened it at the latest message so Record and Send remain immediately reachable on a phone.
+- Kept a failed recording temporarily in the originating browser tab with **Retry transcription** and deliberate discard actions.
+- Added specific recovery messages for empty audio, no detected speech, unsupported audio, connection interruption, timeout, rate limiting and provider rejection.
+- Added metadata-only requested, failed and completed transcription audit events; audio and transcript content remain unretained.
+- Corrected the phone guide to explain Bad Gateway recovery and distinguish an operational Tailscale route from governance approval.
+- Added mobile format, signature detection, empty-audio, unsupported-audio, audit and recovery-interface tests.
+- Kept methodology v0.6, merge, publication, Tailscale permissions and external access unchanged and unapproved.
+
+## Workbench 1.1.1 brand rail refresh - proposed
+
+- Replaced the improvised circular OA badge with the controlled continuous-loop mark in the application rail and welcome state.
+- Increased Recent-conversation contrast, type size and spacing, allowed two-line titles and strengthened the current-conversation state.
+
+## Workbench 1.1.0 mobile knowledge workbench - proposed
+
+- Reframed the founder experience around challenge, defence, retained feedback, readable decisions and governed knowledge publication.
+- Added reliable blue-brand fallbacks so a missing token sheet cannot leave white navigation text on a transparent background.
+- Removed broken primary image dependencies from the Workbench shell while retaining the controlled brand assets in the Brand Review area.
+- Added a phone-focused responsive layout with visible navigation labels, 44-pixel primary actions, contained conversation content and professional blue active states.
+- Added an installable web-app manifest and phone home-screen metadata.
+- Added an in-product secure phone-access proposal using private Tailscale Serve HTTPS while keeping the Workbench on localhost.
+- Recorded that Tailscale is not installed and that no remote access has been enabled.
+- Connected the proposed knowledge journey to the already demonstrated PR #18 Confluence Draft route, without duplicating or broadening its recorded authority.
+- Retained separate preparation, release, merge and Confluence publication decisions.
+- Added the originating feedback, approved-for-preparation decision, product proposal, assurance pack and validation requirements.
+- Kept the approved methodology baseline, existing Confluence publication behaviour, external publication and customer use unchanged.
+
+## Brand system 0.1.0 - draft
+
+- Corrected shared button-text precedence and lightened the website template with a deep-blue hero, brighter signal card and softer navigation after founder visual review.
+- Added a controlled brand area for consistent use across websites, applications and documentation.
+- Corrected the working identity after Jamie supplied the intended continuous OA loop reference.
+- Added controlled copies of the founder-supplied square mark, wide banner and 1584 × 396 LinkedIn profile cover.
+- Replaced the superseded four-block exports with deterministic colour, navy, white and dark-tile derivatives of the OA loop.
+- Aligned the system to an Obsidian, deep-blue and electric-cyan palette, geometric display typography and restrained connected-mesh backgrounds.
+- Proposed **Connected operations. Human outcomes.** as the organising brand idea.
+- Added logo, colour, typography, layout, imagery, motion, accessibility, voice and naming guidance.
+- Added platform-neutral JSON tokens, reusable CSS variables and typed application tokens.
+- Added a visual brand board and working website, application, documentation and social templates.
+- Added a project-wide brand adoption register and visual-review specification.
+- Applied the shared tokens and controlled OA mark to the Workbench as the first bounded application pilot.
+- Added a one-click Brand Review launcher and Workbench area with directly openable examples, per-item review evidence and explicit approval boundaries.
+- Added a controlled Workbench build marker, safe stale-server replacement and a persistent mismatch warning so missing brand assets cannot appear to be a valid visual proposal.
+- Added a generated 1600 × 1000 review board for conversations and other surfaces that cannot open live HTML.
+- Added logo export generation, automated token, reference and contrast checks, and a plain-English decision pack.
+- Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.
+- Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.
 
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 

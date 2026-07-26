@@ -55,6 +55,11 @@ test("local API persists governed conversations and the complete feedback-to-cha
     return result.payload;
   };
   try {
+    const settings = await call("/api/settings");
+    const expectedBuildVersion = (await readFile(new URL("../build-version.txt", import.meta.url), "utf8")).trim();
+    assert.equal(settings.response.ok, true);
+    assert.equal(settings.payload.buildVersion, expectedBuildVersion);
+
     const connections = await call("/api/connections");
     assert.equal(connections.response.ok, true);
     assert.equal(connections.payload.confluence.boundary.readOnlyEvidenceSync, true);
@@ -65,6 +70,67 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(connections.payload.confluence.boundary.approvalCreated, false);
     assert.equal(connections.payload.confluence.publication.automaticPublication, false);
     assert.doesNotMatch(JSON.stringify(connections.payload), /apiToken|Authorization/i);
+
+    const brandBoard = await fetch(`http://127.0.0.1:${port}/brand-system/index.html`);
+    assert.equal(brandBoard.ok, true);
+    assert.match(brandBoard.headers.get("content-type"), /text\/html/);
+    assert.match(await brandBoard.text(), /Operations Automated brand system/i);
+    const brandAsset = await fetch(`http://127.0.0.1:${port}/brand-system/assets/logo/generated/mark-colour-transparent-1024.png`);
+    assert.equal(brandAsset.ok, true);
+    assert.equal(brandAsset.headers.get("content-type"), "image/png");
+    const manifest = await fetch(`http://127.0.0.1:${port}/manifest.webmanifest`);
+    assert.equal(manifest.ok, true);
+    assert.equal(manifest.headers.get("content-type"), "application/manifest+json; charset=utf-8");
+    assert.match((await manifest.json()).name, /Knowledge Workbench/);
+
+    const initialBrandReview = await call("/api/brand-review");
+    assert.equal(initialBrandReview.response.ok, true);
+    assert.equal(initialBrandReview.payload.status, "draft");
+    assert.equal(initialBrandReview.payload.approvalState, "not-approved");
+    assert.equal(initialBrandReview.payload.feedbackLoop.awaitingCodexReview, 0);
+    assert.equal(initialBrandReview.payload.feedbackLoop.readyForFounderReview, 0);
+    assert.ok(initialBrandReview.payload.items.some((item) => item.id === "master-mark"));
+    assert.ok(initialBrandReview.payload.adoption.surfaces.some((surface) => surface.id === "workbench" && surface.status === "pilot-applied"));
+
+    const unsupportedBrandDecision = await call("/api/brand-review", {
+      method: "POST",
+      body: { itemId: "master-mark", action: "revise", reason: "" }
+    });
+    assert.equal(unsupportedBrandDecision.response.status, 400);
+    const brandDecision = await ok("/api/brand-review", {
+      itemId: "master-mark",
+      action: "approve-internal",
+      reason: ""
+    });
+    assert.equal(brandDecision.decision.actor, "Jamie Peppard");
+    assert.equal(brandDecision.decision.approvalCreated, false);
+    assert.equal(brandDecision.decision.repositoryChanged, false);
+    assert.equal(brandDecision.review.approvalState, "not-approved");
+
+    const typographyRevision = await ok("/api/brand-review", {
+      itemId: "typography",
+      action: "revise",
+      reason: "The supporting line is hard to read."
+    });
+    const pendingTypography = typographyRevision.review.feedbackLoop.items.find((item) => item.itemId === "typography");
+    assert.equal(pendingTypography.state, "awaiting-codex-review");
+    assert.equal(typographyRevision.review.feedbackLoop.awaitingCodexReview, 1);
+    const typographyResponse = await ok("/api/brand-review/responses", {
+      decisionId: typographyRevision.decision.id,
+      disposition: "revision-prepared",
+      summary: "Increased the supporting line's size, contrast and visual separation.",
+      affectedFiles: ["app/app.js", "app/styles.css"],
+      sourceRef: "working-tree",
+      repositoryChanged: true
+    });
+    const preparedTypography = typographyResponse.review.feedbackLoop.items.find((item) => item.itemId === "typography");
+    assert.equal(preparedTypography.state, "revision-prepared");
+    assert.equal(preparedTypography.response.approvalCreated, false);
+    assert.equal(preparedTypography.response.automaticRepositoryWrite, false);
+    assert.equal(preparedTypography.response.repositoryChanged, true);
+    assert.equal(typographyResponse.review.feedbackLoop.awaitingCodexReview, 0);
+    assert.equal(typographyResponse.review.feedbackLoop.readyForFounderReview, 1);
+    assert.equal(typographyResponse.review.approvalState, "not-approved");
 
     const unsafeConnectionAction = await fetch(`http://127.0.0.1:${port}/api/connections/confluence/publication-plan`, {
       method: "POST",
@@ -99,6 +165,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
     });
     assert.equal(responseResult.usage.status, "offline");
     assert.equal(responseResult.message.metadata.approvalState, "not-approved");
+    assert.doesNotMatch(responseResult.message.working_text, /methodology\/approved-method\.md|repository status|source hash/i);
+    assert.equal(responseResult.message.metadata.activeWorkDetails, null);
 
     const recorded = await ok("/api/feedback", {
       conversationId,
@@ -278,7 +346,9 @@ test("local API persists governed conversations and the complete feedback-to-cha
       "repository-preparation.recorded",
       "release-merge.authorised",
       "repository.reindexed",
-      "change.implemented"
+      "change.implemented",
+      "brand-review.recorded",
+      "brand-review.response-recorded"
     ]) assert.ok(auditEvents.some((event) => event.action === action), `${action} should remain auditable`);
     const preparationAudit = auditEvents.find((event) => event.action === "repository-preparation.recorded");
     assert.equal(preparationAudit.detail.branchName, "codex/accountability-wording");

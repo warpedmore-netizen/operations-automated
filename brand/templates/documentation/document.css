@@ -1,0 +1,142 @@
+@import url("../../tokens/brand.css");
+
+@page {
+  size: A4;
+  margin: 18mm 17mm 20mm;
+
+  @bottom-left {
+    color: #52677c;
+    content: "Operations Automated · controlled document";
+    font: 8pt "Source Sans 3", "Source Sans Pro", "Segoe UI", Arial, sans-serif;
+  }
+
+  @bottom-right {
+    color: #52677c;
+    content: "Page " counter(page) " of " counter(pages);
+    font: 8pt "Cascadia Mono", Consolas, monospace;
+  }
+}
+
+html {
+  color: #102a43;
+  background: #ffffff;
+  font-family: "Source Sans 3", "Source Sans Pro", "Segoe UI", Arial, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.5;
+}
+
+body {
+  max-width: 178mm;
+  margin: 0 auto;
+}
+
+h1,
+h2 {
+  color: #063f72;
+  font-family: Montserrat, "Aptos Display", Arial, sans-serif;
+  font-weight: 750;
+  break-after: avoid;
+}
+
+h1 {
+  margin: 0 0 8mm;
+  padding-top: 18mm;
+  border-top: 4mm solid #0c79d8;
+  font-size: 29pt;
+  line-height: 1.05;
+}
+
+h2 {
+  margin: 9mm 0 3mm;
+  font-size: 17pt;
+  line-height: 1.15;
+}
+
+h3 {
+  margin: 6mm 0 2mm;
+  color: #0b2742;
+  font-size: 12pt;
+}
+
+p,
+li {
+  orphans: 3;
+  widows: 3;
+}
+
+a {
+  color: #0c79d8;
+  font-weight: 600;
+  text-decoration-thickness: 0.6pt;
+  text-underline-offset: 1.5pt;
+}
+
+blockquote {
+  margin: 5mm 0;
+  padding: 3mm 4mm;
+  color: #0b2742;
+  background: #eef4f8;
+  border-left: 2mm solid #2e9eff;
+}
+
+table {
+  width: 100%;
+  margin: 4mm 0;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+
+thead {
+  display: table-header-group;
+}
+
+th,
+td {
+  padding: 2.5mm;
+  border: 0.4pt solid #cdd9e3;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: #ffffff;
+  background: #0b2742;
+  font-weight: 700;
+}
+
+tr {
+  break-inside: avoid;
+}
+
+code {
+  padding: 0.4mm 1mm;
+  color: #0b2742;
+  background: #e9eff4;
+  border-radius: 1mm;
+  font-family: "Cascadia Mono", Consolas, monospace;
+  font-size: 0.88em;
+}
+
+hr {
+  margin: 8mm 0;
+  border: 0;
+  border-top: 0.5pt solid #cdd9e3;
+}
+
+@media print {
+  body {
+    max-width: none;
+  }
+
+  a {
+    color: #0b2742;
+  }
+
+  a[href^="http"]::after {
+    color: #52677c;
+    content: " (" attr(href) ")";
+    font-size: 8pt;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+}
