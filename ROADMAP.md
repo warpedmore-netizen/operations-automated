@@ -54,6 +54,8 @@ The proposed Mobile Knowledge Workbench has now reached Jamie's Samsung phone th
 
 The proposed Operate internal workbench now frames its distinctive value as a governed operational graph rather than a larger ticket register. Founder use exposed that the first draft still behaved as a passive attention register. The corrected proposal adds a governed action loop: every open item has a working next action, consequential transitions require explicit authority and rationale, direct status bypass is prevented and outcomes remain in activity history. Real-work action testing, calibration, independent-user validation, product approval, release and merge remain outstanding.
 
+A follow-on founder usability correction now reduces capture to one description, asks Oppa Mate to suggest the name and classifications, collapses optional detail, turns ordinary Approval into a labelled click and requires a real Decision outcome. Stronger typed confirmation remains for Risk acceptance. These are proposed product behaviours under private validation, not approval or release.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -91,6 +93,8 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 9. After the approved model is merged, implement one Methodology reading path, one Internal task path and one manually identified document challenge as bounded private pilots without deleting or moving the current controlled pages or performing a live write without separate confirmation.
+10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
+10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
 
 ## Application decision
 

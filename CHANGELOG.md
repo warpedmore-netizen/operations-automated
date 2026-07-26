@@ -2,6 +2,34 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.4.1 assisted capture and actions - proposed
+
+- Reduced ordinary work capture to one required description and generated an editable work-type-aware name.
+- Showed Oppa Mate's record-type and Work Profile suggestions before capture while keeping them correctable.
+- Moved populated relationship, priority and ownership fields behind optional progressive detail.
+- Added safe, editable suggested notes for preparatory and bounded approval actions.
+- Made ordinary Approval an explicit labelled click instead of requiring the button label to be retyped.
+- Required a material Decision outcome before the record action becomes available.
+- Retained exact typed confirmation and substantive evidence for higher-consequence Risk acceptance.
+- Recorded the founder usability correction and kept methodology meaning, merge, release and specific decisions separately controlled.
+
+## Workbench 1.4.0 operating surface - proposed
+
+- Made **My Work** the searchable and filterable common operating layer for operational work, specialist reviews, documentation decisions, Codex handoffs and separate release approvals.
+- Added a governed knowledge-source manifest covering approved methodology, project context, retained decisions and learning, proposed material and connected external evidence.
+- Replaced file-level retrieval with heading-level SQLite FTS5 chunks carrying artefact ID, status, version, hash, authority, effective state and indexed commit; added optional OpenAI embeddings without a separate vector service.
+- Stored exact knowledge snapshots and citations for material responses, classifications, proposals and Build Jobs, with plain-English recommendation reasons and progressively disclosed source evidence.
+- Added conversation continuity using recent messages, a rolling summary, active Case and work context, existing controls and retained corrections.
+- Moved the Operations Bible and seven seeded Work Profiles into versioned JSON definitions loaded directly by the application.
+- Kept record type and Work Profile recommendations separate, correctable and reusable without creating approval.
+- Added universal Decision and Approval records with bounded scope, evidence, recommendation, alternatives, conditions, exact confirmation, result, authorised transition and explicit remaining limits.
+- Migrated feedback, change proposals, Brand Review and Confluence publication queues into source-backed Operate records without deleting specialist history.
+- Added first-class Implementation Jobs: complete copyable Codex brief, Waiting on Codex state, structured receipt, Waiting for Review state, exact founder release confirmation and authorised external merge receipt.
+- Reindexed the repository after a retained authorised merge receipt and queued an applicable Confluence update while keeping publication separate.
+- Added Waiting on Jamie, Waiting on Codex and Blocked views, profile/type filters, conversation handoff and source-backed specialist actions.
+- Added clean-database, legacy-database, restart and ten-journey operating-surface tests; the complete automated Workbench suite passes.
+- Kept methodology v0.6, merge, release, publication, new connections, autonomous execution and customer use unchanged and unapproved.
+
 ## Workbench 1.3.0 Operate governed action loop - proposed
 
 - Corrected the passive Operate inbox so every open item exposes a working next action rather than only status and context.

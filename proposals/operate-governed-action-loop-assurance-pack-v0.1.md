@@ -89,7 +89,7 @@ The bounded action contract is recommended because it creates real progress whil
 - founder-only confirmations do not yet transfer to teams; and
 - source and Operate records could duplicate decisions if future adapters are not governed.
 
-The pilot therefore keeps notes optional for routine progress, required for decisions and exceptions, and preserves specialist source workflows.
+The pilot therefore keeps notes optional for routine progress, suggests safe neutral wording where it can be derived without inventing judgement, requires a real option where the outcome changes and preserves specialist source workflows.
 
 ## Technical verification completed
 
@@ -97,7 +97,8 @@ The pilot therefore keeps notes optional for routine progress, required for deci
 - The full Workbench suite passed: **72 tests passed; 0 failed**.
 - Contract tests prove that every open Operations Bible state has an action and that invalid, stale and direct-status bypass attempts are rejected.
 - Server tests prove Task completion, the complete Approval and Risk journeys, exact confirmation and rationale enforcement, creation-state protection and Case closure protection.
-- Live desktop checks proved that a Task leaves My Work while its activity remains, an Approval cannot proceed without `Approve`, and a Decision cannot proceed without `Record decision`.
+- Live desktop checks proved that a Task leaves My Work while its activity remains, an Approval requires an explicit labelled action, and a Decision cannot be recorded until Jamie selects an outcome.
+- A follow-on founder correction simplified capture to one required description, generated an editable Approval or Decision name, collapsed optional fields and preserved exact typed confirmation only for higher-consequence Risk acceptance.
 - Consequential confirmation is an inline field rather than a browser pop-up, so the required wording and boundary remain visible beside the action.
 - Live Case review showed **Close case** disabled with the reason `1 contained record remains open`.
 - A Brand Review inbox item routed to its existing controlled review surface without recording a decision.

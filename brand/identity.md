@@ -36,6 +36,16 @@ Use the mark alone for:
 
 Do not use the mark alone on a first encounter when the name is not otherwise clear.
 
+### Service-account identity
+
+**Oppa Mate** is the primary Operations Automated service-account user, not a product sub-brand. “Mate” expresses his intended role as a recognisable company colleague operating across approved services and workflows.
+
+Use a controlled **OM** avatar with the full name **Oppa Mate** and the role descriptor **Operations Automated service account**. The avatar uses the master palette and display family, but it remains visually distinct from the OA corporate mark so people can tell the company identity from the account acting within it.
+
+The compact OM avatar may identify navigation, account activity and conversational replies after the full identity has been shown. Do not use it as the Operations Automated corporate logo.
+
+Branding never grants Oppa Mate access, delegated authority or approval rights. Those must come from separately recorded permissions, policies, risk limits and accountable human decisions. Do not depict him as a human employee, create a robot mascot or imply that a friendly identity makes an action safe or authorised.
+
 ### Clear space
 
 Keep clear space around the logo equal to the thickness of the O ribbon. No text, border, photograph, control or other logo enters this space.

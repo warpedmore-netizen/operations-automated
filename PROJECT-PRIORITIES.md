@@ -38,6 +38,8 @@ These are required to preserve the intended method or unblock the next justified
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
 13. **Keep authoritative change and human delivery aligned.** Git remains authoritative, while any Confluence reading copy must retain source, status, approval boundary, conflict protection and a traceable publication receipt.
 14. **Turn unresolved material judgement into actionable work.** Every open inbox item must have a working next action, authority route and retained outcome; routine reversible choices should not be inflated into formal approvals.
+15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and external-Codex handoffs should remain connected while Git retains methodology authority and SQLite retains operational memory.
+15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and external-Codex handoffs should remain connected while Git retains methodology authority and SQLite retains operational memory.
 
 ## Should
 
@@ -56,6 +58,8 @@ These materially improve usefulness, validation or control but do not all block 
 11. Pilot the proposed collaboration method across different tasks, formats, disagreements and control points.
 12. Measure first-use success rather than relying only on construction tests.
 13. Validate one complete repository-to-Confluence publication and one later incremental update, including an independent-edit conflict and recovery.
+14. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
+14. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
 
 ## Could
 

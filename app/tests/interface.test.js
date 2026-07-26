@@ -9,6 +9,8 @@ const repoRoot = resolve(appRoot, "..");
 const html = readFileSync(resolve(appRoot, "index.html"), "utf8");
 const appSource = readFileSync(resolve(appRoot, "app.js"), "utf8");
 const cssSource = readFileSync(resolve(appRoot, "styles.css"), "utf8");
+const brandReview = JSON.parse(readFileSync(resolve(repoRoot, "brand/review-items.json"), "utf8"));
+const brandAdoption = JSON.parse(readFileSync(resolve(repoRoot, "brand/adoption.json"), "utf8"));
 
 function matches(pattern, source) {
   return [...source.matchAll(pattern)].map((match) => match[1]);
@@ -68,7 +70,7 @@ test("essential controls and accessibility landmarks are present", () => {
   assert.match(appSource, /Your recording has not been lost/);
   assert.match(html, /hard budget blocks further paid requests/i);
   assert.match(html, /id="context-panel"[^>]+hidden/);
-  assert.match(appSource, /Behind this answer/);
+  assert.match(appSource, /Why Oppa Mate recommended this/);
   assert.match(appSource, /userFacingAnswer/);
   assert.match(html + appSource, /Approve and merge/);
   assert.match(html, /Preparation and release are separate decisions/);
@@ -79,7 +81,7 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(html + appSource, /\/brand-system\/assets\/logo\/generated\/mark-colour-transparent-1024\.png/);
   assert.match(html, /\/brand-system\/assets\/logo\/generated\/mark-dark-tile-192\.png/);
   assert.match(html, /<img[^>]+class="brand-logo"[^>]+mark-colour-transparent-1024\.png/);
-  assert.match(html, /<img[^>]+class="welcome-logo"[^>]+mark-colour-transparent-1024\.png/);
+  assert.match(html, /class="oppa-account-avatar"[^>]*>OM<\/span>/);
   assert.match(appSource, /\/api\/brand-review/);
   assert.match(appSource, /approve-internal/);
   assert.match(appSource, /Revision requested/);
@@ -97,6 +99,13 @@ test("the Workbench consumes the controlled brand source and exposes visual revi
   assert.match(cssSource, /\.brand-preview-type p \{[^}]+font-size:\s*0\.9rem[^}]+font-weight:\s*650/s);
   assert.match(cssSource, /\.brand-preview-type strong \{[^}]+font-size:\s*clamp\(1\.9rem,\s*2\.65vw,\s*2\.25rem\)/s);
   assert.match(cssSource, /\.brand-feedback-list article \{[^}]+border-left:\s*4px solid/s);
+  assert.match(html, /id="oppa-mate-topbar"/);
+  assert.match(html, /Oppa <b>Mate<\/b>/);
+  assert.match(html, /Operations Automated service account/);
+  assert.match(appSource, /message\.role === "user" \? "You" : "OM"/);
+  assert.match(appSource, /const reviewedCount = value\.items\.filter/);
+  assert.equal(brandReview.items.some((item) => item.id === "oppa-mate-service-account" && item.status === "draft"), true);
+  assert.equal(brandAdoption.surfaces.some((surface) => surface.id === "oppa-mate-service-account" && surface.status === "pilot-applied"), true);
 });
 
 test("the primary knowledge journey remains readable and touch-usable on a phone", () => {
@@ -164,18 +173,26 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(html, /id="work-link-dialog"/);
   assert.match(html, /A relationship adds context; it does not create approval/);
   assert.match(html, /Classification organises work; it does not approve it/);
+  assert.match(html, /id="capture-suggestion"/);
+  assert.match(html, /Suggested automatically; edit only if useful/);
+  assert.match(html, /Change suggestions or add optional detail/);
+  assert.doesNotMatch(html, /name="title" required/);
   assert.match(appSource, /\/api\/my-work/);
   assert.match(appSource, /\/api\/operate\/records/);
   assert.match(appSource, /\/api\/operate\/network/);
-  assert.match(appSource, /Suggested by Oppa Mate/);
-  assert.match(appSource, /Relationship rejected and retained in activity history/);
-  assert.match(cssSource, /min-height:\s*42px/);
-});
   assert.match(appSource, /Governed next action/);
   assert.match(appSource, /data-operate-action/);
   assert.match(appSource, /data-operate-action-confirmation/);
+  assert.match(appSource, /data-operate-action-choice/);
+  assert.match(appSource, /\/api\/operate\/recommendation/);
+  assert.match(appSource, /action\.suggestedNote/);
+  assert.match(appSource, /confirmation = action\.confirmation/);
   assert.doesNotMatch(appSource, /window\.prompt\(`Type "\$\{action\.confirmation\}/);
   assert.match(appSource, /\/api\/operate\/records\/\$\{encodeURIComponent\(record\.id\)\}\/actions/);
   assert.match(appSource, /workflow\.action-completed/);
   assert.match(appSource, /Record the evidence, outcome or reason/);
+  assert.match(appSource, /Suggested by Oppa Mate/);
+  assert.match(appSource, /Relationship rejected and retained in activity history/);
   assert.match(cssSource, /\.work-action-panel/);
+  assert.match(cssSource, /min-height:\s*42px/);
+});

@@ -62,6 +62,20 @@
       "nextGate": "Founder visual review and bounded usability validation"
     },
     {
+      "id": "oppa-mate-service-account",
+      "name": "Oppa Mate service account",
+      "path": "app",
+      "status": "pilot-applied",
+      "uses": [
+        "browserTokens",
+        "logo",
+        "displayTypography",
+        "serviceAccountIdentity"
+      ],
+      "reviewRoute": "/#conversation",
+      "nextGate": "Founder review of the company service-account identity"
+    },
+    {
       "id": "website-starter",
       "name": "Website starter",
       "path": "brand/templates/website",

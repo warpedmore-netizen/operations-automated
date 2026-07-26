@@ -21,6 +21,14 @@
       "status": "draft"
     },
     {
+      "id": "oppa-mate-service-account",
+      "title": "Oppa Mate service-account identity",
+      "question": "Does this make Oppa Mate feel like Operations Automated's recognisable company service-account user without implying authority he has not been given?",
+      "description": "Oppa Mate is the primary company service account. His OM avatar and role descriptor distinguish him from the OA corporate mark while keeping him inside the shared brand system.",
+      "preview": "oppa-service-account",
+      "status": "draft"
+    },
+    {
       "id": "signature-tone",
       "title": "Signature colour and atmosphere",
       "question": "Does the Obsidian, deep-blue and electric-cyan direction feel capable, modern and human enough?",

@@ -8,7 +8,11 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
-> **Proposed Operate pilot:** Workbench build `1.3.0-operate-action-loop-draft` adds a unified **My Work** inbox, explainable **Do Next** order, the initial Operations Bible and a governed action loop. Every open item exposes a working next action; consequential actions retain Jamie's exact confirmation and reason. This is prepared product behaviour, not an approved methodology or release.
+> **Proposed Operate pilot:** Workbench build `1.3.0-operate-action-loop-draft` adds a unified **My Work** inbox, explainable **Do Next** order, the initial Operations Bible and a governed action loop. Every open item exposes a working next action. Oppa Mate suggests names and safe defaults; ordinary approvals use explicit labelled choices, material decisions require an outcome and higher-consequence Risk acceptance retains its stronger confirmation. This is prepared product behaviour, not an approved methodology or release.
+
+> **Proposed operating-surface increment:** Workbench build `1.4.0-workbench-operating-surface-draft` joins governed knowledge, conversation continuity, configurable record and Work Profile definitions, the shared Decision/Approval model and the external-Codex Build Job loop. It is implemented for review on a proposal branch; it is not approved for merge, release, publication or customer use.
+
+> **Proposed usability follow-on:** Workbench build `1.4.1-assisted-capture-actions-draft` lets Oppa Mate suggest an editable name and populated defaults, keeps optional detail collapsed, uses labelled clicks for ordinary Approval and requires a selected outcome for a material Decision. Risk acceptance keeps its stronger typed control. This is prepared for private review only.
 
 Use either one-click entry point:
 
@@ -131,18 +135,27 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 
 ## Implemented MVP boundary
 
+### Oppa Mate identity pilot
+
+Oppa Mate is presented as the primary Operations Automated service-account user rather than a product sub-brand. The pilot uses a controlled **OM** avatar, the full name **Oppa Mate** and the role descriptor **Operations Automated service account**. The identity makes account activity recognisable but does not itself grant access, approval authority or permission to act. It remains draft and has its own item in Brand Review for founder approval, revision or rejection.
+
 - Proposed unified **My Work** inbox across operational records, open change decisions and Brand Review work
+- Search plus Blocked, Waiting on Jamie, Waiting on Codex, Work Profile and record-type filters
 - Proposed explainable 80:20 priority and a five-item **Do Next** list
 - Proposed Cases, Requests and Tasks with optional relationships, journey and product overlays
 - Proposed Operations Bible covering Case, Request, Task, Incident, Problem, Change, Risk, Finding, Improvement, Scenario Test, Decision and Approval
+- Versioned JSON Operations Bible and seven configurable Work Profiles loaded directly by the Workbench
 - Correctable Oppa Mate record-type recommendation from ordinary-language capture
+- One-description capture with an editable suggested name, visible type/profile recommendation and optional detail behind progressive disclosure
+- Separate correctable Work Profile recommendation, retained correction memory and material follow-up questions
 - Working type-and-status actions for every open Operations Bible state, with retained actor, evidence and outcome
-- Exact founder confirmation and rationale before an Approval becomes approved, a Risk becomes accepted, a Change becomes authorised or a material Decision is recorded
+- Safe action notes are suggested where possible; ordinary Approval is a labelled click, Decision outcome is mandatory and Risk acceptance retains exact confirmation
 - Source-backed methodology and Brand Review items route into their existing governed action workflows
 - Direct status changes cannot bypass the governed action route; Cases cannot close while contained work remains open
 - Typed conversations with pre-send context preview
+- Recent-message, rolling-summary and active Case/work continuity, including short follow-ups such as “yes, do that”
 - Local SQLite persistence and restart recovery
-- Status-aware, heading-level repository retrieval
+- Governed knowledge manifest, heading-level SQLite FTS5 retrieval, optional embeddings and exact cited knowledge snapshots
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
 - Proposed human-readable Confluence page planning, founder-confirmed managed-page publication, optimistic conflict checks and version receipts
 - Capability-tier routing and configurable cost gates
@@ -154,6 +167,8 @@ The publication workflow cannot delete, archive or purge a page. It cannot edit 
 - Reopenable conversation history and clearly explained saved feedback
 - Seven-way feedback classification covering corrections, context, memory, evidence, methodology candidates, product candidates and no action
 - Decision Inbox with separate preparation and release decisions
+- Universal Decision and Approval records projected into My Work while specialist histories remain intact
+- First-class Implementation Jobs with a copyable Codex brief, structured return receipt, separate release approval and authorised merge receipt
 - Plain-English decision briefs and a prominent link to the exact draft change on GitHub
 - Bounded implementation instructions requiring a new branch, draft pull request, decision record, changelog, version impact and test evidence
 - Founder-only release confirmation, retained repository references, reindexing and implementation receipts

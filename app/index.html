@@ -25,7 +25,7 @@
       <nav aria-label="Workbench">
         <button class="nav-item active" data-view="my-work"><span class="nav-icon" aria-hidden="true">W</span><span>My work</span></button>
         <button class="nav-item" data-view="operate"><span class="nav-icon" aria-hidden="true">O</span><span>Cases &amp; work</span></button>
-        <button class="nav-item" data-view="conversation"><span class="nav-icon" aria-hidden="true">AI</span><span>Oppa Mate</span></button>
+        <button class="nav-item" data-view="conversation"><span class="nav-icon oppa-nav-icon" aria-hidden="true">OM</span><span>Oppa Mate</span></button>
         <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
@@ -48,7 +48,13 @@
         <p id="server-version-message">The page files and local server are from different Workbench versions.</p>
       </div>
       <header class="topbar">
-        <div><p class="eyebrow" id="workspace-label">Operate workbench</p><h1 id="conversation-title">My work</h1></div>
+        <div class="topbar-heading">
+          <div class="oppa-mate-topbar" id="oppa-mate-topbar" aria-label="Oppa Mate, Operations Automated service account" hidden>
+            <span class="oppa-account-avatar" aria-hidden="true">OM</span>
+            <span><strong>Oppa <b>Mate</b></strong><small>Operations Automated service account</small></span>
+          </div>
+          <p class="eyebrow" id="workspace-label">Operate workbench</p><h1 id="conversation-title">My work</h1>
+        </div>
         <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="ghost" id="new-conversation" type="button">New chat</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
       </header>
 
@@ -71,8 +77,14 @@
             </div>
           </div>
           <div class="work-boundary">
-            <strong>Oppa Mate recommends; you remain in control.</strong>
+            <div class="oppa-boundary-title"><span class="oppa-mate-badge" aria-hidden="true">OM</span><strong>Oppa Mate recommends; you remain in control.</strong></div>
             <p>Priority considers impact, urgency, risk, controls, blocked work, improvement value, age and confidence. A recommendation never creates approval or accepts risk.</p>
+          </div>
+          <div class="work-filters" aria-label="Filter My Work">
+            <label>Find work<input id="work-search" type="search" placeholder="Search title, summary or source"></label>
+            <label>Attention<select id="work-view-filter"><option value="all">All open work</option><option value="blocked">Blocked</option><option value="waiting-jamie">Waiting on Jamie</option><option value="waiting-codex">Waiting on Codex</option></select></label>
+            <label>Work profile<select id="work-profile-filter"><option value="">All work profiles</option></select></label>
+            <label>Record type<select id="work-type-filter"><option value="">All record types</option><option value="case">Case</option><option value="request">Request</option><option value="task">Task</option><option value="incident">Incident</option><option value="problem">Problem</option><option value="change">Change</option><option value="risk">Risk</option><option value="finding">Finding</option><option value="decision">Decision</option><option value="approval">Approval</option><option value="improvement">Improvement</option><option value="scenario-test">Scenario test</option></select></label>
           </div>
           <div class="work-summary" id="work-summary" aria-label="My work summary">
             <div><span>Open attention</span><strong>—</strong></div>
@@ -134,7 +146,10 @@
       <section class="view conversation-view" id="conversation-view" hidden>
         <div class="thread-column">
           <div class="welcome" id="welcome">
-            <img class="welcome-logo" src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="">
+            <div class="oppa-mate-lockup oppa-mate-welcome" aria-label="Oppa Mate, Operations Automated service account">
+              <span class="oppa-account-avatar" aria-hidden="true">OM</span>
+              <span><strong>Oppa <b>Mate</b></strong><small>Operations Automated service account</small></span>
+            </div>
             <p class="eyebrow">Challenge · defend · develop</p>
             <h2>Develop the knowledge, not the tooling.</h2>
             <p>Ask a question, defend a position, challenge the methodology or review a proposed change. The Workbench keeps the readable answer and human decision first; evidence and technical trace remain available without dominating the experience.</p>
@@ -447,6 +462,9 @@
             <article><span>10</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
             <article><span>11</span><div><h3>Use the Workbench from a phone</h3><p>The private route keeps the local server on this computer and uses Tailscale HTTPS between authorised devices. The Workbench, computer and Tailscale must all remain running. Operational activation does not by itself record governance approval.</p></div></article>
             <article><span>12</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. A revision or rejection automatically enters the founder-feedback queue; Codex can prepare a response for your re-review, while overall brand approval remains a separate explicit decision.</p></div></article>
+            <article><span>13</span><div><h3>Continue from the work, not from memory</h3><p>Select <strong>Discuss with Oppa Mate</strong> on a work item. The conversation retains that record, its Case, recent messages, older summary, linked controls and corrections, so a short follow-up can be understood in context.</p></div></article>
+            <article><span>14</span><div><h3>Prepare a real Codex build handoff</h3><p>After a Change is explicitly approved for preparation, select <strong>Prepare Codex build</strong>. Copy the complete brief into Codex, then return the structured branch, draft PR, commit, files, tests, validation, risks and version impact receipt.</p></div></article>
+            <article><span>15</span><div><h3>Keep release and publication separate</h3><p>A returned build becomes <strong>Waiting for review</strong>. Only Jamie's exact <strong>Approve release</strong> decision authorises the reviewed commit for external merge. An authorised merge receipt reindexes Git; any Confluence update still requires its own reviewed publication decision.</p></div></article>
           </div>
           <div class="guide-reference">
             <article><h3>Budgets</h3><p>Soft limits warn; hard limits block paid API calls. Local records and retrieval remain usable. Limits can be changed in Settings.</p></article>
@@ -462,21 +480,22 @@
   <dialog id="work-capture-dialog">
     <form id="work-capture-form">
       <div class="dialog-head"><div><p class="eyebrow">Oppa Mate assisted capture</p><h2>What needs attention?</h2></div><button type="button" data-close-work-capture aria-label="Close">&times;</button></div>
-      <p class="capture-intro">Use ordinary language. Oppa Mate will recommend a record type when you leave classification on automatic, and you can correct it at any time.</p>
-      <label class="capture-wide">Short title<input name="title" required maxlength="160" placeholder="For example: Customers cannot complete identity checks"></label>
-      <label class="capture-wide">What is happening or needed?<textarea name="summary" rows="4" placeholder="Include the intended outcome, who is affected and any known deadline or exposure."></textarea></label>
-      <div class="capture-grid">
-        <label>Record type<select name="recordType" id="capture-record-type"><option value="">Let Oppa Mate recommend</option></select></label>
-        <label>Related case<select name="caseId" id="capture-case"><option value="">No case yet</option></select></label>
-        <label>Parent work<select name="parentId" id="capture-parent"><option value="">No parent work</option></select></label>
-        <label>Impact<select name="impact"><option value="2">Low</option><option value="3" selected>Medium</option><option value="4">High</option><option value="5">Critical</option></select></label>
-        <label>Urgency<select name="urgency"><option value="1">Low</option><option value="2" selected>Normal</option><option value="4">High</option><option value="5">Immediate</option></select></label>
-        <label>Due date<input name="dueAt" type="date"></label>
-        <label>Owner<input name="owner" value="Jamie Peppard"></label>
-      </div>
-      <details class="capture-priority-details">
-        <summary>Optional risk and priority detail</summary>
+      <p class="capture-intro">Describe the need in ordinary language. Oppa Mate will suggest the name, work type, profile and starting priority; change only what needs correcting.</p>
+      <label class="capture-wide">What is happening or needed?<textarea name="summary" rows="4" required placeholder="For example: approve a bounded private pilot of the governed action loop"></textarea></label>
+      <label class="capture-wide">Name <small>Suggested automatically; edit only if useful</small><input name="title" maxlength="160" placeholder="Oppa Mate will suggest a clear name"></label>
+      <div class="capture-suggestion" id="capture-suggestion" aria-live="polite"><strong>Start with the description.</strong><span>The suggestions will appear here before you capture the work.</span></div>
+      <details class="capture-priority-details capture-optional-details">
+        <summary>Change suggestions or add optional detail</summary>
+        <p>These values are already populated. Open this only when a recommendation needs correcting or the extra context matters.</p>
         <div class="capture-grid">
+          <label>Record type<select name="recordType" id="capture-record-type"><option value="">Let Oppa Mate recommend</option></select></label>
+          <label>Work profile<select name="workProfile" id="capture-work-profile"><option value="">Let Oppa Mate recommend</option></select></label>
+          <label>Related case<select name="caseId" id="capture-case"><option value="">No case yet</option></select></label>
+          <label>Parent work<select name="parentId" id="capture-parent"><option value="">No parent work</option></select></label>
+          <label>Impact<select name="impact"><option value="2">Low</option><option value="3" selected>Medium</option><option value="4">High</option><option value="5">Critical</option></select></label>
+          <label>Urgency<select name="urgency"><option value="1">Low</option><option value="2" selected>Normal</option><option value="4">High</option><option value="5">Immediate</option></select></label>
+          <label>Due date<input name="dueAt" type="date"></label>
+          <label>Owner<input name="owner" value="Jamie Peppard"></label>
           <label>Risk exposure<select name="riskExposure"><option value="1">Low</option><option value="2" selected>Limited</option><option value="3">Material</option><option value="4">High</option><option value="5">Critical</option></select></label>
           <label>Control implications<select name="controlImplication"><option value="1" selected>None known</option><option value="3">Material</option><option value="5">Critical</option></select></label>
           <label>Improvement value<select name="strategicValue"><option value="1">Low</option><option value="2" selected>Useful</option><option value="4">High</option><option value="5">Transformative</option></select></label>

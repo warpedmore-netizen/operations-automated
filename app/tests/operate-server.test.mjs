@@ -48,6 +48,21 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(bible.payload.methodologyBaselineChanged, false);
     assert.match(bible.payload.authority, /cannot create approval/i);
 
+    const recommendation = await call("/api/operate/recommendation", {
+      method: "POST",
+      body: { summary: "approve a bounded private pilot of the governed action loop" }
+    });
+    assert.equal(recommendation.response.ok, true);
+    assert.equal(recommendation.payload.recordType.selected, "approval");
+    assert.equal(recommendation.payload.suggestedTitle, "Approve a bounded private pilot of the governed action loop");
+    assert.equal(recommendation.payload.defaults.owner, "Jamie Peppard");
+
+    const autoNamedApproval = await create({
+      summary: "a bounded private pilot of the governed action loop",
+      recordType: "approval"
+    });
+    assert.equal(autoNamedApproval.record.title, "Approve a bounded private pilot of the governed action loop");
+
     const caseResult = await create({
       title: "Restore customer identity verification",
       summary: "Several related actions contribute to restoring the customer outcome.",
@@ -211,6 +226,23 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(explicitApproval.response.ok, true);
     assert.equal(explicitApproval.payload.record.approvalState, "human-confirmed");
     assert.equal(explicitApproval.payload.decisionRecorded, true);
+
+    const decisionResult = await create({ title: "Decide the bounded pilot route", recordType: "decision" });
+    await call(`/api/operate/records/${decisionResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "prepare-decision", actor: "Jamie Peppard", note: "Options and boundary prepared." }
+    });
+    const decisionWithoutChoice = await call(`/api/operate/records/${decisionResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "record-decision", actor: "Jamie Peppard", confirmation: "Record decision", note: "Evidence reviewed." }
+    });
+    assert.equal(decisionWithoutChoice.response.status, 400);
+    const decisionWithChoice = await call(`/api/operate/records/${decisionResult.record.id}/actions`, {
+      method: "POST",
+      body: { actionId: "record-decision", actor: "Jamie Peppard", confirmation: "Record decision", choice: "revise", note: "Revise the proposed scope before proceeding." }
+    });
+    assert.equal(decisionWithChoice.response.ok, true);
+    assert.ok(decisionWithChoice.payload.record.activity.some((item) => item.detail.choice === "revise"));
 
     const riskResult = await create({ title: "Loss of recovery evidence", recordType: "risk" });
     const assessingRisk = await call(`/api/operate/records/${riskResult.record.id}/actions`, {

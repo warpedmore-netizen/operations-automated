@@ -1,10 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
-  isClosedStatus, OPERATIONS_BIBLE, priorityFor, recommendRecordType,
-  sortWorkItems, suggestOperateLinks, summariseOperateNetwork, validateOperateRecord
+  actionsForOperateRecord, isClosedStatus, OPERATIONS_BIBLE, priorityFor, recommendRecordType,
+  sortWorkItems, suggestOperateLinks, suggestOperateTitle, summariseOperateNetwork, validateOperateRecord
 } from "../operate-model.mjs";
-import { actionsForOperateRecord } from "../operate-actions.mjs";
 
 test("the initial Operations Bible covers the requested operational records in plain language", () => {
   const types = new Set(OPERATIONS_BIBLE.map((entry) => entry.type));
@@ -30,6 +29,18 @@ test("Oppa Mate recommends a correctable record type from ordinary language", ()
   });
   assert.equal(selected.recordType, "request");
   assert.equal(selected.recommendation.accepted, true);
+});
+
+test("Oppa Mate supplies a useful editable name when the user provides only the need", () => {
+  assert.equal(
+    suggestOperateTitle("a bounded private pilot of the governed action loop", "approval"),
+    "Approve a bounded private pilot of the governed action loop"
+  );
+  const approval = validateOperateRecord({
+    summary: "Approve a bounded private pilot of the governed action loop",
+    recordType: "approval"
+  });
+  assert.equal(approval.title, "Approve a bounded private pilot of the governed action loop");
 });
 
 test("priority remains impact-led while surfacing deadlines, risk and blocked work", () => {
@@ -89,7 +100,15 @@ test("every open Operations Bible state has a working governed action", () => {
     .find((item) => item.id === "approve");
   assert.equal(approval.confirmation, "Approve");
   assert.equal(approval.noteRequired, true);
+  assert.match(approval.suggestedNote, /recorded scope/i);
+  assert.equal(approval.typedConfirmation, false);
   assert.equal(approval.decision, true);
+  const decision = actionsForOperateRecord({ recordType: "decision", status: "ready" })
+    .find((item) => item.id === "record-decision");
+  assert.deepEqual(decision.choices.map((item) => item.value), ["proceed", "revise", "do-not-proceed"]);
+  const risk = actionsForOperateRecord({ recordType: "risk", status: "open" })
+    .find((item) => item.id === "accept-risk");
+  assert.equal(risk.typedConfirmation, true);
 });
 
 test("a Case cannot close while contained work remains open", () => {

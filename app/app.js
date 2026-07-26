@@ -28,9 +28,12 @@ const state = {
   brandReview: null,
   myWork: null,
   workOrder: "recommended",
+  workFilters: { view: "all", search: "", profile: "", recordType: "" },
   selectedWorkItemId: null,
+  selectedImplementationJob: null,
   operateRecords: [],
   operationsBible: [],
+  workProfiles: [],
   operateNetwork: null,
   currentOperateRecord: null,
   serverCompatible: true
@@ -108,7 +111,7 @@ function workItemMarkup(item, compact = false) {
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
       ${compact ? "" : `<small>${escapeHtml(item.summary || "Open the underlying record for context.")}</small>`}
-      <span class="work-item-next">Next: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` ? blocked ? ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
+      <span class="work-item-next">Next: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` · blocked — ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
       <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
     </span>
     <span class="priority-score priority-${escapeHtml(item.priority?.band || "planned")}"><b>${Number(item.priority?.score || 0)}</b><small>${item.priority?.overdue ? "Overdue" : reasons[0] || "Priority"}</small></span>
@@ -135,57 +138,74 @@ function recordAsWorkItem(record) {
     nextAction: record.nextAction,
     decisionRequired: Boolean(record.nextAction?.decision),
     priority: record.priority,
-    approvalState: record.approvalState
+    approvalState: record.approvalState,
+    workProfile: record.workProfile,
+    workProfileLabel: record.profile?.label || record.workProfile
   };
 }
 
 function activitySummary(activity) {
   const detail = activity.detail || {};
   if (activity.action === "workflow.action-completed") {
-    return `${detail.actionLabel || "Action completed"}: ${statusLabel(detail.statusBefore)} to ${statusLabel(detail.statusAfter)}${detail.note ? ` ? ${detail.note}` : ""}`;
+    return `${detail.actionLabel || "Action completed"}: ${statusLabel(detail.statusBefore)} to ${statusLabel(detail.statusAfter)}${detail.note ? ` — ${detail.note}` : ""}`;
   }
   if (activity.action === "record.created") return "Work record created.";
   if (activity.action === "relationship.confirmed") return "Related work confirmed.";
-  if (activity.action === "relationship.rejected") return `Relationship rejected${detail.reason ? ` ? ${detail.reason}` : ""}.`;
+  if (activity.action === "relationship.rejected") return `Relationship rejected${detail.reason ? ` — ${detail.reason}` : ""}.`;
   return activity.action.replaceAll(".", " ").replaceAll("-", " ");
 }
 
 function operateActionMarkup(record) {
   const actions = record.actions || [];
+  if (record.sourceBacked && record.nextAction) {
+    return `<section class="work-action-panel">
+      <div class="work-action-heading"><span>Governed next action</span><h4>${escapeHtml(record.nextAction.label)}</h4><p>${escapeHtml(record.nextAction.outcome)}</p></div>
+      <button class="primary" data-open-work-source="${escapeHtml(record.nextAction.routeView)}" data-source-id="${escapeHtml(record.sourceId)}">${escapeHtml(record.nextAction.label)}</button>
+      <p class="work-action-authority">The specialist history remains intact. This shared record routes to it instead of creating a second decision.</p>
+    </section>`;
+  }
   if (!actions.length) {
     return `<section class="work-action-panel work-action-complete"><span>Current outcome</span><h4>No further action is due</h4><p>This record is complete or terminal. Its evidence and relationships remain available.</p></section>`;
   }
   const nextAction = record.nextAction || actions[0];
   const noteRequired = actions.some((item) => item.noteRequired);
-  const confirmations = [...new Set(actions.map((item) => item.confirmation).filter(Boolean))];
+  const confirmations = [...new Set(actions.filter((item) => item.typedConfirmation).map((item) => item.confirmation).filter(Boolean))];
+  const choiceAction = actions.find((item) => item.choices?.length);
+  const suggestedNote = nextAction.suggestedNote || "";
   return `<section class="work-action-panel">
     <div class="work-action-heading"><span>Governed next action</span><h4>${escapeHtml(nextAction.label)}</h4><p>${escapeHtml(nextAction.outcome)}</p></div>
-    <label class="work-action-note">Evidence, outcome or reason
-      <textarea rows="3" maxlength="2000" data-operate-action-note placeholder="${noteRequired ? "Required when the selected action is consequential or asks for a reason." : "Optional context for the retained activity history."}"></textarea>
+    <label class="work-action-note">Decision note <small>${suggestedNote ? "Suggested for the recommended action; edit it if it does not reflect the outcome." : noteRequired ? "Required only when the selected action needs evidence or a reason." : "Optional."}</small>
+      <textarea rows="3" maxlength="2000" data-operate-action-note data-user-edited="false" placeholder="${noteRequired ? "Add the evidence, outcome or reason that is not already recorded." : "Optional context for the retained activity history."}">${escapeHtml(suggestedNote)}</textarea>
     </label>
+    ${choiceAction ? `<label class="work-action-choice">Decision outcome <small>Choose one option to enable ${escapeHtml(choiceAction.label)}.</small>
+      <select data-operate-action-choice><option value="">Choose an outcome</option>${choiceAction.choices.map((choice) => `<option value="${escapeHtml(choice.value)}">${escapeHtml(choice.label)}</option>`).join("")}</select>
+    </label>` : ""}
     ${confirmations.length ? `<label class="work-action-confirmation">Exact confirmation
       <input maxlength="100" data-operate-action-confirmation autocomplete="off" placeholder="Type ${escapeHtml(confirmations.join(" or "))} for the consequential action">
-      <small>The action remains unavailable unless the wording matches exactly.</small>
+      <small>Typing remains necessary only for higher-consequence actions such as accepting risk.</small>
     </label>` : ""}
     <div class="work-action-buttons">${actions.map((item) => `<button
       class="${item.style === "primary" ? "primary" : item.style === "danger" ? "danger-outline" : "ghost"}"
       data-operate-action="${escapeHtml(item.id)}"
-      ${item.disabled ? "disabled" : ""}
+      ${item.choices?.length ? 'data-choice-required="true"' : ""}
+      data-action-blocked="${item.disabled ? "true" : "false"}"
+      ${item.disabled || item.choices?.length ? "disabled" : ""}
       title="${escapeHtml(item.unavailableReason || item.outcome)}">${escapeHtml(item.label)}</button>`).join("")}</div>
     ${actions.filter((item) => item.disabled).map((item) => `<p class="work-action-blocked"><strong>${escapeHtml(item.label)} is blocked.</strong> ${escapeHtml(item.unavailableReason)}</p>`).join("")}
-    <p class="work-action-authority">${nextAction.authority === "founder" ? "This action requires Jamie Peppard?s explicit authority." : "This action records progress; it does not create wider approval."}</p>
+    <p class="work-action-authority">${nextAction.authority === "founder" ? "This action requires Jamie Peppard’s explicit authority." : "This action records progress; it does not create wider approval."}</p>
   </section>`;
 }
 
 function operateActivityMarkup(record) {
   const activities = (record.activity || []).slice(0, 8);
   if (!activities.length) return "";
-  return `<details class="work-activity"><summary>Recent activity</summary><ol>${activities.map((activity) => `<li><span>${escapeHtml(activitySummary(activity))}</span><small>${escapeHtml(activity.actor)} ? ${escapeHtml(formatDate(activity.created_at))}</small></li>`).join("")}</ol></details>`;
+  return `<details class="work-activity"><summary>Recent activity</summary><ol>${activities.map((activity) => `<li><span>${escapeHtml(activitySummary(activity))}</span><small>${escapeHtml(activity.actor)} · ${escapeHtml(formatDate(activity.created_at))}</small></li>`).join("")}</ol></details>`;
 }
 
 function renderWorkDetail(item, record = null) {
   state.selectedWorkItemId = item?.id || null;
   state.currentOperateRecord = record;
+  state.selectedImplementationJob = null;
   if (!item) {
     $("#work-detail").innerHTML = '<div class="work-detail-empty"><span aria-hidden="true">↗</span><strong>Select an item</strong><p>The underlying record, priority explanation, authority boundary and next action will appear here.</p></div>';
     return;
@@ -203,11 +223,14 @@ function renderWorkDetail(item, record = null) {
       <div><dt>Status</dt><dd>${escapeHtml(statusLabel(record.status))}</dd></div>
       <div><dt>Due</dt><dd>${escapeHtml(formatDateOnly(record.dueAt))}</dd></div>
       <div><dt>Automation</dt><dd>${escapeHtml(record.automationMode || "manual")}</dd></div>
+      ${record.profile ? `<div><dt>Work profile</dt><dd>${escapeHtml(record.profile.label)}</dd></div>` : ""}
       ${record.case ? `<div><dt>Case</dt><dd>${escapeHtml(record.case.title)}</dd></div>` : ""}
       ${record.parent ? `<div><dt>Parent work</dt><dd>${escapeHtml(record.parent.title)}</dd></div>` : ""}
       ${record.journey ? `<div><dt>Journey</dt><dd>${escapeHtml(record.journey)}${record.journeyStage ? ` · ${escapeHtml(record.journeyStage)}` : ""}</dd></div>` : ""}
     </dl>
     ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
+    ${record.profile ? `<details class="why-recommended"><summary>Why this work profile</summary><p>${escapeHtml(record.profile.purpose)}</p><strong>Questions Oppa Mate may ask</strong><ul>${(record.profile.additionalQuestions || []).map((question) => `<li>${escapeHtml(question)}</li>`).join("")}</ul></details>` : ""}
+    ${record.knowledgeSnapshot?.sources?.length ? `<details class="why-recommended"><summary>Why recommended and source snapshot</summary><p>${escapeHtml(record.knowledgeSnapshot.explanation)}</p><ul>${record.knowledgeSnapshot.sources.map((source) => `<li><strong>${escapeHtml(source.title || source.path)}</strong><span>${escapeHtml(source.status)} · ${source.normative ? "approved normative" : "evidence only"} · ${escapeHtml(source.heading || "document")}</span><code>${escapeHtml(String(source.hash || "").slice(0, 12))}</code></li>`).join("")}</ul></details>` : ""}
     ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong></button>`).join("")}</section>` : ""}
     ${record.links?.length ? `<section class="work-relations"><h4>Relationships</h4>${record.links.map((link) => {
       const otherTitle = link.fromRecordId === record.id ? link.to_title : link.from_title;
@@ -218,6 +241,8 @@ function renderWorkDetail(item, record = null) {
     }).join("")}</section>` : ""}
     ${record.linkSuggestions?.length ? `<section class="link-suggestions"><div><h4>Oppa Mate sees possible connections</h4><p>These are inferences from record types and shared context. Accept only when the relationship is operationally true.</p></div>${record.linkSuggestions.map((suggestion, index) => `<article><span class="work-type work-type-${workTypeClass(suggestion.otherType)}">${escapeHtml(suggestion.otherType)}</span><strong>${escapeHtml(suggestion.otherTitle)}</strong><p>${escapeHtml(suggestion.rationale)}</p><button class="ghost" data-accept-link-suggestion="${index}">Confirm link</button></article>`).join("")}</section>` : ""}
     ${operateActionMarkup(record)}
+    ${record.buildReady ? `<button class="primary prepare-build-action" data-prepare-build="${record.id}">Prepare Codex build</button>` : ""}
+    <button class="ghost discuss-work-action" data-discuss-operate-record="${record.id}">Discuss with Oppa Mate</button>
     <button class="ghost link-work-action" data-link-operate-record="${record.id}">Link related work</button>
     ${operateActivityMarkup(record)}
   ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
@@ -235,12 +260,116 @@ function renderWorkDetail(item, record = null) {
   $$(".work-item").forEach((element) => element.classList.toggle("current", element.dataset.workItemId === item.id));
 }
 
+function linesMarkup(values) {
+  return (values || []).map((value) => `<li>${escapeHtml(value)}</li>`).join("");
+}
+
+function implementationReceiptMarkup(job) {
+  if (job.status === "waiting-on-codex") {
+    return `<details class="build-receipt-panel">
+      <summary>Codex: submit implementation receipt</summary>
+      <form data-build-receipt="${job.id}">
+        <label>Branch<input name="branchName" required placeholder="codex/bounded-change"></label>
+        <label>Draft pull request URL<input name="pullRequestUrl" type="url" required placeholder="https://github.com/owner/repository/pull/123"></label>
+        <label>Commit SHA<input name="commitSha" required minlength="7"></label>
+        <label>Files changed, one per line<textarea name="filesChanged" rows="4" required></textarea></label>
+        <label>Tests run, one per line<textarea name="tests" rows="4" required></textarea></label>
+        <label>Validation evidence, one per line<textarea name="validation" rows="4" required></textarea></label>
+        <label>Unresolved risks, one per line<textarea name="unresolvedRisks" rows="3"></textarea></label>
+        <label>Version impact<textarea name="versionImpact" rows="2" required></textarea></label>
+        <button class="primary" type="submit">Submit receipt for review</button>
+      </form>
+    </details>`;
+  }
+  if (job.status === "waiting-for-review") {
+    return `<section class="release-decision-panel">
+      <span>Separate release approval</span>
+      <h4>Jamie decides whether this exact commit may merge</h4>
+      <label>Decision reason<textarea data-release-reason rows="3" placeholder="Required for request changes, reject or defer."></textarea></label>
+      <label>Exact confirmation<input data-release-confirmation autocomplete="off" placeholder="Type Approve release"></label>
+      <div class="work-action-buttons">
+        <button class="primary" data-build-release-action="approve">Approve release</button>
+        <button class="ghost" data-build-release-action="request-changes">Request changes</button>
+        <button class="danger-outline" data-build-release-action="reject">Reject</button>
+        <button class="ghost" data-build-release-action="defer">Defer</button>
+      </div>
+      <p>Approval authorises only ${escapeHtml(job.commitSha)} in the linked pull request. The Workbench does not merge it.</p>
+    </section>`;
+  }
+  if (job.status === "release-authorised") {
+    return `<section class="release-decision-panel">
+      <span>Release authorised</span>
+      <h4>The exact reviewed commit may now be merged externally</h4>
+      <p>${escapeHtml(job.releaseApproval?.authorised_transition || "")}</p>
+      <form data-merge-receipt="${job.id}">
+        <label>Merged commit SHA<input name="mergedCommitSha" required minlength="7"></label>
+        <label>GitHub merge or pull-request URL<input name="mergeUrl" type="url" value="${escapeHtml(job.pullRequestUrl || "")}" required></label>
+        <button class="primary" type="submit">Record authorised merge receipt</button>
+      </form>
+    </section>`;
+  }
+  return "";
+}
+
+function renderImplementationJobDetail(item, job) {
+  state.selectedWorkItemId = item.id;
+  state.currentOperateRecord = null;
+  state.selectedImplementationJob = job;
+  const approval = job.releaseApproval;
+  $("#work-detail").innerHTML = `
+    <div class="work-detail-heading">
+      <div><span class="work-type work-type-change">Build job</span><h3>${escapeHtml(job.title)}</h3></div>
+      <span class="status-pill status-${workTypeClass(job.status)}">${escapeHtml(statusLabel(job.status))}</span>
+    </div>
+    <p class="work-detail-summary">${escapeHtml(job.approvedRequirement)}</p>
+    <dl class="work-detail-facts">
+      <div><dt>Owner now</dt><dd>${job.status === "waiting-on-codex" || job.status === "release-authorised" ? "Codex" : "Jamie Peppard"}</dd></div>
+      <div><dt>Change</dt><dd>${escapeHtml(job.changeId)}</dd></div>
+      <div><dt>Branch</dt><dd>${escapeHtml(job.branchName || "Not returned yet")}</dd></div>
+      <div><dt>Commit</dt><dd>${escapeHtml(job.commitSha || "Not returned yet")}</dd></div>
+    </dl>
+    <div class="record-boundary"><strong>Authority boundary</strong><p>${escapeHtml(job.authorityBoundary)}</p></div>
+    <details class="implementation-brief" open>
+      <summary>Complete Codex handoff brief</summary>
+      <textarea readonly rows="18">${escapeHtml(job.briefText)}</textarea>
+      <button class="ghost" type="button" data-copy-build-brief>Copy brief</button>
+    </details>
+    ${job.pullRequestUrl ? `<p><a class="primary text-link" href="${escapeHtml(job.pullRequestUrl)}" target="_blank" rel="noreferrer">Open draft pull request</a></p>` : ""}
+    ${job.filesChanged?.length ? `<details class="build-evidence" open><summary>Implementation receipt</summary>
+      <h4>Files changed</h4><ul>${linesMarkup(job.filesChanged)}</ul>
+      <h4>Tests</h4><ul>${linesMarkup(job.tests)}</ul>
+      <h4>Validation</h4><ul>${linesMarkup(job.validation)}</ul>
+      <h4>Unresolved risks</h4>${job.unresolvedRisks.length ? `<ul>${linesMarkup(job.unresolvedRisks)}</ul>` : "<p>None recorded.</p>"}
+      <h4>Version impact</h4><p>${escapeHtml(job.versionImpact)}</p>
+    </details>` : ""}
+    ${approval ? `<details class="universal-control" open><summary>Universal approval record</summary>
+      <dl>
+        <div><dt>Scope</dt><dd>${escapeHtml(approval.scope)}</dd></div>
+        <div><dt>Exact decision</dt><dd>${escapeHtml(approval.exact_decision)}</dd></div>
+        <div><dt>Approver</dt><dd>${escapeHtml(approval.approver)}</dd></div>
+        <div><dt>Recommendation</dt><dd>${escapeHtml(approval.recommendation)}</dd></div>
+        <div><dt>Trade-offs</dt><dd>${escapeHtml(approval.trade_offs || "None recorded")}</dd></div>
+        <div><dt>Conditions</dt><dd>${escapeHtml(approval.conditions || "Pending decision")}</dd></div>
+        <div><dt>Result</dt><dd>${escapeHtml(statusLabel(approval.result))}</dd></div>
+        <div><dt>What remains unauthorised</dt><dd>${escapeHtml((approval.remainsUnauthorised || []).join(", "))}</dd></div>
+      </dl>
+    </details>` : ""}
+    ${implementationReceiptMarkup(job)}
+    <button class="ghost discuss-work-action" data-discuss-operate-record="${escapeHtml(job.changeId)}">Discuss with Oppa Mate</button>
+    <p class="approval-boundary">A complete receipt proves what was prepared; it does not approve release, merge or publication.</p>
+  `;
+  $$(".work-item").forEach((element) => element.classList.toggle("current", element.dataset.workItemId === item.id));
+}
+
 async function openWorkItem(itemId) {
   const item = state.myWork?.items.find((candidate) => candidate.id === itemId);
   if (!item) return;
   if (item.sourceType === "operate-record") {
     const value = await request(`/api/operate/records/${encodeURIComponent(item.sourceId)}`);
     renderWorkDetail(item, value.record);
+  } else if (item.sourceType === "implementation-job") {
+    const value = await request(`/api/implementation-jobs/${encodeURIComponent(item.sourceId)}`);
+    renderImplementationJobDetail(item, value.job);
   } else {
     renderWorkDetail(item);
   }
@@ -272,7 +401,14 @@ function renderMyWork(value) {
 async function loadMyWork(order = state.workOrder) {
   state.workOrder = order;
   $("#work-order").value = order;
-  renderMyWork(await request(`/api/my-work?order=${encodeURIComponent(order)}`));
+  const query = new URLSearchParams({
+    order,
+    view: state.workFilters.view,
+    search: state.workFilters.search,
+    profile: state.workFilters.profile,
+    type: state.workFilters.recordType
+  });
+  renderMyWork(await request(`/api/my-work?${query}`));
 }
 
 function populateCaptureSelectors() {
@@ -281,6 +417,11 @@ function populateCaptureSelectors() {
   typeSelect.innerHTML = '<option value="">Let Oppa Mate recommend</option>'
     + state.operationsBible.map((entry) => `<option value="${escapeHtml(entry.type)}">${escapeHtml(entry.label)}</option>`).join("");
   if ([...typeSelect.options].some((option) => option.value === selectedType)) typeSelect.value = selectedType;
+  const profileSelect = $("#capture-work-profile");
+  const selectedProfile = profileSelect.value;
+  profileSelect.innerHTML = '<option value="">Let Oppa Mate recommend</option>'
+    + state.workProfiles.map((profile) => `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.label)}</option>`).join("");
+  if ([...profileSelect.options].some((option) => option.value === selectedProfile)) profileSelect.value = selectedProfile;
   const caseSelect = $("#capture-case");
   const selectedCase = caseSelect.value;
   const cases = state.operateRecords.filter((record) => record.recordType === "case" && !["closed"].includes(record.status));
@@ -294,6 +435,54 @@ function populateCaptureSelectors() {
       .filter((record) => !["closed", "done", "cancelled", "completed", "rejected"].includes(record.status))
       .map((record) => `<option value="${record.id}">${escapeHtml(record.bible?.label || record.recordType)} · ${escapeHtml(record.title)}</option>`).join("");
   if ([...parentSelect.options].some((option) => option.value === selectedParent)) parentSelect.value = selectedParent;
+}
+
+let captureSuggestionTimer = null;
+let captureSuggestionRequest = 0;
+
+function resetCaptureSuggestion() {
+  const suggestion = $("#capture-suggestion");
+  suggestion.innerHTML = "<strong>Start with the description.</strong><span>The suggestions will appear here before you capture the work.</span>";
+  suggestion.classList.remove("ready");
+}
+
+async function refreshCaptureSuggestion() {
+  const form = $("#work-capture-form");
+  const summary = form.elements.summary.value.trim();
+  const title = form.elements.title.value.trim();
+  if (`${title} ${summary}`.trim().length < 3) {
+    resetCaptureSuggestion();
+    return;
+  }
+  const requestNumber = ++captureSuggestionRequest;
+  try {
+    const value = await request("/api/operate/recommendation", {
+      method: "POST",
+      body: JSON.stringify({
+        title,
+        summary,
+        recordType: form.elements.recordType.value,
+        workProfile: form.elements.workProfile.value
+      })
+    });
+    if (requestNumber !== captureSuggestionRequest) return;
+    const titleInput = form.elements.title;
+    if (titleInput.dataset.userEdited !== "true" && value.suggestedTitle) {
+      titleInput.value = value.suggestedTitle;
+      titleInput.dataset.suggestedValue = value.suggestedTitle;
+    }
+    const suggestion = $("#capture-suggestion");
+    suggestion.innerHTML = `<strong>Suggested: ${escapeHtml(value.recordType.label)} &middot; ${escapeHtml(value.workProfile.label)}</strong><span>${escapeHtml(value.recordType.reason)} Change either suggestion only if the context says it is wrong.</span>`;
+    suggestion.classList.add("ready");
+  } catch (error) {
+    if (requestNumber !== captureSuggestionRequest) return;
+    $("#capture-suggestion").innerHTML = `<strong>Suggestions are temporarily unavailable.</strong><span>${escapeHtml(error.message)} You can still capture the work normally.</span>`;
+  }
+}
+
+function scheduleCaptureSuggestion() {
+  clearTimeout(captureSuggestionTimer);
+  captureSuggestionTimer = setTimeout(() => refreshCaptureSuggestion(), 220);
 }
 
 function renderOperateNetwork() {
@@ -344,14 +533,21 @@ function renderOperate() {
 }
 
 async function loadOperate() {
-  const [recordsValue, bibleValue, networkValue] = await Promise.all([
+  const [recordsValue, bibleValue, networkValue, profileValue] = await Promise.all([
     request("/api/operate/records"),
     request("/api/operate/bible"),
-    request("/api/operate/network")
+    request("/api/operate/network"),
+    request("/api/work-profiles")
   ]);
   state.operateRecords = recordsValue.records;
   state.operationsBible = bibleValue.entries;
   state.operateNetwork = networkValue.network;
+  state.workProfiles = profileValue.profiles;
+  const profileFilter = $("#work-profile-filter");
+  const retainedProfile = profileFilter.value;
+  profileFilter.innerHTML = '<option value="">All work profiles</option>'
+    + state.workProfiles.map((profile) => `<option value="${escapeHtml(profile.id)}">${escapeHtml(profile.label)}</option>`).join("");
+  profileFilter.value = retainedProfile;
   renderOperate();
 }
 
@@ -364,7 +560,8 @@ async function openOperateRecord(recordId) {
 function openWorkCapture() {
   populateCaptureSelectors();
   $("#work-capture-dialog").showModal();
-  $("#work-capture-form [name=title]").focus();
+  $("#work-capture-form [name=summary]").focus();
+  scheduleCaptureSuggestion();
 }
 
 function openLinkCapture(record) {
@@ -454,16 +651,17 @@ function userFacingAnswer(value) {
 }
 
 function technicalDetails(message, sources) {
-  const uniqueSources = [...new Map(sources.map((source) => [`${source.path}:${source.hash}`, source])).values()];
+  const uniqueSources = [...new Map(sources.map((source) => [`${source.path}:${source.heading || ""}:${source.hash}`, source])).values()];
   const execution = message.metadata?.localSynthesis ? "Local fallback" : "Connected AI";
   if (!uniqueSources.length && !message.metadata) return "";
   return `<details class="answer-details">
-    <summary>Behind this answer</summary>
+    <summary>Why Oppa Mate recommended this</summary>
+    ${message.metadata?.whyRecommended ? `<p>${escapeHtml(message.metadata.whyRecommended)}</p>` : ""}
     <div class="answer-detail-grid">
       <div><span>Answer method</span><strong>${execution}</strong></div>
       <div><span>Internal references</span><strong>${uniqueSources.length}</strong></div>
     </div>
-    ${uniqueSources.length ? `<ul>${uniqueSources.map((source) => `<li><span>${escapeHtml(source.path)}</span><em class="${source.status === "approved" ? "approved" : "proposed"}">${escapeHtml(source.status)}</em></li>`).join("")}</ul>` : "<p>No internal reference was attached to this answer.</p>"}
+    ${uniqueSources.length ? `<ul>${uniqueSources.map((source) => `<li><span><strong>${escapeHtml(source.title || source.path)}</strong><small>${escapeHtml(source.heading || "Document context")} · ${escapeHtml(String(source.hash || "").slice(0, 12))}</small></span><em class="${source.normative ? "approved" : "proposed"}">${source.normative ? "approved normative" : `${escapeHtml(source.status)} evidence`}</em></li>`).join("")}</ul>` : "<p>No internal reference was attached to this answer.</p>"}
   </details>`;
 }
 
@@ -474,7 +672,7 @@ function renderConversation() {
   $("#messages").innerHTML = messages.map((message) => {
     const sources = message.metadata?.sources || [];
     return `<article class="message ${message.role}">
-      <div class="message-role">${message.role === "user" ? "You" : "OA"}</div>
+      <div class="message-role">${message.role === "user" ? "You" : "OM"}</div>
       <div class="message-body">
         ${message.role === "assistant" ? markdown(userFacingAnswer(message.working_text)) : `<p>${escapeHtml(message.working_text)}</p>`}
         ${message.role === "assistant" ? technicalDetails(message, sources) + feedbackControls(message.id) : ""}
@@ -891,6 +1089,14 @@ function brandPreviewMarkup(item) {
       <img src="/brand-system/assets/logo/generated/mark-colour-transparent-1024.png" alt="Continuous Operations Automated OA loop">
       <span class="oa-wordmark"><small>Operations</small><strong>Automated</strong></span>
     </div>`;
+  if (item.preview === "oppa-service-account") return `
+    <div class="brand-preview brand-preview-oppa" data-oa-theme="dark">
+      <div class="oppa-preview-lockup">
+        <span class="oppa-account-avatar" aria-hidden="true">OM</span>
+        <span><em>Service account</em><strong>Oppa <b>Mate</b></strong><small>Operations Automated</small></span>
+      </div>
+      <div class="oppa-preview-compact"><span aria-hidden="true">OM</span><p><strong>Primary company service account</strong><small>A recognisable company user; authority still comes from assigned permissions and controls</small></p></div>
+    </div>`;
   if (item.preview === "tone") return `
     <div class="brand-preview brand-preview-tone">
       <span style="--swatch:#01070f"><b>Obsidian</b><small>#01070F</small></span>
@@ -940,7 +1146,8 @@ function renderBrandReview(value) {
   for (const decision of value.decisions) {
     if (!latest.has(decision.item_id)) latest.set(decision.item_id, decision);
   }
-  $("#brand-review-progress").textContent = `${latest.size} of ${value.items.length} reviewed`;
+  const reviewedCount = value.items.filter((item) => latest.has(item.id)).length;
+  $("#brand-review-progress").textContent = `${reviewedCount} of ${value.items.length} reviewed`;
   const feedbackItems = value.feedbackLoop?.items || [];
   const awaitingCount = value.feedbackLoop?.awaitingCodexReview || 0;
   const rereviewCount = value.feedbackLoop?.readyForFounderReview || 0;
@@ -1040,6 +1247,8 @@ function switchView(name, updateHash = true, refresh = true) {
   $("#details-button").hidden = name !== "conversation";
   $("#export-button").hidden = name !== "conversation";
   $("#new-conversation").hidden = name !== "conversation";
+  $("#oppa-mate-topbar").hidden = name !== "conversation";
+  $("#workspace-label").hidden = name === "conversation";
   if (name === "conversation") {
     $("#workspace-label").textContent = $("#workspace").selectedOptions[0]?.textContent || "Oppa Mate";
     $("#conversation-title").textContent = state.conversation?.title || "New conversation";
@@ -1662,8 +1871,35 @@ $$("[data-route-view]").forEach((button) => button.addEventListener("click", () 
 for (const selector of ["#capture-work", "#capture-work-inline", "#capture-operate-record"]) {
   $(selector).addEventListener("click", openWorkCapture);
 }
+for (const selector of ["#work-capture-form [name=summary]", "#capture-record-type", "#capture-work-profile"]) {
+  $(selector).addEventListener("input", scheduleCaptureSuggestion);
+  $(selector).addEventListener("change", scheduleCaptureSuggestion);
+}
+$("#work-capture-form [name=title]").addEventListener("input", (event) => {
+  const suggestedValue = event.currentTarget.dataset.suggestedValue || "";
+  event.currentTarget.dataset.userEdited = String(Boolean(event.currentTarget.value.trim()) && event.currentTarget.value !== suggestedValue);
+  scheduleCaptureSuggestion();
+});
 $$("[data-close-work-capture]").forEach((button) => button.addEventListener("click", () => $("#work-capture-dialog").close()));
 $("#work-order").addEventListener("change", () => loadMyWork($("#work-order").value).catch((error) => toast(error.message, true)));
+for (const [selector, key] of [
+  ["#work-view-filter", "view"],
+  ["#work-profile-filter", "profile"],
+  ["#work-type-filter", "recordType"]
+]) {
+  $(selector).addEventListener("change", () => {
+    state.workFilters[key] = $(selector).value;
+    loadMyWork().catch((error) => toast(error.message, true));
+  });
+}
+let workSearchTimer = null;
+$("#work-search").addEventListener("input", () => {
+  clearTimeout(workSearchTimer);
+  workSearchTimer = setTimeout(() => {
+    state.workFilters.search = $("#work-search").value.trim();
+    loadMyWork().catch((error) => toast(error.message, true));
+  }, 180);
+});
 $("#work-capture-form").addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
@@ -1676,11 +1912,15 @@ $("#work-capture-form").addEventListener("submit", async (event) => {
   try {
     const value = await request("/api/operate/records", { method: "POST", body: JSON.stringify(data) });
     form.reset();
+    form.elements.title.dataset.userEdited = "false";
+    form.elements.title.dataset.suggestedValue = "";
+    resetCaptureSuggestion();
+    form.querySelector(".capture-optional-details").open = false;
     $("#work-capture-dialog").close();
     await Promise.all([loadOperate(), loadMyWork()]);
     switchView("my-work", true, false);
     await openWorkItem(`operate:${value.record.id}`);
-    toast(`${value.message} Priority ${value.record.priority.score}/100.`);
+    toast(`${value.message}${value.materialQuestion ? ` Next question: ${value.materialQuestion}` : ""} Priority ${value.record.priority.score}/100.`);
   } catch (error) {
     toast(error.message, true);
   } finally {
@@ -1699,7 +1939,153 @@ for (const selector of ["#case-register", "#operate-record-list"]) {
     if (item) openOperateRecord(item.dataset.openOperateRecord).catch((error) => toast(error.message, true));
   });
 }
+$("#work-detail").addEventListener("input", (event) => {
+  if (event.target.matches("[data-operate-action-note]")) event.target.dataset.userEdited = "true";
+});
+$("#work-detail").addEventListener("change", (event) => {
+  if (!event.target.matches("[data-operate-action-choice]")) return;
+  const choice = event.target.value;
+  $("#work-detail").querySelectorAll("[data-choice-required=true]").forEach((button) => {
+    button.disabled = button.dataset.actionBlocked === "true" || !choice;
+  });
+  const noteInput = $("#work-detail").querySelector("[data-operate-action-note]");
+  if (choice && noteInput?.dataset.userEdited !== "true") {
+    const label = event.target.selectedOptions[0]?.textContent || choice;
+    noteInput.value = `Selected “${label}” after reviewing the recorded evidence, options and authority boundary.`;
+  }
+});
 $("#work-detail").addEventListener("click", async (event) => {
+  const copyBrief = event.target.closest("[data-copy-build-brief]");
+  if (copyBrief && state.selectedImplementationJob) {
+    try {
+      await navigator.clipboard.writeText(state.selectedImplementationJob.briefText);
+      toast("Complete Codex implementation brief copied.");
+    } catch {
+      const field = $("#work-detail").querySelector(".implementation-brief textarea");
+      field?.select();
+      document.execCommand("copy");
+      toast("Complete Codex implementation brief copied.");
+    }
+    return;
+  }
+  const prepareBuild = event.target.closest("[data-prepare-build]");
+  if (prepareBuild) {
+    prepareBuild.disabled = true;
+    try {
+      const value = await request("/api/implementation-jobs", {
+        method: "POST",
+        body: JSON.stringify({ recordId: prepareBuild.dataset.prepareBuild })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      await openWorkItem(`implementation-job:${value.job.id}`);
+      toast("Complete Build Job prepared for Codex. Release remains separately controlled.");
+    } catch (error) {
+      prepareBuild.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const releaseAction = event.target.closest("[data-build-release-action]");
+  if (releaseAction && state.selectedImplementationJob) {
+    const action = releaseAction.dataset.buildReleaseAction;
+    const reason = $("#work-detail").querySelector("[data-release-reason]")?.value.trim() || "";
+    const confirmation = $("#work-detail").querySelector("[data-release-confirmation]")?.value.trim() || "";
+    if (action === "approve" && confirmation !== "Approve release") {
+      toast('Type "Approve release" exactly before authorising the reviewed commit.', true);
+      return;
+    }
+    releaseAction.disabled = true;
+    try {
+      const value = await request(`/api/implementation-jobs/${encodeURIComponent(state.selectedImplementationJob.id)}/release-decision`, {
+        method: "POST",
+        body: JSON.stringify({ action, reason, confirmation })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      const retained = state.myWork.items.find((item) => item.id === `implementation-job:${value.job.id}`);
+      if (retained) renderImplementationJobDetail(retained, value.job);
+      else renderWorkDetail(null);
+      toast(value.message);
+    } catch (error) {
+      releaseAction.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const discuss = event.target.closest("[data-discuss-operate-record]");
+  if (discuss) {
+    try {
+      const conversation = await ensureConversation();
+      state.conversation = (await request(`/api/conversations/${encodeURIComponent(conversation.id)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ activeRecordId: discuss.dataset.discussOperateRecord })
+      })).conversation;
+      renderConversation();
+      switchView("conversation");
+      $("#input").placeholder = `Discuss ${state.conversation.activeRecord?.title || "the linked work"} with Oppa Mate...`;
+      $("#input").focus();
+      toast("Oppa Mate now has this work and its Case context.");
+    } catch (error) {
+      toast(error.message, true);
+    }
+    return;
+  }
+  const actionButton = event.target.closest("[data-operate-action]");
+  if (actionButton) {
+    const record = state.currentOperateRecord;
+    const action = record?.actions?.find((item) => item.id === actionButton.dataset.operateAction);
+    if (!record || !action || action.disabled) return;
+    const noteInput = $("#work-detail").querySelector("[data-operate-action-note]");
+    const choiceInput = $("#work-detail").querySelector("[data-operate-action-choice]");
+    const choice = action.choices?.length ? choiceInput?.value || "" : "";
+    if (action.choices?.length && !action.choices.some((item) => item.value === choice)) {
+      toast("Choose the decision outcome first.", true);
+      choiceInput?.focus();
+      return;
+    }
+    const choiceLabel = action.choices?.find((item) => item.value === choice)?.label || "";
+    let note = noteInput?.dataset.userEdited === "true" ? noteInput.value.trim() : action.suggestedNote || "";
+    if (!note && choiceLabel) note = `Selected “${choiceLabel}” after reviewing the recorded evidence, options and authority boundary.`;
+    if (action.noteRequired && note.length < 3) {
+      toast("Record the evidence, outcome or reason before taking this action.", true);
+      noteInput?.focus();
+      return;
+    }
+    let confirmation = "";
+    if (action.confirmation) {
+      if (action.typedConfirmation) {
+        const confirmationInput = $("#work-detail").querySelector("[data-operate-action-confirmation]");
+        confirmation = confirmationInput?.value.trim() || "";
+        if (confirmation !== action.confirmation) {
+          toast(`Type "${action.confirmation}" exactly before taking this action.`, true);
+          confirmationInput?.focus();
+          return;
+        }
+      } else {
+        confirmation = action.confirmation;
+      }
+    }
+    actionButton.disabled = true;
+    try {
+      const value = await request(`/api/operate/records/${encodeURIComponent(record.id)}/actions`, {
+        method: "POST",
+        body: JSON.stringify({
+          actionId: action.id,
+          actor: state.currentUser,
+          note,
+          choice,
+          confirmation,
+          confirmationMethod: action.typedConfirmation ? "typed" : "labelled-action"
+        })
+      });
+      await Promise.all([loadOperate(), loadMyWork()]);
+      renderWorkDetail(recordAsWorkItem(value.record), value.record);
+      toast(`${action.label} recorded. ${action.outcome}`);
+    } catch (error) {
+      actionButton.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   const source = event.target.closest("[data-open-work-source]");
   if (source) {
     if (source.dataset.openWorkSource === "decisions") {
@@ -1711,41 +2097,6 @@ $("#work-detail").addEventListener("click", async (event) => {
     return;
   }
   const related = event.target.closest("[data-open-operate-record]");
-  const actionButton = event.target.closest("[data-operate-action]");
-  if (actionButton) {
-    const record = state.currentOperateRecord;
-    const action = record?.actions?.find((item) => item.id === actionButton.dataset.operateAction);
-    if (!record || !action || action.disabled) return;
-    const note = $("#work-detail").querySelector("[data-operate-action-note]")?.value.trim() || "";
-    if (action.noteRequired && note.length < 3) {
-      toast("Record the evidence, outcome or reason before taking this action.", true);
-      return;
-    }
-    let confirmation = "";
-    if (action.confirmation) {
-      const confirmationInput = $("#work-detail").querySelector("[data-operate-action-confirmation]");
-      confirmation = confirmationInput?.value.trim() || "";
-      if (confirmation !== action.confirmation) {
-        toast(`Type "${action.confirmation}" exactly before taking this action.`, true);
-        confirmationInput?.focus();
-        return;
-      }
-    }
-    actionButton.disabled = true;
-    try {
-      const value = await request(`/api/operate/records/${encodeURIComponent(record.id)}/actions`, {
-        method: "POST",
-        body: JSON.stringify({ actionId: action.id, actor: state.currentUser, note, confirmation })
-      });
-      await Promise.all([loadOperate(), loadMyWork()]);
-      renderWorkDetail(recordAsWorkItem(value.record), value.record);
-      toast(`${action.label} recorded. ${action.outcome}`);
-    } catch (error) {
-      actionButton.disabled = false;
-      toast(error.message, true);
-    }
-    return;
-  }
   if (related) {
     await openOperateRecord(related.dataset.openOperateRecord);
     return;
@@ -1802,6 +2153,40 @@ $("#work-detail").addEventListener("click", async (event) => {
       toast(error.message, true);
     }
     return;
+  }
+});
+$("#work-detail").addEventListener("submit", async (event) => {
+  const receiptForm = event.target.closest("[data-build-receipt]");
+  const mergeForm = event.target.closest("[data-merge-receipt]");
+  if (!receiptForm && !mergeForm) return;
+  event.preventDefault();
+  const form = receiptForm || mergeForm;
+  const submit = form.querySelector('[type="submit"]');
+  const values = Object.fromEntries(new FormData(form));
+  const lines = (value) => String(value || "").split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+  submit.disabled = true;
+  try {
+    const jobId = receiptForm ? receiptForm.dataset.buildReceipt : mergeForm.dataset.mergeReceipt;
+    const endpoint = receiptForm ? "receipt" : "merge-receipt";
+    const payload = receiptForm ? {
+      ...values,
+      filesChanged: lines(values.filesChanged),
+      tests: lines(values.tests),
+      validation: lines(values.validation),
+      unresolvedRisks: lines(values.unresolvedRisks)
+    } : values;
+    const value = await request(`/api/implementation-jobs/${encodeURIComponent(jobId)}/${endpoint}`, {
+      method: "POST",
+      body: JSON.stringify(payload)
+    });
+    await Promise.all([loadOperate(), loadMyWork()]);
+    const retained = state.myWork.items.find((item) => item.id === `implementation-job:${value.job.id}`);
+    if (retained) renderImplementationJobDetail(retained, value.job);
+    else renderWorkDetail(null);
+    toast(value.message);
+  } catch (error) {
+    submit.disabled = false;
+    toast(error.message, true);
   }
 });
 $$('[data-close-work-link]').forEach((button) => button.addEventListener("click", () => $("#work-link-dialog").close()));

@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.3
+version: 0.4
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -27,13 +27,49 @@ Classification, recommendation, a passing scenario test and technical readiness 
 
 | | Current Workbench | Proposed Operate MVP |
 |---|---|---|
-| Primary entry point | Conversations and specialist governance areas | One **My Work** inbox and short **Do Next** list |
+| Primary entry point | Conversations and specialist governance areas | Conversation-first capture with one **My Work** home and short **Do Next** list |
 | Operational records | Feedback, decisions and specialist local records | Cases, Requests and Tasks, with the wider dictionary available |
 | Relationships | Present in methodology and specialist workflows | Visible, queryable links between operational records |
 | Progression | Specialist workflows and one Task completion action | Every open item exposes a working governed action and retained outcome |
 | Priority | Area-specific order | Explainable impact-first recommendation |
 | Service-account user | Conversation and bounded governance support | Oppa Mate is the recognisable company service account and may recommend type, route and next action within assigned permissions |
 | Authority | Named human controls | Unchanged and made explicit in record transitions |
+| Knowledge | File-level repository extracts | Governed source manifest, heading chunks, authority labels and exact cited snapshots |
+| Build delivery | Specialist proposal handoff | First-class external-Codex Build Job, receipt and separate release approval |
+
+## Workbench operating surface
+
+The 1.4 proposal makes the existing Workbench parts operate as one system:
+
+- Git remains authoritative for methodology and governed meaning.
+- SQLite retains work, conversations, corrections, links, decisions, approvals, Build Jobs and outcomes.
+- Oppa Mate applies the approved method, retains context, recommends type and Work Profile separately, asks only material questions and prepares work.
+- Codex remains outside the Workbench as the source-code builder; the first handoff is deliberately copyable rather than presented as a direct autonomous connection.
+- Jamie carries out ordinary capture, review, correction and approval inside the Workbench.
+
+Approved methodology is normative within its scope. Proposed, draft, retained and external material may provide evidence but is labelled and cannot silently replace approved meaning. Each material response, classification, proposal and Build Job can retain the exact source snapshot used.
+
+Conversation requests include recent messages, a rolling summary of older history, the active Case or work record, linked controls and retained corrections. A short reply is therefore interpreted in its current work context rather than as a new isolated instruction.
+
+## Configurable definitions and Work Profiles
+
+The Operations Bible is loaded from a versioned JSON definition rather than a JavaScript-only dictionary. It carries statuses, transitions, required and optional information, methodology questions, relationships, approval gates, automation boundaries, completion evidence and review triggers for all twelve core record types.
+
+Work Profiles are a separate configurable layer. The seeded profiles cover methodology feedback/change, product or application build, branding review, daily challenge, research/evidence review, documentation/publication and general administration. A profile guides questions, expected outputs and evidence; it does not change record type or create approval.
+
+## Universal decisions, approvals and specialist history
+
+The shared Decision and Approval records retain scope, exact decision, decision maker or approver, evidence, recommendation, alternatives, trade-offs, conditions, explicit confirmation, decision time, result, authorised transition and remaining limits.
+
+Existing feedback, Decision Inbox, Brand Review and Confluence publication records are projected into the common Operate graph and My Work. Their original tables, routes and audit history remain intact; the shared layer links to the source workflow rather than duplicating its authority.
+
+## External-Codex Build Job
+
+A Build Job is available only after the linked Change is explicitly approved for preparation. It contains the approved requirement, context, methodology and governance constraints, affected components, acceptance criteria, test expectations and authority boundary.
+
+The job moves through **Waiting on Codex**, **Waiting for review** and, only after Jamie types the exact release confirmation, **Release authorised**. The returned receipt retains the branch, draft pull request, commit, changed files, tests, validation, unresolved risks and version impact. The Workbench does not pretend to run Codex or merge the branch.
+
+After Codex records a successful authorised external merge, the Workbench reindexes the repository, retains the merged receipt and queues an applicable Confluence update. Publication remains a later, separate controlled decision.
 
 ## Defining difference: a governed operational graph
 
@@ -68,19 +104,20 @@ Each actionable item exposes:
 - one recommended next action and any credible alternative action;
 - what the action changes and what remains unchanged;
 - the evidence, outcome or rationale required;
-- the authority and inline exact confirmation required where consequence matters; and
+- the authority and proportionate confirmation required where consequence matters; and
 - the retained actor, previous state, resulting state, note and timestamp.
 
 Existing specialist items do not need to duplicate their source workflow. A methodology release decision routes from My Work into the Decision Inbox. A Brand Review item routes into Brand Review. Native Operate records progress through a type-and-status action contract.
 
-Direct status changes cannot bypass that contract. The initial action vocabulary remains proposed product behaviour, but automated tests require every open Operations Bible state to expose at least one valid action. Consequential founder-controlled actions currently include:
+Direct status changes cannot bypass that contract. The initial action vocabulary remains proposed product behaviour, but automated tests require every open Operations Bible state to expose at least one valid action. Consequential founder-controlled actions use the smallest explicit control that preserves judgement:
 
-- approving an Approval with exact **Approve** confirmation;
-- accepting a Risk with exact **Accept risk** confirmation;
-- approving and scheduling a Change with exact **Approve change** confirmation; and
-- recording a material Decision with exact **Record decision** confirmation.
+- **Approve**, **Reject** and **Expire** are clearly labelled choices; the selected button is the explicit action rather than asking Jamie to retype its label;
+- safe, neutral notes may be suggested and remain editable, while rejection, exception and evidence-specific reasons remain mandatory where they cannot be inferred;
+- a material Decision requires Jamie to select **Proceed**, **Revise first** or **Do not proceed** before **Record decision** becomes available;
+- accepting a Risk retains the stronger exact **Accept risk** confirmation and requires the residual exposure, conditions and review trigger; and
+- approving a Change remains bounded to the scope and evidence shown in the record.
 
-Each also requires a retained evidence, outcome or reason. Oppa Mate may recommend or prepare an action, but does not provide Jamie's confirmation. A Case cannot close while contained work remains open.
+Oppa Mate may recommend, name and prepare an action, but the click or choice that records Jamie's judgement remains Jamie's. A Case cannot close while contained work remains open.
 
 ## Initial Operations Bible
 
@@ -134,7 +171,7 @@ The first screen shows:
 
 ## Ordinary-language capture
 
-Capture requires only a description or title. Oppa Mate recommends a record type from the language supplied. The user may accept or correct it before saving. Optional impact, urgency, deadline, owner, Case, risk, control, strategy, journey and product fields improve routing and priority without blocking capture.
+Capture requires only a description. Oppa Mate suggests an editable name, record type, Work Profile and starting priority before saving. The generated name uses the work type as a plain-language verb where useful, such as **Approve...** or **Decide...**. The user opens progressive detail only to correct a suggestion or add context. Impact, urgency, deadline, owner, Case, parent, risk, control and improvement fields remain populated defaults or optional detail rather than capture blockers.
 
 The activity record retains the recommended type, selected type and whether the recommendation was accepted. It does not retain a claim that classification approved the work.
 
@@ -143,6 +180,13 @@ The activity record retains the recommended type, selected type and whether the 
 Implemented in this proposal:
 
 - unified **My Work** and **Do Next**;
+- search plus Blocked, Waiting on Jamie, Waiting on Codex, Work Profile and record-type filters;
+- governed source manifest, heading-level FTS5 retrieval, optional embeddings and exact source snapshots;
+- conversation continuity using recent messages, rolling summary and active work context;
+- versioned executable Operations Bible and seven configurable Work Profiles;
+- one shared Decision and Approval representation across specialist scopes;
+- source-backed migration of feedback, change, brand and publication queues;
+- first-class external-Codex Build Jobs, structured receipts and separate release controls;
 - governed actions across every open state in the initial twelve-record dictionary;
 - durable initial dictionary for all twelve record types;
 - record details and related-work display;
@@ -158,14 +202,15 @@ Implemented in this proposal:
 - action labels on every My Work item, specialist workflow routing and visible retained activity;
 - direct-status bypass protection;
 - proportionate Task completion and type-specific lifecycle progression;
-- exact founder confirmation and retained rationale for Approval, Risk acceptance, Change authorisation and material Decision actions;
+- explicit labelled Approval and Change choices, mandatory Decision outcomes, stronger typed Risk acceptance, and retained rationale proportional to consequence;
 - Case-closure protection while contained work remains open; and
 - local audit/activity evidence with no delete route.
 
 Represented but not claimed as complete:
 
-- mature Incident, Problem and Change workflows;
+- independently validated Incident, Problem and Change workflows beyond the bounded scenarios;
 - automatic creation of every action or decision identified during AI analysis;
+- a direct authenticated Codex connection;
 - automatic parent progress, service-level timing, assignment and escalation;
 - scenario-test execution and comparison;
 - customer-journey analytics;
