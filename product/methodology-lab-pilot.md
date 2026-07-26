@@ -109,6 +109,8 @@ The Workbench refuses to build the plan when:
 
 Preview and publication use current repository and Confluence state. A stale preview cannot authorise later action. Publishing to Draft does not approve v0.8.
 
+An interrupted run may leave Confluence with an accepted page before the local receipt is stored. A later preview may reconcile that receipt without rewriting the page only after one version increment and when the remote title, source commit retained from the failed run, combined source hash and normalised visible content match the current committed Draft. Any other version difference remains a conflict for governed human resolution.
+
 ## Review signals
 
 | Signal | Example | Likely route |

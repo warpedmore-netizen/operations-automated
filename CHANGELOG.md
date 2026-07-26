@@ -8,6 +8,7 @@
 - Added detailed chapters for people, work and capacity, governance and resilience, information and measurement, technology and suppliers, cross-functional interfaces, target design, implementation, Human–AI collaboration and proportionate tools.
 - Added practical activities, outputs, gates, failure tests, tailoring and specialist-authority boundaries throughout the reader.
 - Updated the assurance pack, Workbench publication copy and project memory for the depth revision.
+- Added idempotent Draft-publication recovery: after one remote version increment, the Workbench reconciles without rewriting only when the title, commit retained from a failed Draft run, combined source hash and normalised visible content match; any different remote change remains a conflict.
 - Kept v0.7 as the approved internal baseline; v0.8 meaning, Live promotion, external publication and customer use remain unapproved.
 
 ## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed

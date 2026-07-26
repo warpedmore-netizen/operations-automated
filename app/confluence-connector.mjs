@@ -170,9 +170,13 @@ export function selectSpaceRoles(spaces, value) {
 }
 
 function decodeEntities(value) {
-  const named = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " " };
+  const named = {
+    amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ",
+    ndash: "–", mdash: "—", hellip: "…", lsquo: "‘", rsquo: "’",
+    ldquo: "“", rdquo: "”", middot: "·"
+  };
   return value
-    .replace(/&(#x[0-9a-f]+|#\d+|amp|lt|gt|quot|apos|nbsp);/gi, (match, entity) => {
+    .replace(/&(#x[0-9a-f]+|#\d+|[a-z][a-z0-9]+);/gi, (match, entity) => {
       if (entity[0] === "#") {
         const point = entity[1].toLowerCase() === "x"
           ? Number.parseInt(entity.slice(2), 16)
@@ -194,6 +198,14 @@ export function confluenceStorageToText(value) {
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]{2,}/g, " ")
     .trim();
+}
+
+function publicationBodyTextHash(value) {
+  const normalised = confluenceStorageToText(value)
+    .replace(/\bSource commit:\s*[0-9a-f]{40}\b/gi, "Source commit: [retained-commit]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return createHash("sha256").update(normalised).digest("hex").slice(0, 16);
 }
 
 async function pagesForSpace(connection, space, role, fetchImpl) {
@@ -269,16 +281,25 @@ async function publicationPagesForSpace(connection, space, fetchImpl) {
     path: `/wiki/api/v2/spaces/${encodeURIComponent(space.id)}/pages`,
     credentials: connection,
     maximum: 1000,
-    parameters: { status: "current" }
-  })).map((page) => ({
-    id: String(page.id || ""),
-    title: String(page.title || ""),
-    spaceId: String(page.spaceId || space.id),
-    parentId: page.parentId ? String(page.parentId) : null,
-    status: String(page.status || "current"),
-    version: Number(page.version?.number || 0),
-    webPath: String(page._links?.webui || "")
-  })).filter((page) => page.id);
+    parameters: { status: "current", "body-format": "storage" }
+  })).map((page) => {
+    const storageBody = String(page.body?.storage?.value || "");
+    const readableBody = confluenceStorageToText(storageBody);
+    const sourceCommit = readableBody.match(/\bSource commit:\s*([0-9a-f]{40})\b/i)?.[1] || "";
+    const sourceHash = readableBody.match(/\bCombined source hash:\s*([0-9a-f]{12})\b/i)?.[1] || "";
+    return {
+      id: String(page.id || ""),
+      title: String(page.title || ""),
+      spaceId: String(page.spaceId || space.id),
+      parentId: page.parentId ? String(page.parentId) : null,
+      status: String(page.status || "current"),
+      version: Number(page.version?.number || 0),
+      webPath: String(page._links?.webui || ""),
+      publishedSourceCommit: sourceCommit,
+      publishedSourceHash: sourceHash,
+      publishedBodyTextHash: publicationBodyTextHash(storageBody)
+    };
+  }).filter((page) => page.id);
 }
 
 function mappingFor(mappings, key) {
@@ -349,9 +370,25 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
         conflictType = "managed-page-moved";
         reason = "The managed page is no longer in its controlled Confluence space.";
       } else if (mappedVersion && remote.version !== mappedVersion) {
-        action = "conflict";
-        conflictType = "managed-page-version";
-        reason = "The Confluence page changed after the last Workbench publication. It will not be overwritten.";
+        const recoverableSourceCommits = new Set([
+          plan.sourceCommit,
+          ...(Array.isArray(plan.recoverableSourceCommits) ? plan.recoverableSourceCommits : [])
+        ]);
+        const exactInterruptedDraftWrite = plan.targetLifecycle === "draft"
+          && plan.founderConfirmationRequired === false
+          && remote.version === mappedVersion + 1
+          && remote.title === item.title
+          && recoverableSourceCommits.has(remote.publishedSourceCommit)
+          && remote.publishedSourceHash === item.sourceHash
+          && remote.publishedBodyTextHash === publicationBodyTextHash(item.bodyStorage);
+        if (exactInterruptedDraftWrite) {
+          action = "reconcile";
+          reason = "Confluence already contains this exact committed Draft after an interrupted publication. Reconcile the tracked receipt without rewriting the page.";
+        } else {
+          action = "conflict";
+          conflictType = "managed-page-version";
+          reason = "The Confluence page changed after the last Workbench publication. It will not be overwritten.";
+        }
       } else if (mappedHash === item.sourceHash && mappedTitle === item.title) {
         action = "unchanged";
         reason = "The repository source and tracked Confluence version are unchanged.";
@@ -374,6 +411,7 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
       confluencePageId: remote?.id || "",
       confluenceVersion: remote?.version || 0,
       confluenceParentId: remote?.parentId || null,
+      reconciledSourceCommit: action === "reconcile" ? remote?.publishedSourceCommit || "" : "",
       webPath: remote?.webPath || "",
       webUrl: remote?.webPath ? pageWebUrl(connection, { _links: { webui: remote.webPath } }) : ""
     };
@@ -389,7 +427,7 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
       item.reason = `The parent page “${parent.title}” has a conflict that must be resolved first.`;
     }
   }
-  const summary = Object.fromEntries(["create", "update", "unchanged", "conflict"].map((action) => [
+  const summary = Object.fromEntries(["create", "update", "reconcile", "unchanged", "conflict"].map((action) => [
     action,
     inspected.filter((item) => item.action === action).length
   ]));
@@ -474,16 +512,17 @@ export async function publishConfluencePublication(
     if (parentKey && !parentId) {
       throw Object.assign(new Error(`The parent page for “${item.title}” was not available.`), { status: 409 });
     }
-    if (item.action === "unchanged") {
+    if (item.action === "unchanged" || item.action === "reconcile") {
       const unchanged = {
         ...item,
-        outcome: "unchanged",
+        outcome: item.action === "reconcile" ? "reconciled" : "unchanged",
         confluencePageId: item.confluencePageId,
         confluenceVersion: item.confluenceVersion,
         webUrl: item.webPath ? pageWebUrl(connection, { _links: { webui: item.webPath } }) : ""
       };
       results.set(item.key, unchanged);
       published.push(unchanged);
+      if (item.action === "reconcile") await onPublished(unchanged);
       continue;
     }
     const page = await writePublicationPage(connection, item, parentId, fetchImpl);
@@ -506,7 +545,8 @@ export async function publishConfluencePublication(
     publishedAt: new Date().toISOString(),
     created: published.filter((item) => item.outcome === "created").length,
     updated: published.filter((item) => item.outcome === "updated").length,
-    unchanged: published.filter((item) => item.outcome === "unchanged").length,
+    reconciled: published.filter((item) => item.outcome === "reconciled").length,
+    unchanged: published.filter((item) => ["unchanged", "reconciled"].includes(item.outcome)).length,
     items: published
   };
 }

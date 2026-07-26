@@ -275,12 +275,81 @@ test("publication inspection distinguishes create, update, unchanged and conflic
     { itemKey: "remote", confluencePageId: "102", confluenceSpaceId: "10", confluenceVersion: 4, sourceHash: "old", confluenceTitle: "Remote edit" }
   ];
   const inspected = await inspectConfluencePublication(connection(), plan, mappings, { fetchImpl });
-  assert.deepEqual(inspected.summary, { create: 1, update: 1, unchanged: 1, conflict: 2 });
+  assert.deepEqual(inspected.summary, { create: 1, update: 1, reconcile: 0, unchanged: 1, conflict: 2 });
   assert.equal(inspected.publishable, false);
   assert.match(inspected.items.find((item) => item.key === "remote").reason, /changed after the last/i);
   assert.equal(inspected.items.find((item) => item.key === "remote").conflictType, "managed-page-version");
   assert.match(inspected.items.find((item) => item.key === "title").reason, /not managed/i);
   assert.equal(inspected.items.find((item) => item.key === "title").conflictType, "unmanaged-title");
+});
+
+test("an interrupted AI-managed Draft write is reconciled only when commit and source hash match", async () => {
+  const failedCommit = "d".repeat(40);
+  const currentCommit = "e".repeat(40);
+  const sourceHash = "abc123def456";
+  const bodyStorage = `<p>Current Draft</p><p><strong>Source commit:</strong> ${currentCommit} · <strong>Combined source hash:</strong> ${sourceHash}</p>`;
+  const interruptedBody = bodyStorage.replace(currentCommit, failedCommit).replace("·", "&middot;");
+  const pages = [{
+    id: "210",
+    title: "Current Draft",
+    spaceId: "20",
+    version: { number: 3 },
+    body: { storage: { value: interruptedBody } }
+  }];
+  const fetchImpl = async (url) => response({
+    results: String(url).includes("/spaces/20/") ? pages : [],
+    _links: {}
+  });
+  const plan = {
+    id: "recover-plan",
+    targetLifecycle: "draft",
+    founderConfirmationRequired: false,
+    sourceCommit: currentCommit,
+    recoverableSourceCommits: [failedCommit],
+    parentReferences: [],
+    items: [{
+      key: "draft-page",
+      kind: "pilot-page",
+      role: "methodology",
+      lifecycle: "draft",
+      title: "Current Draft",
+      parentKey: null,
+      sourcePath: "publication/draft.md",
+      sourceStatus: "proposed-pilot",
+      sourceVersion: "0.8",
+      sourceHash,
+      bodyStorage
+    }]
+  };
+  const mappings = [{
+    itemKey: "draft-page",
+    confluencePageId: "210",
+    confluenceSpaceId: "20",
+    confluenceVersion: 2,
+    sourceHash: "old000000000",
+    confluenceTitle: "Earlier Draft"
+  }];
+
+  const inspected = await inspectConfluencePublication(connection(), plan, mappings, { fetchImpl });
+  assert.deepEqual(inspected.summary, { create: 0, update: 0, reconcile: 1, unchanged: 0, conflict: 0 });
+  assert.equal(inspected.publishable, true);
+  assert.equal(inspected.items[0].action, "reconcile");
+
+  const receipts = [];
+  const published = await publishConfluencePublication(connection(), inspected, {
+    fetchImpl: async () => { throw new Error("Reconciliation must not write the Confluence page again."); },
+    onPublished: async (item) => receipts.push(item)
+  });
+  assert.equal(published.reconciled, 1);
+  assert.equal(published.unchanged, 1);
+  assert.equal(receipts[0].outcome, "reconciled");
+  assert.equal(receipts[0].confluenceVersion, 3);
+  assert.equal(receipts[0].reconciledSourceCommit, failedCommit);
+
+  pages[0].body.storage.value = `<p>Independently changed</p>${bodyStorage}`;
+  const changed = await inspectConfluencePublication(connection(), plan, mappings, { fetchImpl });
+  assert.equal(changed.items[0].action, "conflict");
+  assert.equal(changed.items[0].conflictType, "managed-page-version");
 });
 
 test("Draft publication resolves the existing managed Draft parent without updating it", async () => {
@@ -321,7 +390,7 @@ test("Draft publication resolves the existing managed Draft parent without updat
   const inspected = await inspectConfluencePublication(connection(), plan, mappings, { fetchImpl: inspectFetch });
   assert.equal(inspected.publishable, true);
   assert.equal(inspected.parentReferences[0].action, "reference");
-  assert.deepEqual(inspected.summary, { create: 1, update: 0, unchanged: 0, conflict: 0 });
+  assert.deepEqual(inspected.summary, { create: 1, update: 0, reconcile: 0, unchanged: 0, conflict: 0 });
 
   const requests = [];
   const publishFetch = async (url, options = {}) => {

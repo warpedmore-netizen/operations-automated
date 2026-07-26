@@ -156,6 +156,8 @@ The managed manuscript is stored under `publication/methodology-lab-001` for bac
 
 The Lab preview and Draft write are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page, promote content to Live or approve its own synthesis.
 
+If the local Workbench stops after Confluence has accepted a page but before its receipt is stored, the next preview checks the remote Draft. It may reconcile the receipt without another remote write only after one version increment and when the title, source commit retained from the failed Draft run, combined source hash and normalised visible content match the current plan. Any other version difference remains a conflict and cannot be overwritten silently.
+
 ## Implemented MVP boundary
 
 ### Oppa Mate identity pilot

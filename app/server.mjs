@@ -400,6 +400,11 @@ const audit = (action, entityType, entityId, detail = {}) =>
   db.prepare("INSERT INTO audit_events VALUES(?,?,?,?,?,?)")
     .run(randomUUID(), action, entityType, entityId ?? null, JSON.stringify(detail), now());
 const getSettings = () => ({ ...DEFAULT_SETTINGS, ...safeJson(db.prepare("SELECT value_json FROM settings WHERE id=1").get().value_json, {}) });
+db.prepare(`
+  UPDATE confluence_publication_runs
+  SET status='failed',failure_message='The local Workbench stopped before this publication run completed. Generate a fresh preview; exact committed Draft writes can be reconciled safely.',completed_at=?
+  WHERE status='in-progress'
+`).run(now());
 const providerConfigured = (tier = 2) => process.env.WORKBENCH_FORCE_LOCAL !== "1"
   && Boolean(process.env.OPENAI_API_KEY && process.env[`OPENAI_TIER_${tier}_MODEL`]);
 reindexRepository("working-tree");
@@ -435,11 +440,21 @@ function buildCurrentConfluencePublication(publicationKind, identity) {
   const builder = publicationKind === "methodology-lab-pilot"
     ? buildMethodologyLabPublicationPlan
     : buildConfluencePublicationPlan;
-  return builder({
+  const plan = builder({
     repositoryRoot,
     sourceBranch: identity.branch,
     sourceCommit: identity.commitSha
   });
+  if (publicationKind === "methodology-lab-pilot") {
+    const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    plan.recoverableSourceCommits = db.prepare(`
+      SELECT DISTINCT source_commit_sha
+      FROM confluence_publication_runs
+      WHERE publication_kind='methodology-lab-pilot' AND status='failed' AND completed_at>=?
+      ORDER BY completed_at DESC LIMIT 5
+    `).all(cutoff).map((item) => String(item.source_commit_sha || "")).filter(Boolean);
+  }
+  return plan;
 }
 
 function publicationMappings() {
@@ -3536,6 +3551,7 @@ async function api(request, response, url) {
       publicationKind,
       create: inspected.summary.create,
       update: inspected.summary.update,
+      reconcile: inspected.summary.reconcile,
       unchanged: inspected.summary.unchanged,
       conflict: inspected.summary.conflict,
       writePerformed: false
@@ -3650,7 +3666,10 @@ async function api(request, response, url) {
       const result = await publishConfluencePublication(stored, refreshed, {
         onPublished: async (item) => {
           const publishedAt = now();
-          storePublishedPage(runId, identity.commitSha, item, publishedAt);
+          const receiptCommit = item.outcome === "reconciled" && item.reconciledSourceCommit
+            ? item.reconciledSourceCommit
+            : identity.commitSha;
+          storePublishedPage(runId, receiptCommit, item, publishedAt);
           audit("confluence.page.published", "confluence-page", item.confluencePageId, {
             runId,
             itemKey: item.key,
@@ -3682,6 +3701,7 @@ async function api(request, response, url) {
         publicationKind: refreshed.publicationKind,
         created: result.created,
         updated: result.updated,
+        reconciled: result.reconciled,
         unchanged: result.unchanged,
         automaticPublication: false,
         aiManagedDraft: draftPublication,
@@ -3694,6 +3714,7 @@ async function api(request, response, url) {
         sourceCommitSha: identity.commitSha,
         created: result.created,
         updated: result.updated,
+        reconciled: result.reconciled,
         unchanged: result.unchanged,
         pagesDeleted: 0,
         items: result.items.map(({ bodyStorage: _bodyStorage, ...item }) => item),
