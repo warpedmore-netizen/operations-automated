@@ -1,0 +1,120 @@
+{
+  "id": "OA-METHODOLOGY-LAB-001",
+  "title": "Operations Automated Methodology – Consolidated Draft v0.8",
+  "status": "proposed-pilot",
+  "version": "0.8",
+  "pages": [
+    {
+      "key": "hub",
+      "file": "00-start-here.md",
+      "title": "Operations Automated Methodology – Consolidated Draft v0.8",
+      "parentKey": null,
+      "sources": [
+        "methodology/current-methodology-synthesis.md",
+        "methodology/operations-automated-overview.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+      ]
+    },
+    {
+      "key": "read",
+      "file": "01-read-the-methodology.md",
+      "title": "Read the methodology",
+      "parentKey": "hub",
+      "sources": [
+        "methodology/current-methodology-synthesis.md",
+        "methodology/operations-automated-overview.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+      ]
+    },
+    {
+      "key": "part-1",
+      "file": "02-part-1-purpose-value-and-human-boundary.md",
+      "title": "Part I – Purpose, value, responsibility and accountability",
+      "parentKey": "read",
+      "sources": [
+        "methodology/operations-automated-overview.md",
+        "principles/user-defined-value.md",
+        "principles/human-led-automation.md",
+        "methodology/human-ai-collaboration.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+      ]
+    },
+    {
+      "key": "part-2",
+      "file": "03-part-2-journey-first.md",
+      "title": "Part II – Start with the journey",
+      "parentKey": "read",
+      "sources": [
+        "methodology/operational-lenses.md",
+        "methodology/connected-work-risk-and-control.md",
+        "methodology/operational-coverage-model.md",
+        "methodology/cross-functional-interfaces.md"
+      ]
+    },
+    {
+      "key": "journey-chapter",
+      "file": "04-journey-first-operation-next.md",
+      "title": "Chapter – Journey first, operation next",
+      "parentKey": "part-2",
+      "sources": [
+        "methodology/operational-lenses.md",
+        "methodology/connected-work-risk-and-control.md",
+        "methodology/output-contract.md",
+        "principles/user-defined-value.md"
+      ]
+    },
+    {
+      "key": "part-3",
+      "file": "05-part-3-connected-operation.md",
+      "title": "Part III – Understand the connected operation",
+      "parentKey": "read",
+      "sources": [
+        "methodology/operational-lenses.md",
+        "methodology/connected-work-risk-and-control.md"
+      ]
+    },
+    {
+      "key": "part-4",
+      "file": "06-part-4-operate.md",
+      "title": "Part IV – Improve and implement with OPERATE",
+      "parentKey": "read",
+      "sources": [
+        "methodology/operate-overview.md",
+        "methodology/output-contract.md"
+      ]
+    },
+    {
+      "key": "part-5",
+      "file": "07-part-5-readiness.md",
+      "title": "Part V – Become ready for automation, AI and agents",
+      "parentKey": "read",
+      "sources": [
+        "methodology/readiness-path.md",
+        "principles/human-led-automation.md"
+      ]
+    },
+    {
+      "key": "part-6",
+      "file": "08-part-6-govern-learn-and-evolve.md",
+      "title": "Part VI – Govern, learn and evolve",
+      "parentKey": "read",
+      "sources": [
+        "evolution/methodology-evolution-system.md",
+        "methodology/human-ai-collaboration.md",
+        "principles/learning-through-failure.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+      ]
+    },
+    {
+      "key": "review",
+      "file": "09-review-the-pilot.md",
+      "title": "Review the consolidated draft",
+      "parentKey": "hub",
+      "sources": [
+        "methodology/human-ai-collaboration.md",
+        "evolution/methodology-evolution-system.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+      ]
+    }
+  ]
+}

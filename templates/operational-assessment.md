@@ -4,7 +4,7 @@ title: Operational assessment title
 status: draft
 owner: name
 date: YYYY-MM-DD
-methodology_version: proposed-v0.4
+methodology_version: approved-v0.6
 ---
 
 # Operational assessment
@@ -15,6 +15,9 @@ This is a living output from applying Operations Automated, not a questionnaire 
 
 - **Operation, activity or system:**
 - **Problem or opportunity:**
+- **Primary customer, service user, stakeholder or beneficiary:**
+- **Their trigger, interaction or end-to-end journey:**
+- **Experience and outcome they need:**
 - **Intended outcome and beneficiaries:**
 - **Scope and boundaries:**
 - **People affected:**
@@ -77,6 +80,7 @@ Do not assign a single readiness label without explaining the evidence and varia
 - **Implementation route and owner:**
 - **Tests, failure signals and recovery:**
 - **Outcome measures and review triggers:**
+- **Receiver-centred feedback route and response owner:**
 
 ## Current governed next action
 

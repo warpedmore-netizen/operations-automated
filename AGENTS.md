@@ -20,6 +20,14 @@ This repository is the authoritative project memory for Operations Automated.
 5. Ask only questions that materially change the answer.
 6. Invite Jamie to identify what is wrong, missing, impractical or inconsistent in the methodology's response.
 
+## When planning or reviewing work
+
+- Review the [Ideas Space](ideas/README.md) during discovery, research, prioritisation, scoping, design, build, review and roadmap planning.
+- Use `ideas/Find-RelatedIdeas.ps1` with a plain-language description of the work, then check explicit links and the register because text search is only an aid.
+- If relevant active ideas exist, say: “There are existing ideas related to this area. Review them before finalising the scope.”
+- Reassess a resurfaced idea against current viability, impact, speed and effort, relevance, relationships, timing and evidence. Do not rely only on its original assessment.
+- Capturing or resurfacing an idea does not approve it, prioritise it or authorise scope, build, spending, connection, publication or risk acceptance.
+
 ## When Jamie answers a daily challenge or gives methodology feedback
 
 Follow the approved evolution process and the current [founder challenge loop](evolution/founder-challenge-loop.md) when it is approved. Until then, treat it as proposed guidance and follow `evolution/methodology-evolution-system.md`.

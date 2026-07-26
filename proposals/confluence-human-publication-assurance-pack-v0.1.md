@@ -14,7 +14,7 @@ approval_scope: private internal implementation of three bounded pilots
 
 - **Decision recorded:** Jamie approved the human-first Confluence publication and document-challenge model, with the stated conditions, as the basis for three bounded private pilots.
 - **AI recommendation:** Approve with conditions.
-- **Assurance position:** Approved for bounded private implementation after merge; not approved for live migration or publication.
+- **Assurance position:** Approved and merged as the design basis for bounded private implementation; not approved for live migration or publication.
 
 ## Trigger and founder intent
 
@@ -115,3 +115,4 @@ Approval would not authorise:
 - **Date:** 2026-07-25
 - **Conditions or requested revisions:** Apply the ten conditions above. Keep the implementation to the three bounded pilots; retain the current pages; require source maps and exact diffs; use only manually identified, non-confidential test content for the document-challenge pilot; and seek separate approval for every live write and any automatic interaction retrieval.
 - **Review trigger:** After all three bounded pilots, or earlier if a material authority, confidentiality, traceability or usability failure occurs.
+- **Release outcome:** PR #17 was explicitly authorised and merged as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.

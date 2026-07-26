@@ -6,6 +6,7 @@ import { join } from "node:path";
 import {
   PUBLICATION_CONFIRMATION,
   buildConfluencePublicationPlan,
+  buildMethodologyLabPublicationPlan,
   markdownToConfluenceStorage,
   publicationLifecycle
 } from "../confluence-publication.mjs";
@@ -97,6 +98,90 @@ test("publication plan creates a lifecycle-first human reading structure with so
   }
 });
 
+test("methodology lab plan is isolated, source-mapped and authorised only for Draft", async () => {
+  const root = await mkdtemp(join(tmpdir(), "oa-methodology-lab-plan-"));
+  try {
+    await mkdir(join(root, "methodology"), { recursive: true });
+    await mkdir(join(root, "publication", "methodology-lab-001"), { recursive: true });
+    await writeFile(
+      join(root, "methodology", "approved-method.md"),
+      "---\ntitle: Approved Method\nstatus: approved\nversion: 0.6\n---\n# Approved method\n\nControlled meaning.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "00-start.md"),
+      "---\ntitle: Methodology Lab\nstatus: proposed\nversion: 0.1\n---\n# Methodology Lab\n\nStart with the reader.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "01-review.md"),
+      "---\ntitle: Review the Pilot\nstatus: proposed\nversion: 0.1\n---\n# Review the pilot\n\nRecord what worked.\n",
+      "utf8"
+    );
+    await writeFile(
+      join(root, "publication", "methodology-lab-001", "manifest.json"),
+      JSON.stringify({
+        id: "OA-METHODOLOGY-LAB-001",
+        title: "Methodology Lab",
+        status: "proposed-pilot",
+        version: "0.1",
+        pages: [
+          {
+            key: "hub",
+            file: "00-start.md",
+            title: "Methodology Lab",
+            parentKey: null,
+            sources: ["methodology/approved-method.md"]
+          },
+          {
+            key: "review",
+            file: "01-review.md",
+            title: "Review the Pilot",
+            parentKey: "hub",
+            sources: ["methodology/approved-method.md"]
+          }
+        ]
+      }),
+      "utf8"
+    );
+
+    const plan = buildMethodologyLabPublicationPlan({
+      repositoryRoot: root,
+      sourceBranch: "main",
+      sourceCommit: "b".repeat(40),
+      generatedAt: "2026-07-25T09:00:00.000Z"
+    });
+
+    assert.equal(plan.publicationKind, "methodology-lab-pilot");
+    assert.equal(plan.confirmationPhrase, "");
+    assert.equal(plan.targetLifecycle, "draft");
+    assert.equal(plan.founderConfirmationRequired, false);
+    assert.equal(plan.publicationAuthority, "ai-managed-draft");
+    assert.deepEqual(plan.parentReferences, [{
+      key: "methodology:draft",
+      role: "methodology",
+      title: "Draft"
+    }]);
+    assert.equal(plan.existingControlledPagesChanged, false);
+    assert.equal(plan.automaticPublication, false);
+    assert.equal(plan.deletionEnabled, false);
+    assert.deepEqual(plan.items.map((item) => item.key), [
+      "methodology-lab-001:hub",
+      "methodology-lab-001:review"
+    ]);
+    assert.ok(plan.items.every((item) => item.role === "methodology"));
+    assert.ok(plan.items.every((item) => item.lifecycle === "draft"));
+    assert.ok(plan.items.every((item) => item.sourceStatus === "proposed-pilot"));
+    assert.equal(plan.items[0].externalParentKey, "methodology:draft");
+    assert.match(plan.items[0].bodyStorage, /proposed Draft reading synthesis/i);
+    assert.match(plan.items[0].bodyStorage, /methodology\/approved-method\.md/);
+    assert.match(plan.items[0].bodyStorage, /Git remains authoritative/);
+    assert.equal(plan.items[1].parentKey, "methodology-lab-001:hub");
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
 test("repository statuses map conservatively to Live, Draft and Archived", () => {
   assert.equal(publicationLifecycle("approved"), "live");
   assert.equal(publicationLifecycle("published"), "live");
@@ -170,6 +255,63 @@ test("publication inspection distinguishes create, update, unchanged and conflic
   assert.equal(inspected.items.find((item) => item.key === "remote").conflictType, "managed-page-version");
   assert.match(inspected.items.find((item) => item.key === "title").reason, /not managed/i);
   assert.equal(inspected.items.find((item) => item.key === "title").conflictType, "unmanaged-title");
+});
+
+test("Draft publication resolves the existing managed Draft parent without updating it", async () => {
+  const inspectFetch = async (url) => response({
+    results: String(url).includes("/spaces/20/")
+      ? [{ id: "200", title: "Draft", spaceId: "20", version: { number: 4 } }]
+      : [],
+    _links: {}
+  });
+  const plan = {
+    id: "draft-plan",
+    targetLifecycle: "draft",
+    founderConfirmationRequired: false,
+    parentReferences: [{ key: "methodology:draft", role: "methodology", title: "Draft" }],
+    items: [{
+      key: "methodology-lab-001:hub",
+      kind: "pilot-hub",
+      role: "methodology",
+      lifecycle: "draft",
+      title: "Methodology Lab",
+      parentKey: null,
+      externalParentKey: "methodology:draft",
+      sourcePath: "publication/lab.md",
+      sourceStatus: "proposed-pilot",
+      sourceVersion: "0.1",
+      sourceHash: "lab-hash",
+      bodyStorage: "<p>Draft Lab</p>"
+    }]
+  };
+  const mappings = [{
+    itemKey: "methodology:draft",
+    confluencePageId: "200",
+    confluenceSpaceId: "20",
+    confluenceVersion: 3,
+    sourceHash: "parent-hash",
+    confluenceTitle: "Draft"
+  }];
+  const inspected = await inspectConfluencePublication(connection(), plan, mappings, { fetchImpl: inspectFetch });
+  assert.equal(inspected.publishable, true);
+  assert.equal(inspected.parentReferences[0].action, "reference");
+  assert.deepEqual(inspected.summary, { create: 1, update: 0, unchanged: 0, conflict: 0 });
+
+  const requests = [];
+  const publishFetch = async (url, options = {}) => {
+    requests.push({ url: String(url), method: options.method, body: options.body ? JSON.parse(options.body) : null });
+    return response({
+      id: "201",
+      parentId: "200",
+      version: { number: 1 },
+      _links: { webui: "/wiki/spaces/METHOD/pages/201" }
+    });
+  };
+  const result = await publishConfluencePublication(connection(), inspected, { fetchImpl: publishFetch });
+  assert.equal(result.created, 1);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].method, "POST");
+  assert.equal(requests[0].body.parentId, "200");
 });
 
 test("publication writes parents first, uses optimistic page versions and never deletes", async () => {

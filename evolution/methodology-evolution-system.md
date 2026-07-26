@@ -125,6 +125,7 @@ Each connection requires an explicit decision covering purpose, information exch
 - No source may silently change authoritative content.
 - Feedback volume alone does not determine truth or priority.
 - AI-generated proposals must identify their evidence and assumptions.
+- AI may publish committed proposed material beneath a controlled private Confluence Draft parent for human review. This is not approval, release or promotion to Live.
 - A release must record its approver, scope, date and conditions.
 - Rejection and no-change decisions are retained to prevent repeated reconsideration without new evidence.
 - Urgent safety, security or legal signals may be escalated immediately but still require authorised action.
@@ -145,6 +146,6 @@ The v0.4 internal-validation decision does not approve:
 
 - An external feedback or notification connection
 - Collection of identifiable product analytics
-- Automatic merging or publication
+- Automatic merging, scheduled publication or AI promotion to Live
 - Delegation of Jamie's founder authority
 - A particular database, AI provider, hosting platform or commercial product

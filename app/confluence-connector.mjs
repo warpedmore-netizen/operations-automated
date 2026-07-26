@@ -296,6 +296,35 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
     publicationPagesForSpace(connection, spaces.methodology, fetchImpl)
   ]);
   const pagesByRole = { internal: internalPages, methodology: methodologyPages };
+  const parentReferences = (plan.parentReferences || []).map((reference) => {
+    const mapping = mappingFor(mappings, reference.key);
+    const pages = pagesByRole[reference.role] || [];
+    const remote = mapping
+      ? pages.find((page) => page.id === String(mapping.confluencePageId || mapping.confluence_page_id || ""))
+      : null;
+    const mappedSpace = String(mapping?.confluenceSpaceId || mapping?.confluence_space_id || "");
+    let action = "reference";
+    let reason = "The existing managed Draft parent is available.";
+    if (!mapping || !remote) {
+      action = "conflict";
+      reason = "The managed Draft parent is missing or is no longer visible.";
+    } else if (remote.spaceId !== String(spaces[reference.role].id) || (mappedSpace && mappedSpace !== remote.spaceId)) {
+      action = "conflict";
+      reason = "The managed Draft parent is no longer in its controlled Confluence space.";
+    } else if (remote.title.toLocaleLowerCase("en-GB") !== reference.title.toLocaleLowerCase("en-GB")) {
+      action = "conflict";
+      reason = "The managed Draft parent has been renamed.";
+    }
+    return {
+      ...reference,
+      action,
+      reason,
+      confluencePageId: remote?.id || "",
+      confluenceVersion: remote?.version || 0,
+      webPath: remote?.webPath || "",
+      webUrl: remote?.webPath ? pageWebUrl(connection, { _links: { webui: remote.webPath } }) : ""
+    };
+  });
   const inspected = plan.items.map((item) => {
     const mapping = mappingFor(mappings, item.key);
     const pages = pagesByRole[item.role] || [];
@@ -351,8 +380,9 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
   });
   const byKey = new Map(inspected.map((item) => [item.key, item]));
   for (const item of inspected) {
-    if (!item.parentKey) continue;
-    const parent = byKey.get(item.parentKey);
+    const parentKey = item.parentKey || item.externalParentKey;
+    if (!parentKey) continue;
+    const parent = byKey.get(parentKey) || parentReferences.find((reference) => reference.key === parentKey);
     if (parent?.action === "conflict") {
       item.action = "conflict";
       item.conflictType = "parent-conflict";
@@ -367,7 +397,8 @@ export async function inspectConfluencePublication(storedConnection, plan, mappi
     ...plan,
     spaces,
     summary,
-    publishable: summary.conflict === 0,
+    publishable: summary.conflict === 0 && parentReferences.every((reference) => reference.action !== "conflict"),
+    parentReferences,
     items: inspected
   };
 }
@@ -429,11 +460,18 @@ export async function publishConfluencePublication(
   }
   const connection = publicationConnection(storedConnection);
   const results = new Map();
+  for (const reference of inspectedPlan.parentReferences || []) {
+    if (reference.action !== "reference" || !reference.confluencePageId) {
+      throw Object.assign(new Error(`The controlled parent page “${reference.title}” was not available.`), { status: 409 });
+    }
+    results.set(reference.key, reference);
+  }
   const published = [];
   for (const item of inspectedPlan.items) {
-    const parent = item.parentKey ? results.get(item.parentKey) : null;
+    const parentKey = item.parentKey || item.externalParentKey;
+    const parent = parentKey ? results.get(parentKey) : null;
     const parentId = parent?.confluencePageId || null;
-    if (item.parentKey && !parentId) {
+    if (parentKey && !parentId) {
       throw Object.assign(new Error(`The parent page for “${item.title}” was not available.`), { status: 409 });
     }
     if (item.action === "unchanged") {
@@ -493,7 +531,9 @@ export function publicConnectionMetadata(connection, syncState = {}) {
     lastVerifiedAt: connection.lastVerifiedAt,
     readOnly: false,
     writeEnabled: true,
-    writeCapability: "approval-gated-controlled-pages",
+    writeCapability: "ai-managed-draft-and-founder-controlled-live",
+    draftWritesRequireFounderConfirmation: false,
+    liveWritesRequireFounderConfirmation: true,
     automaticWrites: false,
     deleteEnabled: false,
     syncedDocuments: Number(syncState.documentCount || 0),

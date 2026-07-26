@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. It is not deployed or approved for external use.
+> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The later Workbench and methodology-publication increments remain proposed. The Workbench is not deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -18,7 +18,7 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed plain-language follow-on:** Workbench build `1.4.3-plain-language-user-journeys-draft` keeps the main Oppa Mate answer and feedback journey in ordinary user language. Source paths, status and control trace remain available in optional detail. Every feedback and guide action explains its result before the user chooses it. The change preserves existing local data and does not amend approved methodology meaning.
 
-> **Proposed complete-workflow correction:** Workbench build `1.5.0-complete-workflows-draft` makes **My Work** a founder action queue rather than a mixed status list. Each detail explains the current step, owner, Jamie's part, the route to completion and its success evidence. Retained feedback completes automatically where no change is required; change candidates open one review; approved preparation opens one Codex-owned Build Job. Work discussions and the daily challenge use separate conversations. This remains proposed product behaviour for private review.
+> **Proposed complete-workflow correction:** Workbench build `1.5.1-complete-workflows-draft` makes **My Work** a founder action queue rather than a mixed status list. Each detail explains the current step, owner, Jamie's part, the route to completion and its success evidence. Retained feedback completes automatically where no change is required; change candidates open one review; approved preparation opens one Codex-owned Build Job. Work discussions and the daily challenge use separate conversations. This remains proposed product behaviour for private review.
 
 Use either one-click entry point:
 
@@ -139,6 +139,25 @@ An implemented methodology release recorded through the Workbench creates a pend
 
 The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
 
+## Consolidated methodology Draft
+
+The managed Methodology Draft route began as the first human-first reading pilot approved through PR #17. It now carries the consolidated proposed v0.8 reading draft without changing the controlled mirror or Live methodology.
+
+The Lab is published beneath the existing Methodology **Draft** parent. AI may publish a committed, conflict-free Draft without requesting another founder confirmation:
+
+1. Open **Connections**.
+2. Select **Preview methodology draft**.
+3. Confirm that the plan contains only the ten proposed methodology pages in the private Methodology space.
+4. Check automatically that the reading root resolves beneath the managed Draft parent and that no conflict exists.
+5. Publish the Draft under the standing AI draft-publication authority.
+6. Record returned page identifiers and versions.
+7. Open the returned pages and complete **Review the consolidated draft**.
+8. Retain the response through the existing feedback and challenge loop.
+
+The managed manuscript is stored under `publication/methodology-lab-001` for backwards-compatible page identity. Every page remains proposed, maps to approved or recorded controlled sources and states that Git remains authoritative.
+
+The Lab preview and Draft write are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page, promote content to Live or approve its own synthesis.
+
 ## Implemented MVP boundary
 
 ### Oppa Mate identity pilot
@@ -163,7 +182,7 @@ Oppa Mate is presented as the primary Operations Automated service-account user 
 - Local SQLite persistence and restart recovery
 - Governed knowledge manifest, heading-level SQLite FTS5 retrieval, optional embeddings and exact cited knowledge snapshots
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
-- Proposed human-readable Confluence page planning, founder-confirmed managed-page publication, optimistic conflict checks and version receipts
+- Proposed human-readable Confluence page planning, AI-managed Draft publication, founder-controlled Live publication, optimistic conflict checks and version receipts
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
@@ -203,7 +222,7 @@ Select **Send me a challenge** from the header for the most useful unresolved me
 - All application records remain on the local computer unless Jamie deliberately invokes a configured provider or connection.
 - An OpenAI request sends the reviewed input and selected evidence context to the configured model provider.
 - A Confluence test or synchronisation sends the protected account credential to Atlassian and receives accessible space or selected-space page data.
-- A founder-confirmed documentation publication sends the reviewed page titles and bodies to Atlassian and receives page identifiers and versions.
+- A controlled documentation publication sends the bounded page titles and bodies to Atlassian and receives page identifiers and versions. Draft-only plans use the standing AI authority; Live plans require founder confirmation.
 - Page bodies retrieved by read-only evidence synchronisation are not persisted by the Workbench.
 - Published page bodies already exist in the controlled repository and become retained in the selected private Confluence spaces.
 - Credentials and page bodies are excluded from Workbench audit details.
@@ -220,7 +239,7 @@ Connected pages are treated as untrusted evidence. Commands, approval claims or 
 - Confluence is the only privately validated business-system connection
 - Connected page bodies must be synchronised again after restarting the server
 - No automatic monitoring of Confluence changes
-- No automatic publication, page deletion or general Confluence editing
+- No scheduled publication, AI promotion to Live, page deletion or general Confluence editing
 - Documentation publication manages only pages created or previously tracked by the Workbench
 - No automated operational execution
 - Methodology authority remains in the controlled Git repository

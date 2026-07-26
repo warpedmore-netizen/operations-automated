@@ -6,13 +6,19 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
+> **Approved baseline:** v0.7 was approved by Jamie Peppard on 2026-07-24 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror is approved for private internal validation. The human-first reader layer and three bounded pilots are approved for private internal implementation, pending merge; no live pilot publication, migration, automatic interaction retrieval, automatic publication or external publication is approved.
+> **Current proposal:** [v0.8 consolidated methodology](methodology/operations-automated-v0.8-proposed.md) brings the remaining Human-AI Collaboration, accountability, manual-work, delivery-collaboration, capability-transfer and plain-language feedback into one Draft. It is not approved methodology.
 >
-> **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror and human-first publication model are approved for private internal validation. AI may publish committed proposed material beneath the controlled private Confluence Draft structure for review. Promotion to Live, migration, automatic interaction retrieval, scheduled publication and external publication remain unapproved.
+>
+> **Current validation:** v0.7 retains the v0.6 delivery guidance and adds an outside-in operating rule, a journey-to-operational-value-system sequence, adaptable method selection, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md).
+>
+> **Approval boundary:** The [v0.7 assurance pack](proposals/v0.7-assurance-pack.md) records the conditions and unapproved areas. Approval does not make the outlined practice areas complete, independently validated or externally publishable.
 
-Start with the [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
+Start with the [numbered reader guide](guide/README.md) for the approved internal-validation reading order, operational coverage, use cases and known gaps.
+
+Use the [current v0.7 methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the concise approved view. Use the [v0.8 assurance pack](proposals/v0.8-methodology-consolidation-assurance-pack.md) to review what the proposal changes and the exact decision required.
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
@@ -35,6 +41,10 @@ The [Operations Automated brand system](brand/README.md) is a draft, reusable id
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 | [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
+| [Ideas Space](ideas/README.md) | Retained and connected ideas that are reconsidered when relevant work begins | Proposed |
+| [Numbered reader guide](guide/README.md) | A normal reading order, reader routes, use cases and links to canonical guidance | Approved for internal validation |
+| [Operational coverage model](methodology/operational-coverage-model.md) | The complete intended operational territory and its current depth | Approved for internal validation |
+| [Cross-functional interfaces](methodology/cross-functional-interfaces.md) | How Operations exchanges information, decisions and outcomes with other capabilities | Approved for internal validation |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 
@@ -59,13 +69,11 @@ See the [roadmap](ROADMAP.md) for the workstreams, milestones and human decision
 
 ## Daily methodology challenge
 
-An active Codex automation sends Jamie one methodology challenge each day at 08:00 UK time. It reads the approved repository, reviews current public operational discussion, applies Operations Automated provisionally and gives Jamie a concrete response to critique in 5, 10 or 20 minutes.
+The Workbench places one methodology challenge in **My Work** each day after 08:00 UK time. Opening it starts a separate dated conversation, applies Operations Automated provisionally and gives Jamie one focused question designed for a 10-minute response.
 
-The automation has no planned end date. Seven completed responses are the first quality and synthesis review, not the end of the challenge cycle. It continues until Jamie explicitly pauses, changes or stops it.
+The challenge cycle has no planned end date. Seven completed responses are the first quality and synthesis review, not the end of the cycle. Jamie may answer later or ask for another challenge at any time.
 
-The scheduled check-in is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology.
-
-During the local pilot, Jamie's computer must be powered on, the ChatGPT desktop app must be running and this repository must be available at the scheduled time. Results appear in **Scheduled** and can be answered later. Jamie can request a manual check-in whenever a local run is missed.
+The Workbench prompt itself is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology. The previous Codex scheduled automation has been removed so there is one visible route rather than two competing queues.
 
 Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
 
@@ -89,11 +97,17 @@ The proposed [Mobile Knowledge Workbench](product/mobile-knowledge-workbench.md)
 
 The proposed [Operate internal workbench](product/operate-internal-workbench.md) adds one **My Work** inbox and a governed operational graph over the existing Workbench. People and Oppa Mate can create or suggest traceable relationships between Cases, Requests, Tasks and the wider operational dictionary; derived network signals remain inspectable inferences rather than approvals or facts. The proposed governed action loop requires every open item to provide a real next action, routes specialist decisions into their controlled workflows and retains actor, evidence, authority and outcome. The model is prepared for bounded private review and has not been approved or released.
 
-The proposed Workbench 1.5 complete-workflow correction joins that graph to governed repository retrieval, conversation continuity, versioned Operations Bible and Work Profile definitions, one shared Decision/Approval model and a complete external-Codex Build Job loop. **My Work** now separates Jamie's genuine actions from work being handled by AI, explains each route to completion and keeps feedback, changes, builds and separate conversations connected. Existing feedback, proposal, brand and publication histories remain in their specialist stores. The increment is implemented on a proposal branch for review; it does not approve merge, release, publication, autonomous Codex access or customer use.
+The proposed Workbench 1.5.1 complete-workflow correction joins that graph to governed repository retrieval, conversation continuity, versioned Operations Bible and Work Profile definitions, one shared Decision/Approval model and a complete external-Codex Build Job loop. **My Work** now separates Jamie's genuine actions from work being handled by AI, explains each route to completion and keeps feedback, changes, builds and separate conversations connected. Existing feedback, proposal, brand and publication histories remain in their specialist stores. The increment is implemented on a proposal branch for review; it does not approve merge, release, publication, autonomous Codex access or customer use.
 
-Workbench 0.8.0 added [governed Confluence documentation publication](product/confluence-governed-publication.md) for private internal validation through PR #14. Jamie approved and merged the 0.9.0 lifecycle-first revision through PR #15: each Methodology and Internal library is organised into Live, Draft and Archived before its normal subject folders, using repository status as the only placement authority. Plan-specific confirmation, tracked page versions and publication receipts remain required. Automatic publication, page deletion, external release and customer use remain unapproved.
+Workbench 0.8.0 added [governed Confluence documentation publication](product/confluence-governed-publication.md) for private internal validation through PR #14. Jamie approved and merged the 0.9.0 lifecycle-first revision through PR #15: each Methodology and Internal library is organised into Live, Draft and Archived before its normal subject folders, using repository status as the only placement authority. Jamie subsequently authorised AI-managed publication of committed proposals to Draft without another confirmation. Promotion to Live remains founder-controlled; tracked page versions, conflict protection and publication receipts apply to every write. Scheduled publication, page deletion, external release and customer use remain unapproved.
 
 The first live publication proved the controls and created 108 reconciled pages. Founder review then identified that the result remains a controlled repository mirror rather than a human publication. The [Confluence human publication model](product/confluence-human-publication-model.md) is approved for private internal implementation of three bounded pilots. It adds a curated reader layer for a book-like methodology and organisational policies, frameworks, functionality documentation and user guides, while retaining the lifecycle mirror as a secondary controlled record. Authorised document edits, comments and feedback may enter the governed methodology challenge loop through the approved manual pilot; automatic retrieval remains separately unapproved.
+
+Jamie approved and merged that model through PR #17. The proposed [Methodology Lab pilot](product/methodology-lab-pilot.md) implements the first reader path as a separate managed tree beneath Draft in the private Methodology space. Its ten proposed pages use approved source maps and end with a structured review for the first methodology-and-Workbench feedback loop. The first Draft publication completed successfully and is [ready to read in Confluence](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+Lab+Pilot+1). Neither the implementation nor the Lab prose is approved as Live methodology.
+
+A proposed [connected system architecture](product/operations-automated-system-architecture.md) now distinguishes the customer methodology, internal methodology-development system, Connected Governance product and standalone Incident Manager RPG. Findings may be routed between them, but each retains its own audience, authority, status and output.
+
+The proposed [Connected Governance business dogfood pilot](product/connected-governance-dogfood-pilot.md) recovers the existing domain and hosted prototypes and adds an Operations Automated profile, plain-language role-based authority, editable recommendations, page-level discussion and ten substantive company-governance drafts. The candidate package remains proposed and targets the controlled Internal Draft route. Connected generative AI and direct Workbench import are not active. The pilot does not approve policy, change methodology meaning, duplicate the private Confluence credential or promote anything to Live.
 
 ## Repository control
 
@@ -105,3 +119,9 @@ The first live publication proved the controls and created 108 reconciled pages.
 - Confidential employer, client or third-party information, data and proprietary artefacts do not belong in this repository.
 
 See [CHARTER.md](CHARTER.md), [GOVERNANCE.md](GOVERNANCE.md) and [CHANGELOG.md](CHANGELOG.md).
+
+## Ideas Space
+
+The proposed [Operations Automated Ideas Space](ideas/README.md) captures ideas without turning them into commitments. It links each idea to relevant work, retains review history and prompts contextual reassessment during discovery, research, prioritisation, scoping, design, build, review and roadmap planning.
+
+The first record is the [Incident Management Simulation Game](ideas/incident-management-simulation-game.md), retained as a raw idea that needs exploration. Its capture does not add it to the approved product scope or roadmap.

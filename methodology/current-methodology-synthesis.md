@@ -2,11 +2,12 @@
 id: OA-METHOD-011
 title: Current Methodology Synthesis and Visual Map
 status: approved
-version: 0.2
+version: 0.3
 owner: Jamie Peppard
 date: 2026-07-23
+last_updated: 2026-07-26
 approval_required: true
-approval_date: 2026-07-23
+approval_date: 2026-07-24
 approval_scope: internal validation
 ---
 
@@ -14,44 +15,48 @@ approval_scope: internal validation
 
 ## Status
 
-This is the simplest current view of Operations Automated v0.6. Jamie Peppard approved the combined baseline on 2026-07-23 for internal validation. It is not externally validated or approved for external publication.
+This is the simplest current view of Operations Automated v0.7. Jamie Peppard approved the v0.7 baseline on 2026-07-24 for internal validation. It is not externally validated or approved for external publication.
 
 ## The method at a glance
 
 ```mermaid
 flowchart LR
-    A["Purpose, people, value and authority"] --> B["Understand the connected operation"]
-    B --> C["Assess operational and technology readiness"]
-    C --> D["Use OPERATE to improve and implement"]
-    D --> E["Return the smallest useful output"]
-    E --> F["Activate it and prove first use"]
-    F --> G["Observe outcomes and retain learning"]
-    G --> B
+    A["Primary journey, purpose, people, value and authority"] --> B["Map the operational value system"]
+    B --> C["Understand capabilities, interfaces, risk and evidence"]
+    C --> D["Assess operational and technology readiness"]
+    D --> E["Use OPERATE to improve and implement"]
+    E --> F["Return the smallest useful output"]
+    F --> G["Activate it and prove first use"]
+    G --> H["Observe outcomes, receive feedback and retain learning"]
+    H --> A
 
-    H["Human authority and consequence"] -. governs .-> A
-    H -. governs .-> C
-    H -. governs .-> D
-    H -. governs .-> F
+    I["Human authority and consequence"] -. governs .-> A
+    I -. governs .-> D
+    I -. governs .-> E
+    I -. governs .-> G
 
-    I["Evidence, uncertainty and obligations"] -. constrain .-> B
-    I -. constrain .-> C
-    I -. constrain .-> D
-    I -. constrain .-> E
+    J["Evidence, uncertainty and obligations"] -. constrain .-> B
+    J -. constrain .-> C
+    J -. constrain .-> D
+    J -. constrain .-> F
 
-    J["Human-AI collaboration"] -. adapts and challenges .-> B
-    J -. adapts and challenges .-> E
-    J -. learns with .-> G
+    K["Human-AI collaboration"] -. adapts and challenges .-> C
+    K -. adapts and challenges .-> F
+    K -. learns with .-> H
 ```
 
-## Seven working rules
+## Ten working rules
 
-1. Start with the intended outcome, beneficiary and user-defined value.
-2. Understand the operation as a connected system rather than an isolated process.
-3. Use evidence to decide the justified level of operational, automation, AI or agentic readiness.
-4. Improve and simplify before delegating work to technology.
-5. Return useful analysis and the smallest usable aid, not forms or questions alone.
-6. Keep authority, consequence, obligations, uncertainty and recovery visible.
-7. Prove that the user can use the result, then retain learning and improve the method.
+1. Start outside-in with the primary customer, service user, stakeholder or beneficiary journey and the value they need.
+2. Move from that journey into the end-to-end operational value system that must deliver and sustain the outcome.
+3. Understand capabilities and cross-functional interfaces as a connected system rather than an isolated process.
+4. Use the minimum adaptable structure and select methods because they fit the context, not because they are fashionable or comprehensive.
+5. Use evidence to decide the justified level of operational, automation, AI or agentic readiness.
+6. Improve and simplify before delegating work to technology.
+7. Return useful analysis and the smallest usable aid, not forms or questions alone.
+8. Keep authority, consequence, obligations, uncertainty and recovery visible.
+9. Prove that the user can use the result and make feedback workable for the receiver.
+10. Retain learning, expose genuine methodology gaps and evolve the method under human-controlled governance.
 
 ## How the components fit
 
@@ -59,6 +64,7 @@ flowchart LR
 |---|---|---|
 | Direction | [Founder Charter](../CHARTER.md), user-defined value and human-led automation | Approved for internal validation |
 | Understanding | [Operational lenses](operational-lenses.md) and [connected work, risk and control](connected-work-risk-and-control.md) | Approved for internal validation |
+| Operational territory | [Operational coverage model](operational-coverage-model.md) and [cross-functional interfaces](cross-functional-interfaces.md) | Approved for internal validation |
 | Readiness | [Operational readiness path](readiness-path.md) | Approved for internal validation |
 | Improvement | [OPERATE](operate-overview.md) | Approved for internal validation |
 | Delivery | [Output contract](output-contract.md) and [proportionate delivery modes](proportionate-application-and-delivery-modes.md) | Approved for internal validation |
@@ -66,6 +72,7 @@ flowchart LR
 | Collaboration | [Human-AI Collaboration Method](human-ai-collaboration.md) | Approved for internal validation |
 | Completion | [Activation and first use](activation-and-first-use.md) | Approved for internal validation |
 | Evolution | [Methodology evolution system](../evolution/methodology-evolution-system.md) and founder challenge loop | Approved for internal validation |
+| Navigation | [Numbered reader guide](../guide/README.md) and [guide authoring standard](../guide/10-tools-and-reference/guide-authoring-standard.md) | Approved for internal validation |
 
 ## Feedback coverage
 
@@ -84,19 +91,24 @@ flowchart LR
 | Keep the first output simple rather than oppressive | Progressive disclosure and shortest-usable-output rule | Approved v0.6 guidance |
 | A deliverable is incomplete until the user can activate and use it | Activation and first use | Approved v0.6 guidance |
 | Govern how AI understands, represents, challenges, remembers and learns | Human-AI Collaboration Method | Approved v0.6 guidance |
+| Begin outside-in and then move into the operational value system | Reader guide, coverage model and cross-functional interface model | Approved v0.7 guidance |
+| Make the intended operational territory and current depth visible | Operational coverage model and completeness scale | Approved v0.7 guidance |
+| Select and combine methods for the situation | Coverage model, reader guide and guide authoring standard | Approved v0.7 guidance |
+| Make feedback workable for the person giving or receiving it | Outside-in guidance, guide routes and evolution system | Approved v0.7 guidance |
 
 ## What remains open
 
 The methodology meaning has been captured; the main gaps are now evidence and depth:
 
-- simplify and independently test the first decision aid;
-- run a materially different second facilitated case;
-- validate activation and first use across two different delivery types;
-- pilot the Human-AI Collaboration Method across seven materially different interactions;
-- develop deeper guidance for assurance independence, silent harm and human capability;
-- decide which proof-of-concept product features support the validated method; and
+- test the v0.7 reader routes with an independent reader;
+- apply the outside-in journey-to-operational-value-system sequence to two materially different cases;
+- move the highest-value outlined practice families towards usable guidance;
+- validate activation and first use across different delivery types;
+- continue piloting the Human-AI Collaboration Method across materially different interactions;
+- develop deeper guidance for assurance independence, silent harm, recovery and human capability;
+- decide which product features support the validated method; and
 - complete security, commercial and external-publication decisions separately.
 
 ## Control boundary
 
-Jamie Peppard retains final approval over methodology meaning, release, external publication and consequential authority. The v0.6 components are approved only for internal validation and must not be described as externally validated.
+Jamie Peppard retains final approval over methodology meaning, release, external publication and consequential authority. The v0.7 components are approved only for internal validation and must not be described as externally validated.

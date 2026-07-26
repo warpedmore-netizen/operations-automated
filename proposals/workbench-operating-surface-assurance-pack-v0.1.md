@@ -11,7 +11,7 @@ date: 2026-07-26
 
 ## Decision in one sentence
 
-- **Decision required:** decide whether Workbench 1.5.0 is suitable for a bounded private founder pilot and may later merge into the proposed Operate branch.
+- **Decision required:** decide whether Workbench 1.5.1 is suitable for a bounded private founder pilot and may later merge into the proposed Operate branch.
 - **AI recommendation:** suitable for bounded founder review, subject to real-use calibration; do not yet approve broader release, direct Codex connectivity or team/customer use.
 - **Current authority:** implementation, verification and draft-PR review only.
 
@@ -187,6 +187,6 @@ Approved or published methodology may be normative within its stated scope. Prop
 
 Jamie is asked to decide:
 
-> Is the proposed Workbench 1.5.0 operating surface, including clear ownership, complete feedback/change/build workflows, separate work conversations and the in-tool daily challenge, suitable for bounded private founder use and ready to merge into the proposed Operate branch?
+> Is the proposed Workbench 1.5.1 operating surface, including clear ownership, complete feedback/change/build workflows, separate work conversations and the in-tool daily challenge, suitable for bounded private founder use and ready to merge into the proposed Operate branch?
 
 A positive decision would not approve the combined Workbench for external release, change approved methodology meaning, publish Confluence content, activate a direct Codex connection, accept unrecorded risk, approve customer use or delegate Jamie's retained authority.

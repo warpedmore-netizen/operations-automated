@@ -1,6 +1,6 @@
 # Changelog
 
-## Workbench 1.5.0 complete founder workflows - proposed
+## Workbench 1.5.1 complete founder workflows - proposed
 
 - Reframed **My Work** around human action: **Do Next** now excludes work owned by Codex or Oppa Mate, while a separate **Being handled** count keeps that work visible.
 - Added a plain-language current step, owner, founder part, workflow progress and **Done when** evidence to work, change and Build Job details.
@@ -11,6 +11,17 @@
 - Gave work-item discussions and daily methodology challenges separate conversations so new work no longer disappears at the bottom of one continuing thread.
 - Added the 08:00 UK daily methodology challenge to My Work as one focused 10-minute Workbench journey, ready for the existing feedback loop.
 - Preserved specialist history, explicit authority and the external-Codex boundary; no methodology meaning, merge, publication or direct autonomous connection is approved.
+
+## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed
+
+- Reconciled the approved v0.7 methodology, all open-PR branch heads, retained feedback, Workbench product increments, Connected Governance and unique pilot evidence into one controlled history.
+- Updated the concise approved synthesis so it accurately represents v0.7 without changing its approved meaning.
+- Proposed one v0.8 methodology covering deliberate manual work, AI responsibility, human accountability, meaningful review, early delivery collaboration, capability transfer and plain-language informed action.
+- Superseded the earlier Human-AI v0.3 proposal with a consolidated v0.4 proposal while retaining its history.
+- Updated the ten-page managed Confluence reading tree to a consolidated v0.8 Draft with stable page identities and controlled source maps.
+- Updated the Workbench publication journey to preview and publish the consolidated methodology Draft while keeping Live promotion separately founder-controlled.
+- Preserved PR #3's unique pilot evidence exactly and recorded the obsolete PR #8 implementation as superseded by the later Connected Governance branch.
+- Kept v0.7 as the current approved internal baseline; v0.8 meaning, Live publication, external release and customer deployment remain unapproved.
 
 ## Workbench 1.4.3 plain-language user journeys - proposed
 
@@ -31,6 +42,21 @@
 - Added API, interface and live isolated-browser checks while keeping approval, merge, release and publication separate.
 
 All material changes to Operations Automated will be recorded here.
+
+## Workbench 1.0.0 Methodology Lab - proposed
+
+- Corrected the authority model after founder review: AI may publish committed proposed material beneath controlled Confluence Draft parents without another confirmation; Live promotion remains founder-controlled.
+- Moved the Methodology Lab target beneath the existing Methodology Draft page rather than creating another top-level review area.
+- Added an isolated ten-page Methodology Lab manuscript implementing the approved book-style reader pilot.
+- Added a controlled manifest defining titles, hierarchy, reading order and approved source maps.
+- Added a separate Workbench preview mode that contains only the Lab pages and targets the existing private Methodology space.
+- Added validation that rejects unapproved sources, non-proposed pilot pages, duplicate keys or titles, missing parents and hierarchy cycles.
+- Added retained source, conflict, version and audit controls for AI-managed Draft publication.
+- Published the ten proposed Lab pages beneath the existing Methodology Draft page from commit `1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3`; 10 pages were created, none of the existing 108 were changed, no page was deleted and the immediate comparison returned all 10 unchanged.
+- Added a review page that separates methodology, explanation, navigation, product, evidence and no-change feedback.
+- Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no scheduled publication.
+- Added a product specification, feedback record, decision record and assurance pack for the first dogfooding loop.
+- This implementation remains proposed. Draft publication is authorised for review; merge and promotion to Live each remain separate Jamie Peppard decisions.
 
 ## Workbench 1.4.1 assisted capture and actions - proposed
 
@@ -147,6 +173,43 @@ All material changes to Operations Automated will be recorded here.
 - Retained **Operations consultancy** and **Automate. Autonomise. Empower.** as source wording, not approved public language, pending a separate meaning decision.
 - Kept the system in Draft, with external publication, product migration, deployment, trade-mark clearance and methodology change outside its scope.
 
+## Proposed — Connected Governance conversational journey
+
+- Reframed Authority as six plain decision and ownership questions.
+- Added founder-led, leadership-team and committee-led starter structures with recognisable job-title examples and editable wording.
+- Made recommendations workable: users may rename, rewrite, reprioritise, change outputs or add another proposed route.
+- Clear stale recommendation selections and generated documents when a recommendation's meaning changes.
+- Added a retained ask, suggest or challenge discussion to every application page.
+- Labelled immediate page responses as controlled guidance rather than connected generative AI.
+- Replaced the JSON-first handoff with a clear human review completion and honest current stopping point.
+- Retained the credential-free JSON package only as an advanced future-import artefact.
+- Preserved the positively validated draft brand pilot without representing the brand as approved.
+- No generated company policy, brand approval, AI provider connection, direct Workbench import, Confluence publication, Live promotion or external release is approved by this proposal.
+
+## Proposed — Connected Governance guided journey and brand pilot
+
+- Added a guided six-step journey from operating context to readable proposed documents.
+- Added accessible field explanations, examples, prominent save results and explicit next actions.
+- Explained company-governance, methodology, document, control, AI-drafting and publication authority in plain language.
+- Separated authorised knowledge sources, discovered inventory and the Confluence Draft destination.
+- Added the known Operations Automated inventory from retained project context without requiring re-entry.
+- Expanded recommendations to show evidence, owner, full output, destination and the exact consequence of selection.
+- Added the selected source scope and full Draft destination to the credential-free Workbench hand-off contract.
+- Piloted the separate draft Operations Automated mark, semantic palette, voice and endorsed product relationship without treating the brand as approved.
+- Recorded that direct hosted-to-Workbench import remains inactive and needs a separate reviewed connection design.
+- No generated company policy, brand approval, methodology change, new connection, Live publication or external release is approved by this proposal.
+
+## Proposed — Connected Governance business dogfood pilot
+
+- Recovered the preserved Connected Governance domain proof and deployable private test surface into the authoritative proposal branch.
+- Defined the customer methodology, internal methodology-development system, Connected Governance and Incident Manager RPG as connected but separately governed systems.
+- Added an Operations Automated dogfooding profile and durable Governance Authority and Methodology Authority roles.
+- Replaced component-name-only output with ten substantive proposed company-governance documents.
+- Added a controlled Internal Draft hand-off boundary that reuses the private Workbench publication route rather than duplicating credentials.
+- Retained scenario, finding, drift, versioning and AI-without-approval behaviour from the earlier governance proof.
+- Added a dogfooding pilot, feedback record and plain-English assurance pack.
+- No generated company policy, methodology change, Live publication, new connection or external release is approved by this proposal.
+
 ## Workbench 1.0.0 human publication model - approved for private internal implementation
 
 - Recorded that the first governed Confluence publication is technically controlled but still reads like a repository mirror.
@@ -158,7 +221,17 @@ All material changes to Operations Automated will be recorded here.
 - Kept automatic retrieval of document interactions behind a separate permission, confidentiality and retention decision.
 - Kept the current 108 pages unchanged and retained the separate founder confirmation for every live Confluence write.
 - Jamie Peppard approved the human-first publication model and all three bounded pilots for private internal implementation on 2026-07-25.
-- Merge, live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
+- Jamie Peppard explicitly authorised merge of PR #17 on 2026-07-25; it was merged as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.
+- Live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
+## Ideas Space 0.1 - proposed
+
+- Added a structured Ideas Space that preserves ideas without making them commitments.
+- Separated authoritative artefact status from the working lifecycle of an idea.
+- Added capture, relationship, resurfacing and contextual-review guidance.
+- Added a reusable idea-record template and a lightweight local related-idea finder.
+- Added planning instructions to review related ideas during discovery through roadmap planning.
+- Captured the Incident Management Simulation Game as the first raw idea, with its evidence, assumptions, relationships and explicit authority boundary.
+- No product scope, build, external connection, spending, publication or autonomous approval is authorised by this proposal.
 
 ## Workbench 0.9.0 - approved for private internal validation
 
@@ -219,6 +292,26 @@ All material changes to Operations Automated will be recorded here.
 - Added an on-demand Challenge Studio covering principles, AI suitability, deliberately manual work and delivery capability.
 - Proposed an amendment to the approved Human-AI Collaboration Method covering human/machine readability, automation choice, development collaboration and internal capability.
 - This is a proposed Workbench product increment. It does not alter or approve the methodology v0.6 baseline.
+## 0.7 - Methodology coverage and reader guide
+
+- Approved by Jamie Peppard on 2026-07-24 for internal validation with the conditions in the v0.7 assurance pack; merge and external publication were not authorised by this approval.
+
+- Recorded founder feedback that the methodology has a sound conceptual core but remains too light in practical use cases, detailed operational guidance and explicit links with non-operating capabilities.
+- Added an operational coverage model covering core value flow, enabling capabilities, direction and assurance, and change and evolution.
+- Added an outside-in starting rule: follow the primary customer, service user or stakeholder journey before designing the operational capabilities and interfaces that support it.
+- Added a journey-to-operational-value-system sequence: use the primary journey to establish why and where to improve, then start from the first operational event and map how the required outcomes are delivered and sustained.
+- Clarified that established methods are a selectable toolkit: journey mapping, Lean techniques, MoSCoW and specialist practices may be combined where suitable, with the choice and boundaries made explicit.
+- Added a minimum-structure rule that adopts and adapts useful practices without making any framework doctrine, and develops more structure where weak understanding or control intersects with material value or consequence.
+- Added receiver-centred feedback loops designed around the person's effort, accessibility, form and channel, with authorised automation for capture, routing and synthesis but retained human authority over consequential change.
+- Added a completeness scale so every capability can be shown honestly as Identified, Outlined, Usable, Validated or Publishable.
+- Added a cross-functional interface model covering strategy, finance, people, legal, risk, compliance, security, privacy, data, technology, product, change, procurement, suppliers, customer relationships, audit, quality, facilities, health and safety, and sustainability.
+- Clarified that the interface model applies to operational work and end-to-end outcomes rather than governing whole specialist functions, and that disproportionate control friction should be recorded and escalated without overriding obligations or risk authority.
+- Added a numbered, book-like reader guide with routes for quick questions, full assessments, implementation, and governance and review.
+- Added a broad use-case catalogue, including individual, service, physical-operation, low-volume/high-consequence, supplier, resilience, audit, automation, AI and agentic scenarios.
+- Added a common authoring standard for future practice guides and a draft operational coverage-and-interface template.
+- Compared the structure with official ITIL, COBIT, APQC, ISO 9001 and NIST AI RMF material as structural benchmarks only; no equivalence, compliance or certification is claimed.
+- Approved the methodology and guide content for internal validation while retaining the working template as draft and external publication as a separate decision.
+- Corrected the operational-assessment template's stale methodology-version reference and stale proposed-status wording for the approved Human-AI Collaboration Method.
 
 ## 0.6 - Actionable delivery and governed collaboration
 
