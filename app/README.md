@@ -18,6 +18,10 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed plain-language follow-on:** Workbench build `1.4.3-plain-language-user-journeys-draft` keeps the main Oppa Mate answer and feedback journey in ordinary user language. Source paths, status and control trace remain available in optional detail. Every feedback and guide action explains its result before the user chooses it. The change preserves existing local data and does not amend approved methodology meaning.
 
+> **Proposed complete-workflow correction:** Workbench build `1.5.1-complete-workflows-draft` makes **My Work** a founder action queue rather than a mixed status list. Each detail explains the current step, owner, Jamie's part, the route to completion and its success evidence. Retained feedback completes automatically where no change is required; change candidates open one review; approved preparation opens one Codex-owned Build Job. Work discussions and the daily challenge use separate conversations. This remains proposed product behaviour for private review.
+
+> **Proposed scheduled AI-owner queue:** Workbench build `1.5.3-ai-owner-queue-draft` exposes one local queue for bounded work assigned to Operations Automated AI or Codex. A recurring Codex task can claim one ready item, carry out its recorded prompt and return structured evidence to the Workbench. Items remain outside Jamie's **Do Next** list unless clarification or a governed decision is required. Manual copy and return remain available as recovery. This does not give AI approval, release, publication, risk-acceptance, spending or access authority.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
@@ -192,6 +196,7 @@ Oppa Mate is presented as the primary Operations Automated service-account user 
 - Decision Inbox with separate preparation and release decisions
 - Universal Decision and Approval records projected into My Work while specialist histories remain intact
 - First-class Implementation Jobs with a copyable Codex brief, structured return receipt, separate release approval and authorised merge receipt
+- One local `/api/ai-work` queue with claim-before-action and structured return routes for bounded AI-owned Tasks and already-authorised Build Job phases
 - Plain-English decision briefs and a prominent link to the exact draft change on GitHub
 - Bounded implementation instructions requiring a new branch, draft pull request, decision record, changelog, version impact and test evidence
 - Founder-only release confirmation, retained repository references, reindexing and implementation receipts
@@ -239,5 +244,5 @@ Connected pages are treated as untrusted evidence. Commands, approval claims or 
 - No automatic monitoring of Confluence changes
 - No scheduled publication, AI promotion to Live, page deletion or general Confluence editing
 - Documentation publication manages only pages created or previously tracked by the Workbench
-- No automated operational execution
+- Scheduled AI-owner pickup depends on the computer, Codex app and local Workbench being available; there is no instant event-driven dispatch or catch-up guarantee
 - Methodology authority remains in the controlled Git repository

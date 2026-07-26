@@ -66,6 +66,10 @@ Version 0.7 was approved on 2026-07-24 for internal validation. It responds to J
 
 The approved internal-validation catalogue makes omissions visible; it does not claim that every area is already a usable or validated practice. Merge, external publication and product release remain separate decisions.
 
+Further founder use showed that joined records are not the same as a completed workflow. My Work still mixed Jamie's actions with AI-owned work, Cases pointed at closure rather than their open contents, saved feedback could remain in review, preparation exposed developer receipt fields and unrelated discussions accumulated in one long conversation. The proposed Workbench 1.5.1 correction makes ownership, current step, completion evidence and the return point explicit; automates bounded transitions; and brings the daily methodology challenge into its own Workbench conversation. This is a product workflow correction, not an approved methodology change or product release.
+
+Founder testing then exposed a deeper ownership failure: labelling an item as AI-owned did not wake an AI worker, so Tasks and approved-preparation Build Jobs could remain indefinitely in **Being handled**. The proposed Workbench 1.5.3 correction adds a local claimable queue, structured completion return and recurring Codex worker. It uses scheduled polling because no supported event-driven Workbench-to-Codex connection is currently configured. Consequential actions remain behind their existing founder gates, and the worker depends on the computer, Codex app and local Workbench being available.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -104,7 +108,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 6. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet and validate activation.
 7. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
 8. Review the published Methodology Lab Draft as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
-9. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
+9. Review the proposed Workbench 1.5.1 operating surface as one bounded whole: clear ownership and completion, governed knowledge, separate conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff and receipt loop.
 10. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
 11. Prepare a new assurance pack before any later material methodology release.
 12. Define the smallest justified product only after repeatable method outputs create value.

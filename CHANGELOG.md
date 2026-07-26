@@ -1,5 +1,27 @@
 # Changelog
 
+## Workbench 1.5.3 scheduled AI-owner queue - proposed
+
+- Added one local, machine-readable AI work queue for ordinary AI-owned Tasks and explicitly authorised Build Job steps.
+- Added conflict-safe claim and structured return routes so a scheduled Codex task can pick up bounded work, return evidence and move the Workbench to completion or the next human control point.
+- Kept AI-owned work out of Jamie's **Do Next** list while it is queued or being handled; missing outcome information returns to Jamie for clarification instead of being guessed.
+- Retained manual copy-and-return controls as a recovery route when the scheduled worker or local Workbench is unavailable.
+- Made completed AI work visibly terminal, with the returned outcome, evidence and scheduled-worker provenance retained in the ticket.
+- Preserved the founder gates: the worker cannot infer approval, release, merge authority, publication, risk acceptance, spending, access changes or wider delegated authority from assignment.
+- This is proposed private-product behaviour. The configured local schedule does not approve product release, external connection or customer use.
+
+## Workbench 1.5.1 complete founder workflows - proposed
+
+- Reframed **My Work** around human action: **Do Next** now excludes work owned by Codex or Oppa Mate, while a separate **Being handled** count keeps that work visible.
+- Added a plain-language current step, owner, founder part, workflow progress and **Done when** evidence to work, change and Build Job details.
+- Made Cases route to their open contained work and prevented both resolution and closure while that work remains open.
+- Completed the feedback disposition: ordinary corrections and context are retained and leave My Work; methodology and product candidates automatically open one governed change review.
+- Made an approved preparation decision automatically create one Codex-owned Build Job, removed repository receipt fields from Jamie's screens and kept release as a later founder decision.
+- Prevented a prior pull request from appearing as the current build source before Codex returns the new draft receipt.
+- Gave work-item discussions and daily methodology challenges separate conversations so new work no longer disappears at the bottom of one continuing thread.
+- Added the 08:00 UK daily methodology challenge to My Work as one focused 10-minute Workbench journey, ready for the existing feedback loop.
+- Preserved specialist history, explicit authority and the external-Codex boundary; no methodology meaning, merge, publication or direct autonomous connection is approved.
+
 ## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed
 
 - Reconciled the approved v0.7 methodology, all open-PR branch heads, retained feedback, Workbench product increments, Connected Governance and unique pilot evidence into one controlled history.

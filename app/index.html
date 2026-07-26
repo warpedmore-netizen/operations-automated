@@ -36,7 +36,7 @@
         <button class="nav-item" data-view="guide"><span class="nav-icon" aria-hidden="true">?</span><span>How it works</span></button>
       </nav>
       <section class="recent-conversations" aria-labelledby="recent-heading">
-        <div class="recent-heading"><span id="recent-heading">Recent</span><button id="refresh-conversations" type="button">Refresh</button></div>
+        <div class="recent-heading"><span id="recent-heading">Conversations</span><div><button id="new-conversation-rail" data-new-conversation type="button">+ New</button><button id="refresh-conversations" type="button">Refresh</button></div></div>
         <div id="conversation-list"><p class="rail-empty">No conversations yet.</p></div>
       </section>
       <div class="rail-note"><span class="status-dot"></span><strong>Local data boundary</strong><p>Non-confidential project material only. Nothing here is approval.</p></div>
@@ -55,7 +55,7 @@
           </div>
           <p class="eyebrow" id="workspace-label">Operate workbench</p><h1 id="conversation-title">My work</h1>
         </div>
-        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="ghost" id="new-conversation" type="button">New chat</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
+        <div class="top-actions"><span class="baseline-state" id="baseline-state">Baseline: checking...</span><span class="api-state" id="api-state">Checking mode...</span><button class="challenge-button" data-send-challenge="balanced" type="button">Challenge me</button><button class="ghost" id="new-conversation" data-new-conversation type="button">New chat</button><button class="top-help" data-open-guide type="button">How this works</button><button class="ghost" id="details-button" type="button" aria-expanded="false">Technical details</button><button class="ghost" id="export-button" type="button">Export</button></div>
       </header>
 
       <section class="view utility-view my-work-view" id="my-work-view">
@@ -64,7 +64,7 @@
             <div>
               <p class="eyebrow">One place for attention</p>
               <h2>My work</h2>
-              <p>See the work most likely to improve an outcome or reduce exposure. Every open item has a working next action, remains linked to its underlying record and keeps the evidence of what happened.</p>
+              <p>See what needs you, what is already being handled and how each item reaches a real finish. Open any item for its owner, workflow, linked work, success criteria and next governed action.</p>
             </div>
             <div class="work-order">
               <label for="work-order">Order by</label>
@@ -87,8 +87,8 @@
             <label>Record type<select id="work-type-filter"><option value="">All record types</option><option value="case">Case</option><option value="request">Request</option><option value="task">Task</option><option value="incident">Incident</option><option value="problem">Problem</option><option value="change">Change</option><option value="risk">Risk</option><option value="finding">Finding</option><option value="decision">Decision</option><option value="approval">Approval</option><option value="improvement">Improvement</option><option value="scenario-test">Scenario test</option></select></label>
           </div>
           <div class="work-summary" id="work-summary" aria-label="My work summary">
-            <div><span>Open attention</span><strong>—</strong></div>
-            <div><span>Overdue</span><strong>—</strong></div>
+            <div><span>Your actions</span><strong>—</strong></div>
+            <div><span>Being handled</span><strong>—</strong></div>
             <div><span>Blocked</span><strong>—</strong></div>
             <div><span>Decisions</span><strong>—</strong></div>
           </div>
@@ -135,7 +135,14 @@
             <div class="section-heading"><div><p class="eyebrow">Operational graph</p><h3 id="all-work-heading">Operational work</h3></div><span id="operate-record-count">Loading...</span></div>
             <div class="operate-record-list" id="operate-record-list"><p>Loading records...</p></div>
           </section>
-          <details class="operations-bible">
+          <section class="governed-work-registers" aria-labelledby="governed-work-registers-heading">
+            <div class="section-heading"><div><p class="eyebrow">Dedicated registers</p><h3 id="governed-work-registers-heading">Improvements and changes</h3></div><span>Visible as their own workflows</span></div>
+            <div class="governed-register-grid">
+              <section><div class="section-heading"><h4>Improvement initiatives</h4><span id="improvement-register-count">Loading...</span></div><div class="operate-record-list" id="improvement-register"></div></section>
+              <section><div class="section-heading"><h4>Changes</h4><span id="change-register-count">Loading...</span></div><div class="operate-record-list" id="change-register"></div></section>
+            </div>
+          </section>
+          <details class="operations-bible" open>
             <summary><span><strong>Operations Bible</strong><small>Plain-English definitions, routing, approval and automation boundaries</small></span><b>Open dictionary</b></summary>
             <div class="bible-boundary" id="bible-boundary"></div>
             <div class="bible-grid" id="operations-bible"><p>Loading the dictionary...</p></div>
@@ -464,13 +471,13 @@
             <article><span>5</span><div><h3>Choose the kind of help</h3><p>Choose whether you want a direct answer, short summary, fuller analysis, checklist, template or change brief. The main result is written for you; the internal references and processing details stay in the optional panel beneath it.</p></div></article>
             <article><span>6</span><div><h3>Check before sending</h3><p>Before you select <strong>Send now</strong>, the Workbench shows the expected cost and whether anything would block the request. Sending creates an answer in this conversation. It does not make a decision or change the method.</p></div></article>
             <article><span>7</span><div><h3>Say what the answer got right or wrong</h3><p>Open <strong>Was this useful?</strong> beneath an answer. <strong>Helpful</strong> and <strong>You understood me</strong> save a reaction only. The other choices first ask for your correction, disagreement, evidence or suggested change, then save it under <strong>Saved feedback</strong>. None of them edits the method or creates approval.</p></div></article>
-            <article><span>8</span><div><h3>Choose what happens to saved feedback</h3><p>In <strong>Saved feedback</strong>, the description beneath the selector changes before you save. <strong>Save this use</strong> keeps the treatment you selected. If it is a change candidate, <strong>Create change review</strong> makes a separate brief for review. Prepare, revise, reject and defer each update that brief as labelled; only preparation creates a bounded build instruction, and release remains a later decision.</p></div></article>
+            <article><span>8</span><div><h3>Choose what happens to saved feedback</h3><p>In <strong>Saved feedback</strong>, the description beneath the selector changes before you save. <strong>Save this use</strong> completes that feedback step. Ordinary corrections remain traceable and leave My Work. A methodology or product change candidate opens its separate change review automatically; it does not approve preparation, release or publication.</p></div></article>
             <article><span>9</span><div><h3>Ask for one useful challenge</h3><p>Select <strong>Send me a challenge</strong> for a focused scenario and one primary question. You can target principles, AI suitability, deliberately manual work or the capability needed to deliver change with development teams.</p></div></article>
             <article><span>10</span><div><h3>Use evidence and publish readable documentation</h3><p>Open <strong>Connections</strong> to synchronise evidence or preview the readable Methodology and Internal page tree. Review the create, update, unchanged and conflict results, open any affected page, and publish only after entering the exact plan-specific confirmation. That publication does not create methodology approval.</p></div></article>
             <article><span>11</span><div><h3>Use the Workbench from a phone</h3><p>The private route keeps the local server on this computer and uses Tailscale HTTPS between authorised devices. The Workbench, computer and Tailscale must all remain running. Operational activation does not by itself record governance approval.</p></div></article>
             <article><span>12</span><div><h3>Review the shared brand visually</h3><p>Open <strong>Brand review</strong> to see the logo, colour, typography, backgrounds and applied examples. A revision or rejection automatically enters the founder-feedback queue; Codex can prepare a response for your re-review, while overall brand approval remains a separate explicit decision.</p></div></article>
             <article><span>13</span><div><h3>Continue from the work, not from memory</h3><p>Select <strong>Discuss with Oppa Mate</strong> on a work item. The conversation retains that record, its Case, recent messages, older summary, linked controls and corrections, so a short follow-up can be understood in context.</p></div></article>
-            <article><span>14</span><div><h3>Prepare a real Codex build handoff</h3><p>After a Change is explicitly approved for preparation, select <strong>Prepare Codex build</strong>. Copy the complete brief into Codex, then return the structured branch, draft PR, commit, files, tests, validation, risks and version impact receipt.</p></div></article>
+            <article><span>14</span><div><h3>Follow one Codex build</h3><p>After a Change is explicitly approved for preparation, the Workbench creates one linked Build Job automatically. While Codex owns it, there is nothing for Jamie to fill in. Codex returns the branch, draft PR, commit, files, tests, validation, risks and version impact; only then does the separate release decision return to Jamie.</p></div></article>
             <article><span>15</span><div><h3>Keep release and publication separate</h3><p>A returned build becomes <strong>Waiting for review</strong>. Only Jamie's exact <strong>Approve release</strong> decision authorises the reviewed commit for external merge. An authorised merge receipt reindexes Git; any Confluence update still requires its own reviewed publication decision.</p></div></article>
           </div>
           <div class="guide-reference">

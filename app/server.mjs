@@ -390,6 +390,12 @@ for (const item of db.prepare("SELECT id,disposition,wording,classification,crea
     db.prepare("UPDATE feedback SET classification=? WHERE id=?").run(suggestedClassification(item.disposition, item.wording), item.id);
   }
 }
+db.prepare(`
+  UPDATE feedback
+  SET status='retained', updated_at=CASE WHEN updated_at='' THEN created_at ELSE updated_at END
+  WHERE status='awaiting-review'
+    AND classification NOT IN ('methodology-change-candidate','product-change-candidate')
+`).run();
 if (!db.prepare("SELECT id FROM settings WHERE id=1").get()) {
   db.prepare("INSERT INTO settings(id,value_json) VALUES(1,?)").run(JSON.stringify(DEFAULT_SETTINGS));
 }
@@ -833,6 +839,201 @@ function materialCaptureQuestion(value, input) {
   return "";
 }
 
+function isAiOwner(owner) {
+  return /\b(?:codex|oppa mate|operations automated ai|ai owner)\b/i.test(String(owner || ""));
+}
+
+function humanWorkReference(record) {
+  const type = String(record?.recordType || record?.record_type || "work")
+    .replace(/[^a-z0-9]+/gi, "-").toUpperCase();
+  const suffix = String(record?.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase();
+  return `OA-${type}-${suffix || "UNSAVED"}`;
+}
+
+function operateActivityRows(recordId) {
+  return db.prepare("SELECT rowid,* FROM operate_activity WHERE record_id=? ORDER BY rowid DESC")
+    .all(recordId)
+    .map((item) => ({ ...item, detail: safeJson(item.detail_json, {}) }));
+}
+
+function successCriteriaForRecord(record) {
+  const outcome = String(record.summary || record.title || "").trim();
+  return [
+    outcome ? `Deliver the recorded outcome: ${outcome}` : "Deliver the outcome named by the work item.",
+    ...(record.profile?.completionEvidence || record.bible?.completionEvidence || ["Retain clear completion evidence."])
+  ].map(String);
+}
+
+function codexTaskHandoff(record, activities = operateActivityRows(record.id)) {
+  const reference = humanWorkReference(record);
+  const criteria = successCriteriaForRecord(record);
+  const latestStateEvent = activities.find((item) => ["ai-handoff.sent", "ai-handoff.reviewed"].includes(item.action));
+  let status = "ready-for-codex";
+  if (latestStateEvent?.action === "ai-handoff.sent") status = "in-codex";
+  if (latestStateEvent?.action === "ai-handoff.reviewed") {
+    status = latestStateEvent.detail.result === "needs-more-work"
+      ? "needs-more-work"
+      : latestStateEvent.detail.result || "ready-for-founder-review";
+  }
+  const lastSent = activities.find((item) => item.action === "ai-handoff.sent")?.detail || {};
+  const lastReview = activities.find((item) => item.action === "ai-handoff.reviewed")?.detail || {};
+  const missingQuestions = [];
+  if (!String(record.summary || "").trim()) {
+    missingQuestions.push(record.profile?.additionalQuestions?.[0] || "What exact outcome should this work deliver?");
+  }
+  if (status === "ready-for-codex" && missingQuestions.length) status = "needs-clarification";
+  const returnShape = {
+    reference,
+    outcome: "Plain-English description of what was completed",
+    evidence: ["Specific file, link, check or observable result"],
+    criteria: criteria.map((criterion) => ({ criterion, met: true, evidence: "Evidence for this criterion" })),
+    remainingWork: []
+  };
+  const retry = status === "needs-more-work" && lastReview.missing?.length
+    ? `\nThe previous return could not be accepted because:\n${lastReview.missing.map((item) => `- ${item}`).join("\n")}\nCorrect those gaps before returning the result.\n`
+    : "";
+  const prompt = `Complete Operations Automated work item ${reference}.
+
+OUTCOME
+${record.summary || record.title}
+
+CONTEXT
+- Work type: ${record.bible?.label || record.recordType}
+- Work profile: ${record.profile?.label || record.workProfile || "General work"}
+- Parent or Case: ${record.case?.title || record.parent?.title || "None recorded"}
+- Authority: Do the bounded work and report evidence. Do not infer approval, merge, publish, spend, accept risk or change approved methodology.
+
+DONE WHEN
+${criteria.map((criterion) => `- ${criterion}`).join("\n")}
+${missingQuestions.length ? `\nQUESTIONS JAMIE MUST ANSWER BEFORE YOU START\n${missingQuestions.map((question) => `- ${question}`).join("\n")}` : "\nQUESTIONS FOR JAMIE\n- None. Use the recorded outcome and success criteria."}
+${retry}
+RETURN THE RESULT
+End your final response with the marker OA_WORKBENCH_RETURN followed by this JSON shape, completed with real evidence:
+${JSON.stringify(returnShape, null, 2)}
+
+If the local Workbench is reachable, also POST the same completed JSON object as \"result\" to http://127.0.0.1:${port}/api/operate/records/${record.id}/codex-review. If that automatic return is unavailable, Jamie can paste your final response into the ticket and choose \"I've done this — review the outcome\".`;
+  return {
+    reference,
+    status,
+    prompt,
+    criteria,
+    questions: missingQuestions,
+    lastSent,
+    lastReview,
+    currentOwner: status === "needs-clarification" ? FOUNDER_NAME : "Operations Automated AI",
+    automaticReturnEndpoint: `/api/operate/records/${record.id}/codex-review`
+  };
+}
+
+function structuredCodexReturn(input) {
+  if (input?.result && typeof input.result === "object" && !Array.isArray(input.result)) return input.result;
+  const text = String(input?.outcomeText || "").trim();
+  const marker = text.lastIndexOf("OA_WORKBENCH_RETURN");
+  const candidate = marker >= 0 ? text.slice(marker + "OA_WORKBENCH_RETURN".length) : text;
+  const start = candidate.indexOf("{");
+  const end = candidate.lastIndexOf("}");
+  if (start < 0 || end <= start) return null;
+  try { return JSON.parse(candidate.slice(start, end + 1)); }
+  catch { return null; }
+}
+
+function markCodexTaskSent(recordId, input) {
+  const record = operateRecord(recordId, { includeRelations: true });
+  if (!record) return { status: 404, value: { error: "Operational record not found." } };
+  if (isClosedStatus(record.status)) return { status: 409, value: { error: "This work item is already complete or closed." } };
+  if (!isAiOwner(record.assignedOwner || record.owner) && !record.codexHandoff) {
+    return { status: 409, value: { error: "This work item is not assigned to Codex or the Operations Automated AI." } };
+  }
+  if (record.codexHandoff?.status === "in-codex") {
+    return { status: 409, value: { error: "This work item is already recorded as started in Codex." } };
+  }
+  const timestamp = now();
+  const nextStatus = record.recordType === "task" && record.status === "to-do" ? "in-progress" : record.status;
+  const scheduledWorker = input.trigger === "scheduled-ai-owner";
+  const actor = scheduledWorker ? "Operations Automated AI queue worker" : FOUNDER_NAME;
+  const automationMode = scheduledWorker ? "scheduled-codex-handoff" : "manual-codex-handoff";
+  db.prepare("UPDATE operate_records SET status=?,automation_mode=?,updated_at=? WHERE id=?")
+    .run(nextStatus, automationMode, timestamp, record.id);
+  const detail = {
+    taskReference: record.codexHandoff?.reference || humanWorkReference(record),
+    codexTaskReference: String(input.codexTaskReference || "").trim().slice(0, 500),
+    promptHash: createHash("sha256").update(record.codexHandoff?.prompt || "").digest("hex"),
+    trigger: scheduledWorker ? "scheduled-ai-owner" : "manual-handoff"
+  };
+  db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+    .run(randomUUID(), record.id, "ai-handoff.sent", actor, JSON.stringify(detail), timestamp);
+  audit("operate-record.ai-handoff-sent", record.recordType, record.id, detail);
+  return { status: 200, value: { record: operateRecord(record.id, { includeRelations: true }), message: "Recorded as started in Codex. Return the result here when Codex finishes." } };
+}
+
+function reviewCodexTaskReturn(recordId, input) {
+  const record = operateRecord(recordId, { includeRelations: true });
+  if (!record) return { status: 404, value: { error: "Operational record not found." } };
+  if (isClosedStatus(record.status)) return { status: 409, value: { error: "This work item is already complete or closed." } };
+  const parsed = structuredCodexReturn(input);
+  const expected = record.codexHandoff?.criteria || successCriteriaForRecord(record);
+  const missing = [];
+  if (!parsed) missing.push("The Codex result did not include the OA_WORKBENCH_RETURN JSON block.");
+  if (parsed && parsed.reference !== (record.codexHandoff?.reference || humanWorkReference(record))) missing.push("The returned work reference does not match this ticket.");
+  if (parsed && String(parsed.outcome || "").trim().length < 20) missing.push("The completed outcome is not explained clearly enough.");
+  if (parsed && (!Array.isArray(parsed.evidence) || !parsed.evidence.some((item) => String(item).trim().length >= 8))) missing.push("No specific completion evidence was returned.");
+  if (parsed && (!Array.isArray(parsed.criteria) || parsed.criteria.length < expected.length)) missing.push("Not every success criterion has a returned check.");
+  if (parsed?.criteria?.some((item) => item?.met !== true || String(item?.evidence || "").trim().length < 8)) missing.push("One or more success criteria are unmet or lack evidence.");
+  if (parsed && Array.isArray(parsed.remainingWork) && parsed.remainingWork.some((item) => String(item).trim())) missing.push("Codex reported remaining work.");
+  const timestamp = now();
+  const completed = missing.length === 0 && record.recordType === "task";
+  const result = missing.length ? "needs-more-work" : completed ? "completed" : "ready-for-founder-review";
+  const reviewAutomationMode = record.codexHandoff?.lastSent?.trigger === "scheduled-ai-owner"
+    ? "scheduled-codex-reviewed"
+    : "manual-codex-reviewed";
+  if (completed) {
+    db.prepare("UPDATE operate_records SET status='done',automation_mode=?,updated_at=? WHERE id=?")
+      .run(reviewAutomationMode, timestamp, record.id);
+  } else if (!missing.length) {
+    db.prepare("UPDATE operate_records SET owner=?,automation_mode=?,updated_at=? WHERE id=?")
+      .run(FOUNDER_NAME, reviewAutomationMode, timestamp, record.id);
+  } else {
+    const nextStatus = record.recordType === "task" && record.status === "to-do" ? "in-progress" : record.status;
+    db.prepare("UPDATE operate_records SET status=?,automation_mode='manual-codex-handoff',updated_at=? WHERE id=?")
+      .run(nextStatus, timestamp, record.id);
+  }
+  const detail = {
+    taskReference: record.codexHandoff?.reference || humanWorkReference(record),
+    result,
+    outcome: String(parsed?.outcome || "").trim().slice(0, 4000),
+    evidence: Array.isArray(parsed?.evidence) ? parsed.evidence.map(String).slice(0, 30) : [],
+    criteria: Array.isArray(parsed?.criteria) ? parsed.criteria.slice(0, 30) : [],
+    remainingWork: Array.isArray(parsed?.remainingWork) ? parsed.remainingWork.map(String).slice(0, 30) : [],
+    missing,
+    reviewBasis: "Structured Codex return checked against the ticket reference, completion evidence and every recorded success criterion."
+  };
+  db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+    .run(randomUUID(), record.id, "ai-handoff.reviewed", "Operations Automated AI", JSON.stringify(detail), timestamp);
+  audit("operate-record.ai-handoff-reviewed", record.recordType, record.id, detail);
+  const updated = operateRecord(record.id, { includeRelations: true });
+  return {
+    status: 200,
+    value: {
+      record: updated,
+      review: detail,
+      message: completed
+        ? "The returned evidence met every success criterion. The task is complete."
+        : missing.length
+          ? "The task remains open. The Workbench has listed what Codex must correct."
+          : "The evidence is ready. Jamie must now take the record's governed next action."
+    }
+  };
+}
+
+function activeImplementationJobForChange(changeId) {
+  const row = db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(changeId);
+  return row ? implementationJob(row.id) : null;
+}
+
 function operateRow(row, { includeRelations = false } = {}) {
   if (!row) return null;
   const bible = BIBLE_BY_TYPE.get(row.record_type);
@@ -861,11 +1062,86 @@ function operateRow(row, { includeRelations = false } = {}) {
     knowledgeSnapshot: row.knowledge_snapshot_id ? knowledgeSnapshot(row.knowledge_snapshot_id) : null
   };
   baseValue.sourceContext = sourceContextForOperateRow(row);
-  const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(row.id, row.id)
-    .filter((item) => !isClosedStatus(item.status)).length;
-  const specialistAction = row.source_type !== "manual" ? specialistNextAction(row) : null;
+  const openChildRows = db.prepare(`
+    SELECT id,record_type,title,status,owner FROM operate_records
+    WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC
+  `).all(row.id, row.id).filter((item) => !isClosedStatus(item.status));
+  const openChildren = openChildRows.length;
+  const activeJob = row.record_type === "change" ? activeImplementationJobForChange(row.id) : null;
+  const activityRows = operateActivityRows(row.id);
+  const codexHandoff = isAiOwner(baseValue.owner) && !activeJob && row.source_type === "manual"
+    ? codexTaskHandoff(baseValue, activityRows)
+    : null;
+  let specialistAction = row.source_type !== "manual" ? specialistNextAction(row) : null;
+  if (activeJob) {
+    const waitingOnAi = ["waiting-on-codex", "release-authorised"].includes(activeJob.status)
+      && activeJob.handoff?.status === "in-codex";
+    const queuedForAi = ["waiting-on-codex", "release-authorised"].includes(activeJob.status)
+      && activeJob.handoff?.status !== "in-codex";
+    specialistAction = {
+      id: "open-implementation-job",
+      routeView: "my-work",
+      implementationJobId: activeJob.id,
+      label: activeJob.status === "waiting-for-review"
+        ? "Review the completed build"
+        : queuedForAi ? "Queued for the AI owner"
+          : waitingOnAi ? "View work with Codex" : "View Codex build",
+      outcome: activeJob.status === "waiting-for-review"
+        ? "Codex has returned the implementation evidence. Jamie's separate release decision is now required."
+        : queuedForAi
+          ? "The scheduled AI-owner worker can claim this bounded step without Jamie copying a prompt."
+          : activeJob.status === "waiting-on-codex"
+            ? "Codex is working from the recorded brief and must return the branch, pull request and evidence."
+            : "Codex is carrying out the exact authorised merge and must return the matching receipt.",
+      authority: ["waiting-on-codex", "release-authorised"].includes(activeJob.status) ? "ai-owner" : "founder",
+      decision: activeJob.status === "waiting-for-review",
+      targetStatus: row.status,
+      noteRequired: false,
+      confirmation: "",
+      style: "primary",
+      disabled: false,
+      unavailableReason: ""
+    };
+  }
   const actions = specialistAction ? [] : actionsForOperateRecord(baseValue, { openChildren });
-  const nextAction = specialistAction || actions[0] || null;
+  let nextAction = specialistAction || actions[0] || null;
+  if (!specialistAction && row.record_type === "case" && openChildRows.length) {
+    const child = openChildRows[0];
+    nextAction = {
+      id: "continue-contained-work",
+      label: `Continue ${openChildren} open ${openChildren === 1 ? "item" : "items"}`,
+      outcome: `Resolve the Case only after its ${openChildren} contained ${openChildren === 1 ? "item is" : "items are"} complete, closed or deliberately removed.`,
+      authority: "owner",
+      decision: false,
+      routeRecordId: child.id,
+      routeRecordTitle: child.title,
+      disabled: false,
+      unavailableReason: ""
+    };
+  } else if (!specialistAction && codexHandoff && !isClosedStatus(row.status)) {
+    const needsJamie = codexHandoff.status === "needs-clarification";
+    nextAction = {
+      id: needsJamie ? "clarify-ai-task" : "waiting-on-ai-owner",
+      label: codexHandoff.status === "needs-clarification"
+        ? "Clarify the outcome for the AI owner"
+        : codexHandoff.status === "needs-more-work"
+          ? "Queued for an AI-owner retry"
+          : codexHandoff.status === "ready-for-codex"
+            ? "Queued for the AI owner"
+            : "AI owner is working on this task",
+      outcome: codexHandoff.status === "needs-clarification"
+        ? codexHandoff.questions[0]
+        : codexHandoff.status === "needs-more-work"
+          ? "The previous result did not meet every success check. The scheduled worker will retry from the retained correction."
+          : codexHandoff.status === "ready-for-codex"
+            ? "The scheduled worker can claim the recorded task, complete it and return evidence to this item."
+            : "When the AI owner finishes, the Workbench checks the returned evidence and updates the task.",
+      authority: needsJamie ? "owner" : "ai-owner",
+      decision: false,
+      disabled: false,
+      unavailableReason: ""
+    };
+  }
   const priority = nextAction?.disabled
     ? {
         ...baseValue.priority,
@@ -874,20 +1150,37 @@ function operateRow(row, { includeRelations = false } = {}) {
         explanation: `${baseValue.priority.explanation} Next action blocked: ${nextAction.unavailableReason}`
       }
     : baseValue.priority;
+  const activeJobOwner = activeJob?.handoff?.currentOwner;
+  const effectiveOwner = activeJob && ["waiting-on-codex", "release-authorised"].includes(activeJob.status)
+    ? activeJobOwner || "Codex"
+    : codexHandoff?.currentOwner || baseValue.owner;
+  const effectiveAutomationMode = codexHandoff?.status === "completed"
+    && codexHandoff.lastSent?.trigger === "scheduled-ai-owner"
+    ? "scheduled-codex-reviewed"
+    : baseValue.automationMode;
   const value = {
     ...baseValue,
+    automationMode: effectiveAutomationMode,
+    reference: humanWorkReference(baseValue),
+    assignedOwner: baseValue.owner,
+    owner: effectiveOwner,
     actions,
     nextAction,
+    codexHandoff,
     sourceBacked: Boolean(specialistAction),
     specialistRoute: specialistAction?.routeView || null,
-    buildReady: workApprovedForPreparation(baseValue),
+    buildReady: workApprovedForPreparation(baseValue) && !activeJob,
+    implementationJob: activeJob,
+    humanActionRequired: nextAction?.authority !== "ai-owner" && !isAiOwner(effectiveOwner),
     priority,
     openChildren
   };
   if (!includeRelations) return value;
   const links = db.prepare(`
     SELECT l.*, source.title AS from_title, source.record_type AS from_type,
-      target.title AS to_title, target.record_type AS to_type
+      source.status AS from_status, source.owner AS from_owner,
+      target.title AS to_title, target.record_type AS to_type,
+      target.status AS to_status, target.owner AS to_owner
     FROM operate_links l
     JOIN operate_records source ON source.id=l.from_record_id
     JOIN operate_records target ON target.id=l.to_record_id
@@ -900,12 +1193,15 @@ function operateRow(row, { includeRelations = false } = {}) {
     proposedBy: link.proposed_by,
     proposedVia: link.proposed_via,
     confirmedBy: link.confirmed_by,
+    fromStatus: link.from_status,
+    fromOwner: link.from_owner,
+    toStatus: link.to_status,
+    toOwner: link.to_owner,
     createdAt: link.created_at
   }));
   const children = db.prepare("SELECT * FROM operate_records WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC").all(row.id, row.id)
     .map((item) => operateRow(item));
-  const activity = db.prepare("SELECT * FROM operate_activity WHERE record_id=? ORDER BY created_at DESC").all(row.id)
-    .map((item) => ({ ...item, detail: safeJson(item.detail_json, {}) }));
+  const activity = activityRows;
   return {
     ...value,
     case: row.case_id ? operateRow(db.prepare("SELECT * FROM operate_records WHERE id=?").get(row.case_id)) : null,
@@ -936,10 +1232,17 @@ function sourceContextForOperateRow(row) {
   const proposal = row.source_type === "change-proposal" && row.source_id
     ? proposalRecord(row.source_id)
     : null;
-  const sourceUrl = validPullRequestUrl(proposal?.pull_request_url)
+  const jobRow = row.record_type === "change" ? db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(row.id) : null;
+  const job = jobRow ? implementationJob(jobRow.id) : null;
+  const proposalUrl = validPullRequestUrl(proposal?.pull_request_url)
     || inferredPullRequestUrl(`${row.title}\n${row.summary}`);
-  if (!sourceUrl) return null;
-  const pullRequestNumber = Number(sourceUrl.match(/\/pull\/(\d+)/)?.[1]);
+  const sourceUrl = job ? validPullRequestUrl(job.pullRequestUrl) : proposalUrl;
+  if (!sourceUrl && !proposal && !job) return null;
+  const pullRequestNumber = Number(sourceUrl?.match(/\/pull\/(\d+)/)?.[1] || 0);
   const controlSourceIds = [row.id, row.source_id].filter(Boolean);
   const placeholders = controlSourceIds.map(() => "?").join(",");
   const decision = controlSourceIds.length ? db.prepare(`
@@ -955,22 +1258,23 @@ function sourceContextForOperateRow(row) {
   const governedControl = approval || decision;
   const sourceSummary = String(proposal?.problem_learning || row.summary || "").trim();
   const whatChanges = String(proposal?.proposed_wording || proposal?.rationale || row.summary || "").trim();
-  const sourceStatus = proposal?.status || (/\bdraft\s+(?:PR|pull request)\b/i.test(`${row.title}\n${row.summary}`) ? "draft" : "linked-source");
+  const sourceStatus = job?.status || proposal?.status || (/\bdraft\s+(?:PR|pull request)\b/i.test(`${row.title}\n${row.summary}`) ? "draft" : "linked-source");
   return {
-    kind: "pull-request",
+    kind: sourceUrl ? "pull-request" : "change-review",
     url: sourceUrl,
-    label: `Open PR #${pullRequestNumber}`,
-    number: pullRequestNumber,
-    title: proposal?.title || row.title,
+    label: sourceUrl ? `Open PR #${pullRequestNumber}` : "Current draft link pending",
+    number: pullRequestNumber || null,
+    title: job?.title || proposal?.title || row.title,
     status: sourceStatus,
     summary: sourceSummary,
     whatChanges,
-    exactDecision: governedControl?.exact_decision || row.title,
+    exactDecision: job?.releaseApproval?.exact_decision || governedControl?.exact_decision || row.title,
     recommendation: governedControl?.recommendation || row.summary || "Review the linked source and decide the recorded next action.",
     alternatives: safeJson(governedControl?.alternatives_json, proposal?.alternatives || []),
     tradeOffs: governedControl?.trade_offs || (proposal?.risks || []).join("; "),
     evidence: proposal?.evidence || [],
-    validation: proposal?.validationResults || {},
+    validation: job?.receipt || proposal?.validationResults || {},
+    previousUrl: job && proposalUrl && proposalUrl !== sourceUrl ? proposalUrl : null,
     remainsUnauthorised: safeJson(governedControl?.remains_unauthorised_json, ["merge", "release", "publication", "wider delegated authority"]),
     sourceAuthority: "Linked evidence; opening or discussing it creates no approval."
   };
@@ -979,10 +1283,9 @@ function sourceContextForOperateRow(row) {
 function actionableOperateRow(row, options = {}) {
   const value = operateRow(row, options);
   if (!value) return null;
-  const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(value.id, value.id)
-    .filter((item) => !isClosedStatus(item.status)).length;
-  const actions = value.sourceBacked ? (value.actions || []) : actionsForOperateRecord(value, { openChildren });
-  const nextAction = value.sourceBacked ? value.nextAction : (actions[0] || null);
+  const openChildren = value.openChildren || 0;
+  const actions = value.actions || [];
+  const nextAction = value.nextAction || actions[0] || null;
   const priority = nextAction?.disabled
     ? {
         ...value.priority,
@@ -1303,7 +1606,7 @@ function workApprovedForPreparation(record) {
 function syncSpecialistQueues() {
   const feedbackRecords = new Map();
   for (const item of db.prepare("SELECT * FROM feedback ORDER BY created_at").all()) {
-    const terminal = ["no-change", "rejected", "implemented"].includes(item.status);
+    const terminal = ["retained", "no-change", "rejected", "implemented"].includes(item.status);
     const id = upsertSpecialistRecord({
       sourceType: "feedback",
       sourceId: item.id,
@@ -1470,6 +1773,7 @@ function operateInboxItem(record) {
     recordType: record.recordType,
     typeLabel: record.bible?.label || record.recordType,
     title: record.title,
+    reference: record.reference,
     summary: record.summary || record.bible?.definition || "",
     status: record.status,
     owner: record.owner || FOUNDER_NAME,
@@ -1480,12 +1784,15 @@ function operateInboxItem(record) {
     actionLabel: record.nextAction?.label || "Review work",
     nextAction: record.nextAction,
     decisionRequired: Boolean(record.nextAction?.decision),
+    humanActionRequired: record.humanActionRequired,
     priority: record.priority,
     approvalState: record.approvalState
     ,
     workProfile: record.workProfile,
     workProfileLabel: record.profile?.label || record.workProfile,
-    sourceContext: record.sourceContext
+    sourceContext: record.sourceContext,
+    implementationJob: record.implementationJob,
+    codexHandoff: record.codexHandoff
   };
 }
 
@@ -1514,10 +1821,72 @@ function proposalNextAction(proposal) {
   return "Review the retained status and decide the governed next action.";
 }
 
+function implementationJobHandoff(job) {
+  const reference = `OA-BUILD-${String(job.id || "").replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase() || "UNSAVED"}`;
+  if (!["waiting-on-codex", "release-authorised"].includes(job.status)) {
+    return {
+      reference,
+      phase: job.status === "waiting-for-review" ? "review" : "complete",
+      status: job.status === "waiting-for-review" ? "waiting-for-review" : job.status,
+      currentOwner: job.status === "waiting-for-review" ? FOUNDER_NAME : "Codex",
+      prompt: "",
+      lastSent: {}
+    };
+  }
+  const phase = job.status === "release-authorised" ? "merge" : "implementation";
+  const activities = operateActivityRows(job.changeId);
+  const lastSentRow = activities.find((item) =>
+    item.action === "implementation-job.sent"
+    && item.detail.implementationJobId === job.id
+    && item.detail.phase === phase);
+  const boundaryRow = phase === "merge"
+    ? activities.find((item) => item.action === "release-decision.recorded" && item.detail.implementationJobId === job.id && item.detail.action === "approve")
+    : activities.find((item) => item.action === "release-decision.recorded" && item.detail.implementationJobId === job.id && item.detail.action === "request-changes");
+  const sentAfterBoundary = Boolean(lastSentRow && (!boundaryRow || lastSentRow.rowid > boundaryRow.rowid));
+  const returnInstruction = phase === "implementation"
+    ? `When complete, POST this JSON to http://127.0.0.1:${port}/api/implementation-jobs/${job.id}/receipt:
+{
+  "branchName": "codex/...",
+  "pullRequestUrl": "${repositoryWebUrl}/pull/NUMBER",
+  "commitSha": "COMMIT_SHA",
+  "filesChanged": ["path"],
+  "tests": ["command: result"],
+  "validation": ["observable user journey: result"],
+  "unresolvedRisks": [],
+  "versionImpact": "plain-English version impact"
+}
+If the Workbench is unavailable, return exactly that completed JSON after the marker OA_WORKBENCH_BUILD_RETURN so Jamie can paste it back into the ticket.`
+    : `The exact reviewed commit ${job.commitSha} in ${job.pullRequestUrl} is authorised for merge. Check that the pull request still points to that commit, merge only that authorised change, and do not publish externally or extend the scope.
+
+When complete, POST this JSON to http://127.0.0.1:${port}/api/implementation-jobs/${job.id}/merge-receipt:
+{
+  "mergedCommitSha": "MERGED_COMMIT_SHA",
+  "mergeUrl": "${job.pullRequestUrl}"
+}
+If the Workbench is unavailable, return exactly that completed JSON after the marker OA_WORKBENCH_MERGE_RETURN so Jamie can paste it back into the ticket.`;
+  const previousCorrection = phase === "implementation" && boundaryRow?.detail?.reason
+    ? `\nCORRECTION REQUESTED\n${boundaryRow.detail.reason}\n`
+    : "";
+  const prompt = phase === "implementation"
+    ? `Complete Operations Automated build ${reference}.\n\n${job.briefText}${previousCorrection}\n\nRETURN TO THE WORKBENCH\n${returnInstruction}`
+    : `Complete the authorised release step for Operations Automated build ${reference}.\n\n${returnInstruction}`;
+  return {
+    reference,
+    phase,
+    status: sentAfterBoundary ? "in-codex" : "ready-for-codex",
+    currentOwner: "Codex",
+    prompt,
+    lastSent: lastSentRow?.detail || {},
+    automaticReturnEndpoint: phase === "implementation"
+      ? `/api/implementation-jobs/${job.id}/receipt`
+      : `/api/implementation-jobs/${job.id}/merge-receipt`
+  };
+}
+
 function implementationJob(id) {
   const item = rowObject(db.prepare("SELECT * FROM implementation_jobs WHERE id=?").get(id));
   if (!item) return null;
-  return {
+  const value = {
     ...item,
     caseId: item.case_id,
     requestId: item.request_id,
@@ -1543,11 +1912,13 @@ function implementationJob(id) {
     releaseApproval: item.release_approval_id ? governedApproval(item.release_approval_id) : null,
     knowledgeSnapshot: item.knowledge_snapshot_id ? knowledgeSnapshot(item.knowledge_snapshot_id) : null
   };
+  return { ...value, handoff: implementationJobHandoff(value) };
 }
 
 function implementationJobInboxItem(job) {
   const waitingOnCodex = ["waiting-on-codex", "release-authorised"].includes(job.status);
   const waitingForReview = job.status === "waiting-for-review";
+  const queuedForCodex = waitingOnCodex && job.handoff?.status !== "in-codex";
   const priority = syntheticPriority({
     impact: 4,
     urgency: waitingForReview ? 5 : 3,
@@ -1555,8 +1926,8 @@ function implementationJobInboxItem(job) {
     control: 5,
     strategic: 4,
     confidence: job.commit_sha ? 5 : 4,
-    blocking: waitingOnCodex,
-    status: waitingOnCodex ? "blocked" : job.status,
+    blocking: false,
+    status: job.status,
     createdAt: job.created_at
   });
   const nextAction = waitingForReview
@@ -1568,11 +1939,20 @@ function implementationJobInboxItem(job) {
         decision: true,
         routeView: "my-work"
       }
-    : job.status === "waiting-on-codex"
+    : queuedForCodex
       ? {
-          id: "submit-implementation-receipt",
-          label: "Submit implementation receipt",
-          outcome: "Codex returns the branch, draft PR, commit, changed files, tests, validation, risks and version impact.",
+          id: "queue-codex-step",
+          label: job.handoff?.phase === "merge" ? "Authorised merge queued for Codex" : "Build queued for Codex",
+          outcome: "The scheduled AI-owner worker can claim the exact bounded prompt and return its evidence.",
+          authority: "ai-owner",
+          decision: false,
+          routeView: "my-work"
+        }
+      : job.status === "waiting-on-codex"
+      ? {
+          id: "return-codex-result",
+          label: "Return the completed build from Codex",
+          outcome: "Codex must return the branch, pull request, commit, changed files, tests, validation, risks and version impact.",
           authority: "ai-owner",
           decision: false,
           routeView: "my-work"
@@ -1598,19 +1978,26 @@ function implementationJobInboxItem(job) {
     title: job.title,
     summary: waitingForReview
       ? "Implementation evidence is ready for Jamie's separate release decision."
-      : waitingOnCodex ? "The complete implementation brief is waiting on Codex." : "The release is authorised but not yet recorded as merged.",
+      : queuedForCodex
+        ? job.handoff?.phase === "merge"
+          ? "Release is approved. The exact merge step is queued for the AI owner."
+          : "The complete bounded build prompt is queued for the AI owner."
+        : waitingOnCodex ? "Codex is working from the recorded prompt and must return evidence." : "The release is authorised but not yet recorded as merged.",
     status: job.status,
-    owner: waitingOnCodex ? "Codex" : FOUNDER_NAME,
+    owner: waitingOnCodex ? job.handoff?.currentOwner || "Codex" : FOUNDER_NAME,
     dueAt: null,
     createdAt: job.created_at,
     updatedAt: job.updated_at,
     actionLabel: nextAction.label,
     nextAction,
     decisionRequired: waitingForReview,
+    humanActionRequired: waitingForReview,
     priority,
     approvalState: job.releaseApproval?.result === "approved" ? "human-confirmed" : "not-approved",
     workProfile: "product-application-build",
     workProfileLabel: "Product or application build",
+    reference: job.handoff?.reference,
+    handoff: job.handoff,
     sourceContext: pullRequestUrl ? {
       kind: "pull-request",
       url: pullRequestUrl,
@@ -1629,6 +2016,61 @@ function implementationJobInboxItem(job) {
       remainsUnauthorised: job.releaseApproval?.remainsUnauthorised || ["merge", "external publication", "wider delegated authority"],
       sourceAuthority: "Linked implementation evidence; opening or discussing it creates no approval."
     } : null
+  };
+}
+
+function buildAiOwnerQueue() {
+  syncSpecialistQueues();
+  const items = operateRecords()
+    .filter((record) => !isClosedStatus(record.status))
+    .filter((record) => record.codexHandoff && ["ready-for-codex", "needs-more-work"].includes(record.codexHandoff.status))
+    .map((record) => ({
+      kind: "operate-record",
+      id: record.id,
+      reference: record.codexHandoff.reference,
+      title: record.title,
+      summary: record.summary,
+      status: record.codexHandoff.status,
+      priority: record.priority,
+      prompt: record.codexHandoff.prompt,
+      criteria: record.codexHandoff.criteria,
+      claimEndpoint: `/api/operate/records/${record.id}/codex-handoff`,
+      returnEndpoint: record.codexHandoff.automaticReturnEndpoint,
+      retryEvidence: record.codexHandoff.lastReview?.missing || [],
+      authorityBoundary: "Complete only the bounded task. Do not infer approval, merge, publish, spend, accept risk or extend delegated authority."
+    }));
+  for (const row of db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE status IN ('waiting-on-codex','release-authorised')
+    ORDER BY updated_at
+  `).all()) {
+    const job = implementationJob(row.id);
+    if (job.handoff?.status !== "ready-for-codex") continue;
+    items.push({
+      kind: "implementation-job",
+      id: job.id,
+      reference: job.handoff.reference,
+      title: job.title,
+      summary: job.approvedRequirement,
+      status: job.handoff.status,
+      phase: job.handoff.phase,
+      priority: implementationJobInboxItem(job).priority,
+      prompt: job.handoff.prompt,
+      claimEndpoint: `/api/implementation-jobs/${job.id}/mark-sent`,
+      returnEndpoint: job.handoff.automaticReturnEndpoint,
+      authorityBoundary: job.authorityBoundary
+    });
+  }
+  items.sort((left, right) =>
+    (right.priority?.score || 0) - (left.priority?.score || 0)
+    || String(left.reference).localeCompare(String(right.reference)));
+  return {
+    schemaVersion: 1,
+    generatedAt: now(),
+    readyCount: items.length,
+    items,
+    claimBody: { trigger: "scheduled-ai-owner", codexTaskReference: "scheduled run or task reference" },
+    boundary: "Claim before acting, return evidence through the stated endpoint, and stop for any consequential decision or missing authority. A queue item cannot approve its own release, publication, risk acceptance, spending or wider access."
   };
 }
 
@@ -1796,10 +2238,80 @@ async function createImplementationJob(input) {
   return implementationJob(id);
 }
 
+function londonDateKey(value = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(value);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function dailyChallengeWorkItem() {
+  const configuredHour = Number(process.env.WORKBENCH_DAILY_CHALLENGE_HOUR ?? 8);
+  const challengeHour = Number.isInteger(configuredHour) && configuredHour >= 0 && configuredHour <= 23 ? configuredHour : 8;
+  const londonHour = Number(new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London", hour: "2-digit", hourCycle: "h23"
+  }).format(new Date()));
+  if (londonHour < challengeHour) return null;
+  const date = londonDateKey();
+  const title = `Daily methodology challenge — ${date}`;
+  const convo = rowObject(db.prepare("SELECT * FROM conversations WHERE title=? ORDER BY updated_at DESC LIMIT 1").get(title));
+  const messages = convo ? messagesFor(convo.id) : [];
+  const firstAssistant = messages.find((message) => message.role === "assistant");
+  const founderResponse = firstAssistant
+    ? messages.find((message) => message.role === "user" && message.created_at > firstAssistant.created_at)
+    : null;
+  if (founderResponse) return null;
+  const status = firstAssistant ? "awaiting-response" : messages.length ? "being-prepared" : "due";
+  const owner = status === "being-prepared" ? "Oppa Mate" : FOUNDER_NAME;
+  const nextAction = {
+    id: status === "awaiting-response" ? "answer-daily-challenge" : "start-daily-challenge",
+    label: status === "awaiting-response" ? "Answer today's challenge" : status === "being-prepared" ? "Challenge being prepared" : "Start today's challenge",
+    outcome: status === "awaiting-response"
+      ? "Open today's separate conversation, answer the one primary question and let the response enter the controlled feedback loop."
+      : status === "being-prepared"
+        ? "Oppa Mate is preparing today's challenge inside the Workbench. No action is required while it completes."
+        : "Create today's challenge as a separate Workbench conversation. You will review the request and any provider cost before it is sent.",
+    authority: status === "being-prepared" ? "ai-owner" : "owner",
+    decision: false,
+    routeView: "conversation",
+    conversationId: convo?.id || null,
+    challengeDate: date
+  };
+  return {
+    id: `daily-challenge:${date}`,
+    source: "Workbench",
+    sourceType: "daily-challenge",
+    sourceId: convo?.id || date,
+    routeView: "conversation",
+    recordType: "scenario-test",
+    typeLabel: "Daily challenge",
+    title: status === "awaiting-response" ? "Today's methodology challenge is ready" : "Prepare today's methodology challenge",
+    summary: "One focused 10-minute challenge, kept in its own Workbench conversation instead of a separate Codex task.",
+    status,
+    owner,
+    dueAt: null,
+    createdAt: `${date}T07:00:00.000Z`,
+    updatedAt: convo?.updated_at || `${date}T07:00:00.000Z`,
+    actionLabel: nextAction.label,
+    nextAction,
+    decisionRequired: false,
+    priority: syntheticPriority({
+      impact: 3, urgency: 3, risk: 2, control: 2, strategic: 4, confidence: 5,
+      blocking: false, status, createdAt: `${date}T07:00:00.000Z`
+    }),
+    approvalState: "not-approved",
+    workProfile: "daily-methodology-challenge",
+    workProfileLabel: "Daily methodology challenge",
+    humanActionRequired: status !== "being-prepared"
+  };
+}
+
 function buildMyWork(order = "recommended", filters = {}) {
   syncSpecialistQueues();
   const items = operateRecords()
     .filter((record) => !isClosedStatus(record.status))
+    .filter((record) => !(record.recordType === "change" && record.implementationJob))
     .map(operateInboxItem);
   for (const row of db.prepare(`
     SELECT id FROM implementation_jobs
@@ -1808,6 +2320,8 @@ function buildMyWork(order = "recommended", filters = {}) {
   `).all()) {
     items.push(implementationJobInboxItem(implementationJob(row.id)));
   }
+  const dailyChallenge = dailyChallengeWorkItem();
+  if (dailyChallenge) items.push(dailyChallenge);
 
   const proposalValues = db.prepare("SELECT id FROM change_proposals ORDER BY updated_at DESC").all()
     .map((row) => proposalRecord(row.id))
@@ -1922,19 +2436,22 @@ function buildMyWork(order = "recommended", filters = {}) {
     if (recordType && item.recordType !== recordType) return false;
     if (view === "blocked" && !item.priority.blocked) return false;
     if (view === "waiting-jamie" && !(item.owner === FOUNDER_NAME || item.decisionRequired)) return false;
-    if (view === "waiting-codex" && item.owner !== "Codex") return false;
+    if (view === "waiting-codex" && !isAiOwner(item.owner)) return false;
     return true;
   });
   const ordered = sortWorkItems(filtered, order);
-  const doNextCandidates = ordered.filter((item) => !item.priority.blocked && item.owner !== "Codex");
-  const doNext = (doNextCandidates.length ? doNextCandidates : ordered).slice(0, 5);
+  const doNextCandidates = ordered.filter((item) => !item.priority.blocked && !isAiOwner(item.owner) && item.humanActionRequired !== false);
+  const doNext = doNextCandidates.slice(0, 5);
+  const humanItems = ordered.filter((item) => !isAiOwner(item.owner) && item.humanActionRequired !== false);
+  const aiItems = ordered.filter((item) => isAiOwner(item.owner) || item.humanActionRequired === false);
   return {
     order,
     filters: { search, view, profile, recordType },
     doNext,
     items: ordered,
     summary: {
-      total: ordered.length,
+      total: humanItems.length,
+      beingHandled: aiItems.length,
       overdue: ordered.filter((item) => item.priority.overdue).length,
       blocked: ordered.filter((item) => item.priority.blocked).length,
       decisions: ordered.filter((item) => item.decisionRequired).length
@@ -2156,6 +2673,12 @@ function proposalRecord(id) {
     WHERE p.id=?
   `).get(id));
   if (!item) return null;
+  const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(id);
+  const jobRow = changeRow ? db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(changeRow.id) : null;
   return {
     ...item,
     approvedSources: safeJson(item.approved_sources_json, []),
@@ -2168,6 +2691,7 @@ function proposalRecord(id) {
     validationResults: safeJson(item.validation_results_json, {}),
     decisions: db.prepare("SELECT * FROM change_decisions WHERE proposal_id=? ORDER BY created_at").all(id),
     receipt: rowObject(db.prepare("SELECT * FROM implementation_receipts WHERE proposal_id=?").get(id)),
+    implementationJob: jobRow ? implementationJob(jobRow.id) : null,
     approvalState: item.status === "implemented" ? "released-by-human-decision" : "not-approved"
   };
 }
@@ -2563,6 +3087,21 @@ async function api(request, response, url) {
   if (method !== "GET" && url.pathname.startsWith("/api/connections/confluence")) {
     requireLocalJsonAction(request, "Confluence actions");
   }
+  const operateCodexHandoffMatch = url.pathname.match(/^\/api\/operate\/records\/([^/]+)\/codex-handoff$/);
+  if (method === "POST" && operateCodexHandoffMatch) {
+    requireLocalJsonAction(request, "Codex task handoff");
+    const result = markCodexTaskSent(operateCodexHandoffMatch[1], await jsonBody(request));
+    return json(response, result.status, result.value);
+  }
+  const operateCodexReviewMatch = url.pathname.match(/^\/api\/operate\/records\/([^/]+)\/codex-review$/);
+  if (method === "POST" && operateCodexReviewMatch) {
+    requireLocalJsonAction(request, "Codex task return review");
+    const result = reviewCodexTaskReturn(operateCodexReviewMatch[1], await jsonBody(request));
+    return json(response, result.status, result.value);
+  }
+  if (method === "GET" && url.pathname === "/api/ai-work") {
+    return json(response, 200, buildAiOwnerQueue());
+  }
   if (method === "GET" && url.pathname === "/api/settings") return json(response, 200, {
     buildVersion,
     settings: getSettings(),
@@ -2688,9 +3227,10 @@ async function api(request, response, url) {
       return json(response, 201, {
         job,
         handoff: {
-          brief: job.brief_text,
-          status: job.status,
-          owner: "Codex",
+          reference: job.handoff.reference,
+          prompt: job.handoff.prompt,
+          status: job.handoff.status,
+          owner: job.handoff.currentOwner,
           releaseApproved: false
         }
       });
@@ -2702,6 +3242,38 @@ async function api(request, response, url) {
   if (method === "GET" && implementationJobMatch) {
     const job = implementationJob(implementationJobMatch[1]);
     return job ? json(response, 200, { job }) : json(response, 404, { error: "Implementation Job not found." });
+  }
+  const implementationSentMatch = url.pathname.match(/^\/api\/implementation-jobs\/([^/]+)\/mark-sent$/);
+  if (method === "POST" && implementationSentMatch) {
+    requireLocalJsonAction(request, "Codex build handoff");
+    const job = implementationJob(implementationSentMatch[1]);
+    if (!job) return json(response, 404, { error: "Implementation Job not found." });
+    if (!["waiting-on-codex", "release-authorised"].includes(job.status)) {
+      return json(response, 409, { error: "This Build Job is not waiting to be started in Codex." });
+    }
+    if (job.handoff.status === "in-codex") {
+      return json(response, 409, { error: "This Build Job step is already recorded as started in Codex." });
+    }
+    const input = await jsonBody(request);
+    const timestamp = now();
+    const scheduledWorker = input.trigger === "scheduled-ai-owner";
+    const actor = scheduledWorker ? "Operations Automated AI queue worker" : FOUNDER_NAME;
+    const detail = {
+      implementationJobId: job.id,
+      buildReference: job.handoff.reference,
+      phase: job.handoff.phase,
+      codexTaskReference: String(input.codexTaskReference || "").trim().slice(0, 500),
+      promptHash: createHash("sha256").update(job.handoff.prompt).digest("hex"),
+      trigger: scheduledWorker ? "scheduled-ai-owner" : "manual-handoff"
+    };
+    db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)")
+      .run(randomUUID(), job.changeId, "implementation-job.sent", actor, JSON.stringify(detail), timestamp);
+    db.prepare("UPDATE implementation_jobs SET updated_at=? WHERE id=?").run(timestamp, job.id);
+    audit("implementation-job.sent-to-codex", "implementation-job", job.id, detail);
+    return json(response, 200, {
+      job: implementationJob(job.id),
+      message: "Recorded as started in Codex. The Workbench is now waiting for the returned evidence."
+    });
   }
   const implementationReceiptMatch = url.pathname.match(/^\/api\/implementation-jobs\/([^/]+)\/receipt$/);
   if (method === "POST" && implementationReceiptMatch) {
@@ -3921,8 +4493,20 @@ async function api(request, response, url) {
   if (method === "POST" && url.pathname === "/api/conversations") {
     const value = await jsonBody(request);
     const id = randomUUID(); const timestamp = now();
-    db.prepare("INSERT INTO conversations(id,workspace,title,created_at,updated_at) VALUES(?,?,?,?,?)")
-      .run(id, String(value.workspace || "living-methodology"), String(value.title || "New conversation").slice(0, 120), timestamp, timestamp);
+    const activeRecordId = String(value.activeRecordId || "").trim() || null;
+    const activeRecord = activeRecordId ? operateRecord(activeRecordId) : null;
+    if (activeRecordId && !activeRecord) return json(response, 400, { error: "Choose an existing work record as conversation context." });
+    const activeCaseId = activeRecord?.recordType === "case" ? activeRecord.id : activeRecord?.caseId || null;
+    db.prepare("INSERT INTO conversations(id,workspace,title,active_case_id,active_record_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?)")
+      .run(
+        id,
+        String(value.workspace || "living-methodology"),
+        String(value.title || "New conversation").slice(0, 120),
+        activeCaseId,
+        activeRecordId,
+        timestamp,
+        timestamp
+      );
     audit("conversation.created", "conversation", id);
     return json(response, 201, { conversation: conversation(id) });
   }
@@ -4136,7 +4720,9 @@ Never claim to approve, publish, merge or edit methodology.`
     const wording = String(value.wording || "").trim();
     const disposition = String(value.disposition || "conversation-context");
     const classification = suggestedClassification(disposition, wording);
-    const feedbackStatus = classification === "no-action-required" ? "no-change" : "awaiting-review";
+    const feedbackStatus = isChangeCandidate(classification)
+      ? "awaiting-review"
+      : classification === "no-action-required" ? "no-change" : "retained";
     db.prepare(`
       INSERT INTO feedback(
         id,conversation_id,message_id,disposition,wording,interpretation,affected_components,status,created_at,
@@ -4153,7 +4739,13 @@ Never claim to approve, publish, merge or edit methodology.`
       submittingUser: FOUNDER_NAME,
       explicitlyNotApproval: true
     });
-    return json(response, 201, { feedback: feedbackRecord(id) });
+    const proposal = isChangeCandidate(classification) ? await createOrGetChangeProposal(id) : null;
+    return json(response, 201, {
+      feedback: feedbackRecord(id),
+      proposal,
+      completed: !proposal,
+      next: proposal ? "change-review" : "feedback-retained"
+    });
   }
   if (method === "GET" && url.pathname === "/api/feedback") {
     return json(response, 200, {
@@ -4171,7 +4763,9 @@ Never claim to approve, publish, merge or edit methodology.`
     }
     const value = await jsonBody(request);
     const classification = validateClassification(String(value.classification || ""));
-    const status = classification === "no-action-required" ? "no-change" : "awaiting-review";
+    const status = isChangeCandidate(classification)
+      ? "awaiting-review"
+      : classification === "no-action-required" ? "no-change" : "retained";
     db.prepare("UPDATE feedback SET classification=?,status=?,updated_at=? WHERE id=?")
       .run(classification, status, now(), feedback.id);
     audit("feedback.classified", "feedback", feedback.id, {
@@ -4180,7 +4774,14 @@ Never claim to approve, publish, merge or edit methodology.`
       actor: FOUNDER_NAME,
       explicitlyNotApproval: true
     });
-    return json(response, 200, { feedback: feedbackRecord(feedback.id), approvalCreated: false });
+    const proposal = isChangeCandidate(classification) ? await createOrGetChangeProposal(feedback.id) : null;
+    return json(response, 200, {
+      feedback: feedbackRecord(feedback.id),
+      proposal,
+      completed: !proposal,
+      next: proposal ? "change-review" : "feedback-retained",
+      approvalCreated: false
+    });
   }
   const feedbackProposalMatch = url.pathname.match(/^\/api\/feedback\/([^/]+)\/change-proposal$/);
   if (method === "POST" && feedbackProposalMatch) {
@@ -4227,6 +4828,12 @@ Never claim to approve, publish, merge or edit methodology.`
       db.prepare("INSERT INTO change_decisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
         .run(decisionId, proposal.id, proposal.feedback_id, phase, action, actor, reason, proposal.status, nextStatus, "", 0, now());
       setProposalStatus(proposal.id, proposal.feedback_id, nextStatus);
+      let implementationJobValue = null;
+      if (action === "prepare-change") {
+        syncSpecialistQueues();
+        const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(proposal.id);
+        if (changeRow) implementationJobValue = await createImplementationJob({ recordId: changeRow.id });
+      }
       audit("change-decision.recorded", "change-proposal", proposal.id, {
         decisionId, phase, action, actor, statusBefore: proposal.status, statusAfter: nextStatus,
         repositoryChanged: false, releaseApproved: false
@@ -4235,6 +4842,7 @@ Never claim to approve, publish, merge or edit methodology.`
         proposal: proposalRecord(proposal.id),
         decisionId,
         implementationInstruction: action === "prepare-change" ? instruction : null,
+        implementationJob: implementationJobValue,
         repositoryChanged: false,
         releaseApproved: false
       });
@@ -4317,10 +4925,13 @@ Never claim to approve, publish, merge or edit methodology.`
   if (method === "POST" && handoffMatch) {
     const proposal = proposalRecord(handoffMatch[1]);
     if (!proposal) return json(response, 404, { error: "Change proposal not found." });
-    if (proposal.status !== "approved-for-preparation" || !proposal.implementation_instruction) {
+    if (!["approved-for-preparation", "implementation-in-progress"].includes(proposal.status) || !proposal.implementation_instruction) {
       return json(response, 409, { error: "A preparation decision and bounded instruction are required before implementation can start." });
     }
-    setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+    if (proposal.status === "approved-for-preparation") setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+    syncSpecialistQueues();
+    const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(proposal.id);
+    const job = changeRow ? await createImplementationJob({ recordId: changeRow.id }) : null;
     audit("implementation-handoff.created", "change-proposal", proposal.id, {
       instructionFile: `${proposal.id}.md`,
       branchRequired: true,
@@ -4329,6 +4940,7 @@ Never claim to approve, publish, merge or edit methodology.`
     });
     return json(response, 200, {
       proposal: proposalRecord(proposal.id),
+      implementationJob: job,
       instruction: proposal.implementation_instruction,
       mainChanged: false
     });

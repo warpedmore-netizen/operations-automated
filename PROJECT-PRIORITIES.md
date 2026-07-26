@@ -39,7 +39,7 @@ These are required to preserve the intended method or unblock the next justified
 12. **Govern the human-AI collaboration.** AI should reconstruct context, do the analysis, choose the smallest useful representation, challenge proportionately and retain material learning without acquiring authority.
 13. **Keep authoritative change and human delivery aligned.** Git remains authoritative, while any Confluence reading copy must retain source, status, approval boundary, conflict protection and a traceable publication receipt.
 14. **Turn unresolved material judgement into actionable work.** Every open inbox item must have a working next action, authority route and retained outcome; routine reversible choices should not be inflated into formal approvals.
-15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and external-Codex handoffs should remain connected while Git retains methodology authority and SQLite retains operational memory.
+15. **Use one governed operating surface for founder work.** My Work, conversation context, source-backed specialist queues, universal approvals and the scheduled AI-owner queue should remain connected while Git retains methodology authority and SQLite retains operational memory.
 16. **Make the complete operational territory and current depth visible.** Readers must be able to see the intended facets, interfaces, existing guidance and genuine gaps without mistaking an outline for a completed practice.
 17. **Provide a normal reading order and routes by need.** The methodology should work as a short sequential guide and a modular reference library; users should not need to understand the repository structure.
 18. **Begin outside-in.** Follow the primary customer, service user or stakeholder journey before designing the operational work, capabilities and interfaces that support it; then expose effects on every other materially affected person and obligation.
@@ -64,7 +64,7 @@ These materially improve usefulness, validation or control but do not all block 
 11. Pilot the approved internal collaboration method across different tasks, formats, disagreements and control points.
 12. Measure first-use success rather than relying only on construction tests.
 13. Validate one complete repository-to-Confluence publication and one later incremental update, including an independent-edit conflict and recovery.
-14. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
+14. Run the proposed Workbench operating surface with real non-confidential work and compare its classifications, questions, ordering, citations, AI-owner pickup and returned evidence with Jamie's judgement.
 15. Test the approved internal-validation guide routes with an independent reader.
 16. Move the highest-value operational practice families from Outlined to Usable through worked cases, instructions, roles, measures, controls and simple tools.
 17. Add materially different examples, including an individual workflow, a physical or non-service operation and a low-volume, high-consequence activity.

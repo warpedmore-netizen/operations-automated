@@ -55,3 +55,13 @@ This records authority to implement, test, document, commit, push and open a dra
 5. Any future hosted, multi-user, notification or direct-Codex connection.
 
 Passing tests and a technically complete draft do not make these decisions.
+
+## Outcome-ticket implementation addendum
+
+Jamie's later founder review extends the authorised preparation within the same product correction. It authorises readable work references, explicit manual Codex prompts, hand-off and return evidence, direct PR review instructions, a bounded post-approval merge prompt and dedicated Improvement, Change and Operations Bible registers.
+
+This addendum does not authorise a recurring automation, autonomous execution, merge, release or publication. A machine-readable queue may support a later worker, but the Workbench must not claim that work has started until a real claim or manual hand-off is retained.
+
+## Later AI-owner worker direction
+
+Jamie subsequently asked for the recurring or trigger-based worker itself and clarified that AI ownership should lead to review, bounded action and a Workbench update. That later direction authorises configuration and testing of the local recurring worker described in [AI-owned work needs a reliable worker](../feedback/2026-07-26-ai-owned-work-needs-a-worker.md). It does not alter the earlier prohibition on false claims of activity: only a retained worker claim or manual hand-off changes an item to active work. Merge, product release, publication and other consequential authority remain separate.

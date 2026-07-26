@@ -286,14 +286,11 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     await call(`/api/operate/records/${caseResult.record.id}/actions`, {
       method: "POST", body: { actionId: "start-case", actor: "Jamie Peppard" }
     });
-    await call(`/api/operate/records/${caseResult.record.id}/actions`, {
+    const blockedCaseResolution = await call(`/api/operate/records/${caseResult.record.id}/actions`, {
       method: "POST", body: { actionId: "resolve-case", actor: "Jamie Peppard", note: "Primary outcome restored." }
     });
-    const blockedCaseClosure = await call(`/api/operate/records/${caseResult.record.id}/actions`, {
-      method: "POST", body: { actionId: "close-case", actor: "Jamie Peppard", note: "Attempt closure." }
-    });
-    assert.equal(blockedCaseClosure.response.status, 409);
-    assert.match(blockedCaseClosure.payload.error, /contained records remain open/i);
+    assert.equal(blockedCaseResolution.response.status, 409);
+    assert.match(blockedCaseResolution.payload.error, /contained records remain open/i);
 
     const invalidCaseLink = await call(`/api/operate/records/${requestResult.record.id}`, {
       method: "PATCH",

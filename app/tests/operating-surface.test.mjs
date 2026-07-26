@@ -32,6 +32,7 @@ async function startWorkbench({ port, dataRoot, repositoryRoot }) {
       PORT: String(port),
       OPENAI_API_KEY: "",
       OPENAI_EMBEDDING_MODEL: "",
+      WORKBENCH_DAILY_CHALLENGE_HOUR: "0",
       WORKBENCH_DATA_ROOT: dataRoot,
       WORKBENCH_REPOSITORY_ROOT: repositoryRoot
     },
@@ -87,6 +88,12 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   };
   try {
+    const startingWork = await call("/api/my-work");
+    const dailyChallenge = startingWork.payload.items.find((item) => item.sourceType === "daily-challenge");
+    assert.equal(dailyChallenge.owner, "Jamie Peppard");
+    assert.equal(dailyChallenge.humanActionRequired, true);
+    assert.match(dailyChallenge.summary, /own Workbench conversation/i);
+
     // 1. Governed knowledge: approved meaning is normative; proposed material is evidence only.
     const manifest = await call("/api/knowledge/manifest");
     assert.equal(manifest.response.status, 200);
@@ -137,6 +144,58 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     await act(requestWork.record.id, "fulfil-request", { note: "The recovery route is available and checked." });
     const closedRequest = await act(requestWork.record.id, "close-request");
     assert.equal(closedRequest.status, "closed");
+
+    // An AI-owned Task enters the scheduled queue and closes only after structured completion evidence returns.
+    const codexTask = await create({
+      title: "Inventory feature documentation coverage",
+      summary: "List every visible Workbench feature, its documentation location and any uncovered feature.",
+      recordType: "task",
+      owner: "Operations Automated AI",
+      workProfile: "general-administration"
+    });
+    assert.match(codexTask.record.reference, /^OA-TASK-/);
+    assert.equal(codexTask.record.codexHandoff.status, "ready-for-codex");
+    assert.match(codexTask.record.codexHandoff.prompt, /OA_WORKBENCH_RETURN/);
+    assert.equal(codexTask.record.owner, "Operations Automated AI");
+    assert.equal(codexTask.record.humanActionRequired, false);
+    const queuedTaskWork = await call(`/api/my-work?search=${encodeURIComponent(codexTask.record.title)}`);
+    assert.equal(queuedTaskWork.payload.doNext.length, 0);
+    const weakCodexReturn = await call(`/api/operate/records/${codexTask.record.id}/codex-review`, {
+      method: "POST",
+      body: { outcomeText: "Done" }
+    });
+    assert.equal(weakCodexReturn.response.status, 200);
+    assert.equal(weakCodexReturn.payload.review.result, "needs-more-work");
+    assert.ok(weakCodexReturn.payload.review.missing.length > 0);
+    const aiQueue = await call("/api/ai-work");
+    const queuedTask = aiQueue.payload.items.find((item) => item.kind === "operate-record" && item.id === codexTask.record.id);
+    assert.equal(aiQueue.response.status, 200);
+    assert.equal(queuedTask.status, "needs-more-work");
+    assert.equal(queuedTask.reference, codexTask.record.reference);
+    assert.match(queuedTask.prompt, /Do not infer approval/i);
+    const taskSent = await call(queuedTask.claimEndpoint, {
+      method: "POST",
+      body: { trigger: "scheduled-ai-owner", codexTaskReference: "scheduled-documentation-inventory" }
+    });
+    assert.equal(taskSent.response.status, 200);
+    assert.equal(taskSent.payload.record.codexHandoff.status, "in-codex");
+    assert.equal(taskSent.payload.record.owner, "Operations Automated AI");
+    const taskCriteria = taskSent.payload.record.codexHandoff.criteria;
+    const completedCodexReturn = await call(`/api/operate/records/${codexTask.record.id}/codex-review`, {
+      method: "POST",
+      body: {
+        result: {
+          reference: taskSent.payload.record.reference,
+          outcome: "Created and checked a complete inventory of visible Workbench features and documentation gaps.",
+          evidence: ["product/feature-documentation-inventory.md records every checked feature."],
+          criteria: taskCriteria.map((criterion) => ({ criterion, met: true, evidence: "Verified in the retained inventory and coverage check." })),
+          remainingWork: []
+        }
+      }
+    });
+    assert.equal(completedCodexReturn.payload.review.result, "completed");
+    assert.equal(completedCodexReturn.payload.record.status, "done");
+    assert.equal(completedCodexReturn.payload.record.automationMode, "scheduled-codex-reviewed");
 
     // 5. Incident evidence connects to a Problem, governed Change, Tasks and verification.
     const incident = await create({
@@ -345,25 +404,42 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
         reason: "Prepare the smallest coherent visibility correction."
       }
     });
-    assert.equal(preparation.payload.proposal.status, "approved-for-preparation");
+    assert.equal(preparation.payload.proposal.status, "implementation-in-progress");
+    assert.equal(preparation.payload.implementationJob.status, "waiting-on-codex");
     const methodologyWork = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
-    const methodologyChangeItem = methodologyWork.payload.items.find((item) => item.recordType === "change");
-    assert.ok(methodologyChangeItem);
+    const methodologyBuildItems = methodologyWork.payload.items.filter((item) => item.sourceType === "implementation-job");
+    assert.equal(methodologyBuildItems.length, 1, JSON.stringify(methodologyWork.payload.items, null, 2));
+    assert.equal(methodologyBuildItems[0].owner, "Codex");
+    assert.equal(methodologyBuildItems[0].humanActionRequired, false);
+    assert.equal(methodologyBuildItems[0].sourceId, preparation.payload.implementationJob.id);
+    assert.equal(methodologyBuildItems[0].handoff.status, "ready-for-codex");
+    assert.match(methodologyBuildItems[0].handoff.prompt, /RETURN TO THE WORKBENCH/);
+    assert.equal(methodologyWork.payload.items.some((item) => item.sourceType === "operate-record" && item.recordType === "change"), false);
+    assert.equal(methodologyWork.payload.doNext.some((item) => item.sourceId === methodologyBuildItems[0].sourceId), false);
+    assert.ok(methodologyWork.payload.summary.beingHandled >= 1);
+
+    const linkedChange = await call(`/api/operate/records/${preparation.payload.implementationJob.changeId}`);
+    assert.equal(linkedChange.payload.record.implementationJob.id, preparation.payload.implementationJob.id);
 
     // 9. The complete brief is handed to Codex and a full receipt is returned.
-    const build = await call("/api/implementation-jobs", {
+    const job = preparation.payload.implementationJob;
+    assert.match(job.briefText, /Approved-for-preparation requirement/);
+    assert.match(job.authorityBoundary, /remain unauthorised/i);
+    const jobId = job.id;
+    const buildQueue = await call("/api/ai-work");
+    const queuedBuild = buildQueue.payload.items.find((item) => item.kind === "implementation-job" && item.id === jobId);
+    assert.equal(queuedBuild.phase, "implementation");
+    const claimedBuild = await call(queuedBuild.claimEndpoint, {
       method: "POST",
-      body: {
-        recordId: methodologyChangeItem.sourceId,
-        approvedRequirement: "Make release evidence and its authority boundary visible in My Work.",
-        acceptanceCriteria: ["The exact release decision is visible.", "No approval is inferred."],
-        testExpectations: ["Automated journey test", "Desktop and phone-width browser test"]
-      }
+      body: { trigger: "scheduled-ai-owner", codexTaskReference: "scheduled-build-test" }
     });
-    assert.equal(build.response.status, 201, JSON.stringify(build.payload));
-    assert.match(build.payload.job.briefText, /Approved-for-preparation requirement/);
-    assert.match(build.payload.job.authorityBoundary, /remain unauthorised/i);
-    const jobId = build.payload.job.id;
+    assert.equal(claimedBuild.response.status, 200, JSON.stringify(claimedBuild.payload));
+    assert.equal(claimedBuild.payload.job.handoff.status, "in-codex");
+    const buildInProgress = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
+    const buildInProgressItem = buildInProgress.payload.items.find((item) => item.sourceType === "implementation-job");
+    assert.equal(buildInProgressItem.owner, "Codex");
+    assert.equal(buildInProgressItem.humanActionRequired, false);
+    assert.equal(buildInProgress.payload.doNext.some((item) => item.sourceId === buildInProgressItem.sourceId), false);
     const receipt = await call(`/api/implementation-jobs/${jobId}/receipt`, {
       method: "POST",
       body: {
@@ -380,6 +456,11 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(receipt.response.status, 200, JSON.stringify(receipt.payload));
     assert.equal(receipt.payload.job.status, "waiting-for-review");
     assert.equal(receipt.payload.job.releaseApproval.result, "pending");
+    const releaseWork = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
+    const releaseItem = releaseWork.payload.items.find((item) => item.sourceType === "implementation-job");
+    assert.equal(releaseItem.owner, "Jamie Peppard");
+    assert.equal(releaseItem.humanActionRequired, true);
+    assert.equal(releaseWork.payload.doNext.some((item) => item.sourceId === jobId), true);
 
     // 10. Universal approval requires exact founder confirmation and performs no merge.
     const refused = await call(`/api/implementation-jobs/${jobId}/release-decision`, {
@@ -394,9 +475,22 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(release.response.status, 200);
     assert.equal(release.payload.job.status, "release-authorised");
     assert.match(release.payload.message, /No merge was performed/i);
+    assert.equal(release.payload.job.handoff.status, "ready-for-codex");
+    assert.equal(release.payload.job.handoff.phase, "merge");
+    assert.match(release.payload.job.handoff.prompt, /exact reviewed commit/i);
     const controls = await call(`/api/governed-controls?sourceType=implementation-job&sourceId=${jobId}`);
     assert.equal(controls.payload.approvals[0].explicit_confirmation, "Approve release");
     assert.ok(controls.payload.approvals[0].remainsUnauthorised.includes("external publication"));
+
+    const mergeQueue = await call("/api/ai-work");
+    const queuedMerge = mergeQueue.payload.items.find((item) => item.kind === "implementation-job" && item.id === jobId);
+    assert.equal(queuedMerge.phase, "merge");
+    const mergeSent = await call(queuedMerge.claimEndpoint, {
+      method: "POST",
+      body: { trigger: "scheduled-ai-owner", codexTaskReference: "scheduled-merge-test" }
+    });
+    assert.equal(mergeSent.response.status, 200);
+    assert.equal(mergeSent.payload.job.handoff.status, "in-codex");
 
     // 10. Only an authorised external merge receipt completes the Change, and restart preserves it.
     const mergeReceipt = await call(`/api/implementation-jobs/${jobId}/merge-receipt`, {
