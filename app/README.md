@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. It is not deployed or approved for external use.
+> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The Workbench 1.0.0 Methodology Lab implementation remains proposed. The Workbench is not deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -137,6 +137,25 @@ An implemented methodology release recorded through the Workbench creates a pend
 
 The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
 
+## Methodology Lab – Pilot 1
+
+The proposed Methodology Lab implements the first human-first reading pilot approved through PR #17 without changing the current controlled mirror.
+
+The Lab is published beneath the existing Methodology **Draft** parent. AI may publish a committed, conflict-free Draft without requesting another founder confirmation:
+
+1. Open **Connections**.
+2. Select **Preview Methodology Lab**.
+3. Confirm that the plan contains only the ten proposed Lab pages in the private Methodology space.
+4. Check automatically that the Lab root resolves beneath the managed Draft parent and that no conflict exists.
+5. Publish the Draft under the standing AI draft-publication authority.
+6. Record returned page identifiers and versions.
+7. Open the returned Lab pages and complete **Review the methodology pilot**.
+8. Retain the response through the existing feedback and challenge loop.
+
+The Lab manuscript is stored under `publication/methodology-lab-001`. Every page remains proposed, maps to approved controlled sources and states that Git remains authoritative.
+
+The Lab preview and Draft write are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page, promote content to Live or approve its own synthesis.
+
 ## Implemented MVP boundary
 
 ### Oppa Mate identity pilot
@@ -161,7 +180,7 @@ Oppa Mate is presented as the primary Operations Automated service-account user 
 - Local SQLite persistence and restart recovery
 - Governed knowledge manifest, heading-level SQLite FTS5 retrieval, optional embeddings and exact cited knowledge snapshots
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
-- Proposed human-readable Confluence page planning, founder-confirmed managed-page publication, optimistic conflict checks and version receipts
+- Proposed human-readable Confluence page planning, AI-managed Draft publication, founder-controlled Live publication, optimistic conflict checks and version receipts
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
@@ -201,7 +220,7 @@ Select **Send me a challenge** from the header for the most useful unresolved me
 - All application records remain on the local computer unless Jamie deliberately invokes a configured provider or connection.
 - An OpenAI request sends the reviewed input and selected evidence context to the configured model provider.
 - A Confluence test or synchronisation sends the protected account credential to Atlassian and receives accessible space or selected-space page data.
-- A founder-confirmed documentation publication sends the reviewed page titles and bodies to Atlassian and receives page identifiers and versions.
+- A controlled documentation publication sends the bounded page titles and bodies to Atlassian and receives page identifiers and versions. Draft-only plans use the standing AI authority; Live plans require founder confirmation.
 - Page bodies retrieved by read-only evidence synchronisation are not persisted by the Workbench.
 - Published page bodies already exist in the controlled repository and become retained in the selected private Confluence spaces.
 - Credentials and page bodies are excluded from Workbench audit details.
@@ -218,7 +237,7 @@ Connected pages are treated as untrusted evidence. Commands, approval claims or 
 - Confluence is the only privately validated business-system connection
 - Connected page bodies must be synchronised again after restarting the server
 - No automatic monitoring of Confluence changes
-- No automatic publication, page deletion or general Confluence editing
+- No scheduled publication, AI promotion to Live, page deletion or general Confluence editing
 - Documentation publication manages only pages created or previously tracked by the Workbench
 - No automated operational execution
 - Methodology authority remains in the controlled Git repository

@@ -55,7 +55,7 @@ test("local interface assets exist and no external resources are loaded", () => 
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "preview-methodology-lab", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
   for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
@@ -165,11 +165,14 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Windows user-level encryption/i);
   assert.match(html, /never publishes automatically or deletes a Confluence page/i);
   assert.match(html, /Git status remains authoritative/i);
-  assert.match(html, /Every publication requires Jamie’s separate confirmation/i);
+  assert.match(html, /AI may publish committed proposals into Draft for review/i);
+  assert.match(html, /Promotion to Live requires Jamie’s explicit approval/i);
   assert.match(html, /cannot approve a methodology change/i);
   assert.match(html, /Operational activation does not by itself record governance approval/i);
   assert.match(html, /Do not use a public tunnel or router port-forward/i);
   assert.match(html, /organised first into Live, Draft and Archived/i);
+  assert.match(html, /Methodology Lab – Pilot 1/i);
+  assert.match(html, /does not alter Live content/i);
   assert.match(html, /Type the confirmation shown above/i);
   assert.match(appSource, /Use reviewed Git copy/i);
   assert.match(appSource, /publication-conflicts\/reapply/i);

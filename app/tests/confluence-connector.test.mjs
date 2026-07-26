@@ -114,7 +114,9 @@ test("public connection metadata masks the account and never exposes the token",
   assert.equal(value.accountEmailMasked, "s******@example.com");
   assert.equal(value.syncedDocuments, 4);
   assert.equal(value.writeEnabled, true);
-  assert.equal(value.writeCapability, "approval-gated-controlled-pages");
+  assert.equal(value.writeCapability, "ai-managed-draft-and-founder-controlled-live");
+  assert.equal(value.draftWritesRequireFounderConfirmation, false);
+  assert.equal(value.liveWritesRequireFounderConfirmation, true);
   assert.equal(value.automaticWrites, false);
   assert.equal(value.deleteEnabled, false);
   assert.doesNotMatch(JSON.stringify(value), /must-not-leak|service@example\.com/);

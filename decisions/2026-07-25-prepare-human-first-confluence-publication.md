@@ -6,7 +6,8 @@ decision: approved-for-private-internal-implementation
 decision_maker: Jamie Peppard
 date: 2026-07-25
 approval_scope: human-first publication model and three bounded pilots
-release_status: pending-merge
+release_status: merged
+release_commit: 60c036562295d1f55f21d69ac1908742c209c1ee
 ---
 
 # Prepare a human-first Confluence publication model
@@ -52,8 +53,8 @@ It does not authorise:
 - external publication; or
 - automatic publication authority.
 
-## Merge decision still required
+## Merge outcome
 
-The model and pilot scope are approved, but this record does not infer authority to merge PR #17. Jamie must authorise that merge separately before implementation begins.
+Jamie explicitly authorised merge of PR #17 on 2026-07-25. It was merged into `main` as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.
 
 Automatic document-interaction retrieval requires a later, separate connection and data decision. Each live pilot publication also requires the existing fresh plan, conflict check and exact plan-specific confirmation.

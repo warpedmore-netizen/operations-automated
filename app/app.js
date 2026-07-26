@@ -1512,7 +1512,7 @@ function renderConfluencePublicationPlan(plan) {
   ];
   area.className = `publication-status ${summary.conflict ? "error" : "connected"}`;
   area.innerHTML = `
-    <strong>${plan.items.length} controlled pages reviewed against Confluence.</strong>
+    <strong>${escapeHtml(plan.title || `${plan.items.length} controlled pages`)} reviewed against Confluence.</strong>
     <p>${Number(summary.create || 0)} to create · ${Number(summary.update || 0)} to update · ${Number(summary.unchanged || 0)} unchanged · ${Number(summary.conflict || 0)} conflicts.</p>
     <p>Source: ${escapeHtml(plan.sourceBranch)} at ${escapeHtml(String(plan.sourceCommit || "").slice(0, 12))}. No write has happened.</p>`;
   const blockers = Array.isArray(plan.blockers) && plan.blockers.length
@@ -1526,7 +1526,7 @@ function renderConfluencePublicationPlan(plan) {
       <article><span>Unchanged</span><strong>${Number(summary.unchanged || 0)}</strong></article>
       <article class="${summary.conflict ? "has-conflict" : ""}"><span>Conflict</span><strong>${Number(summary.conflict || 0)}</strong></article>
     </div>
-    ${groups.map(([role, label]) => {
+    ${groups.filter(([role]) => plan.items.some((item) => item.role === role)).map(([role, label]) => {
       const items = plan.items.filter((item) => item.role === role);
       const itemByKey = new Map(items.map((item) => [item.key, item]));
       const renderItem = (item) => {
@@ -1554,7 +1554,9 @@ function renderConfluencePublicationPlan(plan) {
         <summary><strong>${label}</strong><span>${items.length} pages</span></summary>
         <div>
           ${roots.map(renderItem).join("")}
-          ${lifecycleGroups.map(([lifecycle, lifecycleLabel]) => {
+          ${(plan.lifecycleOrder?.length
+            ? lifecycleGroups.filter(([lifecycle]) => plan.lifecycleOrder.includes(lifecycle))
+            : []).map(([lifecycle, lifecycleLabel]) => {
             const lifecycleItems = items.filter((item) => item.lifecycle === lifecycle);
             const documentCount = lifecycleItems.filter((item) => item.kind === "controlled-document").length;
             return `<details class="publication-lifecycle" ${lifecycle === "live" ? "open" : ""}>
@@ -1565,31 +1567,36 @@ function renderConfluencePublicationPlan(plan) {
         </div>
       </details>`;
     }).join("")}
-    <p class="confirmation-phrase">Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong></p>`;
-  form.hidden = !plan.publishable;
+    <p class="confirmation-phrase">${plan.founderConfirmationRequired === false
+      ? "<strong>Draft publication is AI-managed.</strong> No separate founder confirmation is required; promotion to Live remains controlled."
+      : `Required confirmation: <strong>${escapeHtml(plan.confirmationPhrase)}</strong>`}</p>`;
+  form.hidden = !plan.publishable || plan.founderConfirmationRequired === false;
   form.reset();
   form.actor.value = "Jamie Peppard";
-  form.confirmation.placeholder = plan.confirmationPhrase;
+  form.confirmation.placeholder = plan.confirmationPhrase || "";
 }
 
-async function previewConfluencePublication() {
-  const button = $("#preview-confluence-publication");
+async function previewConfluencePublication(publicationKind = "controlled-mirror") {
+  const methodologyLab = publicationKind === "methodology-lab-pilot";
+  const button = $(methodologyLab ? "#preview-methodology-lab" : "#preview-confluence-publication");
   button.disabled = true;
-  button.textContent = "Comparing repository and Confluence…";
+  button.textContent = methodologyLab ? "Preparing isolated Lab preview…" : "Comparing repository and Confluence…";
   try {
     const result = await request("/api/connections/confluence/publication-plan", {
       method: "POST",
-      body: "{}"
+      body: JSON.stringify({ publicationKind })
     });
     renderConfluencePublicationPlan(result.plan);
-    toast("Publication preview ready. No Confluence page was changed.");
+    toast(methodologyLab
+      ? "Methodology Lab Draft preview ready. No Live page was changed."
+      : "Publication preview ready. No Confluence page was changed.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";
     $("#confluence-publication-status").innerHTML = `<strong>The documentation preview could not be prepared.</strong><p>${escapeHtml(error.message)}</p>`;
     toast(error.message, true);
   } finally {
     button.disabled = false;
-    button.textContent = "Preview documentation update";
+    button.textContent = methodologyLab ? "Preview Methodology Lab" : "Preview documentation update";
   }
 }
 
@@ -1623,7 +1630,9 @@ async function publishConfluenceDocumentation(event) {
       : "";
     form.hidden = true;
     state.confluencePublicationPlan = null;
-    toast("Reviewed methodology documentation published to Confluence.");
+    toast(result.publicationKind === "methodology-lab-pilot"
+      ? "Reviewed Methodology Lab published for private evaluation."
+      : "Reviewed methodology documentation published to Confluence.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";
     $("#confluence-publication-status").innerHTML = `<strong>Publication stopped safely.</strong><p>${escapeHtml(error.message)}</p><p>Prepare a new preview before retrying.</p>`;
@@ -2478,7 +2487,8 @@ $("#save-confluence").addEventListener("click", saveConfluence);
 $("#verify-confluence").addEventListener("click", verifyConfluence);
 $("#sync-confluence").addEventListener("click", synchroniseConfluence);
 $("#remove-confluence").addEventListener("click", removeConfluence);
-$("#preview-confluence-publication").addEventListener("click", previewConfluencePublication);
+$("#preview-confluence-publication").addEventListener("click", () => previewConfluencePublication("controlled-mirror"));
+$("#preview-methodology-lab").addEventListener("click", () => previewConfluencePublication("methodology-lab-pilot"));
 $("#confluence-publication-approval").addEventListener("submit", publishConfluenceDocumentation);
 $("#confluence-publication-plan").addEventListener("click", (event) => {
   const button = event.target.closest("[data-reapply-conflict]");

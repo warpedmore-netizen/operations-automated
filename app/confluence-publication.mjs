@@ -377,6 +377,167 @@ export function scanPublicationSources(repositoryRoot) {
   return sources;
 }
 
+function methodologyLabBody(page, sources, context) {
+  const contentWithoutRepeatedTitle = stripFrontMatter(page.content).replace(/^#\s+[^\r\n]+(?:\r?\n)+/, "");
+  const readable = markdownToConfluenceStorage(contentWithoutRepeatedTitle, {
+    sourcePath: page.path,
+    sourceCommit: context.sourceCommit,
+    repositoryUrl: context.repositoryUrl,
+    demoteHeadings: false
+  });
+  const sourceMap = sources.map((source) =>
+    `<li><strong>${escapeHtml(source.path)}</strong> — ${escapeHtml(source.status)}, version ${escapeHtml(source.version)}, hash ${escapeHtml(source.hash)}</li>`
+  ).join("");
+  return [
+    "<ac:structured-macro ac:name=\"warning\"><ac:rich-text-body>",
+    "<p><strong>Methodology Lab pilot — proposed Draft reading synthesis</strong></p>",
+    "<p>This page is published to the controlled Confluence Draft area from Operations Automated sources for private internal review. Draft publication does not change approved methodology meaning, replace the controlled record, promote content to Live or authorise external publication.</p>",
+    "</ac:rich-text-body></ac:structured-macro>",
+    readable,
+    "<hr/>",
+    "<h2>Controlled source map</h2>",
+    `<ul>${sourceMap}</ul>`,
+    `<p><small><strong>Pilot source:</strong> ${escapeHtml(page.path)} · <strong>Pilot version:</strong> ${escapeHtml(context.pilotVersion)} · <strong>Source commit:</strong> ${escapeHtml(context.sourceCommit)} · <strong>Combined source hash:</strong> ${escapeHtml(page.sourceHash)}</small></p>`,
+    "<p><small>Git remains authoritative. Connective wording in this Lab remains proposed until it survives review and a later governed decision.</small></p>"
+  ].join("\n");
+}
+
+export function buildMethodologyLabPublicationPlan({
+  repositoryRoot,
+  sourceBranch,
+  sourceCommit,
+  repositoryUrl = "https://github.com/warpedmore-netizen/operations-automated",
+  generatedAt = new Date().toISOString()
+}) {
+  const labDirectory = resolve(repositoryRoot, "publication", "methodology-lab-001");
+  const manifestPath = resolve(labDirectory, "manifest.json");
+  if (!existsSync(manifestPath)) throw new Error("The controlled Methodology Lab manifest is missing.");
+  let manifest;
+  try {
+    manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  } catch {
+    throw new Error("The controlled Methodology Lab manifest is not valid JSON.");
+  }
+  if (
+    manifest?.id !== "OA-METHODOLOGY-LAB-001" ||
+    manifest?.status !== "proposed-pilot" ||
+    !Array.isArray(manifest?.pages) ||
+    manifest.pages.length === 0
+  ) {
+    throw new Error("The Methodology Lab manifest does not declare the bounded proposed pilot.");
+  }
+
+  const controlledSources = new Map(scanPublicationSources(repositoryRoot).map((source) => [source.path, source]));
+  const keys = new Set();
+  const titles = new Set();
+  const items = manifest.pages.map((page) => {
+    const key = String(page?.key || "").trim();
+    const filename = String(page?.file || "").trim();
+    const title = String(page?.title || "").replace(/[\r\n]+/g, " ").trim().slice(0, 240);
+    const parentKey = page?.parentKey === null ? null : String(page?.parentKey || "").trim();
+    if (!/^[a-z0-9-]{2,80}$/.test(key) || keys.has(key)) throw new Error("The Methodology Lab contains a missing or duplicate page key.");
+    if (!/^[A-Za-z0-9._-]+\.md$/.test(filename)) throw new Error(`The Methodology Lab page file for ${key || "unknown"} is not allowed.`);
+    if (!title || titles.has(title.toLocaleLowerCase("en-GB"))) throw new Error("The Methodology Lab contains a missing or duplicate page title.");
+    if (!Array.isArray(page.sources) || page.sources.length === 0) throw new Error(`The Methodology Lab page “${title}” has no controlled source map.`);
+    const sources = page.sources.map((path) => {
+      const normalised = String(path || "").replaceAll("\\", "/");
+      const source = controlledSources.get(normalised);
+      if (!source) throw new Error(`The Methodology Lab source “${normalised}” is not part of the controlled publication source.`);
+      if (!["approved", "published", "recorded"].includes(source.status)) {
+        throw new Error(`The Methodology Lab source “${normalised}” is not approved for the pilot source set.`);
+      }
+      return source;
+    });
+    const path = `publication/methodology-lab-001/${filename}`;
+    const content = readFileSync(resolve(labDirectory, filename), "utf8");
+    const metadata = extractFrontMatter(content);
+    if (String(metadata.status || "").toLowerCase() !== "proposed") {
+      throw new Error(`The Methodology Lab page “${title}” must remain proposed during the pilot.`);
+    }
+    keys.add(key);
+    titles.add(title.toLocaleLowerCase("en-GB"));
+    const sourceHash = hash(JSON.stringify({
+      content,
+      sources: sources.map((source) => [source.path, source.status, source.version, source.hash])
+    }));
+    const item = {
+      key: `methodology-lab-001:${key}`,
+      kind: key === "hub" ? "pilot-hub" : "pilot-page",
+      role: "methodology",
+      lifecycle: "draft",
+      title,
+      parentKey: parentKey ? `methodology-lab-001:${parentKey}` : null,
+      externalParentKey: parentKey ? null : "methodology:draft",
+      sourcePath: path,
+      sourceStatus: "proposed-pilot",
+      sourceVersion: String(manifest.version || "0.1"),
+      sourceHash
+    };
+    item.bodyStorage = methodologyLabBody(
+      { path, content, sourceHash },
+      sources,
+      {
+        sourceCommit,
+        repositoryUrl,
+        pilotVersion: item.sourceVersion
+      }
+    );
+    return item;
+  });
+
+  const itemByKey = new Map(items.map((item) => [item.key, item]));
+  if (!itemByKey.has("methodology-lab-001:hub")) throw new Error("The Methodology Lab requires one controlled hub page.");
+  for (const item of items) {
+    if (item.parentKey && !itemByKey.has(item.parentKey)) {
+      throw new Error(`The Methodology Lab parent for “${item.title}” is missing.`);
+    }
+  }
+  const ordered = [];
+  const visiting = new Set();
+  const visit = (item) => {
+    if (ordered.includes(item)) return;
+    if (visiting.has(item.key)) throw new Error("The Methodology Lab page hierarchy contains a cycle.");
+    visiting.add(item.key);
+    if (item.parentKey) visit(itemByKey.get(item.parentKey));
+    visiting.delete(item.key);
+    ordered.push(item);
+  };
+  items.forEach(visit);
+  const id = hash(JSON.stringify({
+    publicationKind: "methodology-lab-pilot",
+    targetLifecycle: "draft",
+    sourceBranch,
+    sourceCommit,
+    parentReference: "methodology:draft",
+    items: ordered.map((item) => [item.key, item.title, item.parentKey, item.externalParentKey, item.sourceHash])
+  }));
+  return {
+    id,
+    publicationKind: "methodology-lab-pilot",
+    status: "proposed-publication-plan",
+    title: String(manifest.title || "Operations Automated Methodology Lab – Pilot 1"),
+    generatedAt,
+    sourceBranch,
+    sourceCommit,
+    repositoryUrl,
+    confirmationPhrase: "",
+    lifecycleOrder: ["draft"],
+    targetLifecycle: "draft",
+    founderConfirmationRequired: false,
+    publicationAuthority: "ai-managed-draft",
+    parentReferences: [{
+      key: "methodology:draft",
+      role: "methodology",
+      title: "Draft"
+    }],
+    deletionEnabled: false,
+    automaticPublication: false,
+    existingControlledPagesChanged: false,
+    reviewPageKey: "methodology-lab-001:review",
+    items: ordered
+  };
+}
+
 function publicItem(item) {
   const { bodyStorage: _bodyStorage, ...value } = item;
   return value;
@@ -464,6 +625,7 @@ export function buildConfluencePublicationPlan({
   }));
   return {
     id,
+    publicationKind: "controlled-mirror",
     status: "proposed-publication-plan",
     generatedAt,
     sourceBranch,

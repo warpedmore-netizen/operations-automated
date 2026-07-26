@@ -20,6 +20,21 @@
 
 All material changes to Operations Automated will be recorded here.
 
+## Workbench 1.0.0 Methodology Lab - proposed
+
+- Corrected the authority model after founder review: AI may publish committed proposed material beneath controlled Confluence Draft parents without another confirmation; Live promotion remains founder-controlled.
+- Moved the Methodology Lab target beneath the existing Methodology Draft page rather than creating another top-level review area.
+- Added an isolated ten-page Methodology Lab manuscript implementing the approved book-style reader pilot.
+- Added a controlled manifest defining titles, hierarchy, reading order and approved source maps.
+- Added a separate Workbench preview mode that contains only the Lab pages and targets the existing private Methodology space.
+- Added validation that rejects unapproved sources, non-proposed pilot pages, duplicate keys or titles, missing parents and hierarchy cycles.
+- Added retained source, conflict, version and audit controls for AI-managed Draft publication.
+- Published the ten proposed Lab pages beneath the existing Methodology Draft page from commit `1297bd6f3cc1ab7ffc76fc589a6f61979e0e72d3`; 10 pages were created, none of the existing 108 were changed, no page was deleted and the immediate comparison returned all 10 unchanged.
+- Added a review page that separates methodology, explanation, navigation, product, evidence and no-change feedback.
+- Kept the current 108 pages unchanged and retained conflict protection, returned version receipts, no deletion and no scheduled publication.
+- Added a product specification, feedback record, decision record and assurance pack for the first dogfooding loop.
+- This implementation remains proposed. Draft publication is authorised for review; merge and promotion to Live each remain separate Jamie Peppard decisions.
+
 ## Workbench 1.4.1 assisted capture and actions - proposed
 
 - Reduced ordinary work capture to one required description and generated an editable work-type-aware name.
@@ -146,7 +161,8 @@ All material changes to Operations Automated will be recorded here.
 - Kept automatic retrieval of document interactions behind a separate permission, confidentiality and retention decision.
 - Kept the current 108 pages unchanged and retained the separate founder confirmation for every live Confluence write.
 - Jamie Peppard approved the human-first publication model and all three bounded pilots for private internal implementation on 2026-07-25.
-- Merge, live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
+- Jamie Peppard explicitly authorised merge of PR #17 on 2026-07-25; it was merged as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.
+- Live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
 
 ## Workbench 0.9.0 - approved for private internal validation
 
