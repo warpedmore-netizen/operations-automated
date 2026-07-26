@@ -95,6 +95,7 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
   border-radius: 10px;
 }
 .recent-heading { display: flex; align-items: center; justify-content: space-between; padding: 0 0.3rem 0.55rem; color: #d9eaf7; font-size: 0.68rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
+.recent-heading > div { display: flex; gap: 0.25rem; }
 .recent-heading button { padding: 0.22rem 0.3rem; color: #c5dded; background: transparent; border: 0; border-radius: 5px; font-size: 0.64rem; font-weight: 750; text-transform: none; }
 .recent-heading button:hover { color: white; background: rgba(50, 182, 254, 0.13); }
 #conversation-list {
@@ -890,6 +891,33 @@ main { min-width: 0; }
 .work-detail-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
 .work-detail-heading h3 { margin: 0.45rem 0 0; color: var(--ink); font: 750 1.15rem/1.2 var(--display-font); }
 .work-detail-summary { color: var(--muted); font-size: 0.72rem; line-height: 1.55; }
+.work-now { display: grid; gap: 0.45rem; margin: 0.9rem 0; padding: 0.95rem; background: linear-gradient(145deg, #eef8fd, #ffffff); border: 1px solid #b9dceb; border-left: 5px solid var(--oa-blue, #0b77d2); border-radius: 9px; }
+.work-now > span, .workflow-heading span { color: var(--oa-blue, #0b77d2); font-size: 0.52rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
+.work-now h4 { margin: 0; color: var(--ink); font: 750 0.88rem/1.25 var(--display-font); }
+.work-now > p { margin: 0; color: var(--muted); font-size: 0.65rem; line-height: 1.5; }
+.work-now dl { display: grid; grid-template-columns: 0.7fr 1.3fr; gap: 0.45rem; margin: 0.2rem 0 0; }
+.work-now dl div { padding: 0.55rem; background: rgba(255, 255, 255, 0.8); border: 1px solid #d8e8f0; border-radius: 6px; }
+.work-now dt { color: var(--muted); font-size: 0.49rem; font-weight: 900; text-transform: uppercase; }
+.work-now dd { margin: 0.2rem 0 0; color: var(--ink); font-size: 0.59rem; line-height: 1.4; }
+.workflow-progress { margin: 0.85rem 0; padding: 0.8rem; background: #fbfcfd; border: 1px solid var(--line); border-radius: 8px; }
+.workflow-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 0.6rem; }
+.workflow-heading strong { color: var(--ink); font-size: 0.62rem; }
+.workflow-progress ol { display: grid; gap: 0; margin: 0.7rem 0; padding: 0; list-style: none; }
+.workflow-progress li { display: grid; grid-template-columns: 22px 1fr auto; align-items: center; gap: 0.4rem; min-height: 38px; padding: 0.35rem 0; border-bottom: 1px solid #e6edf2; }
+.workflow-progress li:last-child { border-bottom: 0; }
+.workflow-progress li > span { display: grid; place-items: center; width: 22px; height: 22px; color: #6d8191; background: #eef2f5; border-radius: 50%; font-size: 0.58rem; font-weight: 900; }
+.workflow-progress li p { margin: 0; color: var(--muted); font-size: 0.6rem; line-height: 1.35; }
+.workflow-progress li small { color: var(--muted); font-size: 0.49rem; font-weight: 850; text-transform: uppercase; }
+.workflow-progress .workflow-step-complete > span { color: white; background: var(--green); }
+.workflow-progress .workflow-step-complete p { color: #43665c; }
+.workflow-progress .workflow-step-current { margin: 0 -0.35rem; padding: 0.35rem; background: var(--blue-soft); border-radius: 6px; }
+.workflow-progress .workflow-step-current > span { color: white; background: var(--oa-blue, #0b77d2); }
+.workflow-progress .workflow-step-current p { color: var(--ink); font-weight: 800; }
+.workflow-progress details { padding-top: 0.55rem; border-top: 1px solid var(--line); }
+.workflow-progress summary { color: var(--oa-navy, #063f72); font-size: 0.58rem; font-weight: 850; cursor: pointer; }
+.workflow-progress details p, .workflow-progress details li { color: var(--muted); font-size: 0.56rem; line-height: 1.45; }
+.workflow-progress details ul { margin: 0.45rem 0 0; padding-left: 1rem; }
+.source-link-pending { align-self: center; max-width: 130px; padding: 0.45rem; color: var(--muted) !important; background: #eef2f5; border-radius: 5px; font-size: 0.52rem !important; letter-spacing: 0 !important; text-align: center; text-transform: none !important; }
 .source-work-package { display: grid; gap: 0.7rem; margin: 0.85rem 0; padding: 0.85rem; background: linear-gradient(145deg, #eef8fd, #ffffff); border: 1px solid #b9dceb; border-left: 4px solid var(--oa-electric, #32b6fe); border-radius: 8px; }
 .source-work-package-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
 .source-work-package-heading > div { display: grid; gap: 0.18rem; min-width: 0; }
@@ -949,6 +977,8 @@ main { min-width: 0; }
 .work-relations > button, .work-relations > div { display: flex; justify-content: space-between; gap: 0.7rem; width: 100%; margin-top: 0.35rem; padding: 0.55rem; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 6px; text-align: left; }
 .work-relations span { color: var(--muted); font-size: 0.55rem; text-transform: capitalize; }
 .work-relations strong { font-size: 0.62rem; }
+.work-relations > button { display: grid; justify-content: stretch; }
+.work-relations > button small { color: var(--muted); font-size: 0.52rem; }
 .relationship-row > span { display: grid; flex: 1; gap: 0.18rem; }
 .relationship-row > span strong { color: var(--ink); }
 .relationship-row > span em { color: #6a7f91; font-size: 0.52rem; font-style: normal; text-transform: none; }
@@ -967,6 +997,7 @@ main { min-width: 0; }
 .link-suggestions article button { min-height: 34px; padding: 0.4rem 0.55rem; font-size: 0.54rem; }
 .work-action-panel { display: grid; gap: 0.7rem; margin: 0.9rem 0; padding: 0.85rem; background: linear-gradient(145deg, #f2f9fd, #ffffff); border: 1px solid #bcddec; border-left: 4px solid var(--oa-blue, #0b77d2); border-radius: 8px; }
 .work-action-complete { border-left-color: #5d7d70; background: #f4faf7; }
+.work-action-owned { border-left-color: #5d7d70; background: linear-gradient(145deg, #f1f8f5, #ffffff); }
 .work-action-heading > span { color: var(--oa-blue, #0b77d2); font-size: 0.52rem; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; }
 .work-action-heading h4 { margin: 0.25rem 0 0; color: var(--ink); font-size: 0.78rem; }
 .work-action-heading p, .work-action-complete p { margin: 0.32rem 0 0; color: var(--muted); font-size: 0.62rem; line-height: 1.45; }

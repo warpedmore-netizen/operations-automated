@@ -32,6 +32,7 @@ async function startWorkbench({ port, dataRoot, repositoryRoot }) {
       PORT: String(port),
       OPENAI_API_KEY: "",
       OPENAI_EMBEDDING_MODEL: "",
+      WORKBENCH_DAILY_CHALLENGE_HOUR: "0",
       WORKBENCH_DATA_ROOT: dataRoot,
       WORKBENCH_REPOSITORY_ROOT: repositoryRoot
     },
@@ -87,6 +88,12 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(result.response.status, 201, JSON.stringify(result.payload));
   };
   try {
+    const startingWork = await call("/api/my-work");
+    const dailyChallenge = startingWork.payload.items.find((item) => item.sourceType === "daily-challenge");
+    assert.equal(dailyChallenge.owner, "Jamie Peppard");
+    assert.equal(dailyChallenge.humanActionRequired, true);
+    assert.match(dailyChallenge.summary, /own Workbench conversation/i);
+
     // 1. Governed knowledge: approved meaning is normative; proposed material is evidence only.
     const manifest = await call("/api/knowledge/manifest");
     assert.equal(manifest.response.status, 200);
@@ -345,25 +352,26 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
         reason: "Prepare the smallest coherent visibility correction."
       }
     });
-    assert.equal(preparation.payload.proposal.status, "approved-for-preparation");
+    assert.equal(preparation.payload.proposal.status, "implementation-in-progress");
+    assert.equal(preparation.payload.implementationJob.status, "waiting-on-codex");
     const methodologyWork = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
-    const methodologyChangeItem = methodologyWork.payload.items.find((item) => item.recordType === "change");
-    assert.ok(methodologyChangeItem);
+    const methodologyBuildItems = methodologyWork.payload.items.filter((item) => item.sourceType === "implementation-job");
+    assert.equal(methodologyBuildItems.length, 1, JSON.stringify(methodologyWork.payload.items, null, 2));
+    assert.equal(methodologyBuildItems[0].owner, "Codex");
+    assert.equal(methodologyBuildItems[0].humanActionRequired, false);
+    assert.equal(methodologyBuildItems[0].sourceId, preparation.payload.implementationJob.id);
+    assert.equal(methodologyWork.payload.items.some((item) => item.sourceType === "operate-record" && item.recordType === "change"), false);
+    assert.equal(methodologyWork.payload.doNext.some((item) => item.sourceId === methodologyBuildItems[0].sourceId), false);
+    assert.ok(methodologyWork.payload.summary.beingHandled >= 1);
+
+    const linkedChange = await call(`/api/operate/records/${preparation.payload.implementationJob.changeId}`);
+    assert.equal(linkedChange.payload.record.implementationJob.id, preparation.payload.implementationJob.id);
 
     // 9. The complete brief is handed to Codex and a full receipt is returned.
-    const build = await call("/api/implementation-jobs", {
-      method: "POST",
-      body: {
-        recordId: methodologyChangeItem.sourceId,
-        approvedRequirement: "Make release evidence and its authority boundary visible in My Work.",
-        acceptanceCriteria: ["The exact release decision is visible.", "No approval is inferred."],
-        testExpectations: ["Automated journey test", "Desktop and phone-width browser test"]
-      }
-    });
-    assert.equal(build.response.status, 201, JSON.stringify(build.payload));
-    assert.match(build.payload.job.briefText, /Approved-for-preparation requirement/);
-    assert.match(build.payload.job.authorityBoundary, /remain unauthorised/i);
-    const jobId = build.payload.job.id;
+    const job = preparation.payload.implementationJob;
+    assert.match(job.briefText, /Approved-for-preparation requirement/);
+    assert.match(job.authorityBoundary, /remain unauthorised/i);
+    const jobId = job.id;
     const receipt = await call(`/api/implementation-jobs/${jobId}/receipt`, {
       method: "POST",
       body: {
@@ -380,6 +388,11 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(receipt.response.status, 200, JSON.stringify(receipt.payload));
     assert.equal(receipt.payload.job.status, "waiting-for-review");
     assert.equal(receipt.payload.job.releaseApproval.result, "pending");
+    const releaseWork = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
+    const releaseItem = releaseWork.payload.items.find((item) => item.sourceType === "implementation-job");
+    assert.equal(releaseItem.owner, "Jamie Peppard");
+    assert.equal(releaseItem.humanActionRequired, true);
+    assert.equal(releaseWork.payload.doNext.some((item) => item.sourceId === jobId), true);
 
     // 10. Universal approval requires exact founder confirmation and performs no merge.
     const refused = await call(`/api/implementation-jobs/${jobId}/release-decision`, {

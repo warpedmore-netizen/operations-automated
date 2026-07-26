@@ -106,20 +106,86 @@ function workTypeClass(value) {
   return String(value || "work").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
 }
 
+function isAiOwner(owner) {
+  return /\b(?:codex|oppa mate|operations automated ai|ai owner)\b/i.test(String(owner || ""));
+}
+
+function workflowSteps(record) {
+  const job = record.implementationJob;
+  if (job) {
+    const currentByStatus = {
+      "waiting-on-codex": 1,
+      "waiting-for-review": 2,
+      "release-authorised": 3,
+      merged: 4
+    };
+    const current = currentByStatus[job.status] ?? 0;
+    return [
+      ["Requirement approved for preparation", 0],
+      ["Codex returns a tested draft", 1],
+      ["Jamie reviews the exact release", 2],
+      ["Authorised merge is recorded", 3]
+    ].map(([label, position]) => ({ label, state: position < current ? "complete" : position === current ? "current" : "upcoming" }));
+  }
+  if (record.recordType === "case") {
+    const current = record.status === "open" ? 0 : record.openChildren ? 1 : ["resolved", "closed"].includes(record.status) ? 2 : 1;
+    return [
+      ["Outcome and scope recorded", 0],
+      ["Contained work completed", 1],
+      ["Outcome reviewed and Case closed", 2]
+    ].map(([label, position]) => ({ label, state: position < current ? "complete" : position === current ? "current" : "upcoming" }));
+  }
+  if (record.recordType === "task") {
+    const current = record.status === "to-do" ? 0 : ["in-progress", "blocked"].includes(record.status) ? 1 : 2;
+    return [
+      ["Task ready for its owner", 0],
+      ["Work carried out", 1],
+      ["Completion evidence retained", 2]
+    ].map(([label, position]) => ({ label, state: position < current ? "complete" : position === current ? "current" : "upcoming" }));
+  }
+  return [
+    { label: "Work and evidence recorded", state: "complete" },
+    { label: record.nextAction?.label || "Current work completed", state: "current" },
+    { label: "Outcome and rationale retained", state: "upcoming" }
+  ];
+}
+
+function workflowMarkup(record) {
+  const next = record.nextAction || {};
+  const aiOwned = next.authority === "ai-owner" || isAiOwner(record.owner);
+  const completionEvidence = [...new Set([
+    ...(record.implementationJob?.acceptanceCriteria || []),
+    ...(record.bible?.completionEvidence || []),
+    ...(record.profile?.completionEvidence || [])
+  ].filter(Boolean))];
+  const steps = workflowSteps(record);
+  return `<section class="work-now" aria-label="Current workflow step">
+    <span>${aiOwned ? "Being handled" : "Your next step"}</span>
+    <h4>${escapeHtml(next.label || "Review this work")}</h4>
+    <p>${escapeHtml(next.outcome || "Review the recorded outcome, evidence and owner before acting.")}</p>
+    <dl><div><dt>Owner now</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div><div><dt>Your part</dt><dd>${aiOwned ? "Nothing to fill in now. This returns to you only if a decision or clarification is needed." : "Complete the one action shown here; the Workbench will retain the result and update what comes next."}</dd></div></dl>
+  </section>
+  <section class="workflow-progress" aria-label="Workflow progress">
+    <div class="workflow-heading"><span>Workflow</span><strong>${escapeHtml(record.profile?.label || record.bible?.label || "Work")}</strong></div>
+    <ol>${steps.map((step) => `<li class="workflow-step-${step.state}"><span aria-hidden="true">${step.state === "complete" ? "✓" : step.state === "current" ? "●" : "○"}</span><p>${escapeHtml(step.label)}</p><small>${step.state === "complete" ? "Done" : step.state === "current" ? "Now" : "Later"}</small></li>`).join("")}</ol>
+    <details><summary>Done when</summary>${completionEvidence.length ? `<ul>${completionEvidence.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>` : "<p>The intended outcome and enough evidence to support closure are retained.</p>"}</details>
+  </section>`;
+}
+
 function sourceLinkMarkup(sourceContext, className = "source-link") {
   if (!sourceContext?.url) return "";
   return `<a class="${className}" href="${escapeHtml(sourceContext.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceContext.label || "Open source")} <span aria-hidden="true">↗</span></a>`;
 }
 
 function sourceWorkPackageMarkup(sourceContext) {
-  if (!sourceContext?.url) return "";
+  if (!sourceContext) return "";
   const evidence = Array.isArray(sourceContext.evidence) ? sourceContext.evidence.filter(Boolean) : [];
   const alternatives = Array.isArray(sourceContext.alternatives) ? sourceContext.alternatives.filter(Boolean) : [];
   const remainsUnauthorised = Array.isArray(sourceContext.remainsUnauthorised) ? sourceContext.remainsUnauthorised.filter(Boolean) : [];
   return `<section class="source-work-package" aria-label="Linked source work package">
     <div class="source-work-package-heading">
       <div><span>Linked source</span><strong>${escapeHtml(sourceContext.title || sourceContext.label)}</strong><small>${escapeHtml(statusLabel(sourceContext.status))}</small></div>
-      ${sourceLinkMarkup(sourceContext, "primary source-package-link")}
+      ${sourceLinkMarkup(sourceContext, "primary source-package-link") || '<span class="source-link-pending">Current draft link not returned yet</span>'}
     </div>
     <dl>
       <div><dt>Why this exists</dt><dd>${escapeHtml(sourceContext.summary || "No source summary was retained.")}</dd></div>
@@ -159,12 +225,13 @@ function inlineWorkHelpMarkup(record) {
 
 function workItemMarkup(item, compact = false) {
   const reasons = item.priority?.reasons || [];
+  const aiOwned = item.nextAction?.authority === "ai-owner" || isAiOwner(item.owner) || item.humanActionRequired === false;
   return `<article class="work-item-wrap ${compact ? "work-item-wrap-compact" : ""}"><button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
     <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
       ${compact ? "" : `<small>${escapeHtml(item.summary || "Open the underlying record for context.")}</small>`}
-      <span class="work-item-next">Next: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` · blocked — ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
+      <span class="work-item-next">${aiOwned ? "With its owner" : "Next for you"}: ${escapeHtml(item.nextAction?.label || item.actionLabel || "Review work")}${item.nextAction?.disabled ? ` · blocked — ${escapeHtml(item.nextAction.unavailableReason)}` : ""}</span>
       <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
     </span>
     <span class="priority-score priority-${escapeHtml(item.priority?.band || "planned")}"><b>${Number(item.priority?.score || 0)}</b><small>${item.priority?.overdue ? "Overdue" : reasons[0] || "Priority"}</small></span>
@@ -190,11 +257,13 @@ function recordAsWorkItem(record) {
     actionLabel: record.nextAction?.label || "Review work",
     nextAction: record.nextAction,
     decisionRequired: Boolean(record.nextAction?.decision),
+    humanActionRequired: record.humanActionRequired,
     priority: record.priority,
     approvalState: record.approvalState,
     workProfile: record.workProfile,
     workProfileLabel: record.profile?.label || record.workProfile,
-    sourceContext: record.sourceContext
+    sourceContext: record.sourceContext,
+    implementationJob: record.implementationJob
   };
 }
 
@@ -212,10 +281,26 @@ function activitySummary(activity) {
 function operateActionMarkup(record) {
   const actions = record.actions || [];
   if (record.sourceBacked && record.nextAction) {
+    const routeButton = record.nextAction.implementationJobId
+      ? `<button class="ghost" data-open-implementation-job="${escapeHtml(record.nextAction.implementationJobId)}">Open Codex build</button>`
+      : `<button class="primary" data-open-work-source="${escapeHtml(record.nextAction.routeView)}" data-source-id="${escapeHtml(record.sourceId)}">${escapeHtml(record.nextAction.label)}</button>`;
     return `<section class="work-action-panel">
-      <div class="work-action-heading"><span>Governed next action</span><h4>${escapeHtml(record.nextAction.label)}</h4><p>${escapeHtml(record.nextAction.outcome)}</p></div>
-      <button class="primary" data-open-work-source="${escapeHtml(record.nextAction.routeView)}" data-source-id="${escapeHtml(record.sourceId)}">${escapeHtml(record.nextAction.label)}</button>
-      <p class="work-action-authority">The specialist history remains intact. This shared record routes to it instead of creating a second decision.</p>
+      <div class="work-action-heading"><span>${record.nextAction.authority === "ai-owner" ? "Being handled" : "Next action"}</span><h4>${escapeHtml(record.nextAction.label)}</h4><p>${escapeHtml(record.nextAction.outcome)}</p></div>
+      ${routeButton}
+      <p class="work-action-authority">The specialist history remains intact. This view follows the same workflow instead of creating a second decision or form.</p>
+    </section>`;
+  }
+  if (record.nextAction?.routeRecordId) {
+    return `<section class="work-action-panel">
+      <div class="work-action-heading"><span>Continue the Case</span><h4>${escapeHtml(record.nextAction.label)}</h4><p>${escapeHtml(record.nextAction.outcome)}</p></div>
+      <button class="primary" data-open-operate-record="${escapeHtml(record.nextAction.routeRecordId)}">Open ${escapeHtml(record.nextAction.routeRecordTitle || "contained work")}</button>
+      <p class="work-action-authority">The Case cannot be resolved while contained work remains open.</p>
+    </section>`;
+  }
+  if (record.nextAction?.authority === "ai-owner" || isAiOwner(record.owner)) {
+    return `<section class="work-action-panel work-action-owned">
+      <div class="work-action-heading"><span>Being handled</span><h4>${escapeHtml(record.nextAction?.label || "Waiting for the assigned owner")}</h4><p>${escapeHtml(record.nextAction?.outcome || "The assigned owner must return completion evidence.")}</p></div>
+      <p class="work-action-authority">There is nothing for Jamie to mark as done. The item returns to your action list only if a decision, clarification or review is needed.</p>
     </section>`;
   }
   if (!actions.length) {
@@ -272,8 +357,11 @@ function renderWorkDetail(item, record = null) {
     impact: "Impact", urgency: "Urgency", risk: "Risk", control: "Controls",
     blocking: "Blocking", strategic: "Improvement", age: "Age", confidence: "Confidence"
   };
-  const sourceAction = record ? "" : `<button class="primary" data-open-work-source="${escapeHtml(item.routeView)}" data-source-id="${escapeHtml(item.sourceId)}">${escapeHtml(item.actionLabel || "Open source")}</button>`;
+  const sourceAction = record ? "" : item.sourceType === "daily-challenge"
+    ? `<button class="primary" data-start-daily-challenge="${escapeHtml(item.nextAction?.challengeDate || "today")}">${escapeHtml(item.actionLabel || "Start today's challenge")}</button>`
+    : `<button class="primary" data-open-work-source="${escapeHtml(item.routeView)}" data-source-id="${escapeHtml(item.sourceId)}">${escapeHtml(item.actionLabel || "Open source")}</button>`;
   const recordBody = record ? `
+    ${workflowMarkup(record)}
     <dl class="work-detail-facts">
       <div><dt>Owner</dt><dd>${escapeHtml(record.owner || "Unassigned")}</dd></div>
       <div><dt>Status</dt><dd>${escapeHtml(statusLabel(record.status))}</dd></div>
@@ -287,13 +375,15 @@ function renderWorkDetail(item, record = null) {
     ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
     ${record.profile ? `<details class="why-recommended"><summary>Why this work profile</summary><p>${escapeHtml(record.profile.purpose)}</p><strong>Questions Oppa Mate may ask</strong><ul>${(record.profile.additionalQuestions || []).map((question) => `<li>${escapeHtml(question)}</li>`).join("")}</ul></details>` : ""}
     ${record.knowledgeSnapshot?.sources?.length ? `<details class="why-recommended"><summary>Why Oppa Mate recommended this</summary><p>${escapeHtml(record.knowledgeSnapshot.explanation)}</p><ul>${record.knowledgeSnapshot.sources.map((source) => `<li><strong>${escapeHtml(source.title || source.path)}</strong><span>${escapeHtml(source.status)} · ${source.normative ? "approved normative" : "evidence only"} · ${escapeHtml(source.heading || "document")}</span><code>${escapeHtml(String(source.hash || "").slice(0, 12))}</code></li>`).join("")}</ul></details>` : ""}
-    ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong></button>`).join("")}</section>` : ""}
+    ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong><small>${escapeHtml(statusLabel(child.status))} · ${escapeHtml(child.owner || "Unassigned")}</small></button>`).join("")}</section>` : ""}
     ${record.links?.length ? `<section class="work-relations"><h4>Relationships</h4>${record.links.map((link) => {
       const otherTitle = link.fromRecordId === record.id ? link.to_title : link.from_title;
+      const otherStatus = link.fromRecordId === record.id ? link.toStatus : link.fromStatus;
+      const otherOwner = link.fromRecordId === record.id ? link.toOwner : link.fromOwner;
       const provenance = link.proposedVia === "ai"
         ? `Suggested by Oppa Mate · confirmed by ${link.confirmedBy}`
         : `Linked by ${link.confirmedBy || link.proposedBy}`;
-      return `<div class="relationship-row"><span><small>${escapeHtml(link.relationship.replaceAll("-", " "))}</small><strong>${escapeHtml(otherTitle)}</strong><em>${escapeHtml(provenance)}</em></span><details class="link-correction"><summary>Correct</summary><label>Why is this link wrong?<input data-link-rejection-reason="${link.id}" maxlength="500"></label><button class="link-reject" data-reject-operate-link="${link.id}">Reject link</button></details></div>`;
+      return `<div class="relationship-row"><span><small>${escapeHtml(link.relationship.replaceAll("-", " "))}</small><strong>${escapeHtml(otherTitle)}</strong><em>${escapeHtml(statusLabel(otherStatus))} · ${escapeHtml(otherOwner || "Unassigned")}</em><em>${escapeHtml(provenance)}</em></span><details class="link-correction"><summary>Correct</summary><label>Why is this link wrong?<input data-link-rejection-reason="${link.id}" maxlength="500"></label><button class="link-reject" data-reject-operate-link="${link.id}">Reject link</button></details></div>`;
     }).join("")}</section>` : ""}
     ${record.linkSuggestions?.length ? `<section class="link-suggestions"><div><h4>Oppa Mate sees possible connections</h4><p>These are inferences from record types and shared context. Accept only when the relationship is operationally true.</p></div>${record.linkSuggestions.map((suggestion, index) => `<article><span class="work-type work-type-${workTypeClass(suggestion.otherType)}">${escapeHtml(suggestion.otherType)}</span><strong>${escapeHtml(suggestion.otherTitle)}</strong><p>${escapeHtml(suggestion.rationale)}</p><button class="ghost" data-accept-link-suggestion="${index}">Confirm link</button></article>`).join("")}</section>` : ""}
     ${operateActionMarkup(record)}
@@ -302,7 +392,13 @@ function renderWorkDetail(item, record = null) {
     ${inlineWorkHelpMarkup(record)}
     <button class="ghost link-work-action" data-link-operate-record="${record.id}">Link related work</button>
     ${operateActivityMarkup(record)}
-  ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
+  ` : item.sourceType === "daily-challenge" ? `<section class="work-now" aria-label="Current workflow step">
+      <span>${item.nextAction?.authority === "ai-owner" ? "Being handled" : "Your next step"}</span>
+      <h4>${escapeHtml(item.nextAction?.label || "Start today's challenge")}</h4>
+      <p>${escapeHtml(item.nextAction?.outcome || item.summary)}</p>
+      <dl><div><dt>Owner now</dt><dd>${escapeHtml(item.owner)}</dd></div><div><dt>Done when</dt><dd>Jamie has answered the one primary question, or deliberately skipped today's challenge.</dd></div></dl>
+    </section>${sourceAction}<p class="work-action-authority">This challenge stays in its own Workbench conversation. It does not create methodology approval or a repository change.</p>`
+    : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
   $("#work-detail").innerHTML = `
     <div class="work-detail-heading">
       <div><span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span><h3>${escapeHtml(item.title)}</h3></div>
@@ -324,20 +420,10 @@ function linesMarkup(values) {
 
 function implementationReceiptMarkup(job) {
   if (job.status === "waiting-on-codex") {
-    return `<details class="build-receipt-panel">
-      <summary>Codex: submit implementation receipt</summary>
-      <form data-build-receipt="${job.id}">
-        <label>Branch<input name="branchName" required placeholder="codex/bounded-change"></label>
-        <label>Draft pull request URL<input name="pullRequestUrl" type="url" required placeholder="https://github.com/owner/repository/pull/123"></label>
-        <label>Commit SHA<input name="commitSha" required minlength="7"></label>
-        <label>Files changed, one per line<textarea name="filesChanged" rows="4" required></textarea></label>
-        <label>Tests run, one per line<textarea name="tests" rows="4" required></textarea></label>
-        <label>Validation evidence, one per line<textarea name="validation" rows="4" required></textarea></label>
-        <label>Unresolved risks, one per line<textarea name="unresolvedRisks" rows="3"></textarea></label>
-        <label>Version impact<textarea name="versionImpact" rows="2" required></textarea></label>
-        <button class="primary" type="submit">Submit receipt for review</button>
-      </form>
-    </details>`;
+    return `<section class="work-action-panel work-action-owned">
+      <div class="work-action-heading"><span>With Codex</span><h4>You have finished this step</h4><p>Codex must return the branch, draft pull request, commit, changed files, tests, validation, risks and version impact. Those are implementation evidence, not fields for Jamie to complete.</p></div>
+      <p class="work-action-authority">The build stays out of Do Next while Codex owns it. It returns automatically when the separate release decision is ready.</p>
+    </section>`;
   }
   if (job.status === "waiting-for-review") {
     return `<section class="release-decision-panel">
@@ -357,13 +443,9 @@ function implementationReceiptMarkup(job) {
   if (job.status === "release-authorised") {
     return `<section class="release-decision-panel">
       <span>Release authorised</span>
-      <h4>The exact reviewed commit may now be merged externally</h4>
+      <h4>Codex owns the authorised merge and receipt</h4>
       <p>${escapeHtml(job.releaseApproval?.authorised_transition || "")}</p>
-      <form data-merge-receipt="${job.id}">
-        <label>Merged commit SHA<input name="mergedCommitSha" required minlength="7"></label>
-        <label>GitHub merge or pull-request URL<input name="mergeUrl" type="url" value="${escapeHtml(job.pullRequestUrl || "")}" required></label>
-        <button class="primary" type="submit">Record authorised merge receipt</button>
-      </form>
+      <p>Jamie does not enter the merged commit or GitHub receipt. Codex must return the exact authorised result; the Workbench then completes and reindexes the Change.</p>
     </section>`;
   }
   return "";
@@ -381,6 +463,14 @@ function renderImplementationJobDetail(item, job) {
       <span class="status-pill status-${workTypeClass(job.status)}">${escapeHtml(statusLabel(job.status))}</span>
     </div>
     <p class="work-detail-summary">${escapeHtml(job.approvedRequirement)}</p>
+    ${workflowMarkup({
+      recordType: "change",
+      status: job.status,
+      owner: job.status === "waiting-for-review" ? "Jamie Peppard" : "Codex",
+      nextAction: item.nextAction,
+      implementationJob: job,
+      profile: { label: "Product or application build", completionEvidence: ["implementation receipt reviewed", "separate release outcome retained"] }
+    })}
     ${sourceWorkPackageMarkup(item.sourceContext)}
     <dl class="work-detail-facts">
       <div><dt>Owner now</dt><dd>${job.status === "waiting-on-codex" || job.status === "release-authorised" ? "Codex" : "Jamie Peppard"}</dd></div>
@@ -389,8 +479,8 @@ function renderImplementationJobDetail(item, job) {
       <div><dt>Commit</dt><dd>${escapeHtml(job.commitSha || "Not returned yet")}</dd></div>
     </dl>
     <div class="record-boundary"><strong>Authority boundary</strong><p>${escapeHtml(job.authorityBoundary)}</p></div>
-    <details class="implementation-brief" open>
-      <summary>Complete Codex handoff brief</summary>
+    <details class="implementation-brief">
+      <summary>Technical: complete Codex handoff brief</summary>
       <textarea readonly rows="18">${escapeHtml(job.briefText)}</textarea>
       <button class="ghost" type="button" data-copy-build-brief>Copy brief</button>
     </details>
@@ -440,13 +530,13 @@ function renderMyWork(value) {
   state.myWork = value;
   const summary = value.summary;
   $("#work-summary").innerHTML = `
-    <div><span>Open attention</span><strong>${summary.total}</strong></div>
-    <div><span>Overdue</span><strong>${summary.overdue}</strong></div>
+    <div><span>Your actions</span><strong>${summary.total}</strong></div>
+    <div><span>Being handled</span><strong>${summary.beingHandled || 0}</strong></div>
     <div><span>Blocked</span><strong>${summary.blocked}</strong></div>
     <div><span>Decisions</span><strong>${summary.decisions}</strong></div>`;
   $("#do-next-list").innerHTML = value.doNext.length
     ? value.doNext.map((item) => workItemMarkup(item, true)).join("")
-    : '<div class="empty-records"><strong>Nothing needs immediate attention.</strong><p>Capture a Case, Request or Task when new work arrives.</p></div>';
+    : '<div class="empty-records"><strong>Nothing needs an action from you.</strong><p>Work owned by Codex or Oppa Mate remains visible below and will return here only when you need to decide or clarify something.</p></div>';
   $("#work-inbox-list").innerHTML = value.items.length
     ? value.items.map((item) => workItemMarkup(item)).join("")
     : '<div class="empty-records"><strong>Your inbox is clear.</strong><p>Capture work in ordinary language and Oppa Mate will recommend a record type.</p></div>';
@@ -642,11 +732,18 @@ function openLinkCapture(record) {
 
 async function ensureConversation() {
   if (state.conversation) return state.conversation;
+  return createConversation();
+}
+
+async function createConversation({ title = "New conversation", workspace = $("#workspace").value, activeRecordId = null } = {}) {
   const value = await request("/api/conversations", {
     method: "POST",
-    body: JSON.stringify({ workspace: $("#workspace").value, title: "New conversation" })
+    body: JSON.stringify({ workspace, title, activeRecordId })
   });
   state.conversation = value.conversation;
+  $("#workspace").value = state.conversation.workspace;
+  $("#workspace-label").textContent = $("#workspace").selectedOptions[0].textContent;
+  renderConversation();
   await loadConversationList();
   return state.conversation;
 }
@@ -676,11 +773,11 @@ const feedbackOptions = [
   ["needs-clarification", "You misunderstood me", "Asks what was unclear, then saves your correction for review."],
   ["challenge-conclusion", "I disagree", "Asks what you disagree with, then saves it beside this answer."],
   ["add-evidence", "I have more information", "Asks for the missing information, then saves it as evidence to review."],
-  ["record-methodology-feedback", "The method should change", "Asks what should change, then saves a change candidate. It does not create or approve a change proposal."]
+  ["record-methodology-feedback", "The method should change", "Asks what should change, then saves a change candidate and opens its review automatically. It does not approve or implement the change."]
 ];
 
 const challengePrompts = {
-  balanced: "Send me one useful challenge about the Operations Automated methodology. Choose the unresolved tension with the greatest decision value. Begin with a concrete situation, briefly give the strongest provisional Operations Automated response, say what you question in that response, and ask me one primary plain-language question. Do not give me a questionnaire. Treat my answer as evidence, not approval.",
+  balanced: "Prepare today's 10-minute Operations Automated methodology challenge inside this Workbench. Choose the unresolved tension with the greatest decision value. Give me a concrete situation, the strongest provisional Operations Automated response, the reverse or boundary case most likely to change it, and one primary plain-language question. Separate recorded evidence, Jamie's judgement, AI inference and assumptions. Use only evidence actually supplied to this Workbench; if current public evidence is not connected, state that limitation and do not invent a public signal. Explain that my answer becomes feedback rather than approval, and ask what is wrong, missing, impractical or inconsistent. Do not give me a questionnaire.",
   principles: "Challenge one Operations Automated principle with a concrete situation where two reasonable principles, values or stakeholder needs conflict. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Do not give me a questionnaire. Treat my answer as evidence, not approval.",
   "ai-suitability": "Challenge whether the Operations Automated methodology is genuinely suitable for AI to interpret and apply. Use a concrete situation where machine-readable guidance, human-readable meaning, evidence, judgement and authority could diverge. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
   "manual-work": "Challenge how Operations Automated decides that work should remain manual. Use a concrete situation involving human judgement, facilitation, empathy, tacit knowledge or physical work that cannot responsibly be automated yet. Briefly give the strongest provisional response, identify what further thinking is needed, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
@@ -858,14 +955,33 @@ async function previewAndSend(text, origin = null) {
   }
 }
 
-async function sendChallenge(focus = "balanced") {
+async function sendChallenge(focus = "balanced", { title = "Methodology challenge", conversationId = null } = {}) {
   const prompt = challengePrompts[focus] || challengePrompts.balanced;
+  if (conversationId) {
+    state.conversation = (await request(`/api/conversations/${encodeURIComponent(conversationId)}`)).conversation;
+  } else {
+    await createConversation({ title, workspace: "living-methodology" });
+  }
   switchView("conversation");
   $("#workspace").value = "living-methodology";
   $("#workspace-label").textContent = "Living methodology";
   $("#output-type").value = "analysis";
   $("#input").value = prompt;
   await previewAndSend(prompt);
+}
+
+async function startDailyChallenge(item) {
+  const conversationId = item?.nextAction?.conversationId;
+  if (item?.status === "awaiting-response" && conversationId) {
+    await loadConversation(conversationId);
+    toast("Today's challenge is open in its own conversation.");
+    return;
+  }
+  const date = item?.nextAction?.challengeDate || new Date().toISOString().slice(0, 10);
+  await sendChallenge("balanced", {
+    title: `Daily methodology challenge — ${date}`,
+    conversationId
+  });
 }
 
 async function sendPending() {
@@ -953,7 +1069,7 @@ async function recordFeedback(button) {
     ? window.prompt(prompts[disposition], "") ?? ""
     : disposition.replaceAll("-", " ");
   if (needsDetail && !wording.trim()) return;
-  await request("/api/feedback", {
+  const result = await request("/api/feedback", {
     method: "POST",
     body: JSON.stringify({
       conversationId: state.conversation.id,
@@ -964,7 +1080,15 @@ async function recordFeedback(button) {
   });
   button.classList.add("selected");
   const outcome = feedbackOptions.find(([value]) => value === disposition)?.[2] || "Saved for review.";
-  toast(`${outcome} You can review it under Saved feedback.`);
+  await Promise.all([loadFeedback(), loadMyWork()]);
+  if (result.proposal) {
+    state.selectedProposalId = result.proposal.id;
+    switchView("decisions");
+    await loadDecisionInbox(result.proposal.id);
+    toast("Feedback retained and its change review created. No change or approval has been made.");
+  } else {
+    toast(`Done. ${outcome} No My Work action remains.`);
+  }
 }
 
 async function loadFeedback() {
@@ -999,11 +1123,10 @@ async function loadFeedback() {
           </select>
         </label>
         <p class="classification-note" data-classification-outcome="${item.id}">${escapeHtml(outcome)}</p>
-        <div class="feedback-action-preview"><strong>What happens when you choose</strong><p><strong>Open conversation</strong> returns to the original answer. <strong>Save this use</strong> stores the selected treatment. ${canPropose ? "<strong>Create change review</strong> prepares a separate review brief; it does not edit the method or start implementation." : "A change-review action appears only if you first classify this as a methodology or product change candidate and save that use."}</p></div>
+        <div class="feedback-action-preview"><strong>What happens when you choose</strong><p><strong>Open conversation</strong> returns to the original answer. <strong>Save this use</strong> completes the feedback step. Ordinary corrections, context and evidence leave My Work but remain traceable. ${canPropose ? "A change review is created or opened automatically; it does not edit, approve or implement anything." : "Choosing a methodology or product change creates the separate review automatically when saved."}</p></div>
         <div class="record-actions">
           <button data-open-conversation="${item.conversation_id}" class="ghost">Open conversation</button>
           <button data-save-classification="${item.id}" class="ghost">Save this use</button>
-          ${canPropose ? `<button data-create-proposal="${item.id}" class="primary">Create change review</button>` : ""}
         </div>
       </article>`;
     }).join("")
@@ -1026,13 +1149,18 @@ function classificationOutcome(value) {
     "conversation-context": "Saving will keep this with the current conversation so later replies can use it.",
     "reusable-project-memory": "Saving will retain this as project context for later authorised Workbench use.",
     "evidence-submission": "Saving will retain this as evidence to assess. It will not be treated as fact or approval.",
-    "methodology-change-candidate": "Saving will mark this for methodology review. A separate action is required to create a change review.",
-    "product-change-candidate": "Saving will mark this for product review. A separate action is required to create a change review.",
+    "methodology-change-candidate": "Saving will complete the feedback step and automatically create or open a methodology change review. It will not approve or implement the change.",
+    "product-change-candidate": "Saving will complete the feedback step and automatically create or open a product change review. It will not approve or implement the change.",
     "no-action-required": "Saving will close this feedback with no further action while retaining why it was closed."
   })[value] || "Saving will organise this feedback without approving or changing anything.";
 }
 
 const statusLabels = {
+  due: "Due today",
+  "being-prepared": "Being prepared",
+  "awaiting-response": "Awaiting your answer",
+  retained: "Saved and handled",
+  "no-change": "Saved; no change",
   "awaiting-review": "Awaiting review",
   "revision-requested": "Revision requested",
   "approved-for-preparation": "Approved for preparation",
@@ -1066,9 +1194,13 @@ function proposalSection(title, content) {
 
 function decisionNeeded(proposal) {
   if (["awaiting-review", "revision-requested", "deferred"].includes(proposal.status)) return "Decide whether to prepare this change, ask for a revision, reject it or defer it.";
-  if (proposal.status === "approved-for-preparation") return "Preparation is authorised. Start the bounded implementation handoff when you are ready.";
-  if (proposal.status === "implementation-in-progress") return "Review the implementation evidence and record its draft pull request before release review.";
-  if (proposal.status === "awaiting-release-approval") return "This is the separate release decision. Review the draft and choose whether it may merge.";
+  if (proposal.status === "approved-for-preparation") return "Preparation is authorised. The Workbench should now create the Codex build automatically.";
+  if (proposal.status === "implementation-in-progress") return proposal.implementationJob?.status === "waiting-on-codex"
+    ? "Nothing is required from you now. Codex must return the draft and test evidence."
+    : "Open the linked Codex build for the exact current step.";
+  if (proposal.status === "awaiting-release-approval") return proposal.implementationJob
+    ? "Open the linked build and make the separate release decision there."
+    : "This is the separate release decision. Review the draft and choose whether it may merge.";
   if (proposal.status === "implemented") return "No decision is outstanding. The retained receipt shows what was merged and reindexed.";
   if (proposal.status === "rejected") return "No action is required unless new evidence justifies reopening the issue.";
   return "This change is deferred. Revisit it only when timing, evidence or priorities change.";
@@ -1089,10 +1221,11 @@ function readableReview(proposal) {
 }
 
 function repositoryReviewLink(proposal) {
-  if (!proposal.pull_request_url) {
+  const url = proposal.implementationJob ? proposal.implementationJob.pullRequestUrl : proposal.pull_request_url;
+  if (!url) {
     return `<div class="github-link-pending"><strong>GitHub review link</strong><span>The exact draft link will appear here as soon as implementation preparation is recorded.</span></div>`;
   }
-  return `<a class="github-review-link" href="${escapeHtml(proposal.pull_request_url)}" target="_blank" rel="noreferrer">
+  return `<a class="github-review-link" href="${escapeHtml(url)}" target="_blank" rel="noreferrer">
     <span><strong>Open the draft change on GitHub</strong><small>Read the proposed files and discussion in one place.</small></span>
     <span aria-hidden="true">Open ↗</span>
   </a>`;
@@ -1113,27 +1246,26 @@ function decisionActions(proposal) {
   }
   if (proposal.status === "approved-for-preparation") {
     return `<div class="decision-action-panel">
-      <strong>Preparation is authorised. Release is not.</strong>
-      <p>The bounded instruction is ready for Codex or the repository integration.</p>
-      <button class="primary" data-start-handoff>Start implementation handoff</button>
+      <strong>Preparation is authorised; the Codex build has not been created yet.</strong>
+      <p>Retry the automatic handoff. You will not be asked for repository implementation fields.</p>
+      <button class="primary" data-start-handoff>Retry Codex handoff</button>
     </div>`;
   }
   if (proposal.status === "implementation-in-progress") {
-    return `<form class="repository-form" id="repository-reference-form">
-      <h3>Record the draft pull request</h3>
-      <p>The branch must not be main. The pull request must remain a draft.</p>
-      <label>Branch name<input name="branchName" required placeholder="codex/bounded-change"></label>
-      <label>Draft pull request URL<input name="pullRequestUrl" type="url" required placeholder="https://github.com/.../pull/123"></label>
-      <label>Implementation commit<input name="commitSha" required placeholder="7–40 character commit SHA"></label>
-      <label>Version impact<input name="versionImpact" required placeholder="Workbench minor version; methodology unchanged"></label>
-      <label>Methodology version, if affected<input name="methodologyVersion" placeholder="0.5"></label>
-      <label>Validation summary<textarea name="tests" rows="3" required placeholder="Tests run and results"></textarea></label>
-      <label class="check-label"><input name="decisionRecordIncluded" type="checkbox" required> Decision record included</label>
-      <label class="check-label"><input name="changelogUpdated" type="checkbox" required> Changelog updated</label>
-      <button class="primary" type="submit">Record preparation for release review</button>
-    </form>`;
+    return `<div class="decision-action-panel work-action-owned">
+      <strong>${proposal.implementationJob?.status === "waiting-on-codex" ? "Codex is preparing the tested draft." : "Continue through the one Codex build workflow."}</strong>
+      <p>${proposal.implementationJob?.status === "waiting-on-codex" ? "There are no branch, pull request, commit or test fields for Jamie to complete. This item returns for the separate release decision after Codex submits its receipt." : "The older manual repository form has been replaced by the linked Build Job."}</p>
+      ${proposal.implementationJob ? `<button class="ghost" data-open-proposal-build-job="${escapeHtml(proposal.implementationJob.id)}">Open Codex build</button>` : '<button class="primary" data-start-handoff>Repair Codex handoff</button>'}
+    </div>`;
   }
   if (proposal.status === "awaiting-release-approval") {
+    if (proposal.implementationJob) {
+      return `<div class="decision-action-panel release-panel">
+        <strong>The implementation receipt is ready.</strong>
+        <p>Use the linked Build Job for the single release decision. The older duplicate release form is no longer shown.</p>
+        <button class="primary" data-open-proposal-build-job="${escapeHtml(proposal.implementationJob.id)}">Review exact release</button>
+      </div>`;
+    }
     const releaseApproval = proposal.decisions.findLast((item) => item.phase === "release" && item.action === "approve-and-merge");
     if (releaseApproval && state.repositoryMode === "manual") {
       return `<form class="repository-form release-receipt-form" id="implementation-receipt-form">
@@ -1170,6 +1302,18 @@ function renderProposalDetail(proposal) {
       <span class="status-pill status-${escapeHtml(proposal.status)}">${escapeHtml(statusLabel(proposal.status))}</span>
     </div>
     ${repositoryReviewLink(proposal)}
+    ${workflowMarkup({
+      recordType: "change",
+      status: proposal.status,
+      owner: proposal.implementationJob && ["waiting-on-codex", "release-authorised"].includes(proposal.implementationJob.status) ? "Codex" : "Jamie Peppard",
+      nextAction: {
+        label: proposal.implementationJob?.status === "waiting-on-codex" ? "Codex prepares and tests the draft" : "Review the current decision",
+        outcome: decisionNeeded(proposal),
+        authority: proposal.implementationJob?.status === "waiting-on-codex" ? "ai-owner" : "founder"
+      },
+      implementationJob: proposal.implementationJob,
+      profile: { label: `${proposal.change_kind} feedback and change`, completionEvidence: proposal.validationRequirements }
+    })}
     ${readableReview(proposal)}
     ${decisionActions(proposal)}
     <details class="proposal-details">
@@ -1185,7 +1329,7 @@ function renderProposalDetail(proposal) {
       <section><h3>Expected route and cost</h3><p>${escapeHtml(proposal.modelRoute.reason || "Deterministic preparation")} · ${formatCost(proposal.expected_cost)}</p></section>
     </details>
     ${proposal.implementation_instruction ? `<details class="proposal-details"><summary>Bounded implementation instruction</summary>${markdown(proposal.implementation_instruction)}</details>` : ""}
-    ${proposal.pull_request_url ? `<div class="repository-references"><strong>Draft pull request prepared</strong><a href="${escapeHtml(proposal.pull_request_url)}" target="_blank" rel="noreferrer">${escapeHtml(proposal.pull_request_url)}</a><span>Branch: ${escapeHtml(proposal.branch_name)}</span><span>Commit: ${escapeHtml(proposal.implementation_commit_sha)}</span></div>` : ""}
+    ${proposal.pull_request_url && !proposal.implementationJob ? `<div class="repository-references"><strong>Earlier repository reference</strong><a href="${escapeHtml(proposal.pull_request_url)}" target="_blank" rel="noreferrer">${escapeHtml(proposal.pull_request_url)}</a><span>Branch: ${escapeHtml(proposal.branch_name)}</span><span>Commit: ${escapeHtml(proposal.implementation_commit_sha)}</span></div>` : ""}
     <section class="decision-history"><h3>Decision history</h3>${proposal.decisions.length ? proposal.decisions.map((decision) => `<article><div><strong>${escapeHtml(decision.action.replaceAll("-", " "))}</strong><span>${escapeHtml(formatDate(decision.created_at))}</span></div><p>${escapeHtml(decision.actor)} · ${escapeHtml(decision.phase)} decision · ${escapeHtml(statusLabel(decision.status_before))} → ${escapeHtml(statusLabel(decision.status_after))}</p>${decision.reason ? `<blockquote>${escapeHtml(decision.reason)}</blockquote>` : ""}</article>`).join("") : "<p>No decisions recorded yet.</p>"}</section>
     ${receipt ? `<section class="implementation-receipt"><span>Implementation receipt</span><h3>Change implemented and reindexed</h3><p>Pull request: <a href="${escapeHtml(receipt.pull_request_url)}" target="_blank" rel="noreferrer">${escapeHtml(receipt.pull_request_url)}</a></p><p>Commit: ${escapeHtml(receipt.commit_sha)} · Baseline: ${escapeHtml(receipt.baseline_version)} · Reindexed ${escapeHtml(formatDate(receipt.reindexed_at))}</p></section>` : ""}
   `;
@@ -1882,12 +2026,19 @@ $("#feedback-list").addEventListener("click", async (event) => {
     const id = classificationButton.dataset.saveClassification;
     const select = $(`[data-feedback-classification="${id}"]`);
     try {
-      await request(`/api/feedback/${id}/classification`, {
+      const result = await request(`/api/feedback/${id}/classification`, {
         method: "PATCH",
         body: JSON.stringify({ classification: select.value })
       });
-      await loadFeedback();
-      toast(classificationOutcome(select.value));
+      await Promise.all([loadFeedback(), loadMyWork()]);
+      if (result.proposal) {
+        state.selectedProposalId = result.proposal.id;
+        switchView("decisions");
+        await loadDecisionInbox(result.proposal.id);
+        toast("Feedback step complete. The separate change review is ready; nothing has been approved or implemented.");
+      } else {
+        toast("Done. The selected use is retained and this feedback no longer needs an action in My Work.");
+      }
     } catch (error) { toast(error.message, true); }
     return;
   }
@@ -1918,6 +2069,13 @@ $("#decision-list").addEventListener("click", (event) => {
 $("#decision-detail").addEventListener("click", async (event) => {
   const proposal = state.proposals.find((item) => item.id === state.selectedProposalId);
   if (!proposal) return;
+  const buildJobButton = event.target.closest("[data-open-proposal-build-job]");
+  if (buildJobButton) {
+    switchView("my-work");
+    await loadMyWork();
+    await openWorkItem(`implementation-job:${buildJobButton.dataset.openProposalBuildJob}`);
+    return;
+  }
   const decisionButton = event.target.closest("[data-decision-action]");
   if (decisionButton) {
     const action = decisionButton.dataset.decisionAction;
@@ -1939,7 +2097,9 @@ $("#decision-detail").addEventListener("click", async (event) => {
         })
       });
       await loadDecisionInbox(proposal.id);
-      toast(result.manualMergeRequired
+      toast(result.implementationJob
+        ? "Preparation recorded and the Codex build created. Nothing else is required from you until its receipt is ready."
+        : result.manualMergeRequired
         ? "Merge authorised by Jamie. Complete the merge, then record the implementation receipt."
         : `${action.replaceAll("-", " ")} recorded.`);
     } catch (error) { toast(error.message, true); }
@@ -2000,6 +2160,13 @@ $("#conversation-list").addEventListener("click", (event) => {
   if (button) loadConversation(button.dataset.conversationId).catch((error) => toast(error.message, true));
 });
 $("#refresh-conversations").addEventListener("click", () => loadConversationList().catch((error) => toast(error.message, true)));
+$$('[data-new-conversation]').forEach((button) => button.addEventListener("click", () => {
+  state.inlineWorkHelp = null;
+  createConversation().then(() => {
+    switchView("conversation");
+    $("#input").focus();
+  }).catch((error) => toast(error.message, true));
+}));
 $$("[data-starter]").forEach((button) => button.addEventListener("click", () => {
   $("#input").value = button.dataset.starter;
   $("#input").focus();
@@ -2130,6 +2297,21 @@ $("#work-detail").addEventListener("click", async (event) => {
     }
     return;
   }
+  const openImplementationJob = event.target.closest("[data-open-implementation-job]");
+  if (openImplementationJob) {
+    await loadMyWork();
+    await openWorkItem(`implementation-job:${openImplementationJob.dataset.openImplementationJob}`);
+    return;
+  }
+  const dailyChallenge = event.target.closest("[data-start-daily-challenge]");
+  if (dailyChallenge && state.currentWorkItem?.sourceType === "daily-challenge") {
+    try {
+      await startDailyChallenge(state.currentWorkItem);
+    } catch (error) {
+      toast(error.message, true);
+    }
+    return;
+  }
   const prepareBuild = event.target.closest("[data-prepare-build]");
   if (prepareBuild) {
     prepareBuild.disabled = true;
@@ -2176,13 +2358,20 @@ $("#work-detail").addEventListener("click", async (event) => {
   const discuss = event.target.closest("[data-discuss-operate-record]");
   if (discuss) {
     try {
-      const conversation = await ensureConversation();
-      state.conversation = (await request(`/api/conversations/${encodeURIComponent(conversation.id)}`, {
-        method: "PATCH",
-        body: JSON.stringify({ activeRecordId: discuss.dataset.discussOperateRecord })
-      })).conversation;
+      await loadConversationList();
+      const recordId = discuss.dataset.discussOperateRecord;
+      const recordTitle = state.currentOperateRecord?.title || state.selectedImplementationJob?.title || "Linked work";
+      const existing = state.conversations.find((conversation) =>
+        conversation.active_record_id === recordId && String(conversation.title).startsWith("Work · "));
+      state.conversation = existing
+        ? (await request(`/api/conversations/${encodeURIComponent(existing.id)}`)).conversation
+        : await createConversation({
+            title: `Work · ${recordTitle}`.slice(0, 120),
+            workspace: state.currentOperateRecord?.workProfile === "methodology-feedback-change" ? "living-methodology" : "general-project",
+            activeRecordId: recordId
+          });
       state.inlineWorkHelp = {
-        recordId: discuss.dataset.discussOperateRecord,
+        recordId,
         workItemId: state.currentWorkItem?.id || null,
         status: "The linked work, source and authority boundary will stay attached to the question.",
         response: null
@@ -2451,14 +2640,6 @@ $("#details-button").addEventListener("click", () => {
 window.addEventListener("hashchange", () => {
   const requestedView = location.hash.slice(1);
   switchView(validViews.has(requestedView) ? requestedView : "my-work", false);
-});
-$("#new-conversation").addEventListener("click", async () => {
-  state.conversation = null;
-  state.attachments = [];
-  await ensureConversation();
-  renderAttachments();
-  renderConversation();
-  switchView("conversation");
 });
 $("#workspace").addEventListener("change", () => {
   $("#workspace-label").textContent = $("#workspace").selectedOptions[0].textContent;

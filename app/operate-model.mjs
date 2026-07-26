@@ -240,11 +240,11 @@ export function actionsForOperateRecord(record, { openChildren = 0 } = {}) {
       style: item.style || "secondary",
       decision: Boolean(item.decision)
     };
-    if (recordType === "case" && item.targetStatus === "closed" && openChildren > 0) {
+    if (recordType === "case" && ["resolved", "closed"].includes(item.targetStatus) && openChildren > 0) {
       return {
         ...configured,
         disabled: true,
-        unavailableReason: `${openChildren} contained ${openChildren === 1 ? "record remains" : "records remain"} open.`
+        unavailableReason: `${openChildren} contained ${openChildren === 1 ? "record remains" : "records remain"} open. Complete, close or deliberately remove that work before resolving the Case.`
       };
     }
     return { ...configured, disabled: false, unavailableReason: "" };

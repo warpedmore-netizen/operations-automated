@@ -230,7 +230,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
       actor: "Jamie Peppard",
       reason: "Prepare a bounded draft for review."
     });
-    assert.equal(prepared.proposal.status, "approved-for-preparation");
+    assert.equal(prepared.proposal.status, "implementation-in-progress");
+    assert.equal(prepared.implementationJob.status, "waiting-on-codex");
     assert.equal(prepared.repositoryChanged, false);
     assert.match(prepared.implementationInstruction, /new branch/i);
     assert.match(prepared.implementationInstruction, /not approved for release/i);

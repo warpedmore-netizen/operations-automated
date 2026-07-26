@@ -389,6 +389,12 @@ for (const item of db.prepare("SELECT id,disposition,wording,classification,crea
     db.prepare("UPDATE feedback SET classification=? WHERE id=?").run(suggestedClassification(item.disposition, item.wording), item.id);
   }
 }
+db.prepare(`
+  UPDATE feedback
+  SET status='retained', updated_at=CASE WHEN updated_at='' THEN created_at ELSE updated_at END
+  WHERE status='awaiting-review'
+    AND classification NOT IN ('methodology-change-candidate','product-change-candidate')
+`).run();
 if (!db.prepare("SELECT id FROM settings WHERE id=1").get()) {
   db.prepare("INSERT INTO settings(id,value_json) VALUES(1,?)").run(JSON.stringify(DEFAULT_SETTINGS));
 }
@@ -806,6 +812,19 @@ function materialCaptureQuestion(value, input) {
   return "";
 }
 
+function isAiOwner(owner) {
+  return /\b(?:codex|oppa mate|operations automated ai|ai owner)\b/i.test(String(owner || ""));
+}
+
+function activeImplementationJobForChange(changeId) {
+  const row = db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(changeId);
+  return row ? implementationJob(row.id) : null;
+}
+
 function operateRow(row, { includeRelations = false } = {}) {
   if (!row) return null;
   const bible = BIBLE_BY_TYPE.get(row.record_type);
@@ -834,11 +853,63 @@ function operateRow(row, { includeRelations = false } = {}) {
     knowledgeSnapshot: row.knowledge_snapshot_id ? knowledgeSnapshot(row.knowledge_snapshot_id) : null
   };
   baseValue.sourceContext = sourceContextForOperateRow(row);
-  const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(row.id, row.id)
-    .filter((item) => !isClosedStatus(item.status)).length;
-  const specialistAction = row.source_type !== "manual" ? specialistNextAction(row) : null;
+  const openChildRows = db.prepare(`
+    SELECT id,record_type,title,status,owner FROM operate_records
+    WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC
+  `).all(row.id, row.id).filter((item) => !isClosedStatus(item.status));
+  const openChildren = openChildRows.length;
+  const activeJob = row.record_type === "change" ? activeImplementationJobForChange(row.id) : null;
+  let specialistAction = row.source_type !== "manual" ? specialistNextAction(row) : null;
+  if (activeJob) {
+    const waitingOnAi = ["waiting-on-codex", "release-authorised"].includes(activeJob.status);
+    specialistAction = {
+      id: "open-implementation-job",
+      routeView: "my-work",
+      implementationJobId: activeJob.id,
+      label: activeJob.status === "waiting-for-review"
+        ? "Review the completed build"
+        : waitingOnAi ? "View work with Codex" : "View Codex build",
+      outcome: activeJob.status === "waiting-for-review"
+        ? "Codex has returned the implementation evidence. Jamie's separate release decision is now required."
+        : activeJob.status === "waiting-on-codex"
+          ? "Codex owns the next step. Jamie does not need to fill in branch, pull request, commit or test fields."
+          : "The exact release is authorised; Codex must return the matching merge receipt.",
+      authority: waitingOnAi ? "ai-owner" : "founder",
+      decision: activeJob.status === "waiting-for-review",
+      targetStatus: row.status,
+      noteRequired: false,
+      confirmation: "",
+      style: "primary",
+      disabled: false,
+      unavailableReason: ""
+    };
+  }
   const actions = specialistAction ? [] : actionsForOperateRecord(baseValue, { openChildren });
-  const nextAction = specialistAction || actions[0] || null;
+  let nextAction = specialistAction || actions[0] || null;
+  if (!specialistAction && row.record_type === "case" && openChildRows.length) {
+    const child = openChildRows[0];
+    nextAction = {
+      id: "continue-contained-work",
+      label: `Continue ${openChildren} open ${openChildren === 1 ? "item" : "items"}`,
+      outcome: `Resolve the Case only after its ${openChildren} contained ${openChildren === 1 ? "item is" : "items are"} complete, closed or deliberately removed.`,
+      authority: "owner",
+      decision: false,
+      routeRecordId: child.id,
+      routeRecordTitle: child.title,
+      disabled: false,
+      unavailableReason: ""
+    };
+  } else if (!specialistAction && isAiOwner(row.owner) && !isClosedStatus(row.status)) {
+    nextAction = {
+      id: "waiting-on-ai-owner",
+      label: "Wait for Operations Automated AI",
+      outcome: "This work is assigned to the AI owner. Jamie does not mark it complete; completion evidence must be returned by the owner.",
+      authority: "ai-owner",
+      decision: false,
+      disabled: false,
+      unavailableReason: ""
+    };
+  }
   const priority = nextAction?.disabled
     ? {
         ...baseValue.priority,
@@ -847,20 +918,26 @@ function operateRow(row, { includeRelations = false } = {}) {
         explanation: `${baseValue.priority.explanation} Next action blocked: ${nextAction.unavailableReason}`
       }
     : baseValue.priority;
+  const effectiveOwner = activeJob && ["waiting-on-codex", "release-authorised"].includes(activeJob.status) ? "Codex" : baseValue.owner;
   const value = {
     ...baseValue,
+    owner: effectiveOwner,
     actions,
     nextAction,
     sourceBacked: Boolean(specialistAction),
     specialistRoute: specialistAction?.routeView || null,
-    buildReady: workApprovedForPreparation(baseValue),
+    buildReady: workApprovedForPreparation(baseValue) && !activeJob,
+    implementationJob: activeJob,
+    humanActionRequired: nextAction?.authority !== "ai-owner" && !isAiOwner(effectiveOwner),
     priority,
     openChildren
   };
   if (!includeRelations) return value;
   const links = db.prepare(`
     SELECT l.*, source.title AS from_title, source.record_type AS from_type,
-      target.title AS to_title, target.record_type AS to_type
+      source.status AS from_status, source.owner AS from_owner,
+      target.title AS to_title, target.record_type AS to_type,
+      target.status AS to_status, target.owner AS to_owner
     FROM operate_links l
     JOIN operate_records source ON source.id=l.from_record_id
     JOIN operate_records target ON target.id=l.to_record_id
@@ -873,6 +950,10 @@ function operateRow(row, { includeRelations = false } = {}) {
     proposedBy: link.proposed_by,
     proposedVia: link.proposed_via,
     confirmedBy: link.confirmed_by,
+    fromStatus: link.from_status,
+    fromOwner: link.from_owner,
+    toStatus: link.to_status,
+    toOwner: link.to_owner,
     createdAt: link.created_at
   }));
   const children = db.prepare("SELECT * FROM operate_records WHERE case_id=? OR parent_id=? ORDER BY updated_at DESC").all(row.id, row.id)
@@ -909,10 +990,17 @@ function sourceContextForOperateRow(row) {
   const proposal = row.source_type === "change-proposal" && row.source_id
     ? proposalRecord(row.source_id)
     : null;
-  const sourceUrl = validPullRequestUrl(proposal?.pull_request_url)
+  const jobRow = row.record_type === "change" ? db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(row.id) : null;
+  const job = jobRow ? implementationJob(jobRow.id) : null;
+  const proposalUrl = validPullRequestUrl(proposal?.pull_request_url)
     || inferredPullRequestUrl(`${row.title}\n${row.summary}`);
-  if (!sourceUrl) return null;
-  const pullRequestNumber = Number(sourceUrl.match(/\/pull\/(\d+)/)?.[1]);
+  const sourceUrl = job ? validPullRequestUrl(job.pullRequestUrl) : proposalUrl;
+  if (!sourceUrl && !proposal && !job) return null;
+  const pullRequestNumber = Number(sourceUrl?.match(/\/pull\/(\d+)/)?.[1] || 0);
   const controlSourceIds = [row.id, row.source_id].filter(Boolean);
   const placeholders = controlSourceIds.map(() => "?").join(",");
   const decision = controlSourceIds.length ? db.prepare(`
@@ -928,22 +1016,23 @@ function sourceContextForOperateRow(row) {
   const governedControl = approval || decision;
   const sourceSummary = String(proposal?.problem_learning || row.summary || "").trim();
   const whatChanges = String(proposal?.proposed_wording || proposal?.rationale || row.summary || "").trim();
-  const sourceStatus = proposal?.status || (/\bdraft\s+(?:PR|pull request)\b/i.test(`${row.title}\n${row.summary}`) ? "draft" : "linked-source");
+  const sourceStatus = job?.status || proposal?.status || (/\bdraft\s+(?:PR|pull request)\b/i.test(`${row.title}\n${row.summary}`) ? "draft" : "linked-source");
   return {
-    kind: "pull-request",
+    kind: sourceUrl ? "pull-request" : "change-review",
     url: sourceUrl,
-    label: `Open PR #${pullRequestNumber}`,
-    number: pullRequestNumber,
-    title: proposal?.title || row.title,
+    label: sourceUrl ? `Open PR #${pullRequestNumber}` : "Current draft link pending",
+    number: pullRequestNumber || null,
+    title: job?.title || proposal?.title || row.title,
     status: sourceStatus,
     summary: sourceSummary,
     whatChanges,
-    exactDecision: governedControl?.exact_decision || row.title,
+    exactDecision: job?.releaseApproval?.exact_decision || governedControl?.exact_decision || row.title,
     recommendation: governedControl?.recommendation || row.summary || "Review the linked source and decide the recorded next action.",
     alternatives: safeJson(governedControl?.alternatives_json, proposal?.alternatives || []),
     tradeOffs: governedControl?.trade_offs || (proposal?.risks || []).join("; "),
     evidence: proposal?.evidence || [],
-    validation: proposal?.validationResults || {},
+    validation: job?.receipt || proposal?.validationResults || {},
+    previousUrl: job && proposalUrl && proposalUrl !== sourceUrl ? proposalUrl : null,
     remainsUnauthorised: safeJson(governedControl?.remains_unauthorised_json, ["merge", "release", "publication", "wider delegated authority"]),
     sourceAuthority: "Linked evidence; opening or discussing it creates no approval."
   };
@@ -952,10 +1041,9 @@ function sourceContextForOperateRow(row) {
 function actionableOperateRow(row, options = {}) {
   const value = operateRow(row, options);
   if (!value) return null;
-  const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(value.id, value.id)
-    .filter((item) => !isClosedStatus(item.status)).length;
-  const actions = value.sourceBacked ? (value.actions || []) : actionsForOperateRecord(value, { openChildren });
-  const nextAction = value.sourceBacked ? value.nextAction : (actions[0] || null);
+  const openChildren = value.openChildren || 0;
+  const actions = value.actions || [];
+  const nextAction = value.nextAction || actions[0] || null;
   const priority = nextAction?.disabled
     ? {
         ...value.priority,
@@ -1276,7 +1364,7 @@ function workApprovedForPreparation(record) {
 function syncSpecialistQueues() {
   const feedbackRecords = new Map();
   for (const item of db.prepare("SELECT * FROM feedback ORDER BY created_at").all()) {
-    const terminal = ["no-change", "rejected", "implemented"].includes(item.status);
+    const terminal = ["retained", "no-change", "rejected", "implemented"].includes(item.status);
     const id = upsertSpecialistRecord({
       sourceType: "feedback",
       sourceId: item.id,
@@ -1453,12 +1541,14 @@ function operateInboxItem(record) {
     actionLabel: record.nextAction?.label || "Review work",
     nextAction: record.nextAction,
     decisionRequired: Boolean(record.nextAction?.decision),
+    humanActionRequired: record.humanActionRequired,
     priority: record.priority,
     approvalState: record.approvalState
     ,
     workProfile: record.workProfile,
     workProfileLabel: record.profile?.label || record.workProfile,
-    sourceContext: record.sourceContext
+    sourceContext: record.sourceContext,
+    implementationJob: record.implementationJob
   };
 }
 
@@ -1528,8 +1618,8 @@ function implementationJobInboxItem(job) {
     control: 5,
     strategic: 4,
     confidence: job.commit_sha ? 5 : 4,
-    blocking: waitingOnCodex,
-    status: waitingOnCodex ? "blocked" : job.status,
+    blocking: false,
+    status: job.status,
     createdAt: job.created_at
   });
   const nextAction = waitingForReview
@@ -1543,8 +1633,8 @@ function implementationJobInboxItem(job) {
       }
     : job.status === "waiting-on-codex"
       ? {
-          id: "submit-implementation-receipt",
-          label: "Submit implementation receipt",
+          id: "view-codex-progress",
+          label: "Codex prepares and tests the draft",
           outcome: "Codex returns the branch, draft PR, commit, changed files, tests, validation, risks and version impact.",
           authority: "ai-owner",
           decision: false,
@@ -1580,6 +1670,7 @@ function implementationJobInboxItem(job) {
     actionLabel: nextAction.label,
     nextAction,
     decisionRequired: waitingForReview,
+    humanActionRequired: waitingForReview,
     priority,
     approvalState: job.releaseApproval?.result === "approved" ? "human-confirmed" : "not-approved",
     workProfile: "product-application-build",
@@ -1769,10 +1860,80 @@ async function createImplementationJob(input) {
   return implementationJob(id);
 }
 
+function londonDateKey(value = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London", year: "numeric", month: "2-digit", day: "2-digit"
+  }).formatToParts(value);
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${values.year}-${values.month}-${values.day}`;
+}
+
+function dailyChallengeWorkItem() {
+  const configuredHour = Number(process.env.WORKBENCH_DAILY_CHALLENGE_HOUR ?? 8);
+  const challengeHour = Number.isInteger(configuredHour) && configuredHour >= 0 && configuredHour <= 23 ? configuredHour : 8;
+  const londonHour = Number(new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London", hour: "2-digit", hourCycle: "h23"
+  }).format(new Date()));
+  if (londonHour < challengeHour) return null;
+  const date = londonDateKey();
+  const title = `Daily methodology challenge — ${date}`;
+  const convo = rowObject(db.prepare("SELECT * FROM conversations WHERE title=? ORDER BY updated_at DESC LIMIT 1").get(title));
+  const messages = convo ? messagesFor(convo.id) : [];
+  const firstAssistant = messages.find((message) => message.role === "assistant");
+  const founderResponse = firstAssistant
+    ? messages.find((message) => message.role === "user" && message.created_at > firstAssistant.created_at)
+    : null;
+  if (founderResponse) return null;
+  const status = firstAssistant ? "awaiting-response" : messages.length ? "being-prepared" : "due";
+  const owner = status === "being-prepared" ? "Oppa Mate" : FOUNDER_NAME;
+  const nextAction = {
+    id: status === "awaiting-response" ? "answer-daily-challenge" : "start-daily-challenge",
+    label: status === "awaiting-response" ? "Answer today's challenge" : status === "being-prepared" ? "Challenge being prepared" : "Start today's challenge",
+    outcome: status === "awaiting-response"
+      ? "Open today's separate conversation, answer the one primary question and let the response enter the controlled feedback loop."
+      : status === "being-prepared"
+        ? "Oppa Mate is preparing today's challenge inside the Workbench. No action is required while it completes."
+        : "Create today's challenge as a separate Workbench conversation. You will review the request and any provider cost before it is sent.",
+    authority: status === "being-prepared" ? "ai-owner" : "owner",
+    decision: false,
+    routeView: "conversation",
+    conversationId: convo?.id || null,
+    challengeDate: date
+  };
+  return {
+    id: `daily-challenge:${date}`,
+    source: "Workbench",
+    sourceType: "daily-challenge",
+    sourceId: convo?.id || date,
+    routeView: "conversation",
+    recordType: "scenario-test",
+    typeLabel: "Daily challenge",
+    title: status === "awaiting-response" ? "Today's methodology challenge is ready" : "Prepare today's methodology challenge",
+    summary: "One focused 10-minute challenge, kept in its own Workbench conversation instead of a separate Codex task.",
+    status,
+    owner,
+    dueAt: null,
+    createdAt: `${date}T07:00:00.000Z`,
+    updatedAt: convo?.updated_at || `${date}T07:00:00.000Z`,
+    actionLabel: nextAction.label,
+    nextAction,
+    decisionRequired: false,
+    priority: syntheticPriority({
+      impact: 3, urgency: 3, risk: 2, control: 2, strategic: 4, confidence: 5,
+      blocking: false, status, createdAt: `${date}T07:00:00.000Z`
+    }),
+    approvalState: "not-approved",
+    workProfile: "daily-methodology-challenge",
+    workProfileLabel: "Daily methodology challenge",
+    humanActionRequired: status !== "being-prepared"
+  };
+}
+
 function buildMyWork(order = "recommended", filters = {}) {
   syncSpecialistQueues();
   const items = operateRecords()
     .filter((record) => !isClosedStatus(record.status))
+    .filter((record) => !(record.recordType === "change" && record.implementationJob))
     .map(operateInboxItem);
   for (const row of db.prepare(`
     SELECT id FROM implementation_jobs
@@ -1781,6 +1942,8 @@ function buildMyWork(order = "recommended", filters = {}) {
   `).all()) {
     items.push(implementationJobInboxItem(implementationJob(row.id)));
   }
+  const dailyChallenge = dailyChallengeWorkItem();
+  if (dailyChallenge) items.push(dailyChallenge);
 
   const proposalValues = db.prepare("SELECT id FROM change_proposals ORDER BY updated_at DESC").all()
     .map((row) => proposalRecord(row.id))
@@ -1895,19 +2058,22 @@ function buildMyWork(order = "recommended", filters = {}) {
     if (recordType && item.recordType !== recordType) return false;
     if (view === "blocked" && !item.priority.blocked) return false;
     if (view === "waiting-jamie" && !(item.owner === FOUNDER_NAME || item.decisionRequired)) return false;
-    if (view === "waiting-codex" && item.owner !== "Codex") return false;
+    if (view === "waiting-codex" && !isAiOwner(item.owner)) return false;
     return true;
   });
   const ordered = sortWorkItems(filtered, order);
-  const doNextCandidates = ordered.filter((item) => !item.priority.blocked && item.owner !== "Codex");
-  const doNext = (doNextCandidates.length ? doNextCandidates : ordered).slice(0, 5);
+  const doNextCandidates = ordered.filter((item) => !item.priority.blocked && !isAiOwner(item.owner) && item.humanActionRequired !== false);
+  const doNext = doNextCandidates.slice(0, 5);
+  const humanItems = ordered.filter((item) => !isAiOwner(item.owner) && item.humanActionRequired !== false);
+  const aiItems = ordered.filter((item) => isAiOwner(item.owner) || item.humanActionRequired === false);
   return {
     order,
     filters: { search, view, profile, recordType },
     doNext,
     items: ordered,
     summary: {
-      total: ordered.length,
+      total: humanItems.length,
+      beingHandled: aiItems.length,
       overdue: ordered.filter((item) => item.priority.overdue).length,
       blocked: ordered.filter((item) => item.priority.blocked).length,
       decisions: ordered.filter((item) => item.decisionRequired).length
@@ -2129,6 +2295,12 @@ function proposalRecord(id) {
     WHERE p.id=?
   `).get(id));
   if (!item) return null;
+  const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(id);
+  const jobRow = changeRow ? db.prepare(`
+    SELECT id FROM implementation_jobs
+    WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(changeRow.id) : null;
   return {
     ...item,
     approvedSources: safeJson(item.approved_sources_json, []),
@@ -2141,6 +2313,7 @@ function proposalRecord(id) {
     validationResults: safeJson(item.validation_results_json, {}),
     decisions: db.prepare("SELECT * FROM change_decisions WHERE proposal_id=? ORDER BY created_at").all(id),
     receipt: rowObject(db.prepare("SELECT * FROM implementation_receipts WHERE proposal_id=?").get(id)),
+    implementationJob: jobRow ? implementationJob(jobRow.id) : null,
     approvalState: item.status === "implemented" ? "released-by-human-decision" : "not-approved"
   };
 }
@@ -3883,8 +4056,20 @@ async function api(request, response, url) {
   if (method === "POST" && url.pathname === "/api/conversations") {
     const value = await jsonBody(request);
     const id = randomUUID(); const timestamp = now();
-    db.prepare("INSERT INTO conversations(id,workspace,title,created_at,updated_at) VALUES(?,?,?,?,?)")
-      .run(id, String(value.workspace || "living-methodology"), String(value.title || "New conversation").slice(0, 120), timestamp, timestamp);
+    const activeRecordId = String(value.activeRecordId || "").trim() || null;
+    const activeRecord = activeRecordId ? operateRecord(activeRecordId) : null;
+    if (activeRecordId && !activeRecord) return json(response, 400, { error: "Choose an existing work record as conversation context." });
+    const activeCaseId = activeRecord?.recordType === "case" ? activeRecord.id : activeRecord?.caseId || null;
+    db.prepare("INSERT INTO conversations(id,workspace,title,active_case_id,active_record_id,created_at,updated_at) VALUES(?,?,?,?,?,?,?)")
+      .run(
+        id,
+        String(value.workspace || "living-methodology"),
+        String(value.title || "New conversation").slice(0, 120),
+        activeCaseId,
+        activeRecordId,
+        timestamp,
+        timestamp
+      );
     audit("conversation.created", "conversation", id);
     return json(response, 201, { conversation: conversation(id) });
   }
@@ -4098,7 +4283,9 @@ Never claim to approve, publish, merge or edit methodology.`
     const wording = String(value.wording || "").trim();
     const disposition = String(value.disposition || "conversation-context");
     const classification = suggestedClassification(disposition, wording);
-    const feedbackStatus = classification === "no-action-required" ? "no-change" : "awaiting-review";
+    const feedbackStatus = isChangeCandidate(classification)
+      ? "awaiting-review"
+      : classification === "no-action-required" ? "no-change" : "retained";
     db.prepare(`
       INSERT INTO feedback(
         id,conversation_id,message_id,disposition,wording,interpretation,affected_components,status,created_at,
@@ -4115,7 +4302,13 @@ Never claim to approve, publish, merge or edit methodology.`
       submittingUser: FOUNDER_NAME,
       explicitlyNotApproval: true
     });
-    return json(response, 201, { feedback: feedbackRecord(id) });
+    const proposal = isChangeCandidate(classification) ? await createOrGetChangeProposal(id) : null;
+    return json(response, 201, {
+      feedback: feedbackRecord(id),
+      proposal,
+      completed: !proposal,
+      next: proposal ? "change-review" : "feedback-retained"
+    });
   }
   if (method === "GET" && url.pathname === "/api/feedback") {
     return json(response, 200, {
@@ -4133,7 +4326,9 @@ Never claim to approve, publish, merge or edit methodology.`
     }
     const value = await jsonBody(request);
     const classification = validateClassification(String(value.classification || ""));
-    const status = classification === "no-action-required" ? "no-change" : "awaiting-review";
+    const status = isChangeCandidate(classification)
+      ? "awaiting-review"
+      : classification === "no-action-required" ? "no-change" : "retained";
     db.prepare("UPDATE feedback SET classification=?,status=?,updated_at=? WHERE id=?")
       .run(classification, status, now(), feedback.id);
     audit("feedback.classified", "feedback", feedback.id, {
@@ -4142,7 +4337,14 @@ Never claim to approve, publish, merge or edit methodology.`
       actor: FOUNDER_NAME,
       explicitlyNotApproval: true
     });
-    return json(response, 200, { feedback: feedbackRecord(feedback.id), approvalCreated: false });
+    const proposal = isChangeCandidate(classification) ? await createOrGetChangeProposal(feedback.id) : null;
+    return json(response, 200, {
+      feedback: feedbackRecord(feedback.id),
+      proposal,
+      completed: !proposal,
+      next: proposal ? "change-review" : "feedback-retained",
+      approvalCreated: false
+    });
   }
   const feedbackProposalMatch = url.pathname.match(/^\/api\/feedback\/([^/]+)\/change-proposal$/);
   if (method === "POST" && feedbackProposalMatch) {
@@ -4189,6 +4391,12 @@ Never claim to approve, publish, merge or edit methodology.`
       db.prepare("INSERT INTO change_decisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
         .run(decisionId, proposal.id, proposal.feedback_id, phase, action, actor, reason, proposal.status, nextStatus, "", 0, now());
       setProposalStatus(proposal.id, proposal.feedback_id, nextStatus);
+      let implementationJobValue = null;
+      if (action === "prepare-change") {
+        syncSpecialistQueues();
+        const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(proposal.id);
+        if (changeRow) implementationJobValue = await createImplementationJob({ recordId: changeRow.id });
+      }
       audit("change-decision.recorded", "change-proposal", proposal.id, {
         decisionId, phase, action, actor, statusBefore: proposal.status, statusAfter: nextStatus,
         repositoryChanged: false, releaseApproved: false
@@ -4197,6 +4405,7 @@ Never claim to approve, publish, merge or edit methodology.`
         proposal: proposalRecord(proposal.id),
         decisionId,
         implementationInstruction: action === "prepare-change" ? instruction : null,
+        implementationJob: implementationJobValue,
         repositoryChanged: false,
         releaseApproved: false
       });
@@ -4279,10 +4488,13 @@ Never claim to approve, publish, merge or edit methodology.`
   if (method === "POST" && handoffMatch) {
     const proposal = proposalRecord(handoffMatch[1]);
     if (!proposal) return json(response, 404, { error: "Change proposal not found." });
-    if (proposal.status !== "approved-for-preparation" || !proposal.implementation_instruction) {
+    if (!["approved-for-preparation", "implementation-in-progress"].includes(proposal.status) || !proposal.implementation_instruction) {
       return json(response, 409, { error: "A preparation decision and bounded instruction are required before implementation can start." });
     }
-    setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+    if (proposal.status === "approved-for-preparation") setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+    syncSpecialistQueues();
+    const changeRow = db.prepare("SELECT id FROM operate_records WHERE source_type='change-proposal' AND source_id=?").get(proposal.id);
+    const job = changeRow ? await createImplementationJob({ recordId: changeRow.id }) : null;
     audit("implementation-handoff.created", "change-proposal", proposal.id, {
       instructionFile: `${proposal.id}.md`,
       branchRequired: true,
@@ -4291,6 +4503,7 @@ Never claim to approve, publish, merge or edit methodology.`
     });
     return json(response, 200, {
       proposal: proposalRecord(proposal.id),
+      implementationJob: job,
       instruction: proposal.implementation_instruction,
       mainChanged: false
     });

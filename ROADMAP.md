@@ -4,7 +4,7 @@ title: Operations Automated Roadmap
 status: proposed
 version: 0.8
 owner: Jamie Peppard
-last_updated: 2026-07-25
+last_updated: 2026-07-26
 ---
 
 # Operations Automated Roadmap
@@ -58,6 +58,8 @@ A follow-on founder usability correction now reduces capture to one description,
 
 Founder use then exposed a source-continuity failure: PR-backed work named the pull request without carrying a direct link or adequate review package, and Oppa Mate help left My Work without visibly retaining its origin. The proposed 1.4.2 correction puts the source, summary, exact decision and authority boundary into My Work, provides help inside the item and makes any full-conversation handoff visibly reversible. This is a product-delivery correction under private validation; approved methodology, product approval, merge and release remain unchanged.
 
+Further founder use showed that joined records are not the same as a completed workflow. My Work still mixed Jamie's actions with AI-owned work, Cases pointed at closure rather than their open contents, saved feedback could remain in review, preparation exposed developer receipt fields and unrelated discussions accumulated in one long conversation. The proposed Workbench 1.5 correction makes ownership, current step, completion evidence and the return point explicit; automates bounded transitions; and brings the daily methodology challenge into its own Workbench conversation. This is a product workflow correction, not an approved methodology change or product release.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -95,8 +97,7 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 7. Use the evidence to review v0.6 and decide the smallest justified product.
 8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 9. After the approved model is merged, implement one Methodology reading path, one Internal task path and one manually identified document challenge as bounded private pilots without deleting or moving the current controlled pages or performing a live write without separate confirmation.
-10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
-10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
+10. Review the proposed Workbench 1.5 operating surface as one bounded whole: clear ownership and completion, governed knowledge, separate conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
 
 ## Application decision
 

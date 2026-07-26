@@ -1,5 +1,17 @@
 # Changelog
 
+## Workbench 1.5.0 complete founder workflows - proposed
+
+- Reframed **My Work** around human action: **Do Next** now excludes work owned by Codex or Oppa Mate, while a separate **Being handled** count keeps that work visible.
+- Added a plain-language current step, owner, founder part, workflow progress and **Done when** evidence to work, change and Build Job details.
+- Made Cases route to their open contained work and prevented both resolution and closure while that work remains open.
+- Completed the feedback disposition: ordinary corrections and context are retained and leave My Work; methodology and product candidates automatically open one governed change review.
+- Made an approved preparation decision automatically create one Codex-owned Build Job, removed repository receipt fields from Jamie's screens and kept release as a later founder decision.
+- Prevented a prior pull request from appearing as the current build source before Codex returns the new draft receipt.
+- Gave work-item discussions and daily methodology challenges separate conversations so new work no longer disappears at the bottom of one continuing thread.
+- Added the 08:00 UK daily methodology challenge to My Work as one focused 10-minute Workbench journey, ready for the existing feedback loop.
+- Preserved specialist history, explicit authority and the external-Codex boundary; no methodology meaning, merge, publication or direct autonomous connection is approved.
+
 ## Workbench 1.4.3 plain-language user journeys - proposed
 
 - Made the main Oppa Mate answer lead with plain-language meaning and the next action while moving source paths, status labels and control mechanics into one optional detail panel.

@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.6
+version: 0.7
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -63,7 +63,21 @@ The main Oppa Mate answer is written for the user and leads with meaning, recomm
 
 This presentation rule does not discard evidence or hide consequence. Exact source snapshots, status and authority remain in retained response metadata and the optional trace. A material human decision still appears in plain language in the main answer; the implementation mechanics that enforce it stay secondary.
 
-Each feedback choice explains what will be saved, what later action becomes available and what will not happen before the user selects it. The Saved Feedback route uses outcome language such as **Fix this answer only**, **Keep with this conversation** and **Consider a methodology change**. Creating a change review remains a separate action from classification, preparation and release.
+Each feedback choice explains what will be saved, what later action becomes available and what will not happen before the user selects it. The Saved Feedback route uses outcome language such as **Fix this answer only**, **Keep with this conversation** and **Consider a methodology change**. Saving an ordinary correction, context note or evidence completes that feedback step and removes it from Jamie's action queue while retaining its trace. Saving a methodology or product change candidate creates or opens one separate governed review automatically. Classification still does not approve preparation, release or publication.
+
+### Complete workflow and ownership view
+
+Each work detail leads with five questions in ordinary language:
+
+1. what is happening now;
+2. who owns it now;
+3. what, if anything, Jamie must do;
+4. what steps lead to completion; and
+5. what evidence means it is done.
+
+**Do Next** contains only non-blocked work that genuinely requires Jamie. AI-owned work remains visible through **Being handled** and the full inbox, but it cannot ask Jamie to mark the AI's task complete or fill in the AI's implementation receipt. A Case with open contained work routes to that work and cannot be resolved or closed first.
+
+Work-item help creates or reuses a conversation for that work item rather than appending every question to the most recently open conversation. The daily methodology challenge appears after 08:00 UK time as one 10-minute My Work item and starts its own dated conversation. Once Jamie answers, that item leaves My Work and any useful correction can follow the ordinary retained-feedback and change route.
 
 ## Configurable definitions and Work Profiles
 
@@ -79,9 +93,9 @@ Existing feedback, Decision Inbox, Brand Review and Confluence publication recor
 
 ## External-Codex Build Job
 
-A Build Job is available only after the linked Change is explicitly approved for preparation. It contains the approved requirement, context, methodology and governance constraints, affected components, acceptance criteria, test expectations and authority boundary.
+A Build Job is available only after the linked Change is explicitly approved for preparation. That preparation decision creates the one linked job automatically. It contains the approved requirement, context, methodology and governance constraints, affected components, acceptance criteria, test expectations and authority boundary.
 
-The job moves through **Waiting on Codex**, **Waiting for review** and, only after Jamie types the exact release confirmation, **Release authorised**. The returned receipt retains the branch, draft pull request, commit, changed files, tests, validation, unresolved risks and version impact. The Workbench does not pretend to run Codex or merge the branch.
+The job moves through **Waiting on Codex**, **Waiting for review** and, only after Jamie types the exact release confirmation, **Release authorised**. The returned receipt retains the branch, draft pull request, commit, changed files, tests, validation, unresolved risks and version impact. Those receipt fields belong to Codex, not Jamie. The Workbench does not pretend to run Codex or merge the branch.
 
 After Codex records a successful authorised external merge, the Workbench reindexes the repository, retains the merged receipt and queues an applicable Confluence update. Publication remains a later, separate controlled decision.
 
@@ -177,7 +191,7 @@ The product exposes the contributing factors and a short explanation. A person c
 
 The first screen shows:
 
-- a summary of total, overdue, blocked and decision work;
+- a summary of Jamie's actions, work being handled, blocked work and decisions;
 - up to five non-blocked **Do Next** items where possible;
 - one unified inbox containing operational records, open change decisions and Brand Review work;
 - recommended, newest, oldest and deadline ordering; and
@@ -222,6 +236,11 @@ Implemented in this proposal:
 - visible originating-work context and a route back from the full conversation;
 - plain-language main answers with source, status and control detail behind optional disclosure;
 - consequence-first answer feedback, saved-feedback actions and first-use guidance;
+- current owner, Jamie's part, workflow progress and completion evidence on each work detail;
+- AI-owned work excluded from **Do Next** without disappearing from the full inbox;
+- automatic ordinary-feedback completion and automatic change-review creation where applicable;
+- automatic one-job Codex handoff following an explicit preparation decision;
+- separate work-item and dated daily-challenge conversations;
 - Case-closure protection while contained work remains open; and
 - local audit/activity evidence with no delete route.
 
@@ -290,10 +309,13 @@ The mitigation is progressive disclosure, explainability, optional links, visibl
 12. Review the interface and action controls at desktop and phone widths.
 13. Confirm a PR-backed item exposes its safe direct link, review summary, exact decision and remaining authority boundary without requiring a manual search.
 14. Ask Oppa Mate from that item, confirm My Work remains visible, then open the full conversation and return to the originating item.
-15. Have Jamie complete or reject at least one Task, Approval, Decision and non-terminal transition through My Work.
-16. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
-17. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
-18. Run one independent-user capture, linking, action and prioritisation test before any broader use.
+15. Confirm the main answer contains no raw source path, status label or control mechanic while the optional panel retains exact trace and authority.
+16. Confirm every answer-feedback choice and Saved Feedback treatment explains its result before selection or save.
+17. Complete the first-use guide at desktop and phone widths and confirm sending, feedback, preparation and release consequences are understandable before action.
+18. Have Jamie complete or reject at least one Task, Approval, Decision and non-terminal transition through My Work.
+19. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
+20. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
+21. Run one independent-user capture, linking, action and prioritisation test before any broader use.
 
 ## Decision required
 

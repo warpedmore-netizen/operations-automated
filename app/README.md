@@ -18,6 +18,8 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed plain-language follow-on:** Workbench build `1.4.3-plain-language-user-journeys-draft` keeps the main Oppa Mate answer and feedback journey in ordinary user language. Source paths, status and control trace remain available in optional detail. Every feedback and guide action explains its result before the user chooses it. The change preserves existing local data and does not amend approved methodology meaning.
 
+> **Proposed complete-workflow correction:** Workbench build `1.5.0-complete-workflows-draft` makes **My Work** a founder action queue rather than a mixed status list. Each detail explains the current step, owner, Jamie's part, the route to completion and its success evidence. Retained feedback completes automatically where no change is required; change candidates open one review; approved preparation opens one Codex-owned Build Job. Work discussions and the daily challenge use separate conversations. This remains proposed product behaviour for private review.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.
