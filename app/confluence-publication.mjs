@@ -390,7 +390,7 @@ function methodologyLabBody(page, sources, context) {
   ).join("");
   return [
     "<ac:structured-macro ac:name=\"warning\"><ac:rich-text-body>",
-    "<p><strong>Methodology Lab pilot — proposed Draft reading synthesis</strong></p>",
+    "<p><strong>Operations Automated — proposed Draft reading synthesis for the consolidated methodology</strong></p>",
     "<p>This page is published to the controlled Confluence Draft area from Operations Automated sources for private internal review. Draft publication does not change approved methodology meaning, replace the controlled record, promote content to Live or authorise external publication.</p>",
     "</ac:rich-text-body></ac:structured-macro>",
     readable,
@@ -398,7 +398,7 @@ function methodologyLabBody(page, sources, context) {
     "<h2>Controlled source map</h2>",
     `<ul>${sourceMap}</ul>`,
     `<p><small><strong>Pilot source:</strong> ${escapeHtml(page.path)} · <strong>Pilot version:</strong> ${escapeHtml(context.pilotVersion)} · <strong>Source commit:</strong> ${escapeHtml(context.sourceCommit)} · <strong>Combined source hash:</strong> ${escapeHtml(page.sourceHash)}</small></p>`,
-    "<p><small>Git remains authoritative. Connective wording in this Lab remains proposed until it survives review and a later governed decision.</small></p>"
+    "<p><small>Git remains authoritative. Proposed wording remains Draft until it survives review and a later governed decision. Publication here does not promote it to Live.</small></p>"
   ].join("\n");
 }
 
@@ -515,7 +515,7 @@ export function buildMethodologyLabPublicationPlan({
     id,
     publicationKind: "methodology-lab-pilot",
     status: "proposed-publication-plan",
-    title: String(manifest.title || "Operations Automated Methodology Lab – Pilot 1"),
+    title: String(manifest.title || "Operations Automated Methodology – Consolidated Draft"),
     generatedAt,
     sourceBranch,
     sourceCommit,

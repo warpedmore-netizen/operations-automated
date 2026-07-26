@@ -1,17 +1,18 @@
 {
   "id": "OA-METHODOLOGY-LAB-001",
-  "title": "Operations Automated Methodology Lab – Pilot 1",
+  "title": "Operations Automated Methodology – Consolidated Draft v0.8",
   "status": "proposed-pilot",
-  "version": "0.1",
+  "version": "0.8",
   "pages": [
     {
       "key": "hub",
       "file": "00-start-here.md",
-      "title": "Operations Automated Methodology Lab – Pilot 1",
+      "title": "Operations Automated Methodology – Consolidated Draft v0.8",
       "parentKey": null,
       "sources": [
         "methodology/current-methodology-synthesis.md",
-        "methodology/operations-automated-overview.md"
+        "methodology/operations-automated-overview.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
       ]
     },
     {
@@ -21,18 +22,21 @@
       "parentKey": "hub",
       "sources": [
         "methodology/current-methodology-synthesis.md",
-        "methodology/operations-automated-overview.md"
+        "methodology/operations-automated-overview.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
       ]
     },
     {
       "key": "part-1",
       "file": "02-part-1-purpose-value-and-human-boundary.md",
-      "title": "Part I – Purpose, value and the human boundary",
+      "title": "Part I – Purpose, value, responsibility and accountability",
       "parentKey": "read",
       "sources": [
         "methodology/operations-automated-overview.md",
         "principles/user-defined-value.md",
-        "principles/human-led-automation.md"
+        "principles/human-led-automation.md",
+        "methodology/human-ai-collaboration.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
       ]
     },
     {
@@ -42,7 +46,9 @@
       "parentKey": "read",
       "sources": [
         "methodology/operational-lenses.md",
-        "methodology/connected-work-risk-and-control.md"
+        "methodology/connected-work-risk-and-control.md",
+        "methodology/operational-coverage-model.md",
+        "methodology/cross-functional-interfaces.md"
       ]
     },
     {
@@ -95,17 +101,19 @@
       "sources": [
         "evolution/methodology-evolution-system.md",
         "methodology/human-ai-collaboration.md",
-        "principles/learning-through-failure.md"
+        "principles/learning-through-failure.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
       ]
     },
     {
       "key": "review",
       "file": "09-review-the-pilot.md",
-      "title": "Review the methodology pilot",
+      "title": "Review the consolidated draft",
       "parentKey": "hub",
       "sources": [
         "methodology/human-ai-collaboration.md",
-        "evolution/methodology-evolution-system.md"
+        "evolution/methodology-evolution-system.md",
+        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
       ]
     }
   ]

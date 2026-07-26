@@ -40,11 +40,11 @@ The artefact status remains authoritative. This proposal does not change approve
 
 ## Current wording and behaviour
 
-The current approved product boundary describes a private local application with no accounts or hosted deployment. Governed Confluence publication reads from current `main`, previews create/update/unchanged/conflict outcomes and requires Jamie's plan-specific confirmation.
+The current approved product boundary describes a private local application with no accounts or hosted deployment. Governed Confluence publication reads from controlled committed source and previews create/update/unchanged/conflict outcomes. Live publication requires Jamie's plan-specific confirmation. The bounded private Draft route uses the standing authority recorded in the repository.
 
-The running interface remains bound to `127.0.0.1`. A tailnet-only Tailscale Serve route has since been observed working between Jamie's computer and Samsung phone, with Funnel disabled. That is operational evidence, not an inferred governance approval. An unmerged methodology proposal cannot be published as a Confluence review draft.
+The running interface remains bound to `127.0.0.1`. A tailnet-only Tailscale Serve route has since been observed working between Jamie's computer and Samsung phone, with Funnel disabled. That is operational evidence, not an inferred governance approval. A committed methodology proposal may be published only beneath the controlled private Confluence Draft parent.
 
-The separate proposed Methodology Lab pilot in draft PR #18 has demonstrated a bounded Draft-only publication route and created a ten-page private Confluence review set without altering the existing managed pages. That route is unmerged and is not part of the current approved Workbench behaviour.
+The separate proposed Methodology Lab pilot first demonstrated the bounded Draft-only publication route in draft PR #18 and created a ten-page private Confluence review set without altering the existing managed pages. That capability is now reconciled into the consolidated Workbench source. It remains a proposed private-review behaviour and does not approve the published methodology.
 
 ## Proposed wording and behaviour
 
@@ -88,12 +88,12 @@ Technical sources, hashes and controls remain available but visually secondary.
 
 ### Readable Confluence review draft
 
-The ordinary Workbench journey should reconcile the existing PR #18 Draft-publication evidence into a clearly labelled Confluence **Review Draft** experience for an unmerged proposal. It must:
+The ordinary Workbench journey now reconciles the PR #18 Draft-publication evidence into a clearly labelled Confluence **Review Draft** experience for a committed proposal. It must:
 
 - show the approved current wording beside the proposed wording;
 - identify the proposal branch, commit, repository status and expiry or review trigger;
 - distinguish review-draft visibility from approval and release;
-- require a fresh plan and exact founder confirmation before the Confluence write;
+- require a fresh, conflict-free plan and the applicable recorded authority before the Confluence write;
 - never become approved retrieval context;
 - never update the Live reading copy;
 - link to the exact GitHub pull request and readable Workbench decision brief; and
@@ -186,21 +186,21 @@ Evidence is strong for founder usability and current technical failure. It remai
 - **Reasoning:** existing configured Workbench reasoning route; no change proposed.
 - **Voice:** existing transcription route; mobile use may increase volume but not the per-request model design.
 - **Tailscale:** no model cost. Account or plan cost must be checked before connection approval; no spending is authorised.
-- **Confluence:** uses the existing private connection and the bounded standing Draft authority recorded in PR #18. Integration and merge remain separate; Live publication remains founder-confirmed.
+- **Confluence:** uses the existing private connection and the bounded standing Draft authority first recorded in PR #18. Draft publication remains distinct from methodology approval; Live publication remains founder-confirmed.
 - **Existing implementation evidence:** reuse and reconcile PR #18 rather than duplicate its Draft-publication code.
 - **Development:** local implementation and testing through Codex on a separate branch and draft pull request.
 
 ## Version impact
 
-- Proposed Workbench build: `1.1.2-mobile-voice-recovery-draft`
-- Approved Operations Automated methodology baseline: unchanged at v0.6
-- Approved Confluence publication behaviour: unchanged until a later review-draft decision
+- Consolidated Workbench build: `1.5.0-consolidated-methodology-draft`
+- Approved Operations Automated methodology baseline: unchanged at v0.7
+- Private Draft publication behaviour: integrated under the recorded standing authority
 - External publication and customer use: unchanged and unapproved
 
 ## Exact decisions required
 
 1. **Private phone connection:** approve or reject a Jamie-only Tailscale Serve pilot.
-2. **Confluence review draft:** decide whether the existing PR #18 Draft-only capability should be integrated into the ordinary Workbench knowledge journey.
-3. **Release:** after review and tests, separately approve or reject merge of the product change.
+2. **Methodology meaning:** approve, revise, defer or reject the consolidated v0.8 proposal after review.
+3. **Live or external release:** separately approve or reject any promotion beyond the controlled private Draft route.
 
 No one decision authorises all three.

@@ -1,18 +1,20 @@
 ---
 id: OA-METHODOLOGY-LAB-001-START
-title: Operations Automated Methodology Lab – Pilot 1
+title: Operations Automated Methodology – Consolidated Draft v0.8
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 
-# Operations Automated Methodology Lab – Pilot 1
+# Operations Automated methodology – consolidated draft v0.8
 
-## Why this pilot exists
+## Why this draft exists
 
 Operations Automated is being developed as a practical way to understand, govern and improve operations, then decide whether conventional improvement, automation, AI assistance or bounded agents are justified.
 
-This Lab tests whether the controlled methodology can also work as a coherent human publication. It is deliberately separate from the existing repository mirror so that its reading order, explanations and usefulness can be assessed without moving or replacing current pages.
+The approved internal baseline is v0.7. This Draft keeps that baseline and brings the remaining discussion about manual work, AI responsibility, human accountability, meaningful review, delivery collaboration, capability transfer and plain-language action into one coherent proposal.
+
+It also tests whether the controlled methodology can work as a human publication rather than only as a repository mirror.
 
 ## Who it is for
 
@@ -26,16 +28,16 @@ The intended reader may be:
 
 No Git or software-development knowledge should be required.
 
-## What this pilot is – and is not
+## What this draft is – and is not
 
-This is a proposed reading synthesis created from the approved internal-validation methodology. The controlled repository remains authoritative.
+This is a proposed reading synthesis created from approved internal-validation sources. The controlled Git repository remains authoritative.
 
-The pilot:
+The draft:
 
-- explains the methodology in a deliberate sequence;
-- connects ideas that currently sit in separate controlled documents;
-- tests one complete chapter in greater depth; and
-- gives the reader a simple way to review the result.
+- explains the complete method in a deliberate sequence;
+- connects approved v0.7 meaning with clearly identified proposed v0.8 additions;
+- gives the reader a practical route from feedback to a governed change; and
+- asks for an explicit approve, revise, defer or reject decision after review.
 
 It does not:
 
@@ -47,8 +49,8 @@ It does not:
 
 ## How to use it
 
-Start with **Read the methodology**, scan the six parts, then read **Journey first, operation next** as the complete sample chapter.
+Start with **Read the methodology**, scan the six parts, then read **Journey first, operation next** for the practical outside-in route.
 
 Do not judge only whether the writing sounds polished. Test whether it helps you understand what to do, why it matters, what decision remains human and where the method is incomplete.
 
-Finish with **Review the methodology pilot**. Your assessment becomes evidence for the first feedback loop; it does not automatically change the methodology or approve the publication.
+Finish with **Review the consolidated draft**. Your assessment becomes evidence; it does not automatically change the methodology or promote anything to Live.

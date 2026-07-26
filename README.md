@@ -8,7 +8,9 @@ This repository is the controlled source for the methodology, its principles, go
 
 > **Approved baseline:** v0.7 was approved by Jamie Peppard on 2026-07-24 for internal validation. It is not approved for external publication.
 >
-> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror and human-first publication model are approved for private internal validation. AI may publish committed proposed material beneath the controlled private Confluence Draft structure for review. A bounded Methodology Lab implementation is proposed; promotion to Live, migration, automatic interaction retrieval, scheduled publication and external publication remain unapproved.
+> **Current proposal:** [v0.8 consolidated methodology](methodology/operations-automated-v0.8-proposed.md) brings the remaining Human-AI Collaboration, accountability, manual-work, delivery-collaboration, capability-transfer and plain-language feedback into one Draft. It is not approved methodology.
+>
+> **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror and human-first publication model are approved for private internal validation. AI may publish committed proposed material beneath the controlled private Confluence Draft structure for review. Promotion to Live, migration, automatic interaction retrieval, scheduled publication and external publication remain unapproved.
 >
 > **Current validation:** v0.7 retains the v0.6 delivery guidance and adds an outside-in operating rule, a journey-to-operational-value-system sequence, adaptable method selection, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md).
 >
@@ -16,7 +18,7 @@ This repository is the controlled source for the methodology, its principles, go
 
 Start with the [numbered reader guide](guide/README.md) for the approved internal-validation reading order, operational coverage, use cases and known gaps.
 
-Use the [v0.6 methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the earlier concise view of the core components that v0.7 retains.
+Use the [current v0.7 methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the concise approved view. Use the [v0.8 assurance pack](proposals/v0.8-methodology-consolidation-assurance-pack.md) to review what the proposal changes and the exact decision required.
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 

@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-PART-5
 title: Part V – Become Ready for Automation, AI and Agents
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 
@@ -24,6 +24,22 @@ The evidence-led path moves through:
 - **Evolving:** outcomes and changed conditions continuously trigger review.
 
 Choose the lowest level of technical complexity that creates the required value. Retaining human delivery is a valid design decision where context, empathy, authority or difficult-to-reverse consequence matters.
+
+## Choose the work design deliberately
+
+| Choice | Use when | What must remain visible |
+|---|---|---|
+| Deliberately manual | Human contribution is central to value or accountability | Owner, capacity, information, control, recovery and improvement |
+| AI-assisted | Analysis or generation helps but judgement remains human | Evidence boundary, review criteria, correction and authority |
+| Rules-based automation | Work is understood, repeatable and bounded | Exceptions, monitoring, control owner, stop and rollback |
+| Bounded agent | A specific goal and operating environment justify multi-step action | Identity, least privilege, approvals, observability and recovery |
+| Not ready | Value, work, information, capability, authority or consequence is unclear | The evidence or capability needed before reconsideration |
+
+The existence of technical capability does not make delegation proportionate or permitted.
+
+## Transfer capability
+
+Readiness is not only a property of the technology. The receiving people must be able to operate, challenge, recognise drift, recover and improve the result without permanent dependence on the original delivery team.
 
 ## Next
 

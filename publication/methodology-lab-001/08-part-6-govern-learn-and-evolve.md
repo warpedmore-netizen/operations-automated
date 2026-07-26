@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-PART-6
 title: Part VI – Govern, Learn and Evolve
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 
@@ -28,6 +28,32 @@ Feedback, questions, operational outcomes, research and contradictions enter a g
 
 AI may organise evidence, draft analysis, challenge assumptions, prepare changes and run checks. It cannot treat feedback as truth, infer approval or acquire authority from technical capability.
 
+## Explain effects before action
+
+Before asking someone to save feedback, create a change review, authorise implementation, publish or accept consequence, state:
+
+- what the action will create or change;
+- what remains unchanged;
+- whether it is reversible;
+- what evidence will be retained; and
+- the next separate authority gate.
+
+Main answers should lead with the useful meaning, uncertainty, recommendation and next action. Source paths, hashes, statuses and implementation controls remain inspectable without dominating the reading experience.
+
+## Workbench-supported evolution
+
+The Workbench may:
+
+- capture and classify feedback;
+- retain its source and strongest reasonable interpretation;
+- separate answer correction, reusable context, methodology evidence and product evidence;
+- prepare a change review and implementation brief;
+- connect the reviewed Git branch and checks;
+- record the human release decision; and
+- publish a committed proposal beneath Confluence Draft.
+
+It cannot approve methodology meaning, accept risk, infer convergence or promote Draft content to Live.
+
 ## Next
 
-Use **Review the methodology pilot** to assess this reading experience and begin the first controlled feedback loop for both the method and the Workbench.
+Use **Review the consolidated draft** to assess the proposed meaning, reading experience and Workbench-supported release route.

@@ -2,9 +2,9 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.8
+version: 0.9
 owner: Jamie Peppard
-last_updated: 2026-07-25
+last_updated: 2026-07-26
 ---
 
 # Operations Automated Roadmap
@@ -20,6 +20,8 @@ Operations Automated should improve itself through the same evidence-led approac
 ## Current position
 
 Version 0.7 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-24; it is not approved for external publication.
+
+The proposed [v0.8 consolidated methodology](methodology/operations-automated-v0.8-proposed.md) now brings the unresolved Human-AI Collaboration and accountability questions into one reviewable Draft. The approved v0.7 meaning remains current until Jamie explicitly approves, revises, defers or rejects the proposal.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
@@ -52,11 +54,11 @@ The first founder-confirmed publication created 108 pages and the immediate comp
 
 The proposed Mobile Knowledge Workbench has now reached Jamie's Samsung phone through a tailnet-only Tailscale Serve route with Funnel disabled. The first real recording failed during transcription and exposed missing format controls, user feedback, retry and failure auditing. Workbench 1.1.2 prepares a recoverable voice route; a post-correction spoken challenge, denied-identity check, connection-governance decision and product release decision remain outstanding.
 
-The proposed Operate internal workbench now frames its distinctive value as a governed operational graph rather than a larger ticket register. Founder use exposed that the first draft still behaved as a passive attention register. The corrected proposal adds a governed action loop: every open item has a working next action, consequential transitions require explicit authority and rationale, direct status bypass is prevented and outcomes remain in activity history. Real-work action testing, calibration, independent-user validation, product approval, release and merge remain outstanding.
+The proposed Operate internal workbench now frames its distinctive value as a governed operational graph rather than a larger ticket register. Founder use exposed that the first draft still behaved as a passive attention register. The corrected proposal adds a governed action loop: every open item has a working next action, consequential transitions require explicit authority and rationale, direct status bypass is prevented and outcomes remain in activity history. The implementation has been reconciled into the consolidated Workbench source. Real-work action testing, calibration, independent-user validation, product approval and external release remain outstanding.
 
 A follow-on founder usability correction now reduces capture to one description, asks Oppa Mate to suggest the name and classifications, collapses optional detail, turns ordinary Approval into a labelled click and requires a real Decision outcome. Stronger typed confirmation remains for Risk acceptance. These are proposed product behaviours under private validation, not approval or release.
 
-Founder use then exposed a source-continuity failure: PR-backed work named the pull request without carrying a direct link or adequate review package, and Oppa Mate help left My Work without visibly retaining its origin. The proposed 1.4.2 correction puts the source, summary, exact decision and authority boundary into My Work, provides help inside the item and makes any full-conversation handoff visibly reversible. This is a product-delivery correction under private validation; approved methodology, product approval, merge and release remain unchanged.
+Founder use then exposed a source-continuity failure: PR-backed work named the pull request without carrying a direct link or adequate review package, and Oppa Mate help left My Work without visibly retaining its origin. The 1.4.3 correction puts the source, summary, exact decision and authority boundary into My Work, provides help inside the item and makes any full-conversation handoff visibly reversible. It is now part of the consolidated private-validation build. Approved methodology, product approval and external release remain unchanged.
 
 Founder clarification then separated four connected systems: the customer methodology, its internal development and challenge system, Connected Governance, and the standalone Incident Manager RPG. The proposed [connected system architecture](product/operations-automated-system-architecture.md) records their authority and feedback boundaries. The proposed [Connected Governance dogfood pilot](product/connected-governance-dogfood-pilot.md) is the first product test: use the governance service to create Operations Automated's role-based company-governance foundation and prepare it for the existing controlled Internal Draft publication route.
 

@@ -1,19 +1,21 @@
 ---
 id: OA-METHOD-010-DRAFT
 title: Human-AI Collaboration Method v0.3 proposed amendment
-status: proposed
+status: superseded
 version: 0.3-draft
 owner: Jamie Peppard
 date: 2026-07-24
+last_updated: 2026-07-26
 approval_required: true
 based_on: OA-METHOD-009 v0.2
+superseded_by: OA-METHOD-012-DRAFT v0.4-draft
 ---
 
 # Human-AI Collaboration Method v0.3 proposed amendment
 
 ## Status and scope
 
-This is proposed wording for review against the approved [Human-AI Collaboration Method v0.2](human-ai-collaboration.md). It does not amend the approved v0.6 methodology baseline.
+This proposal was consolidated into [Human-AI Collaboration Method v0.4 proposed amendment](human-ai-collaboration-v0.4-proposed.md) on 2026-07-26. It remains retained as proposal history and does not amend the approved v0.7 methodology baseline.
 
 The amendment addresses four connected questions:
 

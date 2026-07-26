@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-PART-2
 title: Part II – Start with the Journey
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 

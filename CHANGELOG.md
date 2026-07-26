@@ -1,5 +1,16 @@
 # Changelog
 
+## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed
+
+- Reconciled the approved v0.7 methodology, all open-PR branch heads, retained feedback, Workbench product increments, Connected Governance and unique pilot evidence into one controlled history.
+- Updated the concise approved synthesis so it accurately represents v0.7 without changing its approved meaning.
+- Proposed one v0.8 methodology covering deliberate manual work, AI responsibility, human accountability, meaningful review, early delivery collaboration, capability transfer and plain-language informed action.
+- Superseded the earlier Human-AI v0.3 proposal with a consolidated v0.4 proposal while retaining its history.
+- Updated the ten-page managed Confluence reading tree to a consolidated v0.8 Draft with stable page identities and controlled source maps.
+- Updated the Workbench publication journey to preview and publish the consolidated methodology Draft while keeping Live promotion separately founder-controlled.
+- Preserved PR #3's unique pilot evidence exactly and recorded the obsolete PR #8 implementation as superseded by the later Connected Governance branch.
+- Kept v0.7 as the current approved internal baseline; v0.8 meaning, Live publication, external release and customer deployment remain unapproved.
+
 ## Workbench 1.4.3 plain-language user journeys - proposed
 
 - Made the main Oppa Mate answer lead with plain-language meaning and the next action while moving source paths, status labels and control mechanics into one optional detail panel.

@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-PART-3
 title: Part III – Understand the Connected Operation
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 
@@ -17,6 +17,10 @@ Use the operational lenses proportionately. Select the views that could material
 The method distinguishes connected work types without forcing every organisation to use the same labels. A case may contain requests or incidents; repeated incidents may reveal a problem; a problem may expose a risk; a decision may accept, reduce or transfer that risk. The useful requirement is traceability between the work, consequence, decision, control and learning.
 
 Non-operational teams are part of the system where they enable, constrain or receive operational work. Risk, technology, finance, product, legal and people functions should help the operation make better decisions within proportionate boundaries. Their involvement becomes harmful when it obscures ownership, creates ceremonial work or moves risk rather than controlling it.
+
+For a material change, operational, product, development, security, support and relevant specialist expertise should meet before a preferred design hardens. Together they should test real work, affected-user experience, feasibility, maintainability, information boundaries, controls, support, recovery, capability gaps and technical debt.
+
+This collaboration does not make Operations Automated the governing authority for every specialist function. It creates explicit interfaces so each capability can contribute within its own authority.
 
 ## Next
 

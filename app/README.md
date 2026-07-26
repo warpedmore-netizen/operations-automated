@@ -2,7 +2,7 @@
 
 This is a private, local-first application prototype for applying and improving the Operations Automated methodology with AI-led, human-controlled governance.
 
-> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The Workbench 1.0.0 Methodology Lab implementation remains proposed. The Workbench is not deployed or approved for external use.
+> **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The later Workbench and methodology-publication increments remain proposed. The Workbench is not deployed or approved for external use.
 
 > **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
 
@@ -137,22 +137,22 @@ An implemented methodology release recorded through the Workbench creates a pend
 
 The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
 
-## Methodology Lab – Pilot 1
+## Consolidated methodology Draft
 
-The proposed Methodology Lab implements the first human-first reading pilot approved through PR #17 without changing the current controlled mirror.
+The managed Methodology Draft route began as the first human-first reading pilot approved through PR #17. It now carries the consolidated proposed v0.8 reading draft without changing the controlled mirror or Live methodology.
 
 The Lab is published beneath the existing Methodology **Draft** parent. AI may publish a committed, conflict-free Draft without requesting another founder confirmation:
 
 1. Open **Connections**.
-2. Select **Preview Methodology Lab**.
-3. Confirm that the plan contains only the ten proposed Lab pages in the private Methodology space.
-4. Check automatically that the Lab root resolves beneath the managed Draft parent and that no conflict exists.
+2. Select **Preview methodology draft**.
+3. Confirm that the plan contains only the ten proposed methodology pages in the private Methodology space.
+4. Check automatically that the reading root resolves beneath the managed Draft parent and that no conflict exists.
 5. Publish the Draft under the standing AI draft-publication authority.
 6. Record returned page identifiers and versions.
-7. Open the returned Lab pages and complete **Review the methodology pilot**.
+7. Open the returned pages and complete **Review the consolidated draft**.
 8. Retain the response through the existing feedback and challenge loop.
 
-The Lab manuscript is stored under `publication/methodology-lab-001`. Every page remains proposed, maps to approved controlled sources and states that Git remains authoritative.
+The managed manuscript is stored under `publication/methodology-lab-001` for backwards-compatible page identity. Every page remains proposed, maps to approved or recorded controlled sources and states that Git remains authoritative.
 
 The Lab preview and Draft write are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page, promote content to Live or approve its own synthesis.
 

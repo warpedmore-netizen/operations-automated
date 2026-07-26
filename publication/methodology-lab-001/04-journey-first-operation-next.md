@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-JOURNEY-CHAPTER
 title: Journey First, Operation Next
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 

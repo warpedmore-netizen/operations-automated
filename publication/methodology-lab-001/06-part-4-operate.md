@@ -2,7 +2,7 @@
 id: OA-METHODOLOGY-LAB-001-PART-4
 title: Part IV – Improve and Implement with OPERATE
 status: proposed
-version: 0.1
+version: 0.8
 owner: Jamie Peppard
 ---
 

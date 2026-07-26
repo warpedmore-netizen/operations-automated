@@ -1580,7 +1580,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
   const methodologyLab = publicationKind === "methodology-lab-pilot";
   const button = $(methodologyLab ? "#preview-methodology-lab" : "#preview-confluence-publication");
   button.disabled = true;
-  button.textContent = methodologyLab ? "Preparing isolated Lab preview…" : "Comparing repository and Confluence…";
+  button.textContent = methodologyLab ? "Preparing methodology Draft preview…" : "Comparing repository and Confluence…";
   try {
     const result = await request("/api/connections/confluence/publication-plan", {
       method: "POST",
@@ -1588,7 +1588,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
     });
     renderConfluencePublicationPlan(result.plan);
     toast(methodologyLab
-      ? "Methodology Lab Draft preview ready. No Live page was changed."
+      ? "Methodology Draft preview ready. No Live page was changed."
       : "Publication preview ready. No Confluence page was changed.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";
@@ -1596,7 +1596,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
     toast(error.message, true);
   } finally {
     button.disabled = false;
-    button.textContent = methodologyLab ? "Preview Methodology Lab" : "Preview documentation update";
+    button.textContent = methodologyLab ? "Preview methodology draft" : "Preview documentation update";
   }
 }
 
@@ -1631,7 +1631,7 @@ async function publishConfluenceDocumentation(event) {
     form.hidden = true;
     state.confluencePublicationPlan = null;
     toast(result.publicationKind === "methodology-lab-pilot"
-      ? "Reviewed Methodology Lab published for private evaluation."
+      ? "Consolidated methodology draft published for private review."
       : "Reviewed methodology documentation published to Confluence.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";

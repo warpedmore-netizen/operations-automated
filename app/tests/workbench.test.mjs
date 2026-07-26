@@ -87,14 +87,14 @@ test("git exclusions cover local secrets, databases, attachments and audio", () 
 
 test("the proposed collaboration method covers AI suitability, manual work and delivery capability without claiming approval", () => {
   const approved = readFileSync(resolve(import.meta.dirname, "..", "..", "methodology", "human-ai-collaboration.md"), "utf8");
-  const proposed = readFileSync(resolve(import.meta.dirname, "..", "..", "methodology", "human-ai-collaboration-v0.3-proposed.md"), "utf8");
+  const proposed = readFileSync(resolve(import.meta.dirname, "..", "..", "methodology", "human-ai-collaboration-v0.4-proposed.md"), "utf8");
   assert.match(approved, /status: approved/);
   assert.match(approved, /version: 0\.2/);
   assert.match(proposed, /status: proposed/);
   assert.match(proposed, /human-readable and AI-usable methodology/i);
   assert.match(proposed, /automation as a design choice, not the default outcome/i);
-  assert.match(proposed, /Product, operational and development collaboration/i);
+  assert.match(proposed, /Early delivery collaboration and capability transfer/i);
   assert.match(proposed, /Build capability while delivering change/i);
-  assert.match(proposed, /one primary question/i);
-  assert.match(proposed, /does not amend the approved v0\.6 methodology baseline/i);
+  assert.match(proposed, /Separate responsibility from accountability/i);
+  assert.match(proposed, /does not amend the approved v0\.7 methodology baseline/i);
 });

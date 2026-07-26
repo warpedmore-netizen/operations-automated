@@ -124,3 +124,9 @@ The first controlled Draft publication completed on 2026-07-25 from commit `1297
 The Workbench created ten Lab pages, changed none of the existing 108 managed pages, deleted nothing and returned a version-one receipt for every page. The immediate reconciliation reported all ten Lab pages unchanged and no conflict.
 
 The [Lab reading root](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+Lab+Pilot+1) is now ready for Jamie's human review. This publication is evidence about the delivery mechanism, not approval of the synthesis or proof of reader value.
+
+## Consolidated v0.8 Draft use
+
+On 2026-07-26 the existing managed ten-page tree was selected as the publication route for the consolidated proposed v0.8 methodology. Reusing its stable page keys lets the Workbench preview controlled updates and preserve page-version conflict protection instead of creating another disconnected methodology area.
+
+The product capability remains proposed. Updating the managed Draft records a reviewable reading copy; it does not approve v0.8, change the approved v0.7 baseline, promote a page to Live or authorise external publication.
