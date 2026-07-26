@@ -152,3 +152,22 @@ Methodology validity requires additional evidence: independent use, different bu
 - A successful technical publication does not approve the synthesis.
 - Founder review does not by itself establish external validity.
 - Live promotion, external publication, customer use, scheduled publication and automatic interaction retrieval remain unapproved.
+
+## End-to-end Draft publication evidence
+
+On 2026-07-26 the 20-chapter reader was published from commit `d60d014d91c4b8d1ede19dd96047ac305e174ae8` under the standing AI-managed Draft authority.
+
+The first attempt updated the reading root and then stopped after Confluence accepted **The Complete Method Map** but before its local receipt was stored. Two Workbench processes had been using the same local SQLite store. The older verified server was replaced, the exact-match recovery control was implemented and tested, and the clean committed Workbench produced a new conflict-free plan.
+
+Publication run `6f6c27f1-7a09-4899-8365-37adc7ab6cb3`:
+
+- created ten new managed Draft pages;
+- updated eight existing managed Draft pages;
+- reconciled the one exact interrupted receipt without rewriting the Confluence page;
+- retained one already unchanged page;
+- deleted no page; and
+- returned identifiers and versions for all 20 pages.
+
+The immediate second comparison returned all 20 pages unchanged and no conflict. The stable [end-to-end Draft reading root](https://operations-automated.atlassian.net/wiki/spaces/OAM/pages/754271/Operations+Automated+Methodology+End-to-End+Draft+v0.8) remains beneath the private Methodology Draft parent.
+
+This receipt proves the controlled delivery and recovery path for this publication. It does not approve v0.8 meaning, establish external validity or promote any page to Live.

@@ -9,6 +9,7 @@
 - Added practical activities, outputs, gates, failure tests, tailoring and specialist-authority boundaries throughout the reader.
 - Updated the assurance pack, Workbench publication copy and project memory for the depth revision.
 - Added idempotent Draft-publication recovery: after one remote version increment, the Workbench reconciles without rewriting only when the title, commit retained from a failed Draft run, combined source hash and normalised visible content match; any different remote change remains a conflict.
+- Published the end-to-end reader to the private Confluence Draft from commit `d60d014d91c4b8d1ede19dd96047ac305e174ae8`: 10 pages were created, eight updated, one interrupted receipt reconciled without another page write, one was already unchanged and none was deleted; the immediate comparison returned all 20 unchanged with no conflict.
 - Kept v0.7 as the approved internal baseline; v0.8 meaning, Live promotion, external publication and customer use remain unapproved.
 
 ## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed
