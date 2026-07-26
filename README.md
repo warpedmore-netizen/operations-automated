@@ -35,6 +35,7 @@ The [Operations Automated brand system](brand/README.md) is a draft, reusable id
 | [Evolution system](evolution/methodology-evolution-system.md) | The controlled loop that turns evidence and feedback into methodology releases | Approved for internal validation |
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 | [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
+| [Ideas Space](ideas/README.md) | Retained and connected ideas that are reconsidered when relevant work begins | Proposed |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 
@@ -111,3 +112,9 @@ The proposed [Connected Governance business dogfood pilot](product/connected-gov
 - Confidential employer, client or third-party information, data and proprietary artefacts do not belong in this repository.
 
 See [CHARTER.md](CHARTER.md), [GOVERNANCE.md](GOVERNANCE.md) and [CHANGELOG.md](CHANGELOG.md).
+
+## Ideas Space
+
+The proposed [Operations Automated Ideas Space](ideas/README.md) captures ideas without turning them into commitments. It links each idea to relevant work, retains review history and prompts contextual reassessment during discovery, research, prioritisation, scoping, design, build, review and roadmap planning.
+
+The first record is the [Incident Management Simulation Game](ideas/incident-management-simulation-game.md), retained as a raw idea that needs exploration. Its capture does not add it to the approved product scope or roadmap.

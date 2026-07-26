@@ -200,6 +200,15 @@ All material changes to Operations Automated will be recorded here.
 - Jamie Peppard approved the human-first publication model and all three bounded pilots for private internal implementation on 2026-07-25.
 - Jamie Peppard explicitly authorised merge of PR #17 on 2026-07-25; it was merged as commit `60c036562295d1f55f21d69ac1908742c209c1ee`.
 - Live Confluence publication, migration of the current pages and automatic interaction retrieval remain separately controlled.
+## Ideas Space 0.1 - proposed
+
+- Added a structured Ideas Space that preserves ideas without making them commitments.
+- Separated authoritative artefact status from the working lifecycle of an idea.
+- Added capture, relationship, resurfacing and contextual-review guidance.
+- Added a reusable idea-record template and a lightweight local related-idea finder.
+- Added planning instructions to review related ideas during discovery through roadmap planning.
+- Captured the Incident Management Simulation Game as the first raw idea, with its evidence, assumptions, relationships and explicit authority boundary.
+- No product scope, build, external connection, spending, publication or autonomous approval is authorised by this proposal.
 
 ## Workbench 0.9.0 - approved for private internal validation
 
