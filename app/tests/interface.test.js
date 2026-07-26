@@ -171,7 +171,7 @@ test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Operational activation does not by itself record governance approval/i);
   assert.match(html, /Do not use a public tunnel or router port-forward/i);
   assert.match(html, /organised first into Live, Draft and Archived/i);
-  assert.match(html, /Consolidated methodology draft v0\.8/i);
+  assert.match(html, /End-to-end methodology Draft v0\.8/i);
   assert.match(html, /does not alter Live content/i);
   assert.match(html, /Type the confirmation shown above/i);
   assert.match(appSource, /Use reviewed Git copy/i);

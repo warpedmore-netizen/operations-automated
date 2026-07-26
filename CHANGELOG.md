@@ -1,5 +1,17 @@
 # Changelog
 
+## Methodology v0.8 end-to-end depth revision and Workbench 1.5.1 - proposed
+
+- Recorded Jamie's finding that the 3,946-word managed reader was an outline rather than a sufficiently detailed methodology; eight of ten pages contained fewer than 400 words.
+- Expanded the central proposed v0.8 methodology into a practical end-to-end business route from mandate and journeys through operating-model design, implementation, activation, normal operation and evolution.
+- Expanded the managed reader from 10 to 20 chapters and approximately 14,050 words while preserving all original managed page keys and adding no deletion behaviour.
+- Added detailed chapters for people, work and capacity, governance and resilience, information and measurement, technology and suppliers, cross-functional interfaces, target design, implementation, Human–AI collaboration and proportionate tools.
+- Added practical activities, outputs, gates, failure tests, tailoring and specialist-authority boundaries throughout the reader.
+- Updated the assurance pack, Workbench publication copy and project memory for the depth revision.
+- Added idempotent Draft-publication recovery: after one remote version increment, the Workbench reconciles without rewriting only when the title, commit retained from a failed Draft run, combined source hash and normalised visible content match; any different remote change remains a conflict.
+- Published the end-to-end reader to the private Confluence Draft from commit `d60d014d91c4b8d1ede19dd96047ac305e174ae8`: 10 pages were created, eight updated, one interrupted receipt reconciled without another page write, one was already unchanged and none was deleted; the immediate comparison returned all 20 unchanged with no conflict.
+- Kept v0.7 as the approved internal baseline; v0.8 meaning, Live promotion, external publication and customer use remain unapproved.
+
 ## Methodology v0.8 consolidated Draft and Workbench 1.5.0 - proposed
 
 - Reconciled the approved v0.7 methodology, all open-PR branch heads, retained feedback, Workbench product increments, Connected Governance and unique pilot evidence into one controlled history.

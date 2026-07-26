@@ -137,24 +137,26 @@ An implemented methodology release recorded through the Workbench creates a pend
 
 The publication workflow cannot delete, archive or purge a page. It cannot edit an unmanaged page, create methodology approval, publish externally or act while the Workbench is running from a development branch.
 
-## Consolidated methodology Draft
+## End-to-end methodology Draft
 
-The managed Methodology Draft route began as the first human-first reading pilot approved through PR #17. It now carries the consolidated proposed v0.8 reading draft without changing the controlled mirror or Live methodology.
+The managed Methodology Draft route began as the first human-first reading pilot approved through PR #17. Its initial ten-page set proved publication controls but was too light for practical methodology use. It now carries the 20-chapter proposed v0.8 end-to-end reader without changing the controlled mirror or Live methodology.
 
 The Lab is published beneath the existing Methodology **Draft** parent. AI may publish a committed, conflict-free Draft without requesting another founder confirmation:
 
 1. Open **Connections**.
-2. Select **Preview methodology draft**.
-3. Confirm that the plan contains only the ten proposed methodology pages in the private Methodology space.
+2. Select **Preview end-to-end methodology**.
+3. Confirm that the plan contains only the 20 proposed methodology chapters in the private Methodology space.
 4. Check automatically that the reading root resolves beneath the managed Draft parent and that no conflict exists.
 5. Publish the Draft under the standing AI draft-publication authority.
 6. Record returned page identifiers and versions.
-7. Open the returned pages and complete **Review the consolidated draft**.
+7. Open the returned pages and complete **Review and decide on the end-to-end Draft**.
 8. Retain the response through the existing feedback and challenge loop.
 
 The managed manuscript is stored under `publication/methodology-lab-001` for backwards-compatible page identity. Every page remains proposed, maps to approved or recorded controlled sources and states that Git remains authoritative.
 
 The Lab preview and Draft write are separate from the lifecycle-mirror plan. It cannot update a controlled-mirror item, clear a pending methodology-release publication, delete a page, promote content to Live or approve its own synthesis.
+
+If the local Workbench stops after Confluence has accepted a page but before its receipt is stored, the next preview checks the remote Draft. It may reconcile the receipt without another remote write only after one version increment and when the title, source commit retained from the failed Draft run, combined source hash and normalised visible content match the current plan. Any other version difference remains a conflict and cannot be overwritten silently.
 
 ## Implemented MVP boundary
 

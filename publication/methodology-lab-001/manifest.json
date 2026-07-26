@@ -1,64 +1,66 @@
 {
   "id": "OA-METHODOLOGY-LAB-001",
-  "title": "Operations Automated Methodology – Consolidated Draft v0.8",
+  "title": "Operations Automated Methodology – End-to-End Draft v0.8",
   "status": "proposed-pilot",
-  "version": "0.8",
+  "version": "0.8-draft.2",
   "pages": [
     {
       "key": "hub",
       "file": "00-start-here.md",
-      "title": "Operations Automated Methodology – Consolidated Draft v0.8",
+      "title": "Operations Automated Methodology – End-to-End Draft v0.8",
       "parentKey": null,
       "sources": [
         "methodology/current-methodology-synthesis.md",
         "methodology/operations-automated-overview.md",
-        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+        "feedback/2026-07-26-methodology-depth-and-end-to-end-business-application.md"
       ]
     },
     {
       "key": "read",
       "file": "01-read-the-methodology.md",
-      "title": "Read the methodology",
+      "title": "The Complete Method Map",
       "parentKey": "hub",
       "sources": [
         "methodology/current-methodology-synthesis.md",
         "methodology/operations-automated-overview.md",
-        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+        "methodology/proportionate-application-and-delivery-modes.md",
+        "feedback/2026-07-26-methodology-depth-and-end-to-end-business-application.md"
       ]
     },
     {
       "key": "part-1",
       "file": "02-part-1-purpose-value-and-human-boundary.md",
-      "title": "Part I – Purpose, value, responsibility and accountability",
+      "title": "Foundations – Purpose, Value, Principles and Accountability",
       "parentKey": "read",
       "sources": [
         "methodology/operations-automated-overview.md",
         "principles/user-defined-value.md",
         "principles/human-led-automation.md",
-        "methodology/human-ai-collaboration.md",
-        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+        "principles/learning-through-failure.md",
+        "methodology/human-ai-collaboration.md"
       ]
     },
     {
       "key": "part-2",
       "file": "03-part-2-journey-first.md",
-      "title": "Part II – Start with the journey",
+      "title": "Business Context, Strategy and Outcomes",
       "parentKey": "read",
       "sources": [
-        "methodology/operational-lenses.md",
-        "methodology/connected-work-risk-and-control.md",
+        "methodology/operations-automated-overview.md",
         "methodology/operational-coverage-model.md",
-        "methodology/cross-functional-interfaces.md"
+        "methodology/operational-lenses.md",
+        "principles/user-defined-value.md"
       ]
     },
     {
       "key": "journey-chapter",
       "file": "04-journey-first-operation-next.md",
-      "title": "Chapter – Journey first, operation next",
+      "title": "Journey, Demand and the Operational Value System",
       "parentKey": "part-2",
       "sources": [
         "methodology/operational-lenses.md",
         "methodology/connected-work-risk-and-control.md",
+        "methodology/operational-coverage-model.md",
         "methodology/output-contract.md",
         "principles/user-defined-value.md"
       ]
@@ -66,54 +68,171 @@
     {
       "key": "part-3",
       "file": "05-part-3-connected-operation.md",
-      "title": "Part III – Understand the connected operation",
+      "title": "The Connected Operating Model and Capability Coverage",
       "parentKey": "read",
       "sources": [
         "methodology/operational-lenses.md",
-        "methodology/connected-work-risk-and-control.md"
+        "methodology/operational-coverage-model.md",
+        "methodology/connected-work-risk-and-control.md",
+        "methodology/cross-functional-interfaces.md"
       ]
     },
     {
-      "key": "part-4",
-      "file": "06-part-4-operate.md",
-      "title": "Part IV – Improve and implement with OPERATE",
-      "parentKey": "read",
+      "key": "people",
+      "file": "05a-people-organisation-capability-and-culture.md",
+      "title": "People, Organisation, Capability and Culture",
+      "parentKey": "part-3",
       "sources": [
-        "methodology/operate-overview.md",
-        "methodology/output-contract.md"
+        "methodology/operational-coverage-model.md",
+        "methodology/human-ai-collaboration.md",
+        "methodology/activation-and-first-use.md"
+      ]
+    },
+    {
+      "key": "work-flow",
+      "file": "05b-work-process-flow-and-capacity.md",
+      "title": "Work, Process, Flow and Capacity",
+      "parentKey": "part-3",
+      "sources": [
+        "methodology/operational-coverage-model.md",
+        "methodology/connected-work-risk-and-control.md",
+        "methodology/operate-overview.md"
+      ]
+    },
+    {
+      "key": "governance-risk",
+      "file": "05c-governance-authority-risk-control-and-resilience.md",
+      "title": "Governance, Authority, Risk, Control and Resilience",
+      "parentKey": "part-3",
+      "sources": [
+        "methodology/connected-work-risk-and-control.md",
+        "principles/human-led-automation.md",
+        "evolution/methodology-evolution-system.md"
+      ]
+    },
+    {
+      "key": "information",
+      "file": "05d-information-data-knowledge-and-measurement.md",
+      "title": "Information, Data, Knowledge and Measurement",
+      "parentKey": "part-3",
+      "sources": [
+        "methodology/operational-coverage-model.md",
+        "methodology/output-contract.md",
+        "methodology/readiness-path.md"
+      ]
+    },
+    {
+      "key": "technology",
+      "file": "05e-technology-assets-architecture-and-suppliers.md",
+      "title": "Technology, Assets, Architecture and Suppliers",
+      "parentKey": "part-3",
+      "sources": [
+        "methodology/operational-coverage-model.md",
+        "methodology/readiness-path.md",
+        "principles/human-led-automation.md",
+        "product/delivery-system.md"
+      ]
+    },
+    {
+      "key": "interfaces",
+      "file": "05f-cross-functional-interfaces.md",
+      "title": "Cross-Functional Interfaces",
+      "parentKey": "part-3",
+      "sources": [
+        "methodology/cross-functional-interfaces.md",
+        "methodology/connected-work-risk-and-control.md"
       ]
     },
     {
       "key": "part-5",
       "file": "07-part-5-readiness.md",
-      "title": "Part V – Become ready for automation, AI and agents",
+      "title": "Readiness and Deliberate Work-Design Choices",
       "parentKey": "read",
       "sources": [
         "methodology/readiness-path.md",
-        "principles/human-led-automation.md"
+        "principles/human-led-automation.md",
+        "methodology/human-ai-collaboration.md",
+        "methodology/actionable-decision-aids.md"
+      ]
+    },
+    {
+      "key": "part-4",
+      "file": "06-part-4-operate.md",
+      "title": "OPERATE – The Full Improvement and Implementation Cycle",
+      "parentKey": "read",
+      "sources": [
+        "methodology/operate-overview.md",
+        "methodology/output-contract.md",
+        "principles/learning-through-failure.md"
+      ]
+    },
+    {
+      "key": "target-design",
+      "file": "06a-target-design-prioritisation-business-case-and-roadmap.md",
+      "title": "Target Design, Prioritisation, Business Case and Roadmap",
+      "parentKey": "part-4",
+      "sources": [
+        "methodology/operate-overview.md",
+        "methodology/actionable-decision-aids.md",
+        "methodology/proportionate-application-and-delivery-modes.md",
+        "methodology/connected-work-risk-and-control.md"
+      ]
+    },
+    {
+      "key": "implementation",
+      "file": "06b-implementation-change-release-activation-and-capability-transfer.md",
+      "title": "Implementation, Change, Release, Activation and Capability Transfer",
+      "parentKey": "part-4",
+      "sources": [
+        "methodology/activation-and-first-use.md",
+        "product/delivery-system.md",
+        "methodology/operate-overview.md",
+        "methodology/output-contract.md"
       ]
     },
     {
       "key": "part-6",
       "file": "08-part-6-govern-learn-and-evolve.md",
-      "title": "Part VI – Govern, learn and evolve",
+      "title": "Run, Govern, Measure and Improve",
       "parentKey": "read",
       "sources": [
         "evolution/methodology-evolution-system.md",
-        "methodology/human-ai-collaboration.md",
+        "methodology/connected-work-risk-and-control.md",
         "principles/learning-through-failure.md",
-        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+        "methodology/output-contract.md"
+      ]
+    },
+    {
+      "key": "human-ai",
+      "file": "08a-human-ai-collaboration.md",
+      "title": "Human–AI Collaboration",
+      "parentKey": "part-6",
+      "sources": [
+        "methodology/human-ai-collaboration.md",
+        "principles/human-led-automation.md",
+        "feedback/2026-07-26-methodology-depth-and-end-to-end-business-application.md"
+      ]
+    },
+    {
+      "key": "routes-toolkit",
+      "file": "08b-proportionate-routes-toolkit-and-output-contract.md",
+      "title": "Proportionate Routes, Toolkit and Output Contract",
+      "parentKey": "read",
+      "sources": [
+        "methodology/proportionate-application-and-delivery-modes.md",
+        "methodology/actionable-decision-aids.md",
+        "methodology/output-contract.md"
       ]
     },
     {
       "key": "review",
       "file": "09-review-the-pilot.md",
-      "title": "Review the consolidated draft",
+      "title": "Review and Decide on the End-to-End Draft",
       "parentKey": "hub",
       "sources": [
-        "methodology/human-ai-collaboration.md",
         "evolution/methodology-evolution-system.md",
-        "feedback/2026-07-26-methodology-consolidation-ai-accountability-and-workbench-release.md"
+        "methodology/human-ai-collaboration.md",
+        "feedback/2026-07-26-methodology-depth-and-end-to-end-business-application.md"
       ]
     }
   ]

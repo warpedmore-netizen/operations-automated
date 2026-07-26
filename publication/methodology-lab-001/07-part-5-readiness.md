@@ -1,46 +1,97 @@
 ---
-id: OA-METHODOLOGY-LAB-001-PART-5
-title: Part V – Become Ready for Automation, AI and Agents
+id: OA-METHODOLOGY-LAB-001-READINESS
+title: Readiness and Deliberate Work-Design Choices
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Part V – Become ready for automation, AI and agents
+# Readiness and deliberate work-design choices
 
-## What this part establishes
+## Readiness is a profile, not a race
 
-Readiness is a profile, not a maturity race or one unexplained score. An operation may be ready for conventional automation in one work type while another still needs experienced human judgement.
+Readiness asks whether a particular work type and operating context can support a proposed change responsibly. It is not one maturity score and it does not assume greater autonomy is the desired end state.
 
-The evidence-led path moves through:
+Assess work types separately. A team may be ready to automate a stable calculation, use AI to assist document analysis, and deliberately retain human judgement for an exceptional decision.
 
-- **Understandable:** purpose, value, real work and ownership can be explained.
-- **Controlled:** normal, exceptional and failed work can be handled safely.
-- **Measurable:** outcomes, flow, quality and unintended effects can be observed.
-- **Improvable:** the operation can implement, test and retain change.
-- **Automation-ready:** stable repeatable work and rules can be delegated to conventional automation.
-- **AI-assist ready:** suitable language, prediction or synthesis work can be supported within an evaluation and human-control model.
-- **Agent-ready:** a bounded goal, tools, permissions, actions, monitoring, stop conditions and recovery are explicit.
-- **Evolving:** outcomes and changed conditions continuously trigger review.
+## Nine readiness dimensions
 
-Choose the lowest level of technical complexity that creates the required value. Retaining human delivery is a valid design decision where context, empathy, authority or difficult-to-reverse consequence matters.
+### Purpose and value
 
-## Choose the work design deliberately
+Is the outcome, beneficiary and minimum acceptable result clear? Is there evidence that changing the work creates justified value rather than technology activity?
 
-| Choice | Use when | What must remain visible |
-|---|---|---|
-| Deliberately manual | Human contribution is central to value or accountability | Owner, capacity, information, control, recovery and improvement |
-| AI-assisted | Analysis or generation helps but judgement remains human | Evidence boundary, review criteria, correction and authority |
-| Rules-based automation | Work is understood, repeatable and bounded | Exceptions, monitoring, control owner, stop and rollback |
-| Bounded agent | A specific goal and operating environment justify multi-step action | Identity, least privilege, approvals, observability and recovery |
-| Not ready | Value, work, information, capability, authority or consequence is unclear | The evidence or capability needed before reconsideration |
+### Work clarity and stability
 
-The existence of technical capability does not make delegation proportionate or permitted.
+Are the trigger, inputs, decisions, rules, variation, exceptions, completion and recovery understood? Is the work stable enough to encode, or should redesign come first?
 
-## Transfer capability
+### Ownership, authority and accountability
 
-Readiness is not only a property of the technology. The receiving people must be able to operate, challenge, recognise drift, recover and improve the result without permanent dependence on the original delivery team.
+Is there an operational owner? Are permission, review, stop, release and risk decisions explicit? Does an authorised human or organisation remain accountable for consequential outcomes?
 
-## Next
+### People and capability
 
-Technology changes work and risk over time. Continue to governance, learning and controlled evolution.
+Do operators and reviewers have capacity, competence, support and realistic control? Is tacit knowledge understood? Can the organisation maintain and improve the arrangement?
+
+### Information and permitted use
+
+Are required information, definitions, provenance, quality, access, privacy, security, records and correction routes fit for the consequence?
+
+### Control and assurance
+
+Are obligations, exposure, controls, human review, monitoring and evidence defined? Can the outcome be challenged, appealed or corrected?
+
+### Technology and integration
+
+Are systems, interfaces, performance, access, support, lifecycle and supplier dependencies fit? Is the design observable rather than opaque in operation?
+
+### Exception, resilience and recovery
+
+Can unusual inputs, dependency failure, error, drift and misuse be detected? Are degraded modes, stop, rollback, recovery and escalation practical?
+
+### Delivery, adoption and evidence
+
+Can the change be implemented, tested, activated and supported? Are value and risk claims testable? Is there capacity for transition and learning?
+
+## Make the work-design decision
+
+### Deliberately manual
+
+Choose this when human judgement, empathy, physical presence, tacit knowledge or accountable discretion creates value, or when another arrangement is not justified. Define owner, capacity, competence, information, controls, continuity and improvement.
+
+### AI-assisted
+
+Choose this when analysis or generation can help and meaningful contextual or consequential judgement remains human. Define evidence boundaries, permitted data, review criteria, correction, monitoring and authority.
+
+### Rules-based automation
+
+Choose this for understood, repeatable, bounded work with reliable inputs and rules. Define rule ownership, exceptions, monitoring, change control, stop and rollback.
+
+### Bounded agent
+
+Choose this only when a defined goal and environment justify multi-step action. Define identity, least privilege, permitted and prohibited actions, approval points, spend and time limits, observability, failure containment, recovery and accountability.
+
+### Not ready
+
+Choose this when material uncertainty in work, information, capability, authority, control or recovery makes intervention unsafe or unlikely to create value. “Not ready” must lead to a specific learning, redesign, stabilisation or capability action—not indefinite avoidance.
+
+## Use critical weaknesses, not averages
+
+A high overall profile cannot compensate for missing authority, unlawful data use, absent recovery or an unintelligible consequential decision. State strengths and blocking weaknesses by work type. Use descriptive evidence rather than an unsupported numerical maturity score.
+
+## Readiness output
+
+Produce:
+
+- work type and proposed arrangement;
+- evidence by readiness dimension;
+- strengths, limitations and blockers;
+- affected stakeholders and specialist decisions;
+- chosen manual, assistance, automation, agent or not-ready position;
+- minimum controls and recovery;
+- actions to close material gaps;
+- decision owner and review trigger; and
+- assumptions that testing must resolve.
+
+## Gate
+
+Proceed only to the next bounded commitment. Readiness for a prototype is not readiness for live consequential operation. Reassess when work, demand, information, technology, obligations or consequence changes.

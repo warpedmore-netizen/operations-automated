@@ -1,55 +1,83 @@
 ---
 id: OA-METHODOLOGY-LAB-001-REVIEW
-title: Review the Consolidated Draft
+title: Review and Decide on the End-to-End Draft
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Review the consolidated draft
+# Review and decide on the end-to-end Draft
 
-## What to assess
+## What is being reviewed
 
-Review the result as a problem solver and intended reader, not as a developer. The approved baseline remains v0.7 while you assess the v0.8 proposal.
+This review concerns the proposed v0.8 methodology meaning and its expanded 20-chapter reader form. The approved internal baseline remains v0.7.
 
-Answer these five questions in ordinary language:
+The revision responds to the finding that the previous 3,946-word reading set was an outline rather than a sufficiently complete end-to-end methodology. The new structure adds practical depth across context, journeys, operating-model design, people, work, governance, information, technology, interfaces, readiness, OPERATE, target design, implementation, activation, operation, Human–AI collaboration and proportionate tools.
 
-1. **Orientation:** Within 30 seconds, could you tell what Operations Automated is, who it is for and where to begin?
-2. **Understanding:** After reading the six-part route, could you explain how the complete methodology fits together?
-3. **Action:** Could you choose a proportionate route, distinguish manual work from justified delegation and identify the next useful action?
-4. **Trust:** Could you distinguish AI responsibility, human authority and accountability, and tell what remains proposed?
-5. **Value:** What should be kept, removed, simplified or developed before v0.8 is approved?
+The revision remains a synthesis from the approved internal methodology and recorded founder feedback. It is not yet independently validated and does not replace specialist professional methods.
 
-Also record any:
+## Review for use, not polish
 
-- missing operational facet or cross-team relationship;
-- statement that changes or overstates the approved meaning;
-- confusing term, sequence or page title;
-- example that feels unrealistic or insufficient;
-- point where more depth or a practical tool is needed; or
-- publication, navigation or Workbench failure.
+Choose at least one real but non-confidential situation. Test whether you can:
 
-## How the feedback is governed
+1. define the outcome, boundary, value and authority;
+2. follow a primary journey into demand and operational work;
+3. build a connected view without mapping everything;
+4. distinguish evidence, judgement, inference and assumptions;
+5. identify material people, work, governance, information, technology and supplier questions;
+6. decide readiness by work type;
+7. generate and compare genuinely different target options;
+8. form a proportionate case and roadmap;
+9. implement, test, release and activate through OPERATE;
+10. transfer capability and design recovery;
+11. establish a useful operating and improvement rhythm; and
+12. identify the exact human and specialist decisions.
 
-Your review becomes evidence. The Workbench should separate:
+Note where the method enabled action and where you still had to invent a missing step, definition, example or tool.
 
-- feedback about methodology meaning;
-- feedback about explanation or reading order;
-- product and publication behaviour;
-- missing evidence or a request for deeper validation; and
-- no methodology change.
+## Apply boundary and failure tests
 
-AI should reconstruct the strongest reasonable meaning, test it proportionately and recommend a disposition. A material change then follows the controlled branch, assurance, approval and merge process.
+Ask:
 
-Nothing changes merely because a comment exists, sounds confident or appears repeatedly.
+- Does the outside-in route still work when the primary beneficiary is not a paying customer?
+- Can a small team use the method without producing unnecessary documents?
+- Can an enterprise use it without losing cross-functional authority and assurance?
+- Does it support a deliberately manual design as credibly as an automated one?
+- Can a specialist function change or reject the operational recommendation?
+- Does the method reveal displaced cost, effort, delay, risk or exclusion?
+- Can a reviewer understand and stop a consequential AI-supported action?
+- Does the release route prove use and recovery rather than deployment alone?
+- Can the receiving operation improve without permanent delivery-team dependence?
+- Is a no-change or stop decision treated as a legitimate outcome?
 
-## Decision after review
+## Classify feedback
 
-Jamie Peppard should explicitly choose one:
+Separate the signal so it receives the right response:
 
-1. **Approve v0.8 for internal validation**
-2. **Revise the proposal**
-3. **Defer pending named evidence**
-4. **Reject and retain v0.7**
+| Signal | Meaning | Likely disposition |
+|---|---|---|
+| Methodology meaning | A principle, sequence, boundary or required decision is wrong or missing | Clarify or propose governed methodology change |
+| Application depth | The meaning is plausible but does not enable the work | Expand activity, output, gate, example or tool |
+| Explanation | The method is correct but difficult to understand | Rewrite or restructure the reader layer |
+| Proportionality | The route creates avoidable burden or insufficient assurance | Change tailoring or escalation guidance |
+| Specialist boundary | The method overclaims or misses an authority/interface | Correct the boundary and obtain specialist review |
+| Product behaviour | Workbench preview, publication, links or feedback handling fails | Product change |
+| Evidence gap | The claim needs a case, independent reader or contrary test | Accumulate evidence or run a bounded pilot |
+| No change | The point is already adequately covered | Retain reasoning and close unless new evidence appears |
 
-Git merge and publication beneath Draft are delivery actions. They do not count as approval of methodology meaning or promotion to Live.
+## Decision standard
+
+Approval should mean the core method is coherent and complete enough for its stated **internal validation** scope, not that every practice guide is finished or that external validity has been proven. Conditions, gaps and later validation should remain visible.
+
+Positive tone, technical readiness, a Git merge, Confluence Draft publication or continued discussion does not count as approval.
+
+## Exact decision required
+
+Jamie Peppard may choose:
+
+1. **Approve v0.8 for internal validation** — make the proposed meaning the next controlled baseline, with gaps and validation work retained.
+2. **Revise** — identify what is wrong, missing, impractical or inconsistent and the affected context.
+3. **Defer** — retain the Draft and state the evidence, specialist input or case needed.
+4. **Reject** — retain the reasoning and continue with v0.7.
+
+Until that explicit decision, this 20-chapter manual remains a private proposed Draft.

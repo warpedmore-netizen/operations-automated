@@ -1,146 +1,121 @@
 ---
-id: OA-METHODOLOGY-LAB-001-JOURNEY-CHAPTER
-title: Journey First, Operation Next
+id: OA-METHODOLOGY-LAB-001-JOURNEY
+title: Journey, Demand and the Operational Value System
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Journey first, operation next
+# Journey, demand and the operational value system
 
-## What you will be able to do
+## Start where value is experienced
 
-This chapter provides a practical route from a customer, service user or stakeholder need to a bounded operational improvement. Use it when the problem is described as a poor experience, slow service, repeated complaint, control failure, avoidable demand or unclear hand-off.
+Begin with the primary customer, service user, employee, citizen, partner or other beneficiary journey. The purpose is to understand the need and experience that give the operation meaning before internal structure dominates the analysis.
 
-The same reasoning applies when the “customer” is an internal colleague, another team, a supplier or a person completing their own recurring work.
+Select one primary journey for the question. Record other materially affected journeys, but do not merge them into a generic average that represents nobody.
 
-## 1. Define the intended outcome
+## Frame the journey
 
-Write one plain sentence:
+Establish:
 
-> When this journey works, **who** can achieve **what outcome**, within **which minimum conditions**?
+- the person or group and their relevant context;
+- the need, event or condition that initiates the journey;
+- what they are trying to achieve rather than the channel they use;
+- the expected and minimum acceptable outcome;
+- important access, fairness, trust, safety or vulnerability considerations;
+- the point at which the journey is genuinely complete; and
+- what happens when it fails, reverses or requires recovery.
 
-Then name the forms of value that matter. These may include accuracy, safety, accessibility, confidence, timeliness, control, cost or reduced effort. Rank only where a real trade-off exists.
+Use recorded evidence where available: observation, service records, complaints, enquiries, operational data, research, interviews and direct feedback. Do not treat a confident internal description as user evidence.
 
-Record who can decide when priorities conflict. The loudest stakeholder, the system owner and the person doing the work may not hold the relevant authority.
+## Map experience over time
 
-## 2. Walk the real journey
+Show the significant stages from the user's perspective. At each stage consider:
 
-Begin at the point where the need arises, not where the organisation first records it.
+- intended progress and evidence of value;
+- action, effort and information required from the user;
+- waiting, uncertainty and repeated contact;
+- decisions made about or with the user;
+- hand-offs between channels, teams or organisations;
+- exclusions, accessibility barriers and unequal effects;
+- failure, complaint, appeal, cancellation or recovery; and
+- emotion only where it is evidenced or directly reported.
 
-Capture:
+The map should reveal where the operation creates value, consumes user effort, transfers risk or generates avoidable demand. It need not be decorative; a table or sequence can be enough.
 
-- the trigger and the expected outcome;
-- each interaction, decision and hand-off visible to the person;
-- information requested, repeated or missing;
-- waiting, rework, abandonment and escalation;
-- normal, exceptional and recovery routes; and
-- the final outcome and any later consequence.
+## Understand demand
 
-Use recorded evidence where it exists, but compare it with lived experience. A documented process can be internally consistent while the real journey depends on workarounds or hidden knowledge.
+Demand is not simply volume. Segment it in ways that change operational design:
 
-## 3. Locate the material moment
+- **value demand:** legitimate need the operation exists to serve;
+- **failure demand:** avoidable contact or work caused by failure to act or act correctly;
+- **planned and predictable work:** known obligations, schedules or lifecycle events;
+- **unplanned and interrupt work:** incidents, exceptions and urgent changes;
+- **standard and exceptional work:** cases that follow a stable route and those needing judgement or specialist handling;
+- **seasonal, event-driven and structural variation:** different causes require different capacity responses; and
+- **latent or excluded demand:** need that does not enter the current channel because access fails or users give up.
 
-Do not attempt to redesign the entire journey at once. Identify the point most connected to the desired value or minimum outcome.
+Use ranges and patterns where data is incomplete. A precise average can hide peaks, tails and exception effort.
 
-Ask:
+## Define value and minimum outcomes
 
-- Where is the greatest avoidable harm, effort, delay or uncertainty?
-- Which point creates repeat demand or failure elsewhere?
-- Which improvement could create useful learning without unacceptable consequence?
-- Are different work types being treated as though they are the same?
+Value should be described in the user's terms and reconciled with organisational sustainability and obligations. Useful statements answer:
 
-Segmentation matters. A standard request, urgent incident, complex complaint and high-risk exception may share an entry channel but need different evidence, authority and treatment.
+- what outcome should be different;
+- for whom;
+- by when or under what condition;
+- what minimum remains acceptable;
+- what evidence would demonstrate it; and
+- which trade-offs require authority.
 
-## 4. Trace the moment into the operation
+Do not reduce value to speed or cost. Quality, confidence, safety, fairness, continuity, control, learning and future capability may be material. Do not claim every preference is an obligation; distinguish desired experience from mandatory outcome.
 
-Follow the selected moment behind the visible journey. Examine the smallest relevant set of operational lenses:
+## Find the first operational event
 
-- **People and experience:** capability, workload, judgement, communication and accessibility.
-- **Demand and work types:** source, volume, variation, classification and preventable demand.
-- **Flow and dependencies:** queues, hand-offs, rework, upstream causes and downstream effects.
-- **Ownership and decisions:** outcome ownership, local responsibility, rules, discretion and escalation.
-- **Risk, controls and resilience:** possible harm, effective controls, failure signals, fallback and recovery.
-- **Information and evidence:** inputs, quality, provenance, definitions, access and measures.
-- **Technology and delegation:** current systems, suitable automation, AI assistance and credible manual alternatives.
-- **Performance and learning:** baseline, success measures, unintended effects and review triggers.
+Move into the operation at the first event required to respond to the journey. This may be receipt of a request, detection of a condition, creation of a record, allocation of work or a proactive trigger.
 
-The lenses are connected. A faster decision may increase rework; a stricter control may create delay and hidden work; an automated hand-off may weaken accountability.
+Trace the operational value system from that point:
 
-## 5. Frame the operational problem
+- inputs and entry conditions;
+- classification, triage and prioritisation;
+- work, decisions and knowledge;
+- queues, hand-offs and dependencies;
+- information and technology;
+- controls and specialist involvement;
+- completion, confirmation and follow-up;
+- exception, dispute and recovery; and
+- measurement and learning.
 
-Separate the visible symptom from the operational condition producing it.
+The journey and operation should remain connected. A journey pain point may originate in upstream demand shaping, a policy rule, missing information, a supplier dependency, a capacity constraint or an incentive far from the visible failure.
 
-A useful problem frame states:
+## Test the reverse and boundary cases
 
-- the affected journey and work type;
-- the current outcome and evidence;
-- the likely operational causes and dependencies;
-- the value or minimum outcome at risk;
-- uncertainty and assumptions; and
-- who owns the next decision.
+Run at least one route that does not follow the happy path:
 
-For example:
+- the user provides incomplete or conflicting information;
+- demand exceeds capacity;
+- an important dependency is unavailable;
+- the user disputes or reverses the request;
+- the case creates unusual risk or vulnerability;
+- the operation has made an error; or
+- the promised outcome cannot be delivered.
 
-> Customers repeat evidence after a case crosses teams because ownership and information requirements change at the hand-off. This increases effort and delay and may create inconsistent decisions. We need to test a shared minimum information set and named end-to-end owner before considering automation.
+Ask whether the person can understand what happened, receive a fair decision, recover without excessive effort and reach a human or specialist when needed.
 
-## 6. Choose the smallest justified improvement
+## Outputs
 
-Consider alternatives before selecting technology:
+A usable journey-and-value-system assessment contains:
 
-- remove unnecessary demand or activity;
-- clarify the outcome, ownership or rule;
-- segment work and create different routes;
-- simplify information or reduce hand-offs;
-- strengthen training, knowledge or recovery;
-- redesign the process or service;
-- use conventional automation for stable repeatable work;
-- use AI to assist language, synthesis or prediction; or
-- delegate bounded actions to an agent only where permissions, monitoring and recovery are established.
+- primary journey, trigger and end condition;
+- intended, minimum and unacceptable outcomes;
+- user effort, delay, failure and recovery evidence;
+- demand segmentation, variation and likely failure demand;
+- trace to the first operational event;
+- high-level operational flow and dependencies;
+- value tensions and affected stakeholders;
+- evidence gaps and assumptions; and
+- questions the connected operating-system analysis must answer.
 
-Prefer the lowest complexity that achieves the required value. A demonstration that technology can complete a task is not evidence that the operation is ready to depend on it.
+## Decision gate
 
-## 7. Define evidence, control and recovery
-
-Before testing the change, record:
-
-- the expected outcome and beneficiary;
-- baseline and success measure;
-- minimum acceptable outcome;
-- failure and harm signals;
-- owner and decision authority;
-- test boundary and affected people;
-- fallback, rollback or degraded operation; and
-- the point at which the result will be reviewed.
-
-Failure should be small enough to remain safe, fast enough to remain useful and open enough to produce retained learning.
-
-## 8. Return something useful
-
-The person should receive more than a list of questions. A proportionate output may be:
-
-- a one-page journey and problem frame;
-- a segmented demand view;
-- a short option comparison;
-- a recommendation with assumptions and trade-offs;
-- a bounded test plan;
-- a checklist or decision aid; or
-- a deeper assessment where consequence requires it.
-
-State what is evidence, what is judgement, what is AI inference and what remains unknown.
-
-## Worked example
-
-A service receives growing complaints about slow updates. The visible request is “send updates automatically”.
-
-Journey review shows that customers mainly lose confidence after a case changes team. Operational tracing shows inconsistent ownership, different status definitions and missing hand-off information. Automating messages would make inconsistency faster and more visible.
-
-The smallest useful improvement is to define one end-to-end owner, agree a minimum hand-off record and segment cases by update need. A bounded automated update can then be tested on stable low-risk cases, with delay, accuracy, repeat contact and customer understanding measured. Complex or high-consequence cases retain capable human communication and recovery.
-
-## Chapter summary
-
-Start with the person receiving the outcome. Use their journey to find where value is lost. Then examine the connected operation deeply enough to understand why. Choose the smallest change that meets the defined value, test it within a safe boundary and retain the learning.
-
-## Next
-
-Continue to **Part III – Understand the connected operation** to see how the operational lenses work together across a wider service, function or operating model.
+The journey work is sufficient when it explains why the operation matters and locates the operational questions that could change the outcome. Do not proceed with an internally optimised target if user-defined value is still assumed, failure demand is ignored or the recovery journey has no owner.

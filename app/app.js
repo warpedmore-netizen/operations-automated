@@ -1490,6 +1490,7 @@ function publicationActionLabel(action) {
   return {
     create: "Create",
     update: "Update",
+    reconcile: "Reconcile receipt",
     unchanged: "Unchanged",
     conflict: "Conflict"
   }[action] || action;
@@ -1513,7 +1514,7 @@ function renderConfluencePublicationPlan(plan) {
   area.className = `publication-status ${summary.conflict ? "error" : "connected"}`;
   area.innerHTML = `
     <strong>${escapeHtml(plan.title || `${plan.items.length} controlled pages`)} reviewed against Confluence.</strong>
-    <p>${Number(summary.create || 0)} to create · ${Number(summary.update || 0)} to update · ${Number(summary.unchanged || 0)} unchanged · ${Number(summary.conflict || 0)} conflicts.</p>
+    <p>${Number(summary.create || 0)} to create · ${Number(summary.update || 0)} to update · ${Number(summary.reconcile || 0)} receipts to reconcile · ${Number(summary.unchanged || 0)} unchanged · ${Number(summary.conflict || 0)} conflicts.</p>
     <p>Source: ${escapeHtml(plan.sourceBranch)} at ${escapeHtml(String(plan.sourceCommit || "").slice(0, 12))}. No write has happened.</p>`;
   const blockers = Array.isArray(plan.blockers) && plan.blockers.length
     ? `<div class="publication-blockers"><strong>Publication is blocked</strong>${plan.blockers.map((item) => `<p>${escapeHtml(item)}</p>`).join("")}</div>`
@@ -1523,6 +1524,7 @@ function renderConfluencePublicationPlan(plan) {
     <div class="publication-summary-grid">
       <article><span>Create</span><strong>${Number(summary.create || 0)}</strong></article>
       <article><span>Update</span><strong>${Number(summary.update || 0)}</strong></article>
+      <article><span>Reconcile receipt</span><strong>${Number(summary.reconcile || 0)}</strong></article>
       <article><span>Unchanged</span><strong>${Number(summary.unchanged || 0)}</strong></article>
       <article class="${summary.conflict ? "has-conflict" : ""}"><span>Conflict</span><strong>${Number(summary.conflict || 0)}</strong></article>
     </div>
@@ -1596,7 +1598,7 @@ async function previewConfluencePublication(publicationKind = "controlled-mirror
     toast(error.message, true);
   } finally {
     button.disabled = false;
-    button.textContent = methodologyLab ? "Preview methodology draft" : "Preview documentation update";
+    button.textContent = methodologyLab ? "Preview end-to-end methodology" : "Preview documentation update";
   }
 }
 
@@ -1631,7 +1633,7 @@ async function publishConfluenceDocumentation(event) {
     form.hidden = true;
     state.confluencePublicationPlan = null;
     toast(result.publicationKind === "methodology-lab-pilot"
-      ? "Consolidated methodology draft published for private review."
+      ? "End-to-end methodology Draft published for private review."
       : "Reviewed methodology documentation published to Confluence.");
   } catch (error) {
     $("#confluence-publication-status").className = "publication-status error";

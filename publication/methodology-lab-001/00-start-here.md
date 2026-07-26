@@ -1,56 +1,45 @@
 ---
 id: OA-METHODOLOGY-LAB-001-START
-title: Operations Automated Methodology – Consolidated Draft v0.8
+title: Operations Automated Methodology – End-to-End Draft v0.8
 status: proposed
-version: 0.8
+version: 0.8-draft.2
 owner: Jamie Peppard
 ---
 
-# Operations Automated methodology – consolidated draft v0.8
+# Operations Automated methodology – end-to-end Draft v0.8
 
-## Why this draft exists
+## What this is
 
-Operations Automated is being developed as a practical way to understand, govern and improve operations, then decide whether conventional improvement, automation, AI assistance or bounded agents are justified.
+Operations Automated is a practical method for understanding, designing, changing, running and improving the operational system of a business. It starts with the outcome required by a customer, service user, stakeholder or beneficiary, follows their journey into the operation, and connects the work, people, information, technology, suppliers, decisions, controls and learning that must make the outcome real.
 
-The approved internal baseline is v0.7. This Draft keeps that baseline and brings the remaining discussion about manual work, AI responsibility, human accountability, meaningful review, delivery collaboration, capability transfer and plain-language action into one coherent proposal.
+This edition is a substantially expanded **proposed Draft**. The approved internal baseline remains v0.7. The previous ten-page reading set proved that Git-controlled material could be published safely to the private Confluence Draft area, but it was too short to be used as a complete method. This revision turns that outline into a layered 20-chapter manual.
 
-It also tests whether the controlled methodology can work as a human publication rather than only as a repository mirror.
+## What it helps you do
 
-## Who it is for
+Use the methodology to:
 
-The intended reader may be:
+- define an operational outcome, boundary and mandate;
+- understand journeys, demand and user-defined value;
+- see the connected current operation and its real constraints;
+- diagnose causes, exposure and readiness;
+- design a target operation and decide how work should be performed;
+- prioritise, justify and plan change;
+- implement, test, release and activate an improvement;
+- transfer the capability needed to operate and recover it; and
+- govern performance, learn and improve over time.
 
-- an individual trying to improve recurring work;
-- an operational practitioner or team leader;
-- a service, process or product owner;
-- a specialist supporting operations, such as risk, technology, finance or people teams; or
-- a leader deciding how operations should develop.
+It applies whether the eventual design is deliberately manual, supported by conventional technology, AI-assisted, rules-automated or delegated to a bounded agent. Automation is a design choice, not the assumed destination.
 
-No Git or software-development knowledge should be required.
+## How to read it
 
-## What this draft is – and is not
+If you need orientation, read **The complete method map** and stop when you can choose the appropriate route. If you are applying the method, use the relevant detailed chapters and their practical questions, activities, outputs and decision gates. If the work is consequential, novel, cross-functional or hard to reverse, use the full route and involve the relevant specialists.
 
-This is a proposed reading synthesis created from approved internal-validation sources. The controlled Git repository remains authoritative.
+The manual deliberately uses progressive disclosure. Depth should help a decision; length alone is not evidence of rigour.
 
-The draft:
+## Authority and limits
 
-- explains the complete method in a deliberate sequence;
-- connects approved v0.7 meaning with clearly identified proposed v0.8 additions;
-- gives the reader a practical route from feedback to a governed change; and
-- asks for an explicit approve, revise, defer or reject decision after review.
+Git remains the authoritative record. Every page in this reading set is proposed and private. Publication here does not approve v0.8, promote any page to Live or authorise external use.
 
-It does not:
+Operations Automated connects the operating system of a business. It does not replace specialist legal, financial, safety, security, privacy, regulatory, clinical, engineering or professional standards and decisions. The authorised human or organisation retains consequential authority and accountability.
 
-- change approved methodology meaning;
-- create a new policy or obligation;
-- prove that the methodology works outside private internal validation;
-- replace the controlled Live, Draft and Archived record; or
-- authorise external publication.
-
-## How to use it
-
-Start with **Read the methodology**, scan the six parts, then read **Journey first, operation next** for the practical outside-in route.
-
-Do not judge only whether the writing sounds polished. Test whether it helps you understand what to do, why it matters, what decision remains human and where the method is incomplete.
-
-Finish with **Review the consolidated draft**. Your assessment becomes evidence; it does not automatically change the methodology or promote anything to Live.
+Finish with **Review and decide**. Test whether the method enables real work, not merely whether the prose sounds convincing.
