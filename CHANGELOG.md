@@ -269,6 +269,26 @@ All material changes to Operations Automated will be recorded here.
 - Added an on-demand Challenge Studio covering principles, AI suitability, deliberately manual work and delivery capability.
 - Proposed an amendment to the approved Human-AI Collaboration Method covering human/machine readability, automation choice, development collaboration and internal capability.
 - This is a proposed Workbench product increment. It does not alter or approve the methodology v0.6 baseline.
+## 0.7 - Methodology coverage and reader guide
+
+- Approved by Jamie Peppard on 2026-07-24 for internal validation with the conditions in the v0.7 assurance pack; merge and external publication were not authorised by this approval.
+
+- Recorded founder feedback that the methodology has a sound conceptual core but remains too light in practical use cases, detailed operational guidance and explicit links with non-operating capabilities.
+- Added an operational coverage model covering core value flow, enabling capabilities, direction and assurance, and change and evolution.
+- Added an outside-in starting rule: follow the primary customer, service user or stakeholder journey before designing the operational capabilities and interfaces that support it.
+- Added a journey-to-operational-value-system sequence: use the primary journey to establish why and where to improve, then start from the first operational event and map how the required outcomes are delivered and sustained.
+- Clarified that established methods are a selectable toolkit: journey mapping, Lean techniques, MoSCoW and specialist practices may be combined where suitable, with the choice and boundaries made explicit.
+- Added a minimum-structure rule that adopts and adapts useful practices without making any framework doctrine, and develops more structure where weak understanding or control intersects with material value or consequence.
+- Added receiver-centred feedback loops designed around the person's effort, accessibility, form and channel, with authorised automation for capture, routing and synthesis but retained human authority over consequential change.
+- Added a completeness scale so every capability can be shown honestly as Identified, Outlined, Usable, Validated or Publishable.
+- Added a cross-functional interface model covering strategy, finance, people, legal, risk, compliance, security, privacy, data, technology, product, change, procurement, suppliers, customer relationships, audit, quality, facilities, health and safety, and sustainability.
+- Clarified that the interface model applies to operational work and end-to-end outcomes rather than governing whole specialist functions, and that disproportionate control friction should be recorded and escalated without overriding obligations or risk authority.
+- Added a numbered, book-like reader guide with routes for quick questions, full assessments, implementation, and governance and review.
+- Added a broad use-case catalogue, including individual, service, physical-operation, low-volume/high-consequence, supplier, resilience, audit, automation, AI and agentic scenarios.
+- Added a common authoring standard for future practice guides and a draft operational coverage-and-interface template.
+- Compared the structure with official ITIL, COBIT, APQC, ISO 9001 and NIST AI RMF material as structural benchmarks only; no equivalence, compliance or certification is claimed.
+- Approved the methodology and guide content for internal validation while retaining the working template as draft and external publication as a separate decision.
+- Corrected the operational-assessment template's stale methodology-version reference and stale proposed-status wording for the approved Human-AI Collaboration Method.
 
 ## 0.6 - Actionable delivery and governed collaboration
 

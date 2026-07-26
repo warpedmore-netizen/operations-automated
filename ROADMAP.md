@@ -19,7 +19,7 @@ Operations Automated should improve itself through the same evidence-led approac
 
 ## Current position
 
-Version 0.6 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-23; it is not approved for external publication.
+Version 0.7 is the approved baseline for internal validation. Jamie Peppard approved it on 2026-07-24; it is not approved for external publication.
 
 The first private application MVP is approved only for private testing. Testing showed that its record, approval and export mechanics work, but the experience mainly collects and reorganises user input because no AI analysis service is embedded. It therefore does not yet deliver the intended methodology value.
 
@@ -60,6 +60,10 @@ Founder use then exposed a source-continuity failure: PR-backed work named the p
 
 Founder clarification then separated four connected systems: the customer methodology, its internal development and challenge system, Connected Governance, and the standalone Incident Manager RPG. The proposed [connected system architecture](product/operations-automated-system-architecture.md) records their authority and feedback boundaries. The proposed [Connected Governance dogfood pilot](product/connected-governance-dogfood-pilot.md) is the first product test: use the governance service to create Operations Automated's role-based company-governance foundation and prepare it for the existing controlled Internal Draft publication route.
 
+Version 0.7 was approved on 2026-07-24 for internal validation. It responds to Jamie's finding that the methodology remains too light in practical use cases, detailed operational coverage, cross-functional linkages and reader guidance. It begins outside-in from the primary customer, service user or stakeholder journey, then moves into the end-to-end operational value system that must deliver the required outcome. It uses the minimum helpful structure, selects and combines methods for the context, keeps specialist interfaces proportionate and makes feedback easy for the receiver. It adds a [numbered reader guide](guide/README.md), a complete [operational coverage model](methodology/operational-coverage-model.md), a [cross-functional interface model](methodology/cross-functional-interfaces.md), a common practice-guide standard and an explicit completeness scale.
+
+The approved internal-validation catalogue makes omissions visible; it does not claim that every area is already a usable or validated practice. Merge, external publication and product release remain separate decisions.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -90,17 +94,19 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Use the approved Human-AI Collaboration Method during daily and ad-hoc internal validation and retain material failures or corrections.
-2. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet.
-3. Run a materially different second facilitated case and select its output from the need.
-4. Validate activation and first use on one executable and one workflow-dependent non-executable delivery.
-5. Test a simplified aid with someone who did not design it.
-6. Prepare a plain-English assurance pack before any proposed component is approved or merged.
-7. Use the evidence to review v0.6 and decide the smallest justified product.
-8. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
-9. Publish the committed Methodology Lab proposal beneath Draft, review it as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
-10. Review the proposed Workbench 1.4 operating surface as one bounded whole: governed knowledge, conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff/receipt loop.
-11. Validate the Connected Governance dogfooding route: create substantive proposed company-governance documents, review their role and system boundaries, prepare the controlled Internal Draft hand-off and retain product and methodology findings separately.
+1. Apply the approved v0.7 coverage, interfaces and reader-guide architecture using the conditions in the [plain-English assurance pack](proposals/v0.7-assurance-pack.md).
+2. Apply the draft coverage-and-interface map outside-in to two materially different, non-confidential journeys, including one outside a conventional service-management setting.
+3. Use those cases and Jamie's priorities to select the first practice families that should move from Outlined to Usable.
+4. Develop and test the first detailed practice guide using the common authoring standard.
+5. Test whether an independent reader can find and use the quick-question, full-assessment, implementation, and governance-and-review routes, and can give or receive feedback through a suitable route.
+6. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet and validate activation.
+7. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
+8. Review the published Methodology Lab Draft as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
+9. Run the proposed Workbench 1.4 operating surface with real non-confidential work and compare its classifications, questions, ordering, citations and handoffs with Jamie's judgement.
+10. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
+11. Prepare a new assurance pack before any later material methodology release.
+12. Define the smallest justified product only after repeatable method outputs create value.
+13. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision
 

@@ -6,13 +6,17 @@ The methodology is intended for individuals, teams and organisations. It conside
 
 This repository is the controlled source for the methodology, its principles, governance, evolution system, working tools and future delivery model.
 
-> **Approved baseline:** v0.6 was approved by Jamie Peppard on 2026-07-23 for internal validation. It is not approved for external publication.
+> **Approved baseline:** v0.7 was approved by Jamie Peppard on 2026-07-24 for internal validation. It is not approved for external publication.
 >
 > **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror and human-first publication model are approved for private internal validation. AI may publish committed proposed material beneath the controlled private Confluence Draft structure for review. A bounded Methodology Lab implementation is proposed; promotion to Live, migration, automatic interaction retrieval, scheduled publication and external publication remain unapproved.
 >
-> **Current validation:** v0.6 adds proportionate [self-guided decision aids](methodology/actionable-decision-aids.md), [activation and first use](methodology/activation-and-first-use.md), and a governed [Human-AI Collaboration Method](methodology/human-ai-collaboration.md). The conditions and remaining boundaries are recorded in the [v0.6 assurance pack](proposals/v0.6-assurance-pack.md).
+> **Current validation:** v0.7 retains the v0.6 delivery guidance and adds an outside-in operating rule, a journey-to-operational-value-system sequence, adaptable method selection, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md).
+>
+> **Approval boundary:** The [v0.7 assurance pack](proposals/v0.7-assurance-pack.md) records the conditions and unapproved areas. Approval does not make the outlined practice areas complete, independently validated or externally publishable.
 
-Start with the [current methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the simplest view of how the complete system fits together.
+Start with the [numbered reader guide](guide/README.md) for the approved internal-validation reading order, operational coverage, use cases and known gaps.
+
+Use the [v0.6 methodology synthesis and visual map](methodology/current-methodology-synthesis.md) for the earlier concise view of the core components that v0.7 retains.
 
 The [current MoSCoW priorities and outstanding-work register](PROJECT-PRIORITIES.md) consolidates what must, should, could and will not be done for now.
 
@@ -36,6 +40,9 @@ The [Operations Automated brand system](brand/README.md) is a draft, reusable id
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 | [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
 | [Ideas Space](ideas/README.md) | Retained and connected ideas that are reconsidered when relevant work begins | Proposed |
+| [Numbered reader guide](guide/README.md) | A normal reading order, reader routes, use cases and links to canonical guidance | Approved for internal validation |
+| [Operational coverage model](methodology/operational-coverage-model.md) | The complete intended operational territory and its current depth | Approved for internal validation |
+| [Cross-functional interfaces](methodology/cross-functional-interfaces.md) | How Operations exchanges information, decisions and outcomes with other capabilities | Approved for internal validation |
 
 OPERATE means Observe, Prioritise, Examine, Redesign, Automate, Test and Evolve. It is an important cycle inside Operations Automated, but it is not the entire methodology.
 
