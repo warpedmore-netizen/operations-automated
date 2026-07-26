@@ -25,6 +25,7 @@ This capability is **proposed**. Individual records may be captured under the ex
 | Idea | Idea status | Relates to | Added | Last reviewed | Next review |
 |---|---|---|---|---|---|
 | [Incident Management Simulation Game](incident-management-simulation-game.md) | Raw idea | Commercial product; incident management methodology; operational resilience tooling | 2026-07-25 | 2026-07-25 | When a named resurfacing trigger occurs |
+| [Workbench-native AI Action Poll](workbench-native-ai-action-poll.md) | Approved for scoping | Operate Workbench; AI-owner queue; workflow and automation engine | 2026-07-26 | 2026-07-26 | During Workbench automation-engine scoping or when a supported local Codex trigger becomes available |
 
 ## Two different statuses
 

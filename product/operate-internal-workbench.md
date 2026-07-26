@@ -23,7 +23,7 @@ The approved v0.6 repository baseline remains authoritative. The connected-work 
 
 Classification, recommendation, a passing scenario test and technical readiness do not create approval.
 
-The AI-owner queue responds to the recorded founder finding that [AI-owned work needs a reliable worker](../feedback/2026-07-26-ai-owned-work-needs-a-worker.md). The queue is a machine-readable integration contract. A recurring local Codex worker has now been configured and its bounded prompt has been exercised through one live Task. The manual hand-off remains the recovery route. Queue availability alone still does not prove a claim, active work or completion.
+The AI-owner queue responds to the recorded founder finding that [AI-owned work needs a reliable worker](../feedback/2026-07-26-ai-owned-work-needs-a-worker.md). The queue is a machine-readable integration contract. A recurring local Codex worker was configured and validated through one live Task and one Build Job phase, then paused at Jamie's direction. The manual hand-off is therefore the current recovery route while the [Workbench-native AI action poll](../ideas/workbench-native-ai-action-poll.md) is scoped. Queue availability alone still does not prove a claim, active work or completion.
 
 ## Current and proposed position
 
