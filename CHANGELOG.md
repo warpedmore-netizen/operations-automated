@@ -1,5 +1,23 @@
 # Changelog
 
+## Workbench 1.4.3 plain-language user journeys - proposed
+
+- Made the main Oppa Mate answer lead with plain-language meaning and the next action while moving source paths, status labels and control mechanics into one optional detail panel.
+- Added a defensive display layer for older and provider-generated answers so raw repository paths, status lines and internal delivery labels do not dominate the user response.
+- Made every answer-feedback choice explain what it will save or start before Jamie selects it.
+- Reworded feedback classifications around their user outcome and added a live explanation before **Save this use** or **Create change review**.
+- Reworked the first-use guide to describe the result of sending, saving feedback, creating a review and preparing a change before asking the user to act.
+- Preserved exact source evidence, status, authority and knowledge snapshots in optional detail and retained records; no SQLite schema change or approved methodology change was introduced.
+
+## Workbench 1.4.2 source context and inline help - proposed
+
+- Added safe, clickable GitHub pull-request links to PR-backed My Work cards and detail views.
+- Added a plain-English source work package covering why the source exists, what changes, the exact decision, evidence, options, risk and remaining authority boundary when retained data is available.
+- Replaced contextless **Discuss with Oppa Mate** navigation with inline work-item help and one-click summary, decision, risk and evidence prompts.
+- Carried the active record, source and authority boundary into connected-model and deterministic local-response context.
+- Added a visible originating-work banner, source link and **Back to work item** action when the full conversation is opened.
+- Added API, interface and live isolated-browser checks while keeping approval, merge, release and publication separate.
+
 All material changes to Operations Automated will be recorded here.
 
 ## Workbench 1.4.1 assisted capture and actions - proposed

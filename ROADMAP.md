@@ -56,6 +56,8 @@ The proposed Operate internal workbench now frames its distinctive value as a go
 
 A follow-on founder usability correction now reduces capture to one description, asks Oppa Mate to suggest the name and classifications, collapses optional detail, turns ordinary Approval into a labelled click and requires a real Decision outcome. Stronger typed confirmation remains for Risk acceptance. These are proposed product behaviours under private validation, not approval or release.
 
+Founder use then exposed a source-continuity failure: PR-backed work named the pull request without carrying a direct link or adequate review package, and Oppa Mate help left My Work without visibly retaining its origin. The proposed 1.4.2 correction puts the source, summary, exact decision and authority boundary into My Work, provides help inside the item and makes any full-conversation handoff visibly reversible. This is a product-delivery correction under private validation; approved methodology, product approval, merge and release remain unchanged.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |

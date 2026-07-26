@@ -89,6 +89,22 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(requestResult.approvalCreated, false);
     assert.equal(taskResult.record.recordType, "task");
 
+    const pullRequestWork = await create({
+      title: "Review PR #22 before the private pilot",
+      summary: "Review the proposed operating graph and decide whether its record meanings, links, signals and authority boundary are suitable for a bounded private pilot.",
+      recordType: "decision"
+    });
+    assert.equal(pullRequestWork.record.sourceContext.url, "https://github.com/warpedmore-netizen/operations-automated/pull/22");
+    assert.equal(pullRequestWork.record.sourceContext.label, "Open PR #22");
+    assert.match(pullRequestWork.record.sourceContext.summary, /operating graph/i);
+    assert.match(pullRequestWork.record.sourceContext.exactDecision, /Review PR #22/i);
+    const untrustedPullRequest = await create({
+      title: "Review an unrelated repository link",
+      summary: "Review https://github.com/example/unrelated/pull/22 before continuing.",
+      recordType: "task"
+    });
+    assert.equal(untrustedPullRequest.record.sourceContext, null);
+
     const linked = await call("/api/operate/links", {
       method: "POST",
       body: {
@@ -174,6 +190,7 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     const inbox = await call("/api/my-work?order=recommended");
     assert.equal(inbox.response.ok, true);
     assert.ok(inbox.payload.items.some((item) => item.sourceId === requestResult.record.id));
+    assert.equal(inbox.payload.items.find((item) => item.sourceId === pullRequestWork.record.id).sourceContext.number, 22);
     assert.ok(inbox.payload.doNext.slice(0, 3).some((item) => item.sourceId === requestResult.record.id));
     assert.equal(inbox.payload.items.every((item) => item.nextAction?.label), true);
     assert.match(inbox.payload.prioritisation.explanation, /impact, urgency, risk/i);

@@ -211,6 +211,11 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
       body: { conversationId, text: "What should I do about this risk?", outputType: "answer" }
     });
     assert.equal(firstResponse.payload.continuity.activeRecordId, corrected.record.id);
+    assert.match(firstResponse.payload.message.working_text, /What could go wrong/i);
+    assert.doesNotMatch(firstResponse.payload.message.working_text, /(?:methodology|product|evolution)\/[\w./-]+\.md|repository status|does not authorise/i);
+    assert.equal(firstResponse.payload.message.metadata.activeWorkDetails.title, corrected.record.title);
+    assert.equal(firstResponse.payload.message.metadata.activeWorkDetails.status, corrected.record.status);
+    assert.match(firstResponse.payload.message.metadata.activeWorkDetails.boundary, /does not record a decision or approval/i);
     assert.ok(firstResponse.payload.knowledgeSnapshotId);
     await call(`/api/conversations/${conversationId}/messages`, {
       method: "POST",

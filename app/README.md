@@ -14,6 +14,10 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed usability follow-on:** Workbench build `1.4.1-assisted-capture-actions-draft` lets Oppa Mate suggest an editable name and populated defaults, keeps optional detail collapsed, uses labelled clicks for ordinary Approval and requires a selected outcome for a material Decision. Risk acceptance keeps its stronger typed control. This is prepared for private review only.
 
+> **Proposed source-context follow-on:** Workbench build `1.4.2-source-context-inline-help-draft` makes PR-backed work self-contained in **My Work**. It adds a safe direct source link, plain-English review package and exact decision; Oppa Mate help now opens inside the work item. A full conversation visibly retains the originating work, source and route back. This is prepared for private review only.
+
+> **Proposed plain-language follow-on:** Workbench build `1.4.3-plain-language-user-journeys-draft` keeps the main Oppa Mate answer and feedback journey in ordinary user language. Source paths, status and control trace remain available in optional detail. Every feedback and guide action explains its result before the user chooses it. The change preserves existing local data and does not amend approved methodology meaning.
+
 Use either one-click entry point:
 
 - Double-click the **Operations Automated Workbench** shortcut on the desktop.

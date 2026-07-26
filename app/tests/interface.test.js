@@ -136,6 +136,24 @@ test("change review and methodology challenge are designed for the founder", () 
   assert.match(appSource, /Treat my answer as evidence, not approval/);
 });
 
+test("answers and feedback actions lead with plain-language outcomes", () => {
+  assert.match(appSource, /Optional: sources, status and controls/);
+  assert.match(appSource, /They are not part of the main answer/);
+  assert.match(appSource, /the supporting guidance/);
+  assert.match(appSource, /Saves that this answer helped\. No follow-up or change starts/);
+  assert.match(appSource, /saves a change candidate\. It does not create or approve a change proposal/i);
+  assert.match(appSource, /What happens when you choose/);
+  assert.match(appSource, /Save this use/);
+  assert.match(appSource, /Create change review/);
+  assert.match(appSource, /Saving will mark this for methodology review/);
+  assert.match(html, /Every action should tell you its result before you choose it/);
+  assert.match(html, /Sending creates an answer in this conversation/);
+  assert.match(html, /Helpful<\/strong> and <strong>You understood me/);
+  assert.match(html, /Create change review<\/strong> makes a separate brief for review/);
+  assert.match(cssSource, /\.feedback-choice/);
+  assert.match(cssSource, /\.answer-control-details/);
+});
+
 test("the interface states the governance and data boundaries", () => {
   assert.match(html, /Feedback is not approval/i);
   assert.match(html, /No automatic repository writes/i);
@@ -193,6 +211,17 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(appSource, /Record the evidence, outcome or reason/);
   assert.match(appSource, /Suggested by Oppa Mate/);
   assert.match(appSource, /Relationship rejected and retained in activity history/);
+  assert.match(appSource, /Linked source/);
+  assert.match(appSource, /rel="noopener noreferrer"/);
+  assert.match(appSource, /Ask Oppa Mate about this work/);
+  assert.match(appSource, /You are asking from this work item/);
+  assert.match(appSource, /data-inline-help-prompt/);
+  assert.match(appSource, /Open full conversation with this context/);
+  assert.match(html, /id="conversation-work-context"/);
+  assert.match(appSource, /Conversation opened from this work item/);
+  assert.match(appSource, /data-back-to-work-item/);
   assert.match(cssSource, /\.work-action-panel/);
+  assert.match(cssSource, /\.source-work-package/);
+  assert.match(cssSource, /\.inline-work-help/);
   assert.match(cssSource, /min-height:\s*42px/);
 });

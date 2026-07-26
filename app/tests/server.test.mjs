@@ -165,6 +165,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
     });
     assert.equal(responseResult.usage.status, "offline");
     assert.equal(responseResult.message.metadata.approvalState, "not-approved");
+    assert.doesNotMatch(responseResult.message.working_text, /methodology\/approved-method\.md|repository status|source hash/i);
+    assert.equal(responseResult.message.metadata.activeWorkDetails, null);
 
     const recorded = await ok("/api/feedback", {
       conversationId,

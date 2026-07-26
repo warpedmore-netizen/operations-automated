@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.4
+version: 0.6
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -50,6 +50,20 @@ The 1.4 proposal makes the existing Workbench parts operate as one system:
 Approved methodology is normative within its scope. Proposed, draft, retained and external material may provide evidence but is labelled and cannot silently replace approved meaning. Each material response, classification, proposal and Build Job can retain the exact source snapshot used.
 
 Conversation requests include recent messages, a rolling summary of older history, the active Case or work record, linked controls and retained corrections. A short reply is therefore interpreted in its current work context rather than as a new isolated instruction.
+
+### Source-backed work and help in place
+
+A source reference is part of the working action, not optional navigation metadata. When a record names a valid GitHub pull request, My Work presents the direct link on the item and a review package containing why the work exists, what changes, the exact decision and what remains unauthorised. Change proposals additionally project retained evidence, alternatives, risks and validation without changing their source authority.
+
+**Ask Oppa Mate about this work** opens inside the selected item with visible originating context and one-click prompts for summary, decision, risk and evidence. Opening the full conversation is optional. The conversation then displays the originating item, linked source and a route back; the source context also enters both connected-model and local-response reasoning. Opening or discussing a source does not approve, merge, release or publish it.
+
+### Plain-language answers and informed feedback actions
+
+The main Oppa Mate answer is written for the user and leads with meaning, recommendation and the next decision or action. Repository paths, artefact status, source hashes, processing route and control mechanics remain inspectable in one optional details panel rather than interrupting the answer.
+
+This presentation rule does not discard evidence or hide consequence. Exact source snapshots, status and authority remain in retained response metadata and the optional trace. A material human decision still appears in plain language in the main answer; the implementation mechanics that enforce it stay secondary.
+
+Each feedback choice explains what will be saved, what later action becomes available and what will not happen before the user selects it. The Saved Feedback route uses outcome language such as **Fix this answer only**, **Keep with this conversation** and **Consider a methodology change**. Creating a change review remains a separate action from classification, preparation and release.
 
 ## Configurable definitions and Work Profiles
 
@@ -203,6 +217,11 @@ Implemented in this proposal:
 - direct-status bypass protection;
 - proportionate Task completion and type-specific lifecycle progression;
 - explicit labelled Approval and Change choices, mandatory Decision outcomes, stronger typed Risk acceptance, and retained rationale proportional to consequence;
+- safe pull-request links and plain-English source work packages in My Work;
+- inline Oppa Mate help with retained source, decision and authority context;
+- visible originating-work context and a route back from the full conversation;
+- plain-language main answers with source, status and control detail behind optional disclosure;
+- consequence-first answer feedback, saved-feedback actions and first-use guidance;
 - Case-closure protection while contained work remains open; and
 - local audit/activity evidence with no delete route.
 
@@ -269,10 +288,12 @@ The mitigation is progressive disclosure, explainability, optional links, visibl
 10. Confirm Case closure is blocked while contained work remains open.
 11. Confirm specialist inbox items route into working source decisions rather than duplicating them.
 12. Review the interface and action controls at desktop and phone widths.
-13. Have Jamie complete or reject at least one Task, Approval, Decision and non-terminal transition through My Work.
-14. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
-15. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
-16. Run one independent-user capture, linking, action and prioritisation test before any broader use.
+13. Confirm a PR-backed item exposes its safe direct link, review summary, exact decision and remaining authority boundary without requiring a manual search.
+14. Ask Oppa Mate from that item, confirm My Work remains visible, then open the full conversation and return to the originating item.
+15. Have Jamie complete or reject at least one Task, Approval, Decision and non-terminal transition through My Work.
+16. Use at least ten real items for one week and compare recommended order and network signals with Jamie's judgement.
+17. Record misclassification, false urgency, missing relationships, false links, missed links, unsuitable actions and inappropriate derived signals.
+18. Run one independent-user capture, linking, action and prioritisation test before any broader use.
 
 ## Decision required
 

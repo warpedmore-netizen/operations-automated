@@ -44,6 +44,23 @@ test("local synthesis returns plain-language guidance without exposing internal 
   assert.doesNotMatch(text, /deterministic local synthesis|Sources used/);
 });
 
+test("local synthesis answers an operational test question before exposing source excerpts", () => {
+  const text = buildLocalSynthesis({
+    input: "Explain how I should test an operational change in plain language.",
+    outputType: "answer",
+    sources: [{
+      path: "methodology/operate-overview.md",
+      status: "approved",
+      version: "0.1",
+      hash: "abc123",
+      excerpt: "## Test\n\nRun a bounded test with visible measures and recovery."
+    }]
+  });
+  assert.match(text, /Test the change on a small, reversible scale/i);
+  assert.match(text, /one condition that would stop the test/i);
+  assert.doesNotMatch(text, /methodology\/operate-overview\.md|approved, version|source hash/i);
+});
+
 test("proposal creation is explicitly separate from approval and repository mutation", () => {
   const packet = buildProposalPacket(
     { disposition: "challenge-conclusion", wording: "Evidence conflicts", interpretation: "", affected_components: "[]" },

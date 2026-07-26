@@ -36,6 +36,8 @@ const state = {
   workProfiles: [],
   operateNetwork: null,
   currentOperateRecord: null,
+  currentWorkItem: null,
+  inlineWorkHelp: null,
   serverCompatible: true
 };
 
@@ -104,9 +106,60 @@ function workTypeClass(value) {
   return String(value || "work").replace(/[^a-z0-9-]/gi, "-").toLowerCase();
 }
 
+function sourceLinkMarkup(sourceContext, className = "source-link") {
+  if (!sourceContext?.url) return "";
+  return `<a class="${className}" href="${escapeHtml(sourceContext.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(sourceContext.label || "Open source")} <span aria-hidden="true">↗</span></a>`;
+}
+
+function sourceWorkPackageMarkup(sourceContext) {
+  if (!sourceContext?.url) return "";
+  const evidence = Array.isArray(sourceContext.evidence) ? sourceContext.evidence.filter(Boolean) : [];
+  const alternatives = Array.isArray(sourceContext.alternatives) ? sourceContext.alternatives.filter(Boolean) : [];
+  const remainsUnauthorised = Array.isArray(sourceContext.remainsUnauthorised) ? sourceContext.remainsUnauthorised.filter(Boolean) : [];
+  return `<section class="source-work-package" aria-label="Linked source work package">
+    <div class="source-work-package-heading">
+      <div><span>Linked source</span><strong>${escapeHtml(sourceContext.title || sourceContext.label)}</strong><small>${escapeHtml(statusLabel(sourceContext.status))}</small></div>
+      ${sourceLinkMarkup(sourceContext, "primary source-package-link")}
+    </div>
+    <dl>
+      <div><dt>Why this exists</dt><dd>${escapeHtml(sourceContext.summary || "No source summary was retained.")}</dd></div>
+      <div><dt>What this changes</dt><dd>${escapeHtml(sourceContext.whatChanges || sourceContext.summary || "Review the linked source for the bounded change.")}</dd></div>
+      <div class="source-decision"><dt>Your decision</dt><dd>${escapeHtml(sourceContext.exactDecision || "Review the source and decide the recorded next action.")}</dd></div>
+    </dl>
+    ${(evidence.length || alternatives.length || sourceContext.tradeOffs || remainsUnauthorised.length) ? `<details><summary>Evidence, options and boundary</summary>
+      ${evidence.length ? `<strong>Evidence</strong><ul>${evidence.map((item) => `<li>${escapeHtml(typeof item === "string" ? item : JSON.stringify(item))}</li>`).join("")}</ul>` : ""}
+      ${alternatives.length ? `<strong>Options</strong><ul>${alternatives.map((item) => `<li>${escapeHtml(typeof item === "string" ? item : JSON.stringify(item))}</li>`).join("")}</ul>` : ""}
+      ${sourceContext.tradeOffs ? `<strong>Trade-offs or risk</strong><p>${escapeHtml(sourceContext.tradeOffs)}</p>` : ""}
+      ${remainsUnauthorised.length ? `<strong>Still not authorised</strong><p>${escapeHtml(remainsUnauthorised.join(", "))}</p>` : ""}
+    </details>` : ""}
+    <p>${escapeHtml(sourceContext.sourceAuthority || "The source informs the work; it does not approve it.")}</p>
+  </section>`;
+}
+
+function inlineWorkHelpMarkup(record) {
+  const help = state.inlineWorkHelp;
+  if (!record || help?.recordId !== record.id) return "";
+  const response = help.response;
+  const prompts = ["Summarise this work", "What do I need to decide?", "What could go wrong?", "Explain the evidence"];
+  return `<section class="inline-work-help" aria-label="Ask Oppa Mate about this work">
+    <div class="inline-work-context">
+      <span class="oppa-account-avatar" aria-hidden="true">OM</span>
+      <div><small>You are asking from this work item</small><strong>${escapeHtml(record.title)}</strong>${sourceLinkMarkup(record.sourceContext, "inline-source-link")}</div>
+    </div>
+    <div class="inline-help-prompts">${prompts.map((prompt) => `<button type="button" class="ghost" data-inline-help-prompt="${escapeHtml(prompt)}">${escapeHtml(prompt)}</button>`).join("")}</div>
+    <form data-inline-work-help="${escapeHtml(record.id)}">
+      <label>Ask a question<input name="question" required maxlength="2000" placeholder="Ask Oppa Mate about this exact work item..."></label>
+      <button class="primary" type="submit">Ask here</button>
+    </form>
+    <p class="inline-help-status" data-inline-help-status>${help.status ? escapeHtml(help.status) : "The linked work, source and authority boundary will stay attached to the question."}</p>
+    ${response ? `<article class="inline-help-response"><div class="message-role">OM</div><div>${markdown(userFacingAnswer(response.working_text))}${technicalDetails(response, response.metadata?.sources || [])}</div></article>` : ""}
+    <button type="button" class="ghost open-full-conversation" data-open-work-conversation>Open full conversation with this context</button>
+  </section>`;
+}
+
 function workItemMarkup(item, compact = false) {
   const reasons = item.priority?.reasons || [];
-  return `<button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
+  return `<article class="work-item-wrap ${compact ? "work-item-wrap-compact" : ""}"><button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
     <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
@@ -115,7 +168,7 @@ function workItemMarkup(item, compact = false) {
       <span class="work-item-meta">${escapeHtml(item.source)} &middot; ${escapeHtml(statusLabel(item.status))}${item.dueAt ? ` &middot; due ${escapeHtml(formatDateOnly(item.dueAt))}` : ""}</span>
     </span>
     <span class="priority-score priority-${escapeHtml(item.priority?.band || "planned")}"><b>${Number(item.priority?.score || 0)}</b><small>${item.priority?.overdue ? "Overdue" : reasons[0] || "Priority"}</small></span>
-  </button>`;
+  </button>${sourceLinkMarkup(item.sourceContext, "work-item-source-link")}</article>`;
 }
 
 function recordAsWorkItem(record) {
@@ -140,7 +193,8 @@ function recordAsWorkItem(record) {
     priority: record.priority,
     approvalState: record.approvalState,
     workProfile: record.workProfile,
-    workProfileLabel: record.profile?.label || record.workProfile
+    workProfileLabel: record.profile?.label || record.workProfile,
+    sourceContext: record.sourceContext
   };
 }
 
@@ -205,8 +259,10 @@ function operateActivityMarkup(record) {
 function renderWorkDetail(item, record = null) {
   state.selectedWorkItemId = item?.id || null;
   state.currentOperateRecord = record;
+  state.currentWorkItem = item;
   state.selectedImplementationJob = null;
   if (!item) {
+    state.currentWorkItem = null;
     $("#work-detail").innerHTML = '<div class="work-detail-empty"><span aria-hidden="true">↗</span><strong>Select an item</strong><p>The underlying record, priority explanation, authority boundary and next action will appear here.</p></div>';
     return;
   }
@@ -230,7 +286,7 @@ function renderWorkDetail(item, record = null) {
     </dl>
     ${record.bible ? `<div class="record-boundary"><strong>${escapeHtml(record.bible.definition)}</strong><p>${escapeHtml(record.bible.approval)}</p></div>` : ""}
     ${record.profile ? `<details class="why-recommended"><summary>Why this work profile</summary><p>${escapeHtml(record.profile.purpose)}</p><strong>Questions Oppa Mate may ask</strong><ul>${(record.profile.additionalQuestions || []).map((question) => `<li>${escapeHtml(question)}</li>`).join("")}</ul></details>` : ""}
-    ${record.knowledgeSnapshot?.sources?.length ? `<details class="why-recommended"><summary>Why recommended and source snapshot</summary><p>${escapeHtml(record.knowledgeSnapshot.explanation)}</p><ul>${record.knowledgeSnapshot.sources.map((source) => `<li><strong>${escapeHtml(source.title || source.path)}</strong><span>${escapeHtml(source.status)} · ${source.normative ? "approved normative" : "evidence only"} · ${escapeHtml(source.heading || "document")}</span><code>${escapeHtml(String(source.hash || "").slice(0, 12))}</code></li>`).join("")}</ul></details>` : ""}
+    ${record.knowledgeSnapshot?.sources?.length ? `<details class="why-recommended"><summary>Why Oppa Mate recommended this</summary><p>${escapeHtml(record.knowledgeSnapshot.explanation)}</p><ul>${record.knowledgeSnapshot.sources.map((source) => `<li><strong>${escapeHtml(source.title || source.path)}</strong><span>${escapeHtml(source.status)} · ${source.normative ? "approved normative" : "evidence only"} · ${escapeHtml(source.heading || "document")}</span><code>${escapeHtml(String(source.hash || "").slice(0, 12))}</code></li>`).join("")}</ul></details>` : ""}
     ${record.children?.length ? `<section class="work-relations"><h4>Contained work</h4>${record.children.map((child) => `<button data-open-operate-record="${child.id}"><span>${escapeHtml(child.bible?.label || child.recordType)}</span><strong>${escapeHtml(child.title)}</strong></button>`).join("")}</section>` : ""}
     ${record.links?.length ? `<section class="work-relations"><h4>Relationships</h4>${record.links.map((link) => {
       const otherTitle = link.fromRecordId === record.id ? link.to_title : link.from_title;
@@ -242,7 +298,8 @@ function renderWorkDetail(item, record = null) {
     ${record.linkSuggestions?.length ? `<section class="link-suggestions"><div><h4>Oppa Mate sees possible connections</h4><p>These are inferences from record types and shared context. Accept only when the relationship is operationally true.</p></div>${record.linkSuggestions.map((suggestion, index) => `<article><span class="work-type work-type-${workTypeClass(suggestion.otherType)}">${escapeHtml(suggestion.otherType)}</span><strong>${escapeHtml(suggestion.otherTitle)}</strong><p>${escapeHtml(suggestion.rationale)}</p><button class="ghost" data-accept-link-suggestion="${index}">Confirm link</button></article>`).join("")}</section>` : ""}
     ${operateActionMarkup(record)}
     ${record.buildReady ? `<button class="primary prepare-build-action" data-prepare-build="${record.id}">Prepare Codex build</button>` : ""}
-    <button class="ghost discuss-work-action" data-discuss-operate-record="${record.id}">Discuss with Oppa Mate</button>
+    <button class="ghost discuss-work-action" data-discuss-operate-record="${record.id}">Ask Oppa Mate about this work</button>
+    ${inlineWorkHelpMarkup(record)}
     <button class="ghost link-work-action" data-link-operate-record="${record.id}">Link related work</button>
     ${operateActivityMarkup(record)}
   ` : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
@@ -252,6 +309,7 @@ function renderWorkDetail(item, record = null) {
       <span class="priority-score priority-${escapeHtml(priority.band || "planned")}"><b>${Number(priority.score || 0)}</b><small>Priority</small></span>
     </div>
     <p class="work-detail-summary">${escapeHtml(item.summary || "No additional summary was recorded.")}</p>
+    ${sourceWorkPackageMarkup(record?.sourceContext || item.sourceContext)}
     <div class="priority-explanation"><strong>Why this is here</strong><p>${escapeHtml(priority.explanation || "This item requires attention in the selected order.")}</p></div>
     ${Object.keys(factors).length ? `<details class="priority-factors"><summary>See priority factors</summary><div>${Object.entries(factors).map(([key, value]) => `<span><small>${escapeHtml(factorLabels[key] || key)}</small><b>${Number(value)}/5</b></span>`).join("")}</div></details>` : ""}
     ${recordBody}
@@ -314,6 +372,7 @@ function implementationReceiptMarkup(job) {
 function renderImplementationJobDetail(item, job) {
   state.selectedWorkItemId = item.id;
   state.currentOperateRecord = null;
+  state.currentWorkItem = item;
   state.selectedImplementationJob = job;
   const approval = job.releaseApproval;
   $("#work-detail").innerHTML = `
@@ -322,6 +381,7 @@ function renderImplementationJobDetail(item, job) {
       <span class="status-pill status-${workTypeClass(job.status)}">${escapeHtml(statusLabel(job.status))}</span>
     </div>
     <p class="work-detail-summary">${escapeHtml(job.approvedRequirement)}</p>
+    ${sourceWorkPackageMarkup(item.sourceContext)}
     <dl class="work-detail-facts">
       <div><dt>Owner now</dt><dd>${job.status === "waiting-on-codex" || job.status === "release-authorised" ? "Codex" : "Jamie Peppard"}</dd></div>
       <div><dt>Change</dt><dd>${escapeHtml(job.changeId)}</dd></div>
@@ -355,7 +415,8 @@ function renderImplementationJobDetail(item, job) {
       </dl>
     </details>` : ""}
     ${implementationReceiptMarkup(job)}
-    <button class="ghost discuss-work-action" data-discuss-operate-record="${escapeHtml(job.changeId)}">Discuss with Oppa Mate</button>
+    <button class="ghost discuss-work-action" data-discuss-operate-record="${escapeHtml(job.changeId)}">Ask Oppa Mate about this work</button>
+    ${inlineWorkHelpMarkup(state.conversation?.activeRecord?.id === job.changeId ? state.conversation.activeRecord : null)}
     <p class="approval-boundary">A complete receipt proves what was prepared; it does not approve release, merge or publication.</p>
   `;
   $$(".work-item").forEach((element) => element.classList.toggle("current", element.dataset.workItemId === item.id));
@@ -610,12 +671,12 @@ async function loadConversationList() {
 }
 
 const feedbackOptions = [
-  ["useful", "Helpful"],
-  ["correct-interpretation", "You understood me"],
-  ["needs-clarification", "You misunderstood me"],
-  ["challenge-conclusion", "I disagree"],
-  ["add-evidence", "I have more information"],
-  ["record-methodology-feedback", "Suggest a change to the method"]
+  ["useful", "Helpful", "Saves that this answer helped. No follow-up or change starts."],
+  ["correct-interpretation", "You understood me", "Saves that the answer understood your meaning. Nothing else changes."],
+  ["needs-clarification", "You misunderstood me", "Asks what was unclear, then saves your correction for review."],
+  ["challenge-conclusion", "I disagree", "Asks what you disagree with, then saves it beside this answer."],
+  ["add-evidence", "I have more information", "Asks for the missing information, then saves it as evidence to review."],
+  ["record-methodology-feedback", "The method should change", "Asks what should change, then saves a change candidate. It does not create or approve a change proposal."]
 ];
 
 const challengePrompts = {
@@ -629,22 +690,42 @@ const challengePrompts = {
 function feedbackControls(messageId) {
   return `<details class="feedback-panel" data-message="${messageId}">
     <summary>Was this useful?</summary>
-    <p>Save a private reaction so it is not lost. Nothing changes automatically.</p>
+    <p>Choose the result you want. Each option explains what will be saved before you select it.</p>
     <div class="feedback-controls">
-      ${feedbackOptions.map(([value, label]) => `<button data-feedback="${value}">${label}</button>`).join("")}
+      ${feedbackOptions.map(([value, label, outcome]) => `<article class="feedback-choice"><div><strong>${label}</strong><span>${outcome}</span></div><button data-feedback="${value}">Choose ${label.toLowerCase()}</button></article>`).join("")}
     </div>
   </details>`;
 }
 
 function userFacingAnswer(value) {
   let text = String(value || "");
-  for (const heading of ["Current understanding", "What the controlled material supports", "Sources used", "Uncertainty and control"]) {
-    text = text.replace(new RegExp(`\\n?### ${heading}\\s*[\\s\\S]*?(?=\\n### |\\n## |$)`, "gi"), "");
+  for (const heading of [
+    "Current understanding",
+    "What the controlled material supports",
+    "Sources used",
+    "Internal references",
+    "Repository sources",
+    "Repository status",
+    "Technical details",
+    "Governance mechanics",
+    "Uncertainty and control"
+  ]) {
+    text = text.replace(new RegExp(`\\n?#{2,3} ${heading}\\s*[\\s\\S]*?(?=\\n#{2,3} |$)`, "gi"), "");
   }
   return text
     .replace(/^## (?:Repository-grounded answer|Detailed grounded analysis|Concise grounded summary)\s*/i, "")
     .replace(/_\[[^\]]+\.(?:md|markdown|txt|json|csv)\]_/gi, "")
-    .replace(/`[^`\n]*\.(?:md|markdown|txt|json|csv)`/gi, "the internal guidance")
+    .replace(/`?(?:\.\.\/|\.\/)?(?:methodology|evolution|product|proposals|feedback|app|brand|templates|decisions|pilots)\/[A-Za-z0-9._/-]+\.(?:md|markdown|txt|json|csv)`?/gi, "the supporting guidance")
+    .replace(/^\s*(?:Repository )?(?:status|source path|source commit|source hash|approval state|answer method|execution mode)\s*:\s*.*$/gim, "")
+    .replace(/\bapproved normative sources?\b/gi, "agreed guidance")
+    .replace(/\bnon-approved material\b/gi, "additional evidence")
+    .replace(/\bdeterministic local synthesis\b/gi, "local answer")
+    .replace(/\bgoverned next action\b/gi, "next action")
+    .replace(/\bproposal packet\b/gi, "change review")
+    .replace(/[^.\n]*\b(?:approved|proposed|selected|normative)\s+source(?:\(s\)|s)?\b[^.\n]*\.\s*/gi, "")
+    .replace(/If (?:your|the) request changes controlled methodology,[^.]*\.\s*/gi, "")
+    .replace(/[^.\n]*(?:does not|cannot) (?:create|record|grant|constitute) (?:an? )?(?:approval|release|publication)[^.\n]*\.\s*/gi, "")
+    .replace(/### Interpretation/gi, "## What this means")
     .replace(/### Recommended next action/gi, "## What to do next")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
@@ -653,20 +734,30 @@ function userFacingAnswer(value) {
 function technicalDetails(message, sources) {
   const uniqueSources = [...new Map(sources.map((source) => [`${source.path}:${source.heading || ""}:${source.hash}`, source])).values()];
   const execution = message.metadata?.localSynthesis ? "Local fallback" : "Connected AI";
-  if (!uniqueSources.length && !message.metadata) return "";
+  const activeWork = message.metadata?.activeWorkDetails;
+  if (!uniqueSources.length && !message.metadata && !activeWork) return "";
   return `<details class="answer-details">
-    <summary>Why Oppa Mate recommended this</summary>
+    <summary>Optional: sources, status and controls</summary>
+    <p class="answer-details-intro">These details support review and traceability. They are not part of the main answer.</p>
     ${message.metadata?.whyRecommended ? `<p>${escapeHtml(message.metadata.whyRecommended)}</p>` : ""}
     <div class="answer-detail-grid">
       <div><span>Answer method</span><strong>${execution}</strong></div>
       <div><span>Internal references</span><strong>${uniqueSources.length}</strong></div>
     </div>
     ${uniqueSources.length ? `<ul>${uniqueSources.map((source) => `<li><span><strong>${escapeHtml(source.title || source.path)}</strong><small>${escapeHtml(source.heading || "Document context")} · ${escapeHtml(String(source.hash || "").slice(0, 12))}</small></span><em class="${source.normative ? "approved" : "proposed"}">${source.normative ? "approved normative" : `${escapeHtml(source.status)} evidence`}</em></li>`).join("")}</ul>` : "<p>No internal reference was attached to this answer.</p>"}
+    ${activeWork ? `<section class="answer-control-details"><strong>Work status and control</strong><p>${escapeHtml(activeWork.title || "Linked work")} is ${escapeHtml(statusLabel(activeWork.status))}. ${escapeHtml(activeWork.boundary || "This answer does not record a decision or approval.")}</p>${activeWork.remainsUnauthorised?.length ? `<p><strong>Still not authorised:</strong> ${escapeHtml(activeWork.remainsUnauthorised.join(", "))}.</p>` : ""}${activeWork.url ? `<a href="${escapeHtml(activeWork.url)}" target="_blank" rel="noopener noreferrer">Open the linked source <span aria-hidden="true">↗</span></a>` : ""}</section>` : `<p class="answer-control-details">This answer provides guidance. It does not record a decision, approval, release or publication.</p>`}
   </details>`;
 }
 
 function renderConversation() {
   const messages = state.conversation?.messages || [];
+  const activeRecord = state.conversation?.activeRecord;
+  const workContext = $("#conversation-work-context");
+  workContext.hidden = !activeRecord;
+  workContext.innerHTML = activeRecord ? `
+    <div><span class="oppa-account-avatar" aria-hidden="true">OM</span><p><small>Conversation opened from this work item</small><strong>${escapeHtml(activeRecord.title)}</strong><span>${escapeHtml(activeRecord.bible?.label || activeRecord.recordType)} · ${escapeHtml(statusLabel(activeRecord.status))}</span></p></div>
+    <div>${sourceLinkMarkup(activeRecord.sourceContext, "conversation-source-link")}<button type="button" class="ghost" data-back-to-work-item="${escapeHtml(activeRecord.id)}">Back to work item</button></div>
+  ` : "";
   $("#welcome").hidden = messages.length > 0;
   $("#conversation-title").textContent = state.conversation?.title || "New conversation";
   $("#messages").innerHTML = messages.map((message) => {
@@ -737,8 +828,13 @@ function attachmentPayload() {
   };
 }
 
-async function previewAndSend(text) {
+async function previewAndSend(text, origin = null) {
   setProcessing(true, "Preparing your request", "Selecting repository evidence and checking cost controls...");
+  if (origin?.recordId && state.inlineWorkHelp?.recordId === origin.recordId) {
+    state.inlineWorkHelp.status = "Preparing the question with this work item attached...";
+    const status = $("#work-detail")?.querySelector("[data-inline-help-status]");
+    if (status) status.textContent = state.inlineWorkHelp.status;
+  }
   $(".send-button").disabled = true;
   try {
     const conversation = await ensureConversation();
@@ -747,6 +843,7 @@ async function previewAndSend(text) {
       text,
       workspace: $("#workspace").value,
       outputType: $("#output-type").value,
+      workOrigin: origin,
       ...attachmentPayload()
     };
     state.pending = payload;
@@ -773,6 +870,7 @@ async function sendChallenge(focus = "balanced") {
 
 async function sendPending() {
   const payload = { ...state.pending, confirmed: true };
+  const workOrigin = payload.workOrigin;
   const submittedText = payload.text;
   $("#preview-dialog").close();
   $("#confirm-send").disabled = true;
@@ -798,11 +896,25 @@ async function sendPending() {
     });
     state.conversation = (await request(`/api/conversations/${state.conversation.id}`)).conversation;
     renderConversation();
+    if (workOrigin?.recordId && state.inlineWorkHelp?.recordId === workOrigin.recordId) {
+      state.inlineWorkHelp.status = "Oppa Mate is working from the linked record and source...";
+      const status = $("#work-detail")?.querySelector("[data-inline-help-status]");
+      if (status) status.textContent = state.inlineWorkHelp.status;
+    }
     setProcessing(true, "AI response in progress", "The model is reasoning over the selected evidence. This can take a little while...");
     const result = await request("/api/respond", { method: "POST", body: JSON.stringify(payload) });
     setProcessing(true, "Response received", "Saving the result and updating usage records...");
     state.conversation = (await request(`/api/conversations/${state.conversation.id}`)).conversation;
     renderConversation();
+    if (workOrigin?.recordId && state.inlineWorkHelp?.recordId === workOrigin.recordId) {
+      state.inlineWorkHelp.response = [...state.conversation.messages].reverse().find((message) => message.role === "assistant") || null;
+      state.inlineWorkHelp.status = "Answer retained with this work context.";
+      if (state.selectedImplementationJob && state.currentWorkItem) {
+        renderImplementationJobDetail(state.currentWorkItem, state.selectedImplementationJob);
+      } else if (state.currentOperateRecord && state.currentWorkItem) {
+        renderWorkDetail(state.currentWorkItem, state.currentOperateRecord);
+      }
+    }
     toast(result.usage.status === "offline"
       ? "Grounded local response completed. No API call or cost."
       : "Provider response completed and usage recorded.");
@@ -810,6 +922,14 @@ async function sendPending() {
     state.attachments = [];
     renderAttachments();
   } catch (error) {
+    if (workOrigin?.recordId && state.inlineWorkHelp?.recordId === workOrigin.recordId) {
+      state.inlineWorkHelp.status = `Oppa Mate could not answer yet: ${error.message}`;
+      if (state.selectedImplementationJob && state.currentWorkItem) {
+        renderImplementationJobDetail(state.currentWorkItem, state.selectedImplementationJob);
+      } else if (state.currentOperateRecord && state.currentWorkItem) {
+        renderWorkDetail(state.currentWorkItem, state.currentOperateRecord);
+      }
+    }
     if (!$("#input").value.trim()) $("#input").value = submittedText;
     toast(error.message, true);
   } finally {
@@ -843,7 +963,8 @@ async function recordFeedback(button) {
     })
   });
   button.classList.add("selected");
-  toast("Saved under Saved feedback. Nothing else changes automatically.");
+  const outcome = feedbackOptions.find(([value]) => value === disposition)?.[2] || "Saved for review.";
+  toast(`${outcome} You can review it under Saved feedback.`);
 }
 
 async function loadFeedback() {
@@ -861,6 +982,7 @@ async function loadFeedback() {
     ? items.map((item) => {
       const [title, explanation] = typeLabels[item.feedback_type || item.disposition] || ["Saved feedback", "You saved a reaction to this answer."];
       const canPropose = ["methodology-change-candidate", "product-change-candidate"].includes(item.classification);
+      const outcome = classificationOutcome(item.classification);
       return `<article class="record-card">
         <div><strong>${escapeHtml(title)}</strong><span class="status-pill status-${escapeHtml(item.status)}">${escapeHtml(statusLabel(item.status))}</span></div>
         <small>${escapeHtml(explanation)}</small>
@@ -876,11 +998,12 @@ async function loadFeedback() {
             ${classificationOptions(item.classification)}
           </select>
         </label>
-        <p class="classification-note">Classification organises the feedback. It does not approve anything.</p>
+        <p class="classification-note" data-classification-outcome="${item.id}">${escapeHtml(outcome)}</p>
+        <div class="feedback-action-preview"><strong>What happens when you choose</strong><p><strong>Open conversation</strong> returns to the original answer. <strong>Save this use</strong> stores the selected treatment. ${canPropose ? "<strong>Create change review</strong> prepares a separate review brief; it does not edit the method or start implementation." : "A change-review action appears only if you first classify this as a methodology or product change candidate and save that use."}</p></div>
         <div class="record-actions">
           <button data-open-conversation="${item.conversation_id}" class="ghost">Open conversation</button>
-          <button data-save-classification="${item.id}" class="ghost">Save classification</button>
-          ${canPropose ? `<button data-create-proposal="${item.id}" class="primary">Create change proposal</button>` : ""}
+          <button data-save-classification="${item.id}" class="ghost">Save this use</button>
+          ${canPropose ? `<button data-create-proposal="${item.id}" class="primary">Create change review</button>` : ""}
         </div>
       </article>`;
     }).join("")
@@ -888,14 +1011,26 @@ async function loadFeedback() {
 }
 
 const classifications = [
-  ["answer-only-correction", "Answer-only correction"],
-  ["conversation-context", "Conversation context"],
-  ["reusable-project-memory", "Reusable project memory"],
-  ["evidence-submission", "Evidence submission"],
-  ["methodology-change-candidate", "Methodology change candidate"],
-  ["product-change-candidate", "Product change candidate"],
-  ["no-action-required", "No action required"]
+  ["answer-only-correction", "Fix this answer only"],
+  ["conversation-context", "Keep with this conversation"],
+  ["reusable-project-memory", "Remember across this project"],
+  ["evidence-submission", "Treat as evidence to review"],
+  ["methodology-change-candidate", "Consider a methodology change"],
+  ["product-change-candidate", "Consider a product change"],
+  ["no-action-required", "Close with no further action"]
 ];
+
+function classificationOutcome(value) {
+  return ({
+    "answer-only-correction": "Saving will keep the correction with this answer. It will not alter the method or other conversations.",
+    "conversation-context": "Saving will keep this with the current conversation so later replies can use it.",
+    "reusable-project-memory": "Saving will retain this as project context for later authorised Workbench use.",
+    "evidence-submission": "Saving will retain this as evidence to assess. It will not be treated as fact or approval.",
+    "methodology-change-candidate": "Saving will mark this for methodology review. A separate action is required to create a change review.",
+    "product-change-candidate": "Saving will mark this for product review. A separate action is required to create a change review.",
+    "no-action-required": "Saving will close this feedback with no further action while retaining why it was closed."
+  })[value] || "Saving will organise this feedback without approving or changing anything.";
+}
 
 const statusLabels = {
   "awaiting-review": "Awaiting review",
@@ -1730,6 +1865,12 @@ $("#messages").addEventListener("click", (event) => {
   const button = event.target.closest("[data-feedback]");
   if (button) recordFeedback(button).catch((error) => toast(error.message, true));
 });
+$("#feedback-list").addEventListener("change", (event) => {
+  const select = event.target.closest("[data-feedback-classification]");
+  if (!select) return;
+  const outcome = $(`[data-classification-outcome="${select.dataset.feedbackClassification}"]`);
+  if (outcome) outcome.textContent = classificationOutcome(select.value);
+});
 $("#feedback-list").addEventListener("click", async (event) => {
   const conversationButton = event.target.closest("[data-open-conversation]");
   if (conversationButton) {
@@ -1746,7 +1887,7 @@ $("#feedback-list").addEventListener("click", async (event) => {
         body: JSON.stringify({ classification: select.value })
       });
       await loadFeedback();
-      toast("Classification saved. No approval was created.");
+      toast(classificationOutcome(select.value));
     } catch (error) { toast(error.message, true); }
     return;
   }
@@ -1757,7 +1898,7 @@ $("#feedback-list").addEventListener("click", async (event) => {
       state.selectedProposalId = result.proposal.id;
       switchView("decisions");
       await loadDecisionInbox(result.proposal.id);
-      toast("Change proposal created for human review. Nothing was approved or changed.");
+      toast("Change review created. It has not edited the method, started implementation or created approval.");
     } catch (error) { toast(error.message, true); }
   }
 });
@@ -1955,6 +2096,27 @@ $("#work-detail").addEventListener("change", (event) => {
   }
 });
 $("#work-detail").addEventListener("click", async (event) => {
+  const inlinePrompt = event.target.closest("[data-inline-help-prompt]");
+  if (inlinePrompt && state.inlineWorkHelp?.recordId) {
+    try {
+      await previewAndSend(inlinePrompt.dataset.inlineHelpPrompt, {
+        type: "work-item",
+        recordId: state.inlineWorkHelp.recordId,
+        workItemId: state.currentWorkItem?.id || null
+      });
+    } catch (error) {
+      toast(error.message, true);
+    }
+    return;
+  }
+  const openWorkConversation = event.target.closest("[data-open-work-conversation]");
+  if (openWorkConversation && state.inlineWorkHelp?.recordId) {
+    renderConversation();
+    switchView("conversation");
+    $("#input").placeholder = `Ask about ${state.conversation?.activeRecord?.title || "the linked work"}...`;
+    $("#input").focus();
+    return;
+  }
   const copyBrief = event.target.closest("[data-copy-build-brief]");
   if (copyBrief && state.selectedImplementationJob) {
     try {
@@ -2019,11 +2181,20 @@ $("#work-detail").addEventListener("click", async (event) => {
         method: "PATCH",
         body: JSON.stringify({ activeRecordId: discuss.dataset.discussOperateRecord })
       })).conversation;
+      state.inlineWorkHelp = {
+        recordId: discuss.dataset.discussOperateRecord,
+        workItemId: state.currentWorkItem?.id || null,
+        status: "The linked work, source and authority boundary will stay attached to the question.",
+        response: null
+      };
       renderConversation();
-      switchView("conversation");
-      $("#input").placeholder = `Discuss ${state.conversation.activeRecord?.title || "the linked work"} with Oppa Mate...`;
-      $("#input").focus();
-      toast("Oppa Mate now has this work and its Case context.");
+      if (state.selectedImplementationJob && state.currentWorkItem) {
+        renderImplementationJobDetail(state.currentWorkItem, state.selectedImplementationJob);
+      } else if (state.currentOperateRecord && state.currentWorkItem) {
+        renderWorkDetail(state.currentWorkItem, state.currentOperateRecord);
+      }
+      $("#work-detail").querySelector("[data-inline-work-help] input")?.focus();
+      toast("Oppa Mate has this exact work item and its source context. You are still in My Work.");
     } catch (error) {
       toast(error.message, true);
     }
@@ -2156,6 +2327,22 @@ $("#work-detail").addEventListener("click", async (event) => {
   }
 });
 $("#work-detail").addEventListener("submit", async (event) => {
+  const inlineHelpForm = event.target.closest("[data-inline-work-help]");
+  if (inlineHelpForm) {
+    event.preventDefault();
+    const question = new FormData(inlineHelpForm).get("question")?.trim() || "";
+    if (!question) return toast("Ask a question about this work first.", true);
+    try {
+      await previewAndSend(question, {
+        type: "work-item",
+        recordId: inlineHelpForm.dataset.inlineWorkHelp,
+        workItemId: state.currentWorkItem?.id || null
+      });
+    } catch (error) {
+      toast(error.message, true);
+    }
+    return;
+  }
   const receiptForm = event.target.closest("[data-build-receipt]");
   const mergeForm = event.target.closest("[data-merge-receipt]");
   if (!receiptForm && !mergeForm) return;
@@ -2187,6 +2374,17 @@ $("#work-detail").addEventListener("submit", async (event) => {
   } catch (error) {
     submit.disabled = false;
     toast(error.message, true);
+  }
+});
+$("#conversation-work-context").addEventListener("click", async (event) => {
+  const back = event.target.closest("[data-back-to-work-item]");
+  if (!back) return;
+  switchView("my-work", true, false);
+  const item = state.myWork?.items.find((candidate) => candidate.sourceType === "operate-record" && candidate.sourceId === back.dataset.backToWorkItem);
+  if (item) await openWorkItem(item.id);
+  else {
+    const value = await request(`/api/operate/records/${encodeURIComponent(back.dataset.backToWorkItem)}`);
+    renderWorkDetail(recordAsWorkItem(value.record), value.record);
   }
 });
 $$('[data-close-work-link]').forEach((button) => button.addEventListener("click", () => $("#work-link-dialog").close()));

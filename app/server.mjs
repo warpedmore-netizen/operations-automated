@@ -60,6 +60,8 @@ loadLocalEnvironment();
 const port = Number.parseInt(process.env.PORT ?? "4173", 10);
 const dataRoot = process.env.WORKBENCH_DATA_ROOT ? resolve(process.env.WORKBENCH_DATA_ROOT) : resolve(appRoot, "local-data");
 const repositoryRoot = process.env.WORKBENCH_REPOSITORY_ROOT ? resolve(process.env.WORKBENCH_REPOSITORY_ROOT) : repoRoot;
+const repositoryWebUrl = String(process.env.WORKBENCH_REPOSITORY_WEB_URL || "https://github.com/warpedmore-netizen/operations-automated")
+  .replace(/\/$/, "");
 const attachmentRoot = resolve(dataRoot, "attachments");
 const instructionRoot = resolve(dataRoot, "change-instructions");
 await Promise.all([mkdir(attachmentRoot, { recursive: true }), mkdir(instructionRoot, { recursive: true })]);
@@ -397,7 +399,8 @@ const audit = (action, entityType, entityId, detail = {}) =>
   db.prepare("INSERT INTO audit_events VALUES(?,?,?,?,?,?)")
     .run(randomUUID(), action, entityType, entityId ?? null, JSON.stringify(detail), now());
 const getSettings = () => ({ ...DEFAULT_SETTINGS, ...safeJson(db.prepare("SELECT value_json FROM settings WHERE id=1").get().value_json, {}) });
-const providerConfigured = (tier = 2) => Boolean(process.env.OPENAI_API_KEY && process.env[`OPENAI_TIER_${tier}_MODEL`]);
+const providerConfigured = (tier = 2) => process.env.WORKBENCH_FORCE_LOCAL !== "1"
+  && Boolean(process.env.OPENAI_API_KEY && process.env[`OPENAI_TIER_${tier}_MODEL`]);
 reindexRepository("working-tree");
 syncSpecialistQueues();
 
@@ -830,6 +833,7 @@ function operateRow(row, { includeRelations = false } = {}) {
     priority: priorityFor(row),
     knowledgeSnapshot: row.knowledge_snapshot_id ? knowledgeSnapshot(row.knowledge_snapshot_id) : null
   };
+  baseValue.sourceContext = sourceContextForOperateRow(row);
   const openChildren = db.prepare("SELECT status FROM operate_records WHERE case_id=? OR parent_id=?").all(row.id, row.id)
     .filter((item) => !isClosedStatus(item.status)).length;
   const specialistAction = row.source_type !== "manual" ? specialistNextAction(row) : null;
@@ -883,6 +887,65 @@ function operateRow(row, { includeRelations = false } = {}) {
     linkSuggestions: suggestOperateLinks(value, operateRecords(), db.prepare("SELECT * FROM operate_links").all()),
     children,
     activity
+  };
+}
+
+function validPullRequestUrl(value) {
+  const url = String(value || "").trim();
+  if (!/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+\/?$/.test(url)) return "";
+  const sourceRepository = url.replace(/\/pull\/\d+\/?$/, "");
+  return sourceRepository.toLowerCase() === repositoryWebUrl.toLowerCase() ? url : "";
+}
+
+function inferredPullRequestUrl(text) {
+  const input = String(text || "");
+  const direct = input.match(/https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+\/?/i)?.[0];
+  if (direct) return validPullRequestUrl(direct);
+  const number = input.match(/\b(?:draft\s+)?(?:PR|pull request)\s*#?\s*(\d+)\b/i)?.[1];
+  return number ? validPullRequestUrl(`${repositoryWebUrl}/pull/${number}`) : "";
+}
+
+function sourceContextForOperateRow(row) {
+  const proposal = row.source_type === "change-proposal" && row.source_id
+    ? proposalRecord(row.source_id)
+    : null;
+  const sourceUrl = validPullRequestUrl(proposal?.pull_request_url)
+    || inferredPullRequestUrl(`${row.title}\n${row.summary}`);
+  if (!sourceUrl) return null;
+  const pullRequestNumber = Number(sourceUrl.match(/\/pull\/(\d+)/)?.[1]);
+  const controlSourceIds = [row.id, row.source_id].filter(Boolean);
+  const placeholders = controlSourceIds.map(() => "?").join(",");
+  const decision = controlSourceIds.length ? db.prepare(`
+    SELECT exact_decision,recommendation,alternatives_json,trade_offs,remains_unauthorised_json,result
+    FROM governed_decisions WHERE source_id IN (${placeholders})
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(...controlSourceIds) : null;
+  const approval = controlSourceIds.length ? db.prepare(`
+    SELECT exact_decision,recommendation,alternatives_json,trade_offs,remains_unauthorised_json,result
+    FROM governed_approvals WHERE source_id IN (${placeholders})
+    ORDER BY updated_at DESC LIMIT 1
+  `).get(...controlSourceIds) : null;
+  const governedControl = approval || decision;
+  const sourceSummary = String(proposal?.problem_learning || row.summary || "").trim();
+  const whatChanges = String(proposal?.proposed_wording || proposal?.rationale || row.summary || "").trim();
+  const sourceStatus = proposal?.status || (/\bdraft\s+(?:PR|pull request)\b/i.test(`${row.title}\n${row.summary}`) ? "draft" : "linked-source");
+  return {
+    kind: "pull-request",
+    url: sourceUrl,
+    label: `Open PR #${pullRequestNumber}`,
+    number: pullRequestNumber,
+    title: proposal?.title || row.title,
+    status: sourceStatus,
+    summary: sourceSummary,
+    whatChanges,
+    exactDecision: governedControl?.exact_decision || row.title,
+    recommendation: governedControl?.recommendation || row.summary || "Review the linked source and decide the recorded next action.",
+    alternatives: safeJson(governedControl?.alternatives_json, proposal?.alternatives || []),
+    tradeOffs: governedControl?.trade_offs || (proposal?.risks || []).join("; "),
+    evidence: proposal?.evidence || [],
+    validation: proposal?.validationResults || {},
+    remainsUnauthorised: safeJson(governedControl?.remains_unauthorised_json, ["merge", "release", "publication", "wider delegated authority"]),
+    sourceAuthority: "Linked evidence; opening or discussing it creates no approval."
   };
 }
 
@@ -1394,7 +1457,8 @@ function operateInboxItem(record) {
     approvalState: record.approvalState
     ,
     workProfile: record.workProfile,
-    workProfileLabel: record.profile?.label || record.workProfile
+    workProfileLabel: record.profile?.label || record.workProfile,
+    sourceContext: record.sourceContext
   };
 }
 
@@ -1494,6 +1558,8 @@ function implementationJobInboxItem(job) {
           decision: false,
           routeView: "my-work"
         };
+  const pullRequestUrl = validPullRequestUrl(job.pullRequestUrl);
+  const pullRequestNumber = Number(pullRequestUrl.match(/\/pull\/(\d+)/)?.[1] || 0);
   return {
     id: `implementation-job:${job.id}`,
     source: "Codex build",
@@ -1517,7 +1583,25 @@ function implementationJobInboxItem(job) {
     priority,
     approvalState: job.releaseApproval?.result === "approved" ? "human-confirmed" : "not-approved",
     workProfile: "product-application-build",
-    workProfileLabel: "Product or application build"
+    workProfileLabel: "Product or application build",
+    sourceContext: pullRequestUrl ? {
+      kind: "pull-request",
+      url: pullRequestUrl,
+      label: `Open PR #${pullRequestNumber}`,
+      number: pullRequestNumber,
+      title: job.title,
+      status: job.status,
+      summary: job.approvedRequirement,
+      whatChanges: job.versionImpact || job.approvedRequirement,
+      exactDecision: job.releaseApproval?.exact_decision || nextAction.outcome,
+      recommendation: job.releaseApproval?.recommendation || nextAction.outcome,
+      alternatives: job.releaseApproval?.alternatives || [],
+      tradeOffs: job.unresolvedRisks.join("; "),
+      evidence: [...job.tests, ...job.validation],
+      validation: job.receipt,
+      remainsUnauthorised: job.releaseApproval?.remainsUnauthorised || ["merge", "external publication", "wider delegated authority"],
+      sourceAuthority: "Linked implementation evidence; opening or discussing it creates no approval."
+    } : null
   };
 }
 
@@ -1937,6 +2021,10 @@ function continuitySearchText(continuity) {
     ...continuity.recentMessages.slice(-4).map((message) => message.text),
     continuity.activeRecord?.title,
     continuity.activeRecord?.summary,
+    continuity.activeRecord?.sourceContext?.url,
+    continuity.activeRecord?.sourceContext?.summary,
+    continuity.activeRecord?.sourceContext?.whatChanges,
+    continuity.activeRecord?.sourceContext?.exactDecision,
     continuity.activeCase?.title,
     ...continuity.decisions.map((item) => item.exact_decision),
     ...continuity.approvals.map((item) => item.exact_decision),
@@ -1958,6 +2046,15 @@ function modelInputWithContinuity(currentInput, continuity) {
     status: continuity.activeRecord.status,
     owner: continuity.activeRecord.owner,
     case: continuity.activeCase?.title || "",
+    source: continuity.activeRecord.sourceContext ? {
+      kind: continuity.activeRecord.sourceContext.kind,
+      url: continuity.activeRecord.sourceContext.url,
+      title: continuity.activeRecord.sourceContext.title,
+      summary: continuity.activeRecord.sourceContext.summary,
+      whatChanges: continuity.activeRecord.sourceContext.whatChanges,
+      exactDecision: continuity.activeRecord.sourceContext.exactDecision,
+      authorityBoundary: continuity.activeRecord.sourceContext.sourceAuthority
+    } : null,
     openQuestions: continuity.activeRecord.activity
       ?.filter((item) => /question|blocked|waiting/i.test(`${item.action} ${item.detail_json || ""}`))
       .slice(0, 5)
@@ -1986,6 +2083,34 @@ function modelInputWithContinuity(currentInput, continuity) {
     "EVIDENCE BOUNDARY",
     "Approved methodology appears separately as normative evidence. Proposed, draft, retained and external material may inform analysis but must remain visibly non-normative. Any synthesis beyond recorded sources is AI inference."
   ].join("\n");
+}
+
+function localActiveWorkAnswer(input, continuity) {
+  const record = continuity.activeRecord;
+  if (!record) return "";
+  const question = String(input || "").toLowerCase();
+  const source = record.sourceContext;
+  const summary = source?.summary || record.summary || record.title;
+  const whatChanges = source?.whatChanges || record.summary || "No separate change summary is recorded.";
+  const exactDecision = source?.exactDecision || record.nextAction?.outcome || record.title;
+  const nextAction = record.nextAction?.label || "Review the work";
+  if (/summari[sz]e|what is this|what's this/.test(question)) {
+    return `## What this means\n\n${summary}\n\n## What would change\n\n${whatChanges}\n\n## What to do next\n\n${nextAction}.`;
+  }
+  if (/what.*decid|decision|choose/.test(question)) {
+    return `## The decision to make\n\n${exactDecision}\n\n## Why it matters\n\n${summary}\n\n## What to do next\n\nReview the evidence shown with this work, then ${nextAction.toLowerCase()}.`;
+  }
+  if (/wrong|risk|failure|fail/.test(question)) {
+    const risk = source?.tradeOffs || "The recorded source may be incomplete, the proposed change may not work in real use, or the authority boundary may be misunderstood.";
+    return `## What could go wrong\n\n${risk}\n\n## What to do next\n\nAdd any missing risk or safeguard to the work before deciding.`;
+  }
+  if (/evidence|support|basis/.test(question)) {
+    const evidence = source?.evidence?.length
+      ? source.evidence.map((item) => `- ${typeof item === "string" ? item : JSON.stringify(item)}`).join("\n")
+      : `- ${summary}`;
+    return `## Evidence to review\n\n${evidence}\n\n## What to do next\n\nDecide whether this is enough to support the current action and add what is missing.`;
+  }
+  return `## What this means\n\n${summary}\n\n## What to do next\n\n${nextAction}: ${exactDecision}`;
 }
 
 function feedbackRecord(id) {
@@ -2384,6 +2509,7 @@ async function createOrGetChangeProposal(feedbackId) {
 }
 
 async function openAiResponse({ input, instructions, route, sources, outputType }) {
+  if (process.env.WORKBENCH_FORCE_LOCAL === "1") return null;
   const apiKey = process.env.OPENAI_API_KEY;
   const model = process.env[`OPENAI_TIER_${route.tier}_MODEL`];
   if (!apiKey || !model) return null;
@@ -3899,7 +4025,7 @@ Never claim to approve, publish, merge or edit methodology.`
     const localInput = continuity.followUpReference
       ? `${String(value.text || "")}\n\n${continuity.followUpReference}`
       : String(value.text || "");
-    const text = result?.text || buildLocalSynthesis({
+    const text = result?.text || localActiveWorkAnswer(value.text, continuity) || buildLocalSynthesis({
       input: localInput,
       sources,
       outputType: value.outputType || "answer",
@@ -3926,6 +4052,14 @@ Never claim to approve, publish, merge or edit methodology.`
           activeCaseId: continuity.activeCase?.id || null,
           followUpReference: continuity.followUpReference
         },
+        activeWorkDetails: continuity.activeRecord ? {
+          title: continuity.activeRecord.title,
+          status: continuity.activeRecord.status,
+          url: continuity.activeRecord.sourceContext?.url || "",
+          boundary: continuity.activeRecord.sourceContext?.sourceAuthority
+            || "This answer does not record a decision or approval.",
+          remainsUnauthorised: continuity.activeRecord.sourceContext?.remainsUnauthorised || []
+        } : null,
         generated: Boolean(result),
         localSynthesis: !result,
         approvalState: "not-approved",

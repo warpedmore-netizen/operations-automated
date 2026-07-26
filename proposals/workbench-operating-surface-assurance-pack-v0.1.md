@@ -2,7 +2,7 @@
 id: OA-ASSURANCE-WORKBENCH-OPERATING-SURFACE-001
 title: Workbench Operating Surface Assurance Pack
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -27,6 +27,8 @@ date: 2026-07-26
 | Approval | Specialist controls used different storage and presentation | Universal bounded Decision/Approval object while specialist source history remains |
 | Build | Proposal instruction existed but no common operating job | First-class approved-for-preparation Build Job, Codex brief, receipt and separate release control |
 | Learning | Some recommendations and rejected links were retained | Type/Profile corrections, relationship rejection, cited snapshots and outcomes are structured for evaluation |
+| Source-backed action | Work could name a PR without a direct link or usable source brief | My Work carries the safe PR link, review summary, exact decision and authority boundary |
+| Help continuity | Active record ID was technically attached after leaving My Work | Help starts inline; the optional full conversation visibly retains its origin and route back |
 
 No approved methodology wording changes in this proposal.
 
@@ -104,6 +106,9 @@ Approved or published methodology may be normative within its stated scope. Prop
 ## Verification
 
 - full automated Workbench suite: **75 passed, 0 failed**;
+- a PR #22 API fixture returned its safe GitHub link, source summary and exact decision in both record detail and My Work;
+- an isolated browser journey showed the PR link on the work card and detail, kept Oppa Mate help inside My Work and returned a work-specific decision answer;
+- the optional full conversation displayed the originating record and source link, then returned to the same work item;
 - dedicated operating-surface suite covers the ten required governed journeys;
 - clean-database creation and pre-migration database upgrade preserve retained records;
 - restart preserves conversation context, records, Build Job, decisions, approvals and receipt;
