@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-26 — Proposed Workbench visible references and completed-action clarity
+
+- Added stable type-specific operational references such as `CASE-001`, `TASK-001`, `INC-001` and `APP-001` without replacing internal UUID relationships.
+- Backfilled existing records additively and exposed references in My Work, details, Cases & Work and relationship selectors.
+- Corrected terminal records so an already approved Approval no longer claims Jamie has another action to complete.
+- Recorded the founder feedback and updated the Workbench assurance boundary; no methodology meaning, merge or release is approved.
+
 ## Workbench 1.5.1 complete founder workflows - proposed
 
 - Reframed **My Work** around human action: **Do Next** now excludes work owned by Codex or Oppa Mate, while a separate **Being handled** count keeps that work visible.
