@@ -1,6 +1,6 @@
 # Operations Automated
 
-Operations Automated is developing a living, human-led methodology for understanding, governing and improving operations, from basic operational clarity and process improvement through safe automation, AI readiness and bounded agentic operation.
+Operations Automated is developing an AI-enabled, human-led and continually evolving methodology for understanding, governing, running and improving operations, from basic operational clarity and process improvement through safe automation, AI readiness and bounded agentic operation.
 
 The methodology is intended for individuals, teams and organisations. It considers operations as connected systems of purpose, people, demand, work, decisions, dependencies, risk, information, technology and learning.
 
@@ -11,6 +11,8 @@ This repository is the controlled source for the methodology, its principles, go
 > **Current proposal:** [v0.8 consolidated methodology](methodology/operations-automated-v0.8-proposed.md) brings the remaining Human-AI Collaboration, accountability, manual-work, delivery-collaboration, capability-transfer and plain-language feedback into one Draft. It is not approved methodology.
 >
 > **Current control proposal:** the proposed [Steering and Collaboration Contract](STEERING.md), [project registry](projects/project-registry.yml) and [prompt registry](prompts/prompt-registry.yml) separate Product Purpose from implementation steering, route requests to the right product and require approved purpose, approved Steering, exact approved prompt and recovery provenance before a new material Workbench build. Their presence does not approve their meaning, another product, migration or release.
+>
+> **Current Methodology-system proposal:** the reconciled [Methodology Product Purpose](docs/purpose/operations-automated-methodology.md), [learning-system extension](evolution/methodology-learning-system-v0.3-proposed.md), [Methodology–Workbench contract](product/methodology-workbench-contract.md), [component registry](knowledge/methodology-components.v0.7.json) and [machine schema](knowledge/methodology-contract.schema.json) connect purpose, approved human-readable authority, machine use, signal synthesis, release trace and outcome review. They remain proposed and do not change the approved v0.7 baseline.
 >
 > **Current boundary:** Commercial validation, external publication, application deployment and any connection beyond the privately validated Confluence route require separate decisions. The governed lifecycle-first Confluence mirror and human-first publication model are approved for private internal validation. AI may publish committed proposed material beneath the controlled private Confluence Draft structure for review. Promotion to Live, migration, automatic interaction retrieval, scheduled publication and external publication remain unapproved.
 >
@@ -44,6 +46,9 @@ The [Operations Automated brand system](brand/README.md) is a draft, reusable id
 | [Delivery system](product/delivery-system.md) | Facilitated delivery now and a future evidence-led product | Approved for internal validation |
 | [Brand system](brand/README.md) | Shared identity, visual review and adoption contract across delivery surfaces | Draft for internal review |
 | [Steering and project-boundary control](STEERING.md) | Request interpretation, product routing, prompt provenance, conflict visibility and recovery gates | Proposed for review |
+| [Methodology Product Purpose](docs/purpose/operations-automated-methodology.md) | Proposed complete product identity, outcomes, inputs, boundaries, learning and product relationships | Proposed for review |
+| [Methodology learning-system extension](evolution/methodology-learning-system-v0.3-proposed.md) | Proposed complete signal-to-outcome route with related-signal synthesis and human release control | Proposed for review |
+| [Methodology–Workbench contract](product/methodology-workbench-contract.md) | Minimum version, snapshot, result, change, release and outcome trace | Proposed for review |
 | [Ideas Space](ideas/README.md) | Retained and connected ideas that are reconsidered when relevant work begins | Proposed |
 | [Numbered reader guide](guide/README.md) | A normal reading order, reader routes, use cases and links to canonical guidance | Approved for internal validation |
 | [Operational coverage model](methodology/operational-coverage-model.md) | The complete intended operational territory and its current depth | Approved for internal validation |

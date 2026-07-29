@@ -2,7 +2,7 @@
 id: OA-PURPOSE-WORKBENCH-001
 title: AI Workbench Product Purpose and Boundaries
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-29
 approved_source: product/MVP.md@0.1
@@ -32,6 +32,7 @@ Jamie can see what needs attention, understand the relevant approved method and 
 - My Work, Cases and connected operational records;
 - the Operations Bible and Work Profiles;
 - conversations, retrieval and exact knowledge snapshots;
+- Methodology application records, structured learning signals, related-signal synthesis, complete change proposals, release traces and outcome reviews under the proposed [Methodology–Workbench contract](../../product/methodology-workbench-contract.md);
 - methodology challenges and feedback-to-change controls;
 - Decisions, Approvals, Implementation Jobs and Codex handoffs;
 - approved private Confluence evidence and Draft-publication controls;
@@ -54,6 +55,8 @@ The Workbench may recommend, classify, prepare, record and execute already-autho
 
 The Methodology and Workbench remain in the Operations Automated core project because the Workbench is the current environment for applying and improving the Methodology. Git remains authoritative for controlled meaning; SQLite remains authoritative for local operational memory.
 
+The Workbench must record the exact approved Methodology baseline and source snapshot used by a material answer. It may prepare signal synthesis and change proposals, but none can create Methodology approval. A later conversation must be able to prove which approved release it used.
+
 ## Success evidence
 
-The Workbench succeeds when it returns useful progress, keeps ownership and authority understandable, routes each request to the right product, uses exact purpose and prompt provenance, preserves specialist workflows and can recover its operational memory after failure.
+The Workbench succeeds when it returns useful progress, keeps ownership and authority understandable, routes each request to the right product, uses exact purpose, Methodology, snapshot and prompt provenance, preserves specialist workflows, traces learning from signal to outcome and can recover its operational memory after failure.

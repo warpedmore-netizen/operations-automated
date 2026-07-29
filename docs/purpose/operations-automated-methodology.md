@@ -1,58 +1,167 @@
 ---
 id: OA-PURPOSE-METHODOLOGY-001
+product_identifier: operations-automated-methodology
 title: Operations Automated Methodology Product Purpose and Boundaries
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-29
 approved_source: CHARTER.md@0.3
+approved_methodology_baseline: Operations Automated v0.7
 approval_required: true
 ---
 
-# Operations Automated Methodology — Product Purpose and Boundaries
+# Operations Automated Methodology — product purpose and boundaries
 
-## Control note
+## Control note and current approved boundary
 
-This proposed purpose view reconciles the approved Founder Charter and approved v0.7 methodology into a product-boundary format. It does not replace or amend their approved meaning. `CHARTER.md` version 0.3 remains the approved purpose authority until Jamie approves an exact successor.
+This is a proposed reconciliation of the approved [Founder Charter](../../CHARTER.md) and approved v0.7 methodology. It makes their product purpose and delivery relationships explicit without replacing or amending them.
 
-## Why it exists
+`CHARTER.md@0.3` remains the approved purpose authority. Operations Automated v0.7 remains the approved Methodology baseline for internal validation. This document, the proposed v0.8 consolidation, its machine-readable companion, the Workbench contract and the learning-system extension remain proposed until Jamie Peppard explicitly decides their exact meaning. Merge, technical completion, private Draft publication or continued use cannot change that status. External publication remains unapproved.
 
-Help people understand, govern and improve how work happens, and use automation, AI and agents without surrendering human judgement, authority or accountability.
+## Purpose
+
+Operations Automated is an AI-enabled, human-led and continually evolving methodology for understanding, governing, running and improving operations.
+
+It helps people understand how work actually happens, define the people and outcomes that matter, see an operation as a connected system, choose proportionate improvement, implement under suitable control, test the result, retain useful learning and improve the Methodology itself through evidence and structured challenge.
+
+Its default orientation is people-first and outcome-led. Automation, AI adoption, speed, cost reduction and headcount reduction are possible considerations, not assumed value.
 
 ## Intended users
 
-Individuals, operational and service managers, team and process owners, improvement and transformation practitioners, risk and control practitioners, and people improving connected cross-functional work.
+- individuals improving recurring work;
+- operations and service managers;
+- operational excellence and transformation teams;
+- process owners and team leaders;
+- incident, change, resilience and continuity practitioners;
+- risk, control, quality and audit practitioners;
+- automation, AI and agentic-system practitioners;
+- cross-functional teams improving connected work; and
+- organisations seeking a proportionate operating methodology.
 
-## Core outcome
+The Methodology must remain useful for one recurring activity, an individual, a team, a process or service, connected operational systems and organisation-wide improvement. Proportionality changes the depth and evidence required, not the purpose or human authority boundary.
 
-A user can move from an ordinary-language operational need to an evidence-based understanding, a proportionate readiness judgement, a defensible recommendation, a governed implementation route and retained learning.
+## User problems
 
-## What it includes
+The Methodology addresses operations that depend on undocumented knowledge, inherited or unclear processes, disconnected records and tools, weak handovers, hidden dependencies, uncontrolled decisions, individual heroics and technology pressure unsupported by operational readiness.
 
-- outside-in journeys and user-defined value;
-- connected operational lenses, coverage and interfaces;
-- operational, automation, AI and agentic readiness;
-- OPERATE as the improvement and implementation cycle;
-- useful outputs, decision aids, activation and first use;
-- human–AI collaboration; and
-- controlled methodology learning and evolution.
+Users may otherwise receive isolated process maps, generic framework scores, questions without analysis, technology-first recommendations or deliverables that cannot be activated. The Methodology is intended to turn an ordinary-language operational need into useful understanding, a defensible decision, a workable route and retained learning.
 
-## Boundaries and non-goals
+## Intended outcomes
 
-The Methodology must not become a universal automation recommender, rigid certification bureaucracy, unexplained score, template library without reasoning, substitute for specialist obligations, or autonomous authority. It must not treat efficiency, technology adoption or cost reduction as the assumed value.
+A proportionate application should help the user obtain:
 
-## Information boundary
+- a useful answer, assessment or implemented improvement;
+- visible evidence, assumptions and uncertainty;
+- an understanding of people, purpose and user-defined value;
+- an outside-in journey and connected operational-system view;
+- practical options, trade-offs and a justified recommendation;
+- named human decisions and authority boundaries;
+- a proportionate implementation route with measurable acceptance and outcome criteria;
+- controls, failure tests, recovery and supersession routes;
+- activated first use and capability transfer where relevant; and
+- retained learning that may improve the Methodology only through controlled human authority.
 
-Use authorised, necessary and non-confidential evidence. Do not retain confidential employer, client or third-party material in the project repository or validation cases.
+## Main inputs
 
-## Authority boundary
+Inputs may include direct questions, ordinary conversations, structured challenges, corrections, practitioner feedback, assessments, real operational work, successful or failed changes, incidents and near misses, scenario tests, audits, control failures, research, standards, authoritative guidance, changed regulation or accepted practice, changed automation or AI capability, Workbench outcomes, Dynamic Governance findings, permissioned signals from separate products and contradictions inside the Methodology.
 
-Jamie Peppard retains methodology meaning, release and external publication. AI may apply, question, analyse, draft and test; it cannot approve meaning or risk.
+An input is a signal. It does not become evidence, approved meaning, priority or authority merely because it is recorded, repeated, structured or generated by AI.
 
-## Relationship to the Workbench
+## Core capabilities
 
-The private AI Workbench supports application, challenge and evolution of the Methodology. Workbench behaviour and feedback may provide evidence, but cannot silently change Methodology meaning.
+The Methodology coherently connects:
 
-## Success evidence
+- the Founder Charter, user-defined value and people-first outcome orientation;
+- outside-in journeys and the operational value system that must deliver and sustain the outcome;
+- connected operational lenses, work, risk, control, coverage and cross-functional interfaces;
+- readiness from operational basics through deliberately manual work, automation, AI assistance and bounded agents;
+- OPERATE as the improvement and implementation cycle, not the whole Methodology;
+- TIGIPI as a memorable and ethical human-factors heuristic;
+- Ask and assessment or project delivery modes;
+- the useful-output contract, actionable decision aids, activation and first use;
+- the Human–AI Collaboration Method and mutual challenge;
+- practice guides and a reader-first navigation layer; and
+- controlled methodology evolution, assurance, release, distribution, outcome review, recovery and supersession.
 
-Success requires useful outcomes across materially different non-confidential cases, readable and usable guidance, visible authority and uncertainty, activation evidence, recoverable implementation and retained learning. Document volume, confident AI wording and technical completion are insufficient.
+The proposed [machine-readable component registry](../../knowledge/methodology-components.v0.7.json) indexes these components. It must retrieve the linked human-readable authority and cannot silently paraphrase or replace it.
+
+## Non-goals
+
+The Operations Automated Methodology is not:
+
+- the AI Workbench interface;
+- a generic task-management system;
+- the Dynamic Governance Tool;
+- the Incident Management RPG or Football Manager Player Lab;
+- a rigid certification framework or universal maturity score;
+- a collection of unexplained templates;
+- an automation, AI-adoption, cost or headcount-reduction mandate;
+- an autonomous authority; or
+- a substitute for applicable legal, regulatory, security, safety, ethical, professional or specialist judgement.
+
+Its internal structure does not require the Workbench to imitate that structure visually. Workbench design must be independently useful to its user.
+
+## Authority model
+
+People retain purpose, intended value, contextual and specialist judgement, empathy, leadership, acceptance of consequence and approval of material meaning. Jamie Peppard retains Product Purpose, Methodology meaning, release, external publication and consequential authority during the founder-controlled phase.
+
+AI may apply approved content, retrieve and cite it, distinguish evidence from inference, challenge, identify gaps, connect signals, prepare synthesis, draft proposed changes, run checks, prepare assurance material and execute already-authorised bounded mechanics. It may not invent evidence, change approved meaning, infer approval, promote Draft to Live, accept risk, hide disagreement or acquire authority from technical capability or conversational fluency.
+
+Artefact status is authoritative. A branch, commit, pull request, merge, test, Confluence Draft publication or repeated feedback cannot approve content.
+
+## Relationship to the AI Workbench
+
+The AI Workbench applies the approved Methodology, retrieves relevant components, records the exact Methodology version and knowledge snapshot, receives questions and challenges, retains structured feedback, finds related evidence, prepares possible improvements, manages surrounding Decisions and implementation work, prepares controlled Codex handoffs, reindexes approved releases and records outcome reviews.
+
+The Workbench does not own Methodology meaning. Git and the approved human-readable artefacts remain authoritative. SQLite is operational memory, not a second Methodology authority. The proposed [Methodology–Workbench contract](../../product/methodology-workbench-contract.md) defines the minimum trace the Workbench must provide and return.
+
+## Relationship to Dynamic Governance
+
+The Dynamic Governance Tool is a separate product. It may apply approved Operations Automated principles behind the scenes, identify governance findings, provide controlled learning signals, create linked Workbench requests and receive approved releases relevant to its behaviour.
+
+It cannot change the Methodology, treat usage or findings as automatic Methodology evidence, inherit the Workbench database or approval authority, share internal data without an approved contract, or create approval by publishing a document. Its target repository and non-destructive migration remain separate decisions.
+
+## Relationship to other products
+
+Incident Management RPG and Football Manager Player Lab remain separate products. They may provide appropriately permissioned learning signals through an explicitly approved route. They do not share product purpose, application data, prompt authority, release authority, source code or Methodology status by default.
+
+The relevant active Ideas Space record was reviewed as a boundary test. The Incident Management Simulation Game remains a raw idea and does not enter this scope.
+
+## Learning model
+
+The approved [Methodology Evolution System](../../evolution/methodology-evolution-system.md) remains authoritative. The proposed [learning-system extension](../../evolution/methodology-learning-system-v0.3-proposed.md) makes the complete signal-to-outcome route and the minimum retained information explicit.
+
+The system may improve its capture, retrieval, synthesis, recommendations and administration. It cannot approve its own proposal. Rejection, deferral, no change, supersession and reversal remain learning and must be retained.
+
+## Success measures
+
+Measure whether:
+
+- users receive practical value rather than only questions;
+- the smallest useful output is selected and can be activated;
+- a later user can understand which approved version and evidence snapshot informed a result;
+- feedback can be traced to a disposition and related feedback can be connected;
+- approved changes reach affected products and prompts consistently;
+- a later conversation demonstrably uses the released version;
+- failed, confusing or harmful changes are detected and can be reversed or superseded;
+- the Methodology becomes more useful without becoming more bureaucratic; and
+- AI reduces administration without acquiring authority.
+
+Document volume, confident AI wording, technical completion and feedback counts are not sufficient success evidence.
+
+## Review triggers
+
+Review this purpose when there is:
+
+- an explicit purpose-review or purpose-change instruction;
+- evidence that users cannot obtain the intended outcomes proportionately;
+- repeated confusion about Methodology, Workbench or product boundaries;
+- a material change in intended users, operating scale or commercial proposition;
+- a changed legal, regulatory, safety, security, ethical or professional boundary;
+- a changed automation, AI or agent capability that affects delegated work;
+- a release, migration or integration that could alter authority or data boundaries;
+- a contradiction between approved human-readable and machine-usable forms; or
+- a failed or harmful Methodology change.
+
+Any successor must show current and proposed meaning, evidence, alternatives, affected products and prompts, migration, recovery, exact human decision and effective date. Until that decision is recorded, this document remains proposed and the approved Charter and v0.7 baseline remain controlling.

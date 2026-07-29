@@ -1,1 +1,1 @@
-1.6.0-steering-control-draft
+1.7.0-methodology-contract-draft

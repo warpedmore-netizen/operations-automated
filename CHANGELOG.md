@@ -1,5 +1,16 @@
 # Changelog
 
+## Workbench 1.7.0 Methodology purpose, learning and delivery contract - proposed
+
+- Reconciled the proposed Operations Automated Methodology Product Purpose and Boundaries without changing the approved v0.7 baseline.
+- Added a proposed learning-system extension, Methodology–Workbench contract, machine-readable component registry and record schema linked back to human-readable authority.
+- Expanded retained feedback with source, permission, confidentiality, context, evidence, limitations, AI interpretation, affected components, related signals, controlled disposition and outcome trigger.
+- Added related-signal synthesis that remains proposed and cannot turn repetition into truth or approval.
+- Expanded change proposals with related feedback, current and proposed meaning, evidence strength, counter-tests, disagreement, product and prompt impact, migration, recommendation and the exact decision required.
+- Added Methodology application envelopes with exact baseline and knowledge snapshot, complete release records, later-conversation version proof and outcome reviews linked from signal to release.
+- Kept Dynamic Governance findings as controlled signals and rejected RPG or Player Lab data without an approved signal contract.
+- Preserved separate preparation, merge, release, publication, Product Purpose and Methodology-meaning decisions. No proposed record can approve itself.
+
 ## Workbench 1.6.0 steering, boundary, prompt and recovery control - proposed
 
 - Added a proposed Steering and Collaboration Contract, reconciled Product Purpose proposals and machine-readable project, prompt and recovery registries without changing the approved v0.7 methodology baseline.

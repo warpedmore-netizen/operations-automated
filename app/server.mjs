@@ -16,6 +16,10 @@ import {
   validateRepositoryReference
 } from "./change-governance.mjs";
 import {
+  defaultLearningDisposition, findRelatedMethodologySignals, synthesiseMethodologySignals,
+  validateApplicationContract, validateLearningDisposition
+} from "./methodology-learning.mjs";
+import {
   KNOWLEDGE_MANIFEST, changelogVersion, chunkDocument, readGitRefFile,
   retrieveIndexedSections, scanGitRef, scanWorkingTree
 } from "./repository-index.mjs";
@@ -145,6 +149,30 @@ db.exec(`
     pull_request_url TEXT NOT NULL, commit_sha TEXT NOT NULL, methodology_version TEXT,
     source_ref TEXT NOT NULL, reindexed_at TEXT NOT NULL, baseline_version TEXT NOT NULL,
     created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS methodology_signal_syntheses (
+    id TEXT PRIMARY KEY, signal_ids_json TEXT NOT NULL, theme TEXT NOT NULL,
+    summary TEXT NOT NULL, components_json TEXT NOT NULL DEFAULT '[]',
+    dispositions_json TEXT NOT NULL DEFAULT '[]', sources_json TEXT NOT NULL DEFAULT '[]',
+    limitations_json TEXT NOT NULL DEFAULT '[]', recommendation TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'proposed', approval_state TEXT NOT NULL DEFAULT 'not-approved',
+    created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS methodology_releases (
+    id TEXT PRIMARY KEY, proposal_id TEXT NOT NULL UNIQUE, feedback_id TEXT NOT NULL,
+    approver TEXT NOT NULL, scope TEXT NOT NULL, version TEXT NOT NULL, release_date TEXT NOT NULL,
+    conditions TEXT NOT NULL DEFAULT '', effective_content_json TEXT NOT NULL DEFAULT '[]',
+    superseded_content_json TEXT NOT NULL DEFAULT '[]', affected_prompts_json TEXT NOT NULL DEFAULT '[]',
+    affected_products_json TEXT NOT NULL DEFAULT '[]', migration_requirements_json TEXT NOT NULL DEFAULT '[]',
+    distribution_destinations_json TEXT NOT NULL DEFAULT '[]', source_commit_sha TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'recorded', created_at TEXT NOT NULL
+  );
+  CREATE TABLE IF NOT EXISTS methodology_outcome_reviews (
+    id TEXT PRIMARY KEY, proposal_id TEXT NOT NULL, release_id TEXT NOT NULL,
+    expected_outcome TEXT NOT NULL, observed_outcome TEXT NOT NULL,
+    evidence_json TEXT NOT NULL DEFAULT '[]', result TEXT NOT NULL,
+    learning TEXT NOT NULL, next_disposition TEXT NOT NULL,
+    reviewer TEXT NOT NULL, review_date TEXT NOT NULL, created_at TEXT NOT NULL
   );
   CREATE TABLE IF NOT EXISTS repository_index (
     path TEXT PRIMARY KEY, status TEXT NOT NULL, version TEXT NOT NULL, hash TEXT NOT NULL,
@@ -331,6 +359,7 @@ db.exec(`
   );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
+  CREATE INDEX IF NOT EXISTS methodology_outcome_reviews_proposal_idx ON methodology_outcome_reviews(proposal_id, review_date);
   CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
   CREATE INDEX IF NOT EXISTS brand_review_item_idx ON brand_review_decisions(item_id, created_at);
   CREATE INDEX IF NOT EXISTS brand_review_response_idx ON brand_review_responses(decision_id, created_at);
@@ -357,6 +386,19 @@ ensureColumn("feedback", "classification", "TEXT NOT NULL DEFAULT 'conversation-
 ensureColumn("feedback", "affected_workspace", "TEXT NOT NULL DEFAULT 'living-methodology'");
 ensureColumn("feedback", "submitting_user", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
 ensureColumn("feedback", "updated_at", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "source_reference", "TEXT NOT NULL DEFAULT 'Workbench conversation'");
+ensureColumn("feedback", "source_type", "TEXT NOT NULL DEFAULT 'workbench-conversation'");
+ensureColumn("feedback", "source_date", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "permission_boundary", "TEXT NOT NULL DEFAULT 'Authorised project use'");
+ensureColumn("feedback", "confidentiality_boundary", "TEXT NOT NULL DEFAULT 'Non-confidential project context only'");
+ensureColumn("feedback", "operating_context", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "evidence_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("feedback", "evidence_limitations", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "ai_interpretation", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "related_feedback_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("feedback", "learning_disposition", "TEXT NOT NULL DEFAULT 'more-evidence'");
+ensureColumn("feedback", "resulting_proposal", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "outcome_review_trigger", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("conversations", "active_case_id", "TEXT");
 ensureColumn("conversations", "active_record_id", "TEXT");
 ensureColumn("conversations", "summary_through_message_id", "TEXT");
@@ -369,6 +411,16 @@ ensureColumn("repository_index", "effective_state", "TEXT NOT NULL DEFAULT 'cont
 ensureColumn("repository_index", "normative", "INTEGER NOT NULL DEFAULT 0");
 ensureColumn("repository_index", "indexed_commit", "TEXT NOT NULL DEFAULT 'working-tree'");
 ensureColumn("change_proposals", "knowledge_snapshot_id", "TEXT");
+ensureColumn("change_proposals", "related_feedback_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("change_proposals", "synthesis_json", "TEXT NOT NULL DEFAULT '{}'");
+ensureColumn("change_proposals", "evidence_strength", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("change_proposals", "counter_tests_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("change_proposals", "disagreements_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("change_proposals", "affected_components_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("change_proposals", "affected_products_prompts_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("change_proposals", "migration", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("change_proposals", "recommendation", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("change_proposals", "exact_decision_required", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("operate_records", "work_profile", "TEXT NOT NULL DEFAULT 'general-administration'");
 ensureColumn("operate_records", "knowledge_snapshot_id", "TEXT");
 ensureColumn("operate_links", "proposed_by", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
@@ -399,6 +451,7 @@ recordSchemaMigration(3, "Add conversation continuity and active work context");
 recordSchemaMigration(4, "Add configurable work profiles and retained corrections");
 recordSchemaMigration(5, "Add universal decisions, approvals and implementation jobs");
 recordSchemaMigration(7, "Add steering intake and exact implementation provenance");
+recordSchemaMigration(8, "Add complete methodology learning, synthesis, release and outcome trace");
 
 ensureColumn("confluence_publication_runs", "publication_kind", "TEXT NOT NULL DEFAULT 'controlled-mirror'");
 db.exec(`
@@ -406,12 +459,18 @@ db.exec(`
   UPDATE feedback SET feedback_type=disposition WHERE feedback_type='unspecified';
   UPDATE feedback SET status='awaiting-review' WHERE status='recorded';
   UPDATE feedback SET updated_at=created_at WHERE updated_at='';
+  UPDATE feedback SET source_date=created_at WHERE source_date='';
+  UPDATE feedback SET ai_interpretation=interpretation WHERE ai_interpretation='' AND interpretation<>'';
   UPDATE feedback
   SET affected_workspace=COALESCE((SELECT workspace FROM conversations WHERE conversations.id=feedback.conversation_id), affected_workspace);
 `);
-for (const item of db.prepare("SELECT id,disposition,wording,classification,created_at,updated_at FROM feedback").all()) {
+for (const item of db.prepare("SELECT id,disposition,wording,classification,learning_disposition,created_at,updated_at FROM feedback").all()) {
   if (item.created_at === item.updated_at && item.classification === "conversation-context") {
     db.prepare("UPDATE feedback SET classification=? WHERE id=?").run(suggestedClassification(item.disposition, item.wording), item.id);
+  }
+  if (!item.learning_disposition || item.learning_disposition === "more-evidence") {
+    db.prepare("UPDATE feedback SET learning_disposition=? WHERE id=?")
+      .run(defaultLearningDisposition(item.classification), item.id);
   }
 }
 db.prepare(`
@@ -2766,7 +2825,63 @@ function localActiveWorkAnswer(input, continuity) {
 
 function feedbackRecord(id) {
   const item = rowObject(db.prepare("SELECT f.*, c.title AS conversation_title FROM feedback f LEFT JOIN conversations c ON c.id=f.conversation_id WHERE f.id=?").get(id));
-  return item ? { ...item, affectedComponents: safeJson(item.affected_components, []), approvalState: "not-approved" } : null;
+  return item ? {
+    ...item,
+    affectedComponents: safeJson(item.affected_components, []),
+    evidence: safeJson(item.evidence_json, []),
+    relatedFeedback: safeJson(item.related_feedback_json, []),
+    approvalState: "not-approved"
+  } : null;
+}
+
+function methodologyReleaseForProposal(proposalId) {
+  const item = rowObject(db.prepare("SELECT * FROM methodology_releases WHERE proposal_id=?").get(proposalId));
+  return item ? {
+    ...item,
+    effectiveContent: safeJson(item.effective_content_json, []),
+    supersededContent: safeJson(item.superseded_content_json, []),
+    affectedPrompts: safeJson(item.affected_prompts_json, []),
+    affectedProducts: safeJson(item.affected_products_json, []),
+    migrationRequirements: safeJson(item.migration_requirements_json, []),
+    distributionDestinations: safeJson(item.distribution_destinations_json, [])
+  } : null;
+}
+
+function methodologyOutcomeReviews(proposalId) {
+  return db.prepare("SELECT * FROM methodology_outcome_reviews WHERE proposal_id=? ORDER BY review_date").all(proposalId)
+    .map((item) => ({ ...item, evidence: safeJson(item.evidence_json, []) }));
+}
+
+function recordMethodologyRelease({ proposal, approval, commitSha, version, release = {} }) {
+  if (proposal.change_kind !== "methodology") return null;
+  const existing = methodologyReleaseForProposal(proposal.id);
+  if (existing) return existing.id;
+  const id = randomUUID();
+  const timestamp = now();
+  const affected = proposal.affectedProductsAndPrompts || [];
+  const affectedPrompts = release.affectedPrompts || affected.filter((item) => /prompt/i.test(item));
+  const affectedProducts = release.affectedProducts || affected.filter((item) => !/prompt/i.test(item));
+  db.prepare(`
+    INSERT INTO methodology_releases(
+      id,proposal_id,feedback_id,approver,scope,version,release_date,conditions,
+      effective_content_json,superseded_content_json,affected_prompts_json,affected_products_json,
+      migration_requirements_json,distribution_destinations_json,source_commit_sha,status,created_at
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+  `).run(
+    id, proposal.id, proposal.feedback_id, approval.actor,
+    release.scope || proposal.title, version, release.date || timestamp,
+    release.conditions || approval.reason || "",
+    JSON.stringify(release.effectiveContent || proposal.affectedFiles || []),
+    JSON.stringify(release.supersededContent || []), JSON.stringify(affectedPrompts),
+    JSON.stringify(affectedProducts), JSON.stringify(release.migrationRequirements || [proposal.migration].filter(Boolean)),
+    JSON.stringify(release.distributionDestinations || ["controlled Git repository", "Workbench repository index"]),
+    commitSha, "recorded", timestamp
+  );
+  audit("methodology-release.recorded", "methodology-release", id, {
+    proposalId: proposal.id, feedbackId: proposal.feedback_id, approver: approval.actor,
+    version, commitSha, approvalCreated: false
+  });
+  return id;
 }
 
 function proposalRecord(id) {
@@ -2794,10 +2909,18 @@ function proposalRecord(id) {
     alternatives: safeJson(item.alternatives_json, []),
     risks: safeJson(item.risks_json, []),
     validationRequirements: safeJson(item.validation_json, []),
+    relatedFeedback: safeJson(item.related_feedback_json, []),
+    synthesis: safeJson(item.synthesis_json, {}),
+    counterTests: safeJson(item.counter_tests_json, []),
+    disagreements: safeJson(item.disagreements_json, []),
+    affectedComponents: safeJson(item.affected_components_json, []),
+    affectedProductsAndPrompts: safeJson(item.affected_products_prompts_json, []),
     modelRoute: safeJson(item.model_route_json, {}),
     validationResults: safeJson(item.validation_results_json, {}),
     decisions: db.prepare("SELECT * FROM change_decisions WHERE proposal_id=? ORDER BY created_at").all(id),
     receipt: rowObject(db.prepare("SELECT * FROM implementation_receipts WHERE proposal_id=?").get(id)),
+    release: methodologyReleaseForProposal(id),
+    outcomeReviews: methodologyOutcomeReviews(id),
     implementationJob: jobRow ? implementationJob(jobRow.id) : null,
     approvalState: item.status === "implemented" ? "released-by-human-decision" : "not-approved"
   };
@@ -3110,8 +3233,14 @@ function createKnowledgeSnapshot({ purpose, entityType, entityId = null, query, 
 function knowledgeSnapshot(id) {
   const snapshot = rowObject(db.prepare("SELECT * FROM knowledge_snapshots WHERE id=?").get(id));
   if (!snapshot) return null;
+  const indexRun = snapshot.index_run_id
+    ? rowObject(db.prepare("SELECT source_ref,baseline_version,created_at FROM repository_index_runs WHERE id=?").get(snapshot.index_run_id))
+    : null;
   return {
     ...snapshot,
+    baselineVersion: indexRun?.baseline_version || "unknown",
+    indexedSourceRef: indexRun?.source_ref || snapshot.source_ref,
+    indexedAt: indexRun?.created_at || null,
     sources: db.prepare("SELECT * FROM knowledge_snapshot_sources WHERE snapshot_id=? ORDER BY rank").all(id)
       .map((item) => ({ ...item, normative: Boolean(item.normative) }))
   };
@@ -3130,7 +3259,11 @@ async function createOrGetChangeProposal(feedbackId) {
   const route = chooseRoute({ text: feedback.original_wording, outputType: "proposal" }, settings);
   const sources = await repositorySections(feedback.original_wording, settings.maximumRetrievedContext);
   const expectedCost = providerConfigured(route.tier) ? estimateCost(route.inputEstimate, route.outputLimit, settings) : 0;
-  const proposal = buildStructuredProposal({ feedback, conversation: convo, sources, route, expectedCost });
+  const signalRows = db.prepare("SELECT id FROM feedback WHERE id<>? ORDER BY created_at DESC").all(feedback.id)
+    .map((item) => feedbackRecord(item.id));
+  const relatedSignalRefs = findRelatedMethodologySignals([...signalRows, feedback], feedback);
+  const relatedFeedback = relatedSignalRefs.map((item) => feedbackRecord(item.id)).filter(Boolean);
+  const proposal = buildStructuredProposal({ feedback, conversation: convo, sources, route, expectedCost, relatedFeedback });
   const id = randomUUID();
   const timestamp = now();
   const knowledgeSnapshotId = createKnowledgeSnapshot({
@@ -3146,17 +3279,24 @@ async function createOrGetChangeProposal(feedbackId) {
       id,feedback_id,conversation_id,change_kind,title,problem_learning,approved_sources_json,
       affected_files_json,current_wording,proposed_wording,rationale,evidence_json,alternatives_json,
       risks_json,validation_json,expected_cost,model_route_json,status,created_at,updated_at,
-      knowledge_snapshot_id
-    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+      knowledge_snapshot_id,related_feedback_json,synthesis_json,evidence_strength,counter_tests_json,
+      disagreements_json,affected_components_json,affected_products_prompts_json,migration,
+      recommendation,exact_decision_required
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `).run(
     id, feedback.id, feedback.conversation_id, proposal.kind, proposal.title, proposal.problemLearning,
     JSON.stringify(proposal.approvedSources), JSON.stringify(proposal.affectedFiles), proposal.currentWording,
     proposal.proposedWording, proposal.rationale, JSON.stringify(proposal.evidence),
     JSON.stringify(proposal.alternatives), JSON.stringify(proposal.risks),
     JSON.stringify(proposal.validationRequirements), proposal.expectedCost, JSON.stringify(proposal.modelRoute),
-    "awaiting-review", timestamp, timestamp, knowledgeSnapshotId
+    "awaiting-review", timestamp, timestamp, knowledgeSnapshotId,
+    JSON.stringify(proposal.relatedFeedback), JSON.stringify(proposal.synthesis || {}), proposal.evidenceStrength,
+    JSON.stringify(proposal.counterTests), JSON.stringify(proposal.disagreements),
+    JSON.stringify(proposal.affectedComponents), JSON.stringify(proposal.affectedProductsAndPrompts),
+    proposal.migration, proposal.recommendation, proposal.exactDecisionRequired
   );
-  db.prepare("UPDATE feedback SET status='awaiting-review', updated_at=? WHERE id=?").run(timestamp, feedback.id);
+  db.prepare("UPDATE feedback SET status='awaiting-review',related_feedback_json=?,resulting_proposal=?,updated_at=? WHERE id=?")
+    .run(JSON.stringify(relatedSignalRefs), id, timestamp, feedback.id);
   audit("change-proposal.created", "change-proposal", id, {
     feedbackId: feedback.id,
     changeKind: proposal.kind,
@@ -4851,10 +4991,44 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       sources,
       explanation: `${sources.filter((item) => item.normative).length} approved normative source${sources.filter((item) => item.normative).length === 1 ? "" : "s"} prioritised; non-approved material remained labelled evidence.`
     });
+    const applicationSnapshot = knowledgeSnapshot(knowledgeSnapshotId);
+    const methodologyApplication = validateApplicationContract({
+      methodology_version: applicationSnapshot.baselineVersion,
+      relevant_components: [...new Set(sources.filter((item) => item.normative).map((item) => item.artefactId || item.path))].length
+        ? [...new Set(sources.filter((item) => item.normative).map((item) => item.artefactId || item.path))]
+        : ["not-yet-determined"],
+      knowledge_snapshot: {
+        snapshot_id: knowledgeSnapshotId,
+        source_ref: applicationSnapshot.indexedSourceRef,
+        baseline_version: applicationSnapshot.baselineVersion,
+        sources: applicationSnapshot.sources.map((source) => ({
+          path: source.path, artefact_id: source.artefact_id, version: source.version,
+          status: source.status, hash: source.hash, normative: source.normative
+        }))
+      },
+      user_context: {
+        conversation_id: value.conversationId,
+        request: String(value.text || ""),
+        target_project: steeringAssessment.primaryTarget
+      },
+      evidence: sources.map((source) => ({ path: source.path, status: source.status, version: source.version, hash: source.hash })),
+      assumptions: ["Only the authorised context supplied to this conversation and retrieved snapshot was used."],
+      uncertainty: sources.some((item) => item.normative)
+        ? "The response remains provisional to the stated context and evidence."
+        : "No approved normative source was retrieved; the response requires additional verification.",
+      result: text,
+      options: [],
+      recommendation: "Use the result proportionately and inspect the retained reasoning before any consequential action.",
+      authority_required: "The authorised human retains consequential decisions, approval, risk acceptance and release.",
+      case_test: steeringAssessment.candidates.map((item) => item.classification),
+      feedback_route: "POST /api/feedback with this message identifier",
+      approval_state: "not-approved"
+    });
     db.prepare("INSERT INTO messages(id,conversation_id,role,working_text,route_json,metadata_json,created_at) VALUES(?,?,?,?,?,?,?)")
       .run(id, value.conversationId, "assistant", text, JSON.stringify(route), JSON.stringify({
         sources,
         knowledgeSnapshotId,
+        methodologyApplication,
         whyRecommended: `${sources.filter((item) => item.normative).length} approved source${sources.filter((item) => item.normative).length === 1 ? "" : "s"} informed the response. Proposed, retained and external material was treated only as evidence.`,
         continuity: {
           recentMessageCount: continuity.recentMessages.length,
@@ -4900,6 +5074,7 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       route,
       sources,
       knowledgeSnapshotId,
+      methodologyApplication,
       continuity: {
         rollingSummaryUsed: Boolean(continuity.rollingSummary),
         recentMessageCount: continuity.recentMessages.length,
@@ -4919,20 +5094,55 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
     const id = randomUUID();
     const timestamp = now();
     const wording = String(value.wording || "").trim();
+    const sourceReference = String(value.sourceReference || `Workbench conversation ${value.conversationId}`);
+    if (/\b(?:incident[- ]management[- ]rpg|player[- ]lab|football[- ]manager[- ]player[- ]lab)\b/i.test(sourceReference)
+      && value.approvedProductSignalContract !== true) {
+      return json(response, 403, {
+        error: "Separate-product data cannot enter Methodology learning without an approved signal contract and permission boundary."
+      });
+    }
     const disposition = String(value.disposition || "conversation-context");
     const classification = suggestedClassification(disposition, wording);
+    const learningDisposition = value.learningDisposition
+      ? validateLearningDisposition(String(value.learningDisposition))
+      : defaultLearningDisposition(classification);
+    const affectedComponents = value.affectedComponents || [];
+    const signalDraft = {
+      id,
+      original_wording: wording,
+      interpretation: value.interpretation || "",
+      classification,
+      learning_disposition: learningDisposition,
+      affectedComponents
+    };
+    const relatedFeedback = findRelatedMethodologySignals([
+      ...db.prepare("SELECT id FROM feedback ORDER BY created_at DESC").all().map((item) => feedbackRecord(item.id)),
+      signalDraft
+    ], signalDraft);
     const feedbackStatus = isChangeCandidate(classification)
       ? "awaiting-review"
       : classification === "no-action-required" ? "no-change" : "retained";
     db.prepare(`
       INSERT INTO feedback(
         id,conversation_id,message_id,disposition,wording,interpretation,affected_components,status,created_at,
-        original_wording,feedback_type,classification,affected_workspace,submitting_user,updated_at
-      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        original_wording,feedback_type,classification,affected_workspace,submitting_user,updated_at,
+        source_reference,source_type,source_date,permission_boundary,confidentiality_boundary,operating_context,
+        evidence_json,evidence_limitations,ai_interpretation,related_feedback_json,learning_disposition,
+        resulting_proposal,outcome_review_trigger
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     `).run(
       id, value.conversationId, value.messageId, disposition, wording, value.interpretation || "",
-      JSON.stringify(value.affectedComponents || []), feedbackStatus, timestamp,
-      wording, disposition, classification, convo.workspace, FOUNDER_NAME, timestamp
+      JSON.stringify(affectedComponents), feedbackStatus, timestamp,
+      wording, disposition, classification, convo.workspace, FOUNDER_NAME, timestamp,
+      sourceReference,
+      value.sourceType || "workbench-conversation",
+      value.sourceDate || timestamp,
+      value.permissionBoundary || "Authorised project use",
+      value.confidentialityBoundary || "Non-confidential project context only",
+      value.context || convo.title,
+      JSON.stringify(value.evidence || []), value.evidenceLimitations || "Not independently validated.",
+      value.aiInterpretation || value.interpretation || "",
+      JSON.stringify(relatedFeedback), learningDisposition, "", value.outcomeReviewTrigger || ""
     );
     audit("feedback.recorded", "feedback", id, {
       disposition,
@@ -4950,9 +5160,47 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
   }
   if (method === "GET" && url.pathname === "/api/feedback") {
     return json(response, 200, {
-      feedback: db.prepare("SELECT f.*, c.title AS conversation_title FROM feedback f LEFT JOIN conversations c ON c.id=f.conversation_id ORDER BY f.created_at DESC").all()
-        .map((item) => ({ ...item, affectedComponents: safeJson(item.affected_components, []), approvalState: "not-approved" }))
+      feedback: db.prepare("SELECT id FROM feedback ORDER BY created_at DESC").all()
+        .map((item) => feedbackRecord(item.id))
     });
+  }
+  if (method === "POST" && url.pathname === "/api/feedback/synthesis") {
+    const value = await jsonBody(request);
+    const signalIds = [...new Set(value.feedbackIds || [])];
+    const signals = signalIds.map((id) => feedbackRecord(id)).filter(Boolean);
+    if (signals.length !== signalIds.length) return json(response, 404, { error: "One or more feedback signals were not found." });
+    if (signals.length < 2) return json(response, 400, { error: "Select at least two retained signals for synthesis." });
+    const synthesis = synthesiseMethodologySignals(signals);
+    const id = randomUUID();
+    const timestamp = now();
+    db.prepare(`
+      INSERT INTO methodology_signal_syntheses(
+        id,signal_ids_json,theme,summary,components_json,dispositions_json,sources_json,
+        limitations_json,recommendation,status,approval_state,created_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      id, JSON.stringify(synthesis.signalIds), synthesis.theme, synthesis.summary,
+      JSON.stringify(synthesis.components), JSON.stringify(synthesis.dispositions), JSON.stringify(synthesis.sources),
+      JSON.stringify(synthesis.limitations), synthesis.recommendation, synthesis.status,
+      synthesis.approvalState, timestamp
+    );
+    audit("methodology-signals.synthesised", "methodology-signal-synthesis", id, {
+      signalIds, approvalCreated: false
+    });
+    return json(response, 201, { synthesis: { id, ...synthesis, createdAt: timestamp } });
+  }
+  if (method === "GET" && url.pathname === "/api/feedback/syntheses") {
+    const syntheses = db.prepare("SELECT * FROM methodology_signal_syntheses ORDER BY created_at DESC").all()
+      .map((item) => ({
+        ...item,
+        signalIds: safeJson(item.signal_ids_json, []),
+        components: safeJson(item.components_json, []),
+        dispositions: safeJson(item.dispositions_json, []),
+        sources: safeJson(item.sources_json, []),
+        limitations: safeJson(item.limitations_json, []),
+        approvalState: item.approval_state
+      }));
+    return json(response, 200, { syntheses });
   }
   const feedbackClassificationMatch = url.pathname.match(/^\/api\/feedback\/([^/]+)\/classification$/);
   if (method === "PATCH" && feedbackClassificationMatch) {
@@ -4964,11 +5212,14 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
     }
     const value = await jsonBody(request);
     const classification = validateClassification(String(value.classification || ""));
+    const learningDisposition = value.learningDisposition
+      ? validateLearningDisposition(String(value.learningDisposition))
+      : defaultLearningDisposition(classification);
     const status = isChangeCandidate(classification)
       ? "awaiting-review"
       : classification === "no-action-required" ? "no-change" : "retained";
-    db.prepare("UPDATE feedback SET classification=?,status=?,updated_at=? WHERE id=?")
-      .run(classification, status, now(), feedback.id);
+    db.prepare("UPDATE feedback SET classification=?,learning_disposition=?,status=?,updated_at=? WHERE id=?")
+      .run(classification, learningDisposition, status, now(), feedback.id);
     audit("feedback.classified", "feedback", feedback.id, {
       from: feedback.classification,
       to: classification,
@@ -5092,6 +5343,12 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       const receiptId = randomUUID();
       db.prepare("INSERT INTO implementation_receipts VALUES(?,?,?,?,?,?,?,?,?,?)")
         .run(receiptId, proposal.id, proposal.feedback_id, merge.pullRequestUrl, merge.commitSha, index.baselineVersion, merge.sourceRef, index.indexedAt, index.baselineVersion, now());
+      const releaseId = recordMethodologyRelease({
+        proposal,
+        approval: { actor, reason },
+        commitSha: merge.commitSha,
+        version: index.baselineVersion
+      });
       audit("change.implemented", "change-proposal", proposal.id, {
         decisionId, receiptId, pullRequestUrl: merge.pullRequestUrl, commitSha: merge.commitSha,
         baselineVersion: index.baselineVersion, reindexedAt: index.indexedAt
@@ -5108,6 +5365,7 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
         proposal: proposalRecord(proposal.id),
         decisionId,
         receiptId,
+        releaseId,
         implementationReceipt: true,
         confluencePublicationQueued: Boolean(publicationQueueId)
       });
@@ -5209,6 +5467,13 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       .run(value.commitSha, value.methodologyVersion || index.baselineVersion, now(), proposal.id);
     db.prepare("UPDATE feedback SET status='implemented',updated_at=? WHERE id=?").run(now(), proposal.feedback_id);
     db.prepare("UPDATE change_decisions SET status_after='implemented',repository_changed=1 WHERE id=?").run(approval.id);
+    const releaseId = recordMethodologyRelease({
+      proposal,
+      approval,
+      commitSha: value.commitSha,
+      version: value.methodologyVersion || index.baselineVersion,
+      release: value.release || {}
+    });
     audit("change.implemented", "change-proposal", proposal.id, {
       receiptId, pullRequestUrl: proposal.pull_request_url, commitSha: value.commitSha,
       sourceRef, reindexedAt: index.indexedAt, baselineVersion: index.baselineVersion
@@ -5224,8 +5489,49 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
     return json(response, 200, {
       proposal: proposalRecord(proposal.id),
       receiptId,
+      releaseId,
       implementationReceipt: true,
       confluencePublicationQueued: Boolean(publicationQueueId)
+    });
+  }
+  const outcomeReviewMatch = url.pathname.match(/^\/api\/change-proposals\/([^/]+)\/outcome-review$/);
+  if (method === "POST" && outcomeReviewMatch) {
+    const proposal = proposalRecord(outcomeReviewMatch[1]);
+    if (!proposal) return json(response, 404, { error: "Change proposal not found." });
+    if (proposal.status !== "implemented" || !proposal.release) {
+      return json(response, 409, { error: "An outcome review requires a recorded implemented methodology release." });
+    }
+    const value = await jsonBody(request);
+    const result = String(value.result || "");
+    if (!["met", "partly-met", "not-met", "harmful", "unknown"].includes(result)) {
+      return json(response, 400, { error: "Choose met, partly-met, not-met, harmful or unknown." });
+    }
+    const expectedOutcome = String(value.expectedOutcome || "").trim();
+    const observedOutcome = String(value.observedOutcome || "").trim();
+    const learning = String(value.learning || "").trim();
+    if (!expectedOutcome || !observedOutcome || !learning) {
+      return json(response, 400, { error: "Record the expected outcome, observed outcome and retained learning." });
+    }
+    const nextDisposition = validateLearningDisposition(String(value.nextDisposition || "no-action"));
+    const id = randomUUID();
+    const timestamp = now();
+    db.prepare(`
+      INSERT INTO methodology_outcome_reviews(
+        id,proposal_id,release_id,expected_outcome,observed_outcome,evidence_json,result,
+        learning,next_disposition,reviewer,review_date,created_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      id, proposal.id, proposal.release.id, expectedOutcome, observedOutcome,
+      JSON.stringify(value.evidence || []), result, learning, nextDisposition,
+      value.reviewer || FOUNDER_NAME, value.reviewDate || timestamp, timestamp
+    );
+    audit("methodology-release.outcome-reviewed", "methodology-outcome-review", id, {
+      proposalId: proposal.id, releaseId: proposal.release.id, result, nextDisposition,
+      approvalCreated: false
+    });
+    return json(response, 201, {
+      review: methodologyOutcomeReviews(proposal.id).find((item) => item.id === id),
+      trace: { feedbackId: proposal.feedback_id, proposalId: proposal.id, releaseId: proposal.release.id, reviewId: id }
     });
   }
   if (method === "GET" && url.pathname === "/api/repository/baseline") {

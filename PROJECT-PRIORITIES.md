@@ -2,7 +2,7 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.8
+version: 0.9
 owner: Jamie Peppard
 last_updated: 2026-07-29
 ---
@@ -18,6 +18,7 @@ last_updated: 2026-07-29
 - **Older PR disposition:** PR #3's unique pilot evidence is preserved exactly. PR #8 is recorded as superseded by the later Connected Governance branch and its obsolete Workbench implementation is not replayed.
 - **Application position:** the integrated Workbench provides one proposed operating surface for feedback, decisions, implementation receipts and Confluence Draft publication. No production deployment, external release or commercial offer is approved.
 - **Steering-control position:** the proposed Steering contract and project, prompt and recovery registries now make Product Purpose, project routing, prompt provenance and recovery gates explicit. The Methodology and Workbench remain one core project; Dynamic Governance requires a separate later repository and non-destructive migration decision; the RPG and Player Lab remain outside this project. None of these proposed controls is approved merely because it is implemented.
+- **Methodology-system position:** the proposed Methodology Product Purpose, learning-system extension, Methodology–Workbench contract and machine forms now connect the approved v0.7 human-readable sources to versioned application, signal, synthesis, release and outcome records. They remain proposed; the mechanics and passing tests do not approve their meaning or release the Workbench.
 - **Confluence position:** the private connection, lifecycle-first controlled mirror and human-first publication model are approved, and the first 108-page publication reconciled successfully. AI may publish committed proposed material beneath controlled Draft parents without another approval touchpoint. The managed ten-page reading tree now carries the proposed v0.8 Draft. Live promotion, migration, automatic interaction retrieval, scheduled publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
@@ -48,6 +49,7 @@ These are required to preserve the intended method or unblock the next justified
 20. **Move from the journey into the operational value system.** Once the need and point of investigation are understood, start with the first operational event, map what must happen to deliver and sustain the outcome, and add proportionate interfaces without claiming control over whole specialist functions.
 21. **Select and combine methods for the situation.** Use tools such as journey mapping, Lean techniques, MoSCoW and specialist practices where they add clarity or control; explain the choice and do not treat any framework as a competing identity or universal answer.
 22. **Control product boundaries and material build provenance.** Classify requests before commitment, keep Product Purpose separate from steering, select only exact current approved prompts, surface conflicts and require a proved restore route before material Workbench implementation.
+23. **Keep Methodology application and learning traceable.** Record the approved version and exact knowledge snapshot used, retain material signals with boundaries and disposition, synthesize related signals without treating volume as truth, and trace any human-approved release through later use and outcome review.
 
 ## Should
 
@@ -73,6 +75,7 @@ These materially improve usefulness, validation or control but do not all block 
 18. Test outside-in journey mapping and operational injection points across materially different contexts.
 19. Test whether automated feedback capture and routing reduce effort without hiding provenance, authority, response status or minority signals.
 20. Test the proposed project-boundary recommendations and exact-prompt build gate against real non-confidential work, including a retained human rejection or deferral and a recovery exercise after a later schema change.
+21. Test the proposed Methodology application and learning contract in one real non-confidential case, including useful output, correction, related-signal retrieval, later-version proof and outcome review.
 
 ## Could
 
@@ -120,6 +123,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Cross-functional interfaces | Validate how Operations works with strategy, finance, people, legal, risk, technology, product, procurement and other enabling or assurance capabilities | Approved for internal validation in v0.7; not yet case-tested | Test in two cases and revise before claiming general applicability |
 | Outside-in journeys | Validate that beginning with the primary person's journey reveals the right operational injection points without hiding other stakeholders or obligations | Approved for internal validation in v0.7; not yet case-tested | Test in one ordinary and one high-consequence journey |
 | Feedback loops | Define and validate receiver-centred capture, acknowledgement, routing, response and outcome review, with bounded automation | Approved for internal validation in v0.7; no multi-channel evidence | Test with different users, forms, channels and consequences |
+| Methodology application and learning contract | Prove that human-readable authority, machine components, Workbench snapshots, related signals, releases and outcome reviews remain aligned | Proposed contract and automated control fixtures prepared; no real-user outcome evidence | Jamie reviews the separate meaning and implementation decisions, then one authorised case tests the complete trace |
 | Ask experience | Define the repeatable output pattern for answerable and unanswerable questions, including progressive disclosure | v0.5 approved; simplicity and artefact behaviour under v0.6 testing | Evidence from the two cases |
 | Assessment/project experience | Define the full retained consultancy-style journey and its minimum artefacts | Concept approved; delivery specification incomplete | Complete cases before product definition |
 | Product definition | Specify the smallest useful AI-assisted product from validated outputs | Not started; earlier application parked | Jamie approves scope after repeatable value is shown |
