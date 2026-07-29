@@ -28,6 +28,7 @@
         <button class="nav-item" data-view="conversation"><span class="nav-icon oppa-nav-icon" aria-hidden="true">OM</span><span>Oppa Mate</span></button>
         <button class="nav-item" data-view="challenges"><span class="nav-icon" aria-hidden="true">!</span><span>Challenge studio</span></button>
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
+        <button class="nav-item" data-view="learning"><span class="nav-icon" aria-hidden="true">L</span><span>Methodology learning</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
         <button class="nav-item" data-view="brand"><span class="nav-icon" aria-hidden="true">OA</span><span>Brand review</span></button>
         <button class="nav-item" data-view="steering"><span class="nav-icon" aria-hidden="true">P</span><span>Purpose &amp; steering</span></button>
@@ -294,11 +295,11 @@
             <article><span>Build</span><strong id="steering-build-version">Loading…</strong><p>Workbench build using the registered control set.</p></article>
           </div>
           <form class="steering-intake-form" id="steering-intake-form">
-            <div><p class="eyebrow">Request-intake check</p><h3>Classify before committing work</h3><p>Paste one substantive request. The Workbench records its candidates, target project and boundary recommendation without approving anything.</p></div>
+            <div><p class="eyebrow">Ordinary language to governed action</p><h3>Describe what you need</h3><p>The Workbench retrieves controlled context, frames the outcome, checks the product boundary and shows the smallest safe route. You do not need to choose a record type, prompt or technical acceptance criteria.</p></div>
             <label for="steering-request">Request
-              <textarea id="steering-request" name="sourceText" rows="4" required placeholder="For example: Add a recovery-status panel to the private Workbench."></textarea>
+              <textarea id="steering-request" name="sourceText" rows="5" required placeholder="For example: I need the Workbench to turn a plain-language feature request into the right governed route and tell me what happens next."></textarea>
             </label>
-            <button class="primary" type="submit">Classify and record</button>
+            <button class="primary" type="submit">Frame my request</button>
           </form>
           <div id="steering-intake-result" class="steering-intake-result" aria-live="polite"></div>
           <div class="steering-layout">
@@ -436,6 +437,49 @@
         </div>
       </section>
       <section class="view utility-view" id="feedback-view" hidden><div class="utility-card wide-card"><p class="eyebrow">Review and classify</p><h2>Saved feedback</h2><div class="plain-explainer"><strong>Feedback is evidence, not approval.</strong><p>Review what was said, choose what kind of feedback it is and decide whether it should stop here or become a methodology or product change candidate. Classification never approves a change.</p><button data-open-guide type="button">Read how the change loop works</button></div><div id="feedback-list"></div></div></section>
+      <section class="view utility-view methodology-learning-view" id="learning-view" hidden>
+        <div class="utility-card methodology-learning-card">
+          <div class="work-page-heading">
+            <div>
+              <p class="eyebrow">Structured learning, not chat recollection</p>
+              <h2>Methodology learning</h2>
+              <p>See what Jamie has corrected, what is connected, what remains unresolved and which human-authorised Methodology releases can be traced back to feedback.</p>
+            </div>
+            <span class="status-pill status-awaiting-review" id="learning-baseline">Checking repository baseline</span>
+          </div>
+          <div class="work-boundary">
+            <div class="oppa-boundary-title"><span class="oppa-mate-badge" aria-hidden="true">OM</span><strong>Oppa Mate can connect and analyse learning; Jamie controls meaning.</strong></div>
+            <p id="learning-boundary">Classification, repetition, synthesis, implementation and publication cannot create Methodology approval.</p>
+          </div>
+          <div class="learning-summary" id="learning-summary" aria-label="Methodology learning summary"><p>Reading retained learning...</p></div>
+          <section class="learning-questions" aria-labelledby="learning-questions-heading">
+            <div class="section-heading"><div><p class="eyebrow">Ask the retained system</p><h3 id="learning-questions-heading">Founder questions</h3></div><span>Uses SQLite records and the current repository index</span></div>
+            <div class="learning-question-actions">
+              <button class="primary" type="button" data-learning-question="unresolved">What have you learned from me that has not yet been dealt with?</button>
+              <button class="ghost" type="button" data-learning-question="approved">Which approved Methodology changes came from my feedback?</button>
+            </div>
+            <div class="learning-answer" id="learning-answer" aria-live="polite"><strong>Choose a question.</strong><p>The answer will show the records and trace behind it.</p></div>
+          </section>
+          <div class="learning-layout">
+            <section aria-labelledby="learning-signals-heading">
+              <div class="section-heading"><div><p class="eyebrow">Open learning</p><h3 id="learning-signals-heading">Signals requiring attention</h3></div><span id="learning-signal-count">0</span></div>
+              <div class="learning-list" id="learning-unresolved-list"><p>Loading signals...</p></div>
+            </section>
+            <section aria-labelledby="learning-clusters-heading">
+              <div class="section-heading"><div><p class="eyebrow">Related memory</p><h3 id="learning-clusters-heading">Signal clusters and reviews</h3></div><span id="learning-cluster-count">0</span></div>
+              <div class="learning-list" id="learning-clusters"><p>Loading clusters...</p></div>
+            </section>
+          </div>
+          <section class="learning-pipeline" aria-labelledby="learning-pipeline-heading">
+            <div class="section-heading"><div><p class="eyebrow">Disposition and progress</p><h3 id="learning-pipeline-heading">Methodology learning route</h3></div><span>Every significant signal needs an explained state</span></div>
+            <div class="learning-status-grid" id="learning-status-grid"><p>Loading the learning route...</p></div>
+          </section>
+          <section class="learning-trace-section" aria-labelledby="learning-trace-heading">
+            <div class="section-heading"><div><p class="eyebrow">Signal to outcome</p><h3 id="learning-trace-heading">Human-authorised Methodology change traces</h3></div><span id="learning-trace-count">0</span></div>
+            <div class="learning-list" id="learning-traces"><p>Loading release traces...</p></div>
+          </section>
+        </div>
+      </section>
       <section class="view utility-view" id="decisions-view" hidden>
         <div class="utility-card decision-card">
           <p class="eyebrow">Human-controlled change workflow</p><h2>Decision inbox</h2>

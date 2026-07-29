@@ -2,7 +2,7 @@
 id: OA-STEERING-INTAKE-001
 title: Request Intake and Project-Boundary Contract
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-07-29
 ---
@@ -12,6 +12,22 @@ date: 2026-07-29
 ## Outcome
 
 Turn an authorised natural-language request into one or more traceable candidates before material implementation. Classification organises and routes work; it does not approve work or change Product Purpose.
+
+The complete framing route also returns a useful interpretation, the smallest safe work hierarchy, readiness, model or tool selection, linked-record plan and exact next governed action. A user should not need to choose the record type, product, prompt, Methodology component or technical acceptance format.
+
+## Pre-flight and interpretation
+
+Before framing material work, retrieve the applicable Product Purpose, Steering, approved Methodology, prompt registry, Decisions and Approvals, accepted corrections, feedback, related work, Ideas, implementation state, recorded pull-request references, Work Profile and security restrictions.
+
+Retain separately:
+
+- the exact source request and available conversation, work and evidence context;
+- the user-stated outcome, constraints, exclusions, urgency and authority statement;
+- the strongest reasonable interpretation and apparent outcome;
+- AI inference, uncertainty, safe assumptions and prohibited assumptions; and
+- the facts that would materially change the product, outcome, data, security, authority or acceptance route.
+
+Do not ask for information already available in controlled context.
 
 ## Candidate record
 
@@ -84,6 +100,42 @@ Material implementation may begin only when:
 - the exact approved implementation prompt identifier and version are recorded;
 - conflicts affecting the outcome or authority are resolved or explicitly accepted by Jamie; and
 - the recovery gate is successful for behaviour or database changes.
+
+Readiness uses:
+
+- **A — Capture**
+- **B — Explore**
+- **C — Define**
+- **D — Implementation Ready**
+- **E — Implement and Verify**
+- **F — Pre-approval Assurance**
+- **G — Approved Execution**
+
+Do not generate or send a Codex handoff before stage D. Stage D requires a complete outcome, scope, acceptance and evidence package as well as the control conditions above.
+
+## Work package and creation
+
+Frame the request across Product Purpose, capability or outcome, Initiative or Improvement, Change, Implementation Job, Task, test and evidence, outcome review and learning signal. Include only the levels justified by the request.
+
+The complete package retains identity, purpose and scope, current state, problem and evidence, requirements, governance and authority, implementation, acceptance and validation, non-goals, prompt and route.
+
+Create only the smallest existing linked record after the user confirms the route:
+
+- answer only: no unnecessary Task;
+- Methodology challenge: Feedback and review route;
+- vague product need: Improvement;
+- defined controlled behaviour change: Change;
+- purpose or separate-project candidate: Decision;
+- bounded operational action: Task; and
+- Idea: Ideas Space, without delivery commitment.
+
+An Implementation Job remains behind the existing explicit approved-for-preparation transition even when the framing is stage D.
+
+## Prompt and outcome provenance
+
+Retain the framing prompt, Product Purpose, Steering, Work Profile, generation time, source work, human changes, final approved handoff version and resulting branch, pull request and release.
+
+A Codex return must match the work reference and intended outcome, contain changed files, tests, migration, rollback, unresolved risks, remaining work and evidence for every acceptance criterion. An inadequate return leaves the work open and states the exact correction required.
 
 ## Decision handling
 
