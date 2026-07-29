@@ -54,6 +54,11 @@ test("local interface assets exist and no external resources are loaded", () => 
   assert.doesNotMatch(html, /(?:src|href)="https?:\/\//i);
 });
 
+test("primary actions remain readable when rendered as links", () => {
+  assert.match(cssSource, /\.oa-base \.primary\s*\{[^}]*color:\s*white;/s);
+  assert.match(cssSource, /\.oa-base a\.primary\s*\{[^}]*text-decoration:\s*none;/s);
+});
+
 test("essential controls and accessibility landmarks are present", () => {
   for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "preview-methodology-lab", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
