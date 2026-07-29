@@ -56,7 +56,11 @@ const OPERATE_ACTION_CONTRACT = Object.freeze({
       action("resolve-case", "Resolve case", "resolved", "The intended Case outcome is recorded as reached, ready for closure review.", { noteRequired: true })
     ],
     resolved: [
-      action("close-case", "Close case", "closed", "The resolved Case leaves the open inbox while its history and relationships remain available.", { noteRequired: true, style: "primary" }),
+      action("close-case", "Close case", "closed", "The resolved Case leaves the open inbox while its history and relationships remain available.", {
+        noteRequired: true,
+        suggestedNote: "The intended outcome has been reviewed and all contained work is complete.",
+        style: "primary"
+      }),
       action("reopen-case", "Reopen case", "in-progress", "The Case returns to active work with the reason retained.", { noteRequired: true })
     ]
   },
