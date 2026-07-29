@@ -9,7 +9,7 @@ date: 2026-07-29
 
 # AI Workbench governed base completion assurance pack
 
-Draft pull request: pending from `codex/complete-workbench-base`, layered on draft PR #29.
+Draft pull request: [#30](https://github.com/warpedmore-netizen/operations-automated/pull/30) from `codex/complete-workbench-base`, layered on draft PR #29.
 
 ## Decision in one sentence
 
