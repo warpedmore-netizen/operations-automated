@@ -60,10 +60,10 @@ test("primary actions remain readable when rendered as links", () => {
 });
 
 test("essential controls and accessibility landmarks are present", () => {
-  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "preview-methodology-lab", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "server-version-warning", "server-version-message", "guide-view"]) {
+  for (const id of ["new-conversation", "composer", "record", "recording-status", "recording-level", "voice-recovery", "retry-transcription", "discard-recording", "processing-state", "attach", "workspace", "output-type", "preview-dialog", "feedback-list", "decision-status-board", "decision-list", "decision-detail", "challenges-view", "connections-view", "phone-access-heading", "confluence-form", "confluence-connection-status", "remove-confluence", "confluence-publication", "preview-confluence-publication", "preview-methodology-lab", "confluence-publication-approval", "publish-confluence", "brand-view", "brand-review-progress", "brand-feedback-heading", "brand-feedback-count", "brand-feedback-list", "brand-adoption-list", "brand-review-grid", "steering-view", "steering-intake-form", "steering-projects", "steering-prompts", "steering-proposals", "steering-recommendations", "steering-conflicts", "steering-builds", "server-version-warning", "server-version-message", "guide-view"]) {
     assert.match(html, new RegExp(`id="${id}"`));
   }
-  for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
+  for (const label of ["Challenge studio", "Saved feedback", "Decision inbox", "Brand review", "Purpose &amp; steering", "Cost and usage", "Settings", "Connections", "How it works"]) assert.match(html, new RegExp(label));
   assert.match(html, /<main[^>]+id="main"/);
   assert.match(html, /aria-live="polite"/);
   assert.match(html, /lang="en-GB"/);
@@ -77,6 +77,7 @@ test("essential controls and accessibility landmarks are present", () => {
   assert.match(html, /id="context-panel"[^>]+hidden/);
   assert.match(appSource, /Why Oppa Mate recommended this/);
   assert.match(appSource, /userFacingAnswer/);
+  assert.match(appSource, /const intakeForm = event\.currentTarget;/);
   assert.match(html + appSource, /Approve and merge/);
   assert.match(html, /Preparation and release are separate decisions/);
 });

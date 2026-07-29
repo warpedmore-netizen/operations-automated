@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "recorded",
+  "latest": {
+    "recovery_id": "OA-RECOVERY-2026-07-29-001",
+    "record": "docs/recovery/2026-07-29-steering-control-baseline.md",
+    "tested_at": "2026-07-29",
+    "source_build": "1.5.3-ai-owner-queue-draft",
+    "source_commit": "72c1b8cb76e50f96e8226258a8aecf147c341de8",
+    "backup_location": "%LOCALAPPDATA%\\OperationsAutomated\\Workbench\\backups\\steering-control-20260729\\workbench-baseline-20260729.sqlite",
+    "backup_sha256": "9C1C48D3D168602B9525638175F51EB6DFBB4C5550036CA0271C82A37CCF2974",
+    "restore_status": "succeeded",
+    "restored_counts": {
+      "conversations": 12,
+      "messages": 84,
+      "operate_records": 21,
+      "governed_decisions": 2,
+      "governed_approvals": 15,
+      "implementation_jobs": 1,
+      "confluence_publication_runs": 6,
+      "confluence_publication_pages": 128
+    }
+  }
+}

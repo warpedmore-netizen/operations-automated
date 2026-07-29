@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "status": "proposed-control-registry",
+  "version": "0.1",
+  "owner": "Jamie Peppard",
+  "prompts": [
+    {
+      "prompt_id": "OA-PROMPT-STEERING-INSTALL-001",
+      "title": "Install the Operations Automated Steering, Project-Boundary, Prompt-Control and Recovery System",
+      "target_project": "operations-automated-core",
+      "target_capability": "steering-control-installation",
+      "exact_version": "1.0",
+      "status": "approved",
+      "exact_text_path": "prompts/approved/OA-PROMPT-STEERING-INSTALL-001-v1.0.md",
+      "purpose_version": "OA-CHARTER-001@0.3",
+      "steering_version": "OA-STEERING-001@0.1",
+      "effective_date": "2026-07-29",
+      "superseded_prompt": null,
+      "reason_for_change": "Initial exact implementation instruction for the steering-control foundation.",
+      "approving_decision": "OA-DECISION-2026-07-29-001",
+      "builds_or_pull_requests": ["1.6.0-steering-control-draft", "codex/install-steering-control-recovery"],
+      "migration_impact": "Adds control metadata and additive Workbench schema only; does not migrate Governance implementation or product data."
+    },
+    {
+      "prompt_id": "OA-PROMPT-WORKBENCH-BUILD-001",
+      "title": "Governed Workbench implementation job",
+      "target_project": "ai-workbench",
+      "target_capability": "product-application-build",
+      "exact_version": "1.0",
+      "status": "draft",
+      "exact_text_path": "prompts/drafts/OA-PROMPT-WORKBENCH-BUILD-001-v1.0.md",
+      "purpose_version": "OA-PRODUCT-001@0.1",
+      "steering_version": "OA-STEERING-001@0.1",
+      "effective_date": "2026-07-29",
+      "superseded_prompt": "OA-PROMPT-WORKBENCH-BUILD-001@0.9",
+      "reason_for_change": "Registers the existing bounded Codex handoff as an exact version and adds purpose, steering and prompt provenance.",
+      "approving_decision": null,
+      "builds_or_pull_requests": ["none until the steering and exact prompt are approved"],
+      "migration_impact": "Existing jobs remain intact and visibly legacy; future jobs remain blocked until the Steering contract and this exact prompt are approved."
+    },
+    {
+      "prompt_id": "OA-PROMPT-WORKBENCH-BUILD-001",
+      "title": "Legacy Workbench implementation handoff",
+      "target_project": "ai-workbench",
+      "target_capability": "product-application-build",
+      "exact_version": "0.9",
+      "status": "superseded",
+      "exact_text_path": "prompts/superseded/OA-PROMPT-WORKBENCH-BUILD-001-v0.9.md",
+      "purpose_version": "unrecorded-legacy",
+      "steering_version": "unrecorded-legacy",
+      "effective_date": "2026-07-26",
+      "superseded_prompt": null,
+      "reason_for_change": "Retained to make the pre-registry provenance gap visible; version 1.0 is the proposed exact replacement.",
+      "approving_decision": null,
+      "builds_or_pull_requests": ["Workbench implementation jobs created before schema migration 7"],
+      "migration_impact": "Historical only; never selected as current."
+    }
+  ]
+}

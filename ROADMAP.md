@@ -2,9 +2,9 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 0.9
+version: 1.0
 owner: Jamie Peppard
-last_updated: 2026-07-26
+last_updated: 2026-07-29
 ---
 
 # Operations Automated Roadmap
@@ -70,6 +70,8 @@ Further founder use showed that joined records are not the same as a completed w
 
 Founder testing then exposed a deeper ownership failure: labelling an item as AI-owned did not wake an AI worker, so Tasks and approved-preparation Build Jobs could remain indefinitely in **Being handled**. The proposed Workbench 1.5.3 correction adds a local claimable queue, structured completion return and recurring Codex worker. It uses scheduled polling because no supported event-driven Workbench-to-Codex connection is currently configured. Consequential actions remain behind their existing founder gates, and the worker depends on the computer, Codex app and local Workbench being available.
 
+The proposed Workbench 1.6.0 control increment separates Product Purpose from steering, registers each product boundary and exact material prompt, proves a recoverable SQLite baseline and exposes request classification, prompt provenance and unresolved conflicts in one private surface. The Methodology and Workbench remain one core project. Dynamic Governance is treated as a separate product but its retained implementation is not moved until Jamie approves a target repository and non-destructive migration plan. The RPG and Player Lab remain outside this project.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -109,10 +111,11 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 7. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
 8. Review the published Methodology Lab Draft as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
 9. Review the proposed Workbench 1.5.1 operating surface as one bounded whole: clear ownership and completion, governed knowledge, separate conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff and receipt loop.
-10. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
-11. Prepare a new assurance pack before any later material methodology release.
-12. Define the smallest justified product only after repeatable method outputs create value.
-13. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
+10. Review the proposed Steering contract, three Product Purpose reconciliations and Workbench 1.6.0 control increment using the [steering-control assurance pack](proposals/steering-control-assurance-pack.md); keep merge, purpose approval and the Dynamic Governance migration decision separate.
+11. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
+12. Prepare a new assurance pack before any later material methodology release.
+13. Define the smallest justified product only after repeatable method outputs create value.
+14. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision
 

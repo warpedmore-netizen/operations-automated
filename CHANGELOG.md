@@ -1,5 +1,15 @@
 # Changelog
 
+## Workbench 1.6.0 steering, boundary, prompt and recovery control - proposed
+
+- Added a proposed Steering and Collaboration Contract, reconciled Product Purpose proposals and machine-readable project, prompt and recovery registries without changing the approved v0.7 methodology baseline.
+- Kept the Methodology and Workbench in one core project, recorded Dynamic Governance as a separate product awaiting a non-destructive migration decision, and kept the Incident Management RPG and Football Manager Player Lab outside this project.
+- Registered the exact supplied installation prompt as approved for this bounded preparation and a proposed exact Workbench build prompt as Draft; retained the earlier Workbench prompt as superseded and excluded it from current collation.
+- Added request classification, project-boundary recommendations, retained accept/defer/reject route decisions and visible conflict checks to the private Workbench.
+- Required every new material Workbench Build Job to carry exact current purpose, steering, approved-prompt and prompt-hash provenance after a successful recovery gate. Historical jobs remain intact and visibly legacy when provenance was not recorded.
+- Created and tested a user-local consistent SQLite backup before behaviour changes, preserving conversations, feedback, decisions, approvals, publication history, implementation jobs and audit evidence.
+- Preserved specialist Workbench workflows and the retained Governance implementations. No migration, repository creation, merge, release, publication or Product Purpose approval is implied.
+
 ## Workbench 1.5.3 scheduled AI-owner queue - proposed
 
 - Added one local, machine-readable AI work queue for ordinary AI-owned Tasks and explicitly authorised Build Job steps.

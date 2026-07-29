@@ -4,7 +4,9 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Status:** Workbench 0.9.0 was approved and merged for private internal validation through PR #15. The later Workbench and methodology-publication increments remain proposed. The Workbench is not deployed or approved for external use.
 
-> **Methodology boundary:** The approved Operations Automated v0.6 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
+> **Methodology boundary:** The approved Operations Automated v0.7 repository baseline remains authoritative. Workbench analysis, connected evidence, feedback classification and proposal preparation do not approve methodology meaning.
+
+> **Proposed purpose-and-steering control:** Workbench build `1.6.0-steering-control-draft` adds a visible Product Purpose, project-boundary, prompt-provenance, conflict and recovery surface. It classifies and retains substantive request-intake recommendations, blocks new Build Jobs without an approved purpose, approved Steering contract and exact approved prompt, and preserves rejected or deferred routes. The Steering contract, purpose reconciliations and future Workbench build prompt remain proposed or Draft; this surface cannot approve them or migrate the separate Dynamic Governance Tool.
 
 > **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
@@ -185,6 +187,7 @@ Oppa Mate is presented as the primary Operations Automated service-account user 
 - Governed knowledge manifest, heading-level SQLite FTS5 retrieval, optional embeddings and exact cited knowledge snapshots
 - Read-only Confluence connection, Internal/Methodology space assignment and session-scoped connected-evidence retrieval
 - Proposed human-readable Confluence page planning, AI-managed Draft publication, founder-controlled Live publication, optimistic conflict checks and version receipts
+- Proposed Purpose & Steering registry, request-intake classification, project-boundary recommendations, exact prompt provenance, visible conflicts and tested recovery status
 - Capability-tier routing and configurable cost gates
 - Useful local answers, analyses, checklists, templates and proposal-preparation briefs grounded in repository evidence
 - Optional server-side OpenAI Responses API route
