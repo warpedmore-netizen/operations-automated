@@ -9,6 +9,8 @@ date: 2026-07-29
 
 # Methodology Product Purpose, Learning System and Delivery Contract assurance pack
 
+Draft pull request: [#29 — Add Methodology purpose, learning and delivery contract](https://github.com/warpedmore-netizen/operations-automated/pull/29), layered on draft PR #28.
+
 ## Decision in one sentence
 
 Decide whether to merge the prepared proposed control implementation and, separately, whether to approve, revise, defer or reject the Product Purpose, learning-system extension, Methodology–Workbench contract and machine-readable forms.
