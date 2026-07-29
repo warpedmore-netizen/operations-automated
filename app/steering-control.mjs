@@ -272,7 +272,7 @@ export function loadSteeringControls(repositoryRoot) {
 function targetProjectIds(text) {
   const value = String(text || "");
   const targets = [];
-  if (/\b(?:dynamic governance|connected governance|governance tool|governance-poc|governance site)\b/i.test(value)) targets.push("dynamic-governance-tool");
+  if (/\b(?:dynamic governance|connected governance|governance tool|governance-poc|governance site|governance document lifecycle)\b/i.test(value)) targets.push("dynamic-governance-tool");
   if (/\b(?:incident management (?:rpg|simulation|game)|incident manager rpg)\b/i.test(value)) targets.push("incident-management-rpg");
   if (/\b(?:football manager player lab|player lab)\b/i.test(value)) targets.push("football-manager-player-lab");
   if (/\b(?:workbench|oppa mate|my work|implementation job|codex handoff)\b/i.test(value)) targets.push("ai-workbench");
@@ -324,17 +324,35 @@ export function assessProjectBoundary({ text, targetProject, classifications = [
   }
 
   const newProject = recommendation === "create-separate-project" ? {
+    reason: rationale,
+    proposedName: project?.product_name || "New product candidate",
     proposedProductName: project?.product_name || "New product candidate",
+    draftPurpose: project?.core_outcome || "Purpose requires a separate proposal.",
     proposedProductPurpose: project?.core_outcome || "Purpose requires a separate proposal.",
     intendedUsers: project?.intended_users || [],
+    intendedOutcome: project?.core_outcome || "Outcome requires definition.",
     primaryOutcome: project?.core_outcome || "Outcome requires definition.",
+    inputs: targetProject === "dynamic-governance-tool"
+      ? ["Controlled governing sources", "Authorised operating evidence"]
+      : ["Inputs require separate product discovery"],
+    outputs: targetProject === "dynamic-governance-tool"
+      ? ["Linked governance drafts", "Evidence and controlled releases"]
+      : ["Outputs require separate product discovery"],
     inputsAndOutputs: targetProject === "dynamic-governance-tool"
       ? "Controlled governing sources and findings in; linked governance drafts, evidence and releases out."
       : "Inputs and outputs require separate product discovery.",
+    coreCapabilities: targetProject === "dynamic-governance-tool"
+      ? ["Source ingestion", "Traceable governance relationships", "Controlled review and release"]
+      : ["Capabilities require separate product discovery"],
+    boundaries: project?.authority_boundary || "Separate purpose, data, authority and release controls are required.",
+    nonGoals: ["Do not inherit the Workbench database, Methodology authority or Operations Automated release authority."],
     boundariesAndNonGoals: project?.authority_boundary || "Separate purpose, data, authority and release controls are required.",
+    relationshipToCurrentProducts: project?.connected_products || [],
     relationshipToExistingProducts: project?.connected_products || [],
+    informationAndSecurityImplications: project?.information_boundary || "A separate data and security decision is required.",
     dataAndSecurityImplications: project?.information_boundary || "A separate data and security decision is required.",
     authorityModel: project?.authority_boundary || "Jamie retains approval until explicitly delegated.",
+    whatStaysInCurrentProduct: "Only controlled findings, references and learning signals; no imported internal database or approval authority.",
     remainsInCurrentProduct: "Only controlled findings, references and learning signals; no imported internal database or approval authority.",
     migrationOrIntegration: targetProject === "dynamic-governance-tool"
       ? "Prepare a non-destructive repository migration and controlled signal-exchange contract; do not remove retained code yet."

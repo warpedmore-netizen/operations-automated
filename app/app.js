@@ -1762,6 +1762,62 @@ function steeringStatusLabel(value) {
   return String(value || "unknown").replaceAll("-", " ");
 }
 
+function framingList(values, empty = "None recorded.") {
+  return Array.isArray(values) && values.length
+    ? `<ul>${values.map((item) => `<li>${escapeHtml(typeof item === "string" ? item : item.title || item.question || item.reason || JSON.stringify(item))}</li>`).join("")}</ul>`
+    : `<p>${escapeHtml(empty)}</p>`;
+}
+
+function framingResultMarkup(intake, { compact = false } = {}) {
+  const framing = intake.framing || {};
+  if (!framing.reference) {
+    return `<article class="steering-item steering-recommendation" data-steering-intake-id="${escapeHtml(intake.id)}">
+      <div><span>${escapeHtml(intake.status)}</span><strong>${escapeHtml(intake.boundary?.recommendation || "Legacy classification")}</strong></div>
+      <p>${escapeHtml(intake.sourceText)}</p>
+      <small>This retained intake predates the complete framing engine. Its original classification remains unchanged.</small>
+    </article>`;
+  }
+  const questions = framing.materialQuestions || [];
+  const linked = intake.linkedRecords || [];
+  const planned = framing.recordPlan?.createWhenConfirmed || [];
+  const canCreateRoute = !linked.length && !questions.length && planned.length;
+  const classificationLabels = (framing.classifications || []).map((item) => item.label).join(" · ");
+  const sourceCount = framing.preflight?.sources?.length || 0;
+  const recordSummary = linked.length
+    ? linked.map((item) => `${item.reference || item.id} · ${item.type}`).join(" · ")
+    : planned.length
+      ? planned.map((item) => `${item.type} (${item.timing.replaceAll("-", " ")})`).join(" · ")
+      : "No extra record is needed.";
+  return `<article class="framing-result ${compact ? "framing-result-compact" : ""}" data-steering-intake-id="${escapeHtml(intake.id)}">
+    <div class="framing-result-heading">
+      <div><span>${escapeHtml(framing.reference)}</span><h3>${escapeHtml(framing.title)}</h3></div>
+      <em>Stage ${escapeHtml(framing.readiness?.stage || "A")} · ${escapeHtml(framing.readiness?.label || "Capture")}</em>
+    </div>
+    <p class="framing-outcome">${escapeHtml(framing.interpretation?.apparentOutcome || intake.sourceText)}</p>
+    <div class="framing-route-grid">
+      <div><span>Product route</span><strong>${escapeHtml(framing.workPackage?.identity?.targetProduct || intake.targetProject)}</strong><small>${escapeHtml(framing.projectBoundary?.recommendation || intake.boundary?.recommendation)}</small></div>
+      <div><span>Classification</span><strong>${escapeHtml(classificationLabels || "Unclassified")}</strong><small>${escapeHtml(framing.projectBoundary?.rationale || "")}</small></div>
+      <div><span>AI and tool route</span><strong>${escapeHtml(framing.modelToolRoute?.route || "local-framing-engine")}</strong><small>${escapeHtml(framing.modelToolRoute?.reason || "")}</small></div>
+      <div><span>Records</span><strong>${escapeHtml(recordSummary)}</strong><small>${linked.length ? "Created and linked without approval." : "The proposed minimum route; no approval is inferred."}</small></div>
+    </div>
+    ${questions.length ? `<section class="framing-question"><span>One material question</span><strong>${escapeHtml(questions[0].question)}</strong><p>${escapeHtml(questions[0].whyMaterial)}</p><label>Your answer<textarea rows="2" data-framing-answer placeholder="Add only the information that changes this route."></textarea></label><button type="button" class="primary" data-answer-framing-question="${escapeHtml(intake.id)}" data-question-id="${escapeHtml(questions[0].id)}">Continue with this answer</button></section>` : `<section class="framing-next"><span>Next governed action</span><strong>${escapeHtml(framing.nextGovernedAction)}</strong></section>`}
+    ${canCreateRoute ? `<button type="button" class="primary" data-create-framing-route="${escapeHtml(intake.id)}">Create the draft route</button>` : ""}
+    ${linked.length ? `<div class="framing-created"><strong>Created</strong><p>${escapeHtml(recordSummary)}</p></div>` : ""}
+    <details class="preview-details">
+      <summary>Review assumptions, scope and control trace</summary>
+      <div class="framing-detail-grid">
+        <section><h4>Assumptions you can correct</h4>${framingList(framing.assumptions)}</section>
+        <section><h4>Explicitly out of scope</h4>${framingList(framing.workPackage?.purposeAndScope?.explicitlyOutOfScope)}</section>
+        <section><h4>Acceptance and evidence</h4>${framingList(framing.workPackage?.acceptanceAndValidation?.acceptanceCriteria)}</section>
+        <section><h4>Readiness blockers</h4>${framingList(framing.readiness?.blockers, "No stage blocker is recorded.")}</section>
+      </div>
+      <p><strong>Controlled context:</strong> ${sourceCount} relevant source or memory reference${sourceCount === 1 ? "" : "s"} retrieved before framing. <strong>Purpose:</strong> ${escapeHtml(framing.preflight?.purpose || "unavailable")}. <strong>Steering:</strong> ${escapeHtml(framing.preflight?.steering || "unavailable")}.</p>
+      <p><strong>Codex:</strong> ${escapeHtml(framing.codex?.reason || "Not selected.")}</p>
+      <p class="control-note">${escapeHtml(framing.authorityBoundary)}</p>
+    </details>
+  </article>`;
+}
+
 function renderSteering(value) {
   state.steering = value;
   $("#steering-version").textContent = `${value.steering?.version || "unavailable"} · ${steeringStatusLabel(value.steering?.status)}`;
@@ -1793,15 +1849,13 @@ function renderSteering(value) {
     <article class="steering-item"><div><span>${escapeHtml(item.status)}</span><strong>${escapeHtml(item.title)}</strong></div><p>${escapeHtml(item.detail)}</p><small>Requires an exact human Decision before Approved status.</small></article>`).join("") : `<p class="empty-steering">No unresolved purpose or prompt proposals.</p>`;
 
   $("#steering-recommendations").innerHTML = value.intakes.length ? value.intakes.map((intake) => `
-    <article class="steering-item steering-recommendation" data-steering-intake-id="${escapeHtml(intake.id)}">
-      <div><span>${escapeHtml(intake.status)}</span><strong>${escapeHtml(intake.boundary.recommendation)}</strong></div>
-      <p>${escapeHtml(intake.sourceText)}</p>
-      <small>${escapeHtml(intake.boundary.rationale)}</small>
-      ${intake.decision?.action ? `<p><strong>Recorded decision:</strong> ${escapeHtml(intake.decision.action)} by ${escapeHtml(intake.decision.actor)}${intake.decision.reason ? ` · ${escapeHtml(intake.decision.reason)}` : ""}</p>` : `
+    ${framingResultMarkup(intake, { compact: true })}
+    <div class="steering-route-decision" data-steering-intake-id="${escapeHtml(intake.id)}">
+      ${intake.decision?.action ? `<p><strong>Recorded route decision:</strong> ${escapeHtml(intake.decision.action)} by ${escapeHtml(intake.decision.actor)}${intake.decision.reason ? ` · ${escapeHtml(intake.decision.reason)}` : ""}</p>` : `
         <label>Reason when deferring or rejecting<textarea rows="2" data-steering-decision-reason></textarea></label>
         <div class="steering-decision-actions"><button type="button" data-steering-decision="accept-route">Accept route</button><button type="button" data-steering-decision="defer-route">Defer route</button><button type="button" data-steering-decision="reject-route">Reject route</button></div>`}
       <p class="control-note">A route decision does not approve purpose, repository creation, migration, build, release or publication.</p>
-    </article>`).join("") : `<p class="empty-steering">No project-boundary recommendations have been recorded.</p>`;
+    </div>`).join("") : `<p class="empty-steering">No request routes have been recorded.</p>`;
 
   $("#steering-conflicts").innerHTML = value.conflicts.length ? value.conflicts.map((conflict) => `
     <article class="steering-item steering-conflict ${escapeHtml(conflict.severity)}"><div><span>${escapeHtml(conflict.severity)} · ${escapeHtml(conflict.status)}</span><strong>${escapeHtml(conflict.summary)}</strong></div><p>${escapeHtml(conflict.decisionRequired)}</p><small>${escapeHtml((conflict.sources || []).join(" · "))}</small></article>`).join("") : `<p class="empty-steering">No control conflicts detected.</p>`;
@@ -2533,21 +2587,91 @@ $("#steering-intake-form").addEventListener("submit", async (event) => {
   const intakeForm = event.currentTarget;
   const form = new FormData(intakeForm);
   const result = $("#steering-intake-result");
-  result.innerHTML = "<strong>Classifying and checking the project boundary…</strong>";
+  result.innerHTML = "<strong>Retrieving controlled context and framing the smallest safe route…</strong>";
   try {
     const value = await request("/api/steering/intakes", {
       method: "POST",
-      body: JSON.stringify({ sourceText: form.get("sourceText") })
+      body: JSON.stringify({
+        sourceText: form.get("sourceText"),
+        originatingConversation: state.conversation?.id || null,
+        activeWorkContext: state.currentOperateRecord?.id || null
+      })
     });
     const intake = value.intake;
-    result.innerHTML = `<strong>${escapeHtml(intake.boundary.recommendation)}</strong><p>${escapeHtml(intake.boundary.rationale)}</p><small>${escapeHtml(intake.classification.candidates.map((item) => item.classification).join(" · "))}</small>`;
+    result.innerHTML = framingResultMarkup(intake);
     intakeForm.reset();
     await loadSteering();
   } catch (error) {
-    result.innerHTML = `<strong>Classification failed.</strong><p>${escapeHtml(error.message)}</p>`;
+    result.innerHTML = `<strong>Framing stopped safely.</strong><p>${escapeHtml(error.message)}</p>`;
   }
 });
+
+async function createFramingRoute(id, resultContainer = null) {
+  const value = await request(`/api/steering/intakes/${encodeURIComponent(id)}/create-route`, {
+    method: "POST",
+    body: "{}"
+  });
+  if (resultContainer) resultContainer.innerHTML = framingResultMarkup(value.intake);
+  await loadSteering();
+  toast(value.message);
+}
+
+async function answerFramingQuestion(button, resultContainer = null) {
+  const card = button.closest(".framing-result");
+  const answer = card?.querySelector("[data-framing-answer]")?.value.trim() || "";
+  const value = await request(`/api/steering/intakes/${encodeURIComponent(button.dataset.answerFramingQuestion)}/answer`, {
+    method: "POST",
+    body: JSON.stringify({ questionId: button.dataset.questionId, answer })
+  });
+  if (resultContainer) resultContainer.innerHTML = framingResultMarkup(value.intake);
+  await loadSteering();
+  toast(value.message);
+}
+
+$("#steering-intake-result").addEventListener("click", (event) => {
+  const answerButton = event.target.closest("[data-answer-framing-question]");
+  if (answerButton) {
+    answerButton.disabled = true;
+    answerFramingQuestion(answerButton, $("#steering-intake-result"))
+      .catch((error) => {
+        answerButton.disabled = false;
+        toast(error.message, true);
+      });
+    return;
+  }
+  const button = event.target.closest("[data-create-framing-route]");
+  if (!button) return;
+  button.disabled = true;
+  createFramingRoute(button.dataset.createFramingRoute, $("#steering-intake-result"))
+    .catch((error) => {
+      button.disabled = false;
+      toast(error.message, true);
+    });
+});
+
 $("#steering-recommendations").addEventListener("click", async (event) => {
+  const answerButton = event.target.closest("[data-answer-framing-question]");
+  if (answerButton) {
+    answerButton.disabled = true;
+    try {
+      await answerFramingQuestion(answerButton);
+    } catch (error) {
+      answerButton.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const createRoute = event.target.closest("[data-create-framing-route]");
+  if (createRoute) {
+    createRoute.disabled = true;
+    try {
+      await createFramingRoute(createRoute.dataset.createFramingRoute);
+    } catch (error) {
+      createRoute.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   const button = event.target.closest("[data-steering-decision]");
   if (!button) return;
   const card = button.closest("[data-steering-intake-id]");

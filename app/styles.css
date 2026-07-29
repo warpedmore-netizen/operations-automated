@@ -885,6 +885,36 @@ main { min-width: 0; }
 .steering-conflict.warning { border-left: 4px solid var(--amber); }
 .steering-decision-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
 .steering-decision-actions button { min-height: 42px; padding: 0.45rem 0.65rem; color: var(--blue-strong); background: white; border: 1px solid #a9c7dc; border-radius: 7px; font-size: 0.68rem; font-weight: 750; }
+.framing-result { display: grid; gap: 0.85rem; padding: 1rem; color: var(--ink); background: white; border: 1px solid #9fc8df; border-radius: 10px; box-shadow: 0 7px 20px rgba(10, 57, 95, 0.07); }
+.framing-result-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.framing-result-heading span, .framing-route-grid span, .framing-question span, .framing-next span { display: block; color: #56708e; font-size: 0.6rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase; }
+.framing-result-heading h3 { margin: 0.25rem 0 0; font: 750 1.05rem/1.25 var(--display-font); }
+.framing-result-heading em { flex: 0 0 auto; padding: 0.42rem 0.6rem; color: #075d50; background: #e0f6f1; border: 1px solid #a9dacd; border-radius: 999px; font-size: 0.64rem; font-style: normal; font-weight: 800; }
+.framing-outcome { margin: 0; color: #365069; font-size: 0.76rem; line-height: 1.55; }
+.framing-route-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.framing-route-grid > div { display: grid; gap: 0.28rem; min-width: 0; padding: 0.75rem; background: #f4f8fb; border: 1px solid #d8e5ef; border-radius: 8px; }
+.framing-route-grid strong { color: var(--ink); font-size: 0.74rem; line-height: 1.4; overflow-wrap: anywhere; }
+.framing-route-grid small { color: var(--muted); font-size: 0.62rem; line-height: 1.45; }
+.framing-question, .framing-next { padding: 0.8rem; background: #fff8e8; border-left: 4px solid var(--amber); border-radius: 7px; }
+.framing-next { background: var(--green-soft); border-left-color: var(--green); }
+.framing-question strong, .framing-next strong { display: block; margin-top: 0.3rem; font-size: 0.78rem; line-height: 1.45; }
+.framing-question p { margin: 0.35rem 0 0; color: var(--muted); font-size: 0.66rem; line-height: 1.45; }
+.framing-question label { display: block; margin-top: 0.65rem; color: var(--ink); font-size: 0.66rem; font-weight: 800; }
+.framing-question textarea { width: 100%; margin: 0.3rem 0 0.5rem; padding: 0.62rem; background: white; border: 1px solid #d1b46f; border-radius: 7px; resize: vertical; }
+.framing-created { padding: 0.7rem; background: var(--green-soft); border-radius: 7px; }
+.framing-created p { margin: 0.25rem 0 0; color: #365f56; font-size: 0.68rem; }
+.framing-detail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; margin: 0.8rem 0; }
+.framing-detail-grid section { padding: 0.7rem; background: #f7f9fb; border-radius: 7px; }
+.framing-detail-grid h4 { margin: 0 0 0.35rem; color: var(--ink); font-size: 0.69rem; }
+.framing-detail-grid p, .framing-detail-grid li { color: var(--muted); font-size: 0.63rem; line-height: 1.45; }
+.framing-detail-grid ul { margin: 0; padding-left: 1rem; }
+.framing-result .preview-details > p { color: var(--muted); font-size: 0.64rem; line-height: 1.5; }
+.framing-result-compact { padding: 0.8rem; box-shadow: none; }
+.framing-result-compact .framing-route-grid { grid-template-columns: 1fr; }
+.steering-route-decision { padding: 0.75rem; background: #f8fafc; border: 1px solid var(--line); border-radius: 8px; }
+.steering-route-decision label { color: var(--ink); font-size: 0.68rem; font-weight: 750; }
+.steering-route-decision textarea { width: 100%; margin-top: 0.35rem; padding: 0.6rem; border: 1px solid var(--line); border-radius: 7px; resize: vertical; }
+.steering-route-decision p { margin: 0.4rem 0; color: var(--muted); font-size: 0.67rem; line-height: 1.45; }
 .control-note { padding-top: 0.5rem; border-top: 1px solid var(--line); }
 .empty-steering { margin: 0; color: var(--muted); font-size: 0.7rem; }
 .compact-action { min-height: 38px; padding: 0.55rem 0.75rem; }
@@ -1214,6 +1244,9 @@ dialog form { padding: 1.4rem; }
   .steering-heading { display: grid; }
   .steering-summary, .steering-layout { grid-template-columns: 1fr; }
   .steering-intake-form { grid-template-columns: 1fr; }
+  .framing-result-heading { display: grid; }
+  .framing-result-heading em { justify-self: start; }
+  .framing-route-grid, .framing-detail-grid { grid-template-columns: 1fr; }
   html, body { min-width: 0; overflow-x: hidden; }
   .shell { display: block; }
   .rail {
