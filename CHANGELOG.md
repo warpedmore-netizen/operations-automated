@@ -1,5 +1,17 @@
 # Changelog
 
+## Workbench 1.8.0 complete governed base journey - proposed
+
+- Added one dedicated **Methodology learning** surface over retained SQLite records and the current repository index, without creating a new canonical work record type.
+- Added direct structured answers to **What have you learned from me that has not yet been dealt with?** and **Which approved Methodology changes came from my feedback?**
+- Made every material feedback signal expose its source wording, contextual interpretation, assessment change, uncertainty, counter-test, affected product and Methodology components, accepted correction, contradictions, confidence, reason, review trigger, Decision link, implementation link and final outcome.
+- Added visible related-signal clusters and Methodology Learning Reviews covering approved baseline, sources, corrections, what is covered or unclear, possible gaps, contradictions, evidence strength, counter-evidence, limits, proposed disposition, strongest no-change case, recommendation and exact human Decision or evidence required.
+- Expanded the Codex Implementation Job with the complete target, provenance, problem, behaviour, scope, exclusion, security, architecture, migration, rollback, documentation, question, acceptance and structured-return fields.
+- Kept a failed or incomplete Codex return open and required evidence against every acceptance criterion before a separate release Decision can be offered.
+- Extended the additive SQLite migration and proved that existing records, the pre-change database state and the pre-change repository artefact can be restored in a test copy.
+- Added the complete non-confidential vertical-journey evidence and full regression coverage; 100 Workbench tests pass and the desktop and 390-pixel live layouts have no browser errors or horizontal overflow.
+- Preserved Git authority, SQLite operational memory, Oppa Mate identity, separate preparation and release Decisions, controlled Confluence Draft/Live separation and all specialist histories. No Methodology meaning, merge, product release, Live publication or external use is approved.
+
 ## Workbench 1.7.0 Methodology purpose, learning and delivery contract - proposed
 
 - Reconciled the proposed Operations Automated Methodology Product Purpose and Boundaries without changing the approved v0.7 baseline.

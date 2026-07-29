@@ -16,8 +16,9 @@ import {
   validateRepositoryReference
 } from "./change-governance.mjs";
 import {
-  defaultLearningDisposition, findRelatedMethodologySignals, synthesiseMethodologySignals,
-  validateApplicationContract, validateLearningDisposition
+  LEARNING_DISPOSITION_LABELS, buildMethodologyLearningReview, defaultDispositionReason,
+  defaultLearningDisposition, findRelatedMethodologySignals, groupRelatedMethodologySignals,
+  synthesiseMethodologySignals, validateApplicationContract, validateLearningDisposition
 } from "./methodology-learning.mjs";
 import {
   KNOWLEDGE_MANIFEST, changelogVersion, chunkDocument, readGitRefFile,
@@ -399,6 +400,19 @@ ensureColumn("feedback", "related_feedback_json", "TEXT NOT NULL DEFAULT '[]'");
 ensureColumn("feedback", "learning_disposition", "TEXT NOT NULL DEFAULT 'more-evidence'");
 ensureColumn("feedback", "resulting_proposal", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("feedback", "outcome_review_trigger", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "contextual_meaning", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "assessment_change", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "uncertainty_dispute", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "counter_test", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "affected_product", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "accepted_correction", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "contradictions_json", "TEXT NOT NULL DEFAULT '[]'");
+ensureColumn("feedback", "confidence", "TEXT NOT NULL DEFAULT 'provisional'");
+ensureColumn("feedback", "disposition_reason", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "review_trigger", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "decision_reference", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "implementation_link", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("feedback", "final_outcome", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("conversations", "active_case_id", "TEXT");
 ensureColumn("conversations", "active_record_id", "TEXT");
 ensureColumn("conversations", "summary_through_message_id", "TEXT");
@@ -452,6 +466,7 @@ recordSchemaMigration(4, "Add configurable work profiles and retained correction
 recordSchemaMigration(5, "Add universal decisions, approvals and implementation jobs");
 recordSchemaMigration(7, "Add steering intake and exact implementation provenance");
 recordSchemaMigration(8, "Add complete methodology learning, synthesis, release and outcome trace");
+recordSchemaMigration(9, "Add inspectable challenge reasoning, visible dispositions and completion links");
 
 ensureColumn("confluence_publication_runs", "publication_kind", "TEXT NOT NULL DEFAULT 'controlled-mirror'");
 db.exec(`
@@ -472,6 +487,29 @@ for (const item of db.prepare("SELECT id,disposition,wording,classification,lear
     db.prepare("UPDATE feedback SET learning_disposition=? WHERE id=?")
       .run(defaultLearningDisposition(item.classification), item.id);
   }
+  const current = db.prepare("SELECT learning_disposition,disposition_reason,contextual_meaning,assessment_change,uncertainty_dispute,counter_test,affected_product,accepted_correction,review_trigger FROM feedback WHERE id=?").get(item.id);
+  const learningDisposition = current.learning_disposition || defaultLearningDisposition(item.classification);
+  db.prepare(`
+    UPDATE feedback SET
+      contextual_meaning=CASE WHEN contextual_meaning='' THEN COALESCE(NULLIF(ai_interpretation,''),NULLIF(interpretation,''),original_wording) ELSE contextual_meaning END,
+      assessment_change=CASE WHEN assessment_change='' THEN ? ELSE assessment_change END,
+      uncertainty_dispute=CASE WHEN uncertainty_dispute='' THEN COALESCE(NULLIF(evidence_limitations,''),'Further context may change the assessment.') ELSE uncertainty_dispute END,
+      counter_test=CASE WHEN counter_test='' THEN ? ELSE counter_test END,
+      affected_product=CASE WHEN affected_product='' THEN ? ELSE affected_product END,
+      accepted_correction=CASE WHEN accepted_correction='' AND ? IN ('answer-only-correction','reusable-correction') THEN original_wording ELSE accepted_correction END,
+      disposition_reason=CASE WHEN disposition_reason='' THEN ? ELSE disposition_reason END,
+      review_trigger=CASE WHEN review_trigger='' THEN outcome_review_trigger ELSE review_trigger END
+    WHERE id=?
+  `).run(
+    learningDisposition === "answer-only-correction"
+      ? "The originating answer should change; no Methodology change follows from this signal alone."
+      : "The signal changes the retained assessment only to the extent stated in its disposition.",
+    "Test whether the issue is answer quality, guidance or product behaviour before changing approved Methodology meaning.",
+    item.classification === "product-change-candidate" ? "AI Workbench" : "Operations Automated Methodology",
+    learningDisposition,
+    defaultDispositionReason(item.classification, learningDisposition),
+    item.id
+  );
 }
 db.prepare(`
   UPDATE feedback
@@ -1966,13 +2004,19 @@ function implementationJobHandoff(job) {
   const returnInstruction = phase === "implementation"
     ? `When complete, POST this JSON to http://127.0.0.1:${port}/api/implementation-jobs/${job.id}/receipt:
 {
+  "workReference": "${reference}",
   "branchName": "codex/...",
   "pullRequestUrl": "${repositoryWebUrl}/pull/NUMBER",
   "commitSha": "COMMIT_SHA",
   "filesChanged": ["path"],
+  "behaviourImplemented": "plain-English behaviour implemented",
   "tests": ["command: result"],
   "validation": ["observable user journey: result"],
+  "migrationPerformed": "migration and preservation result",
+  "rollbackPath": "tested rollback or restoration route",
   "unresolvedRisks": [],
+  "acceptanceCriterionEvidence": [{"criterion":"exact criterion from the brief","result":"met","evidence":"test or observation"}],
+  "remainingWork": [],
   "versionImpact": "plain-English version impact"
 }
 If the Workbench is unavailable, return exactly that completed JSON after the marker OA_WORKBENCH_BUILD_RETURN so Jamie can paste it back into the ticket.`
@@ -2203,6 +2247,8 @@ function buildAiOwnerQueue() {
 }
 
 function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, sources, provenance }) {
+  const asList = (value, fallback = []) => Array.isArray(value) && value.length ? value.map(String) : fallback;
+  const workReference = `OA-BUILD-${String(jobId || "").replace(/[^a-z0-9]/gi, "").slice(0, 8).toUpperCase() || "UNSAVED"}`;
   const approvedRequirement = String(input.approvedRequirement || sourceRecord.summary || sourceRecord.title).trim();
   const affectedComponents = Array.isArray(input.affectedComponents) && input.affectedComponents.length
     ? input.affectedComponents.map(String)
@@ -2230,13 +2276,72 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
   ].filter(Boolean).join("\n"));
   const constraints = String(input.constraints ||
     "Use the approved Operations Automated methodology proportionately. Keep approved meaning authoritative, distinguish proposed material, use safe SQLite migrations and retain exact evidence.");
+  const targetRepository = String(input.targetRepository || repositoryWebUrl);
+  const targetBranch = String(input.targetBranch || `codex/${sourceRecord.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) || "workbench-change"}`);
+  const sourceRequest = String(input.sourceRequest || sourceRecord.sourceContext?.summary || sourceRecord.summary || sourceRecord.title);
+  const intendedOutcome = String(input.intendedOutcome || approvedRequirement);
+  const userProblem = String(input.userProblem || sourceRecord.summary || sourceRecord.title);
+  const currentBehaviour = String(input.currentBehaviour || context);
+  const requiredBehaviour = String(input.requiredBehaviour || approvedRequirement);
+  const explicitExclusions = asList(input.explicitExclusions, [
+    "Do not change approved Methodology meaning or artefact status.",
+    "Do not merge, publish to Live, create a connection, spend or accept risk.",
+    "Do not absorb Dynamic Governance, Incident Management RPG or Player Lab into the Workbench."
+  ]);
+  const dataSecurityBoundaries = asList(input.dataSecurityBoundaries, [
+    "Use only authorised non-confidential project material.",
+    "Preserve the private-first local SQLite boundary and keep credentials outside Git and SQLite.",
+    "Do not delete or replace existing conversations, feedback, decisions, approvals, specialist histories or audit evidence."
+  ]);
+  const architectureConstraints = asList(input.architectureConstraints, [
+    "Git remains authoritative for approved Methodology and governed meaning.",
+    "SQLite remains authoritative for local operational memory.",
+    "Oppa Mate is the AI service-account identity and Codex is the implementation worker.",
+    "Extend specialist stores additively and project common views rather than duplicating authority."
+  ]);
+  const migrationRequirements = asList(input.migrationRequirements, [
+    "Use an additive, idempotent SQLite migration.",
+    "Prove existing records survive migration without loss or rewritten authority."
+  ]);
+  const rollbackRequirements = asList(input.rollbackRequirements, [
+    "Document how to restore the pre-change application and SQLite copy.",
+    "Prove the restoration route on a test copy before release review."
+  ]);
+  const documentationRequirements = asList(input.documentationRequirements, [
+    "Update the Workbench product documentation, changelog, version impact and assurance evidence.",
+    "Keep proposed behaviour visibly separate from approved Methodology meaning."
+  ]);
+  const unresolvedQuestions = asList(input.unresolvedQuestions, []);
   const citations = sources.map((source) =>
     `- [${source.status}${source.normative ? " · approved normative" : " · evidence only"}] ${source.path} — ${source.heading || source.title} (${source.hash.slice(0, 12)})`
   );
   const brief = {
     schemaVersion: 1,
     jobId,
+    workReference,
+    targetRepository,
+    targetBranch,
     provenance,
+    productPurposeVersion: `${provenance.purposeId}@${provenance.purposeVersion}`,
+    steeringVersion: `${provenance.steeringId}@${provenance.steeringVersion}`,
+    approvedPromptVersion: `${provenance.promptId}@${provenance.promptVersion}`,
+    sourceRequest,
+    intendedOutcome,
+    userProblem,
+    relevantEvidence: sources.map((source) => ({
+      path: source.path,
+      heading: source.heading,
+      status: source.status,
+      authority: source.authority,
+      hash: source.hash,
+      indexedCommit: source.indexedCommit
+    })),
+    currentBehaviour,
+    requiredBehaviour,
+    inScopeRequirements: acceptanceCriteria,
+    explicitExclusions,
+    dataSecurityBoundaries,
+    architectureConstraints,
     approvedRequirement,
     requirementAuthority: "Approved for preparation in the source work; this does not approve release.",
     currentContext: context,
@@ -2244,6 +2349,11 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
     affectedComponents,
     acceptanceCriteria,
     testExpectations,
+    testScenarios: testExpectations,
+    migrationRequirements,
+    rollbackRequirements,
+    documentationRequirements,
+    unresolvedQuestions,
     authorityBoundary,
     sourceRecordId: sourceRecord.id,
     changeId: changeRecord.id,
@@ -2254,10 +2364,30 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
       authority: source.authority,
       hash: source.hash,
       indexedCommit: source.indexedCommit
-    }))
+    })),
+    structuredReturnFormat: {
+      workReference,
+      branchName: targetBranch,
+      pullRequestUrl: `${repositoryWebUrl}/pull/NUMBER`,
+      commitSha: "COMMIT_SHA",
+      filesChanged: ["path"],
+      behaviourImplemented: "plain-English behaviour implemented",
+      tests: ["command: result"],
+      migrationPerformed: "migration and preservation result",
+      rollbackPath: "tested rollback or restoration route",
+      unresolvedRisks: [],
+      acceptanceCriterionEvidence: acceptanceCriteria.map((criterion) => ({ criterion, result: "met", evidence: "test or observation" })),
+      remainingWork: [],
+      versionImpact: "plain-English version impact"
+    }
   };
   const text = [
     `# Codex implementation brief — ${sourceRecord.title}`,
+    "",
+    "## Work and target",
+    `- Work reference: ${workReference}`,
+    `- Target repository: ${targetRepository}`,
+    `- Target branch: ${targetBranch}`,
     "",
     "## Prompt provenance",
     `- Target project: ${provenance.targetProject}`,
@@ -2266,6 +2396,16 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
     `- Prompt: ${provenance.promptId}@${provenance.promptVersion} (${provenance.promptStatus})`,
     `- Exact prompt SHA-256: ${provenance.promptSha256}`,
     `- Approving Decision: ${provenance.approvingDecision}`,
+    "",
+    "## Source request, user problem and intended outcome",
+    sourceRequest,
+    "",
+    `User problem: ${userProblem}`,
+    `Intended outcome: ${intendedOutcome}`,
+    "",
+    "## Current and required behaviour",
+    `Current: ${currentBehaviour}`,
+    `Required: ${requiredBehaviour}`,
     "",
     "## Approved-for-preparation requirement",
     approvedRequirement,
@@ -2285,11 +2425,35 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
     "## Test expectations",
     ...testExpectations.map((item) => `- ${item}`),
     "",
+    "## Explicit exclusions",
+    ...explicitExclusions.map((item) => `- ${item}`),
+    "",
+    "## Data and security boundaries",
+    ...dataSecurityBoundaries.map((item) => `- ${item}`),
+    "",
+    "## Architecture constraints",
+    ...architectureConstraints.map((item) => `- ${item}`),
+    "",
+    "## Migration requirements",
+    ...migrationRequirements.map((item) => `- ${item}`),
+    "",
+    "## Rollback requirements",
+    ...rollbackRequirements.map((item) => `- ${item}`),
+    "",
+    "## Documentation requirements",
+    ...documentationRequirements.map((item) => `- ${item}`),
+    "",
+    "## Unresolved questions",
+    ...(unresolvedQuestions.length ? unresolvedQuestions.map((item) => `- ${item}`) : ["- None recorded; stop and return any newly discovered material question."]),
+    "",
     "## Authority boundary",
     authorityBoundary,
     "",
     "## Knowledge snapshot",
-    ...citations
+    ...citations,
+    "",
+    "## Structured return format",
+    JSON.stringify(brief.structuredReturnFormat, null, 2)
   ].join("\n");
   return { brief, text };
 }
@@ -2387,7 +2551,11 @@ async function createImplementationJob(input) {
   }
   if (changeRecord.sourceType === "change-proposal") {
     const proposal = proposalRecord(changeRecord.sourceId);
-    if (proposal) setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+    if (proposal) {
+      setProposalStatus(proposal.id, proposal.feedback_id, "implementation-in-progress");
+      db.prepare("UPDATE feedback SET implementation_link=?,updated_at=? WHERE id=?")
+        .run(`implementation-job:${id}`, timestamp, proposal.feedback_id);
+    }
   }
   db.prepare("INSERT INTO operate_activity VALUES(?,?,?,?,?,?)").run(
     randomUUID(), changeRecord.id, "implementation-job.prepared", FOUNDER_NAME,
@@ -2825,13 +2993,23 @@ function localActiveWorkAnswer(input, continuity) {
 
 function feedbackRecord(id) {
   const item = rowObject(db.prepare("SELECT f.*, c.title AS conversation_title FROM feedback f LEFT JOIN conversations c ON c.id=f.conversation_id WHERE f.id=?").get(id));
-  return item ? {
+  if (!item) return null;
+  const proposal = rowObject(db.prepare("SELECT id,status FROM change_proposals WHERE feedback_id=?").get(item.id));
+  const decisions = proposal
+    ? db.prepare("SELECT id,phase,action,actor,reason,status_after,created_at FROM change_decisions WHERE proposal_id=? ORDER BY created_at").all(proposal.id)
+    : [];
+  return {
     ...item,
     affectedComponents: safeJson(item.affected_components, []),
     evidence: safeJson(item.evidence_json, []),
     relatedFeedback: safeJson(item.related_feedback_json, []),
+    contradictions: safeJson(item.contradictions_json, []),
+    uncertainty: item.uncertainty_dispute,
+    visibleDisposition: LEARNING_DISPOSITION_LABELS[item.learning_disposition] || item.learning_disposition,
+    proposal: proposal ? { id: proposal.id, status: proposal.status } : null,
+    decisions,
     approvalState: "not-approved"
-  } : null;
+  };
 }
 
 function methodologyReleaseForProposal(proposalId) {
@@ -2850,6 +3028,182 @@ function methodologyReleaseForProposal(proposalId) {
 function methodologyOutcomeReviews(proposalId) {
   return db.prepare("SELECT * FROM methodology_outcome_reviews WHERE proposal_id=? ORDER BY review_date").all(proposalId)
     .map((item) => ({ ...item, evidence: safeJson(item.evidence_json, []) }));
+}
+
+function methodologySignalSyntheses() {
+  return db.prepare("SELECT * FROM methodology_signal_syntheses ORDER BY created_at DESC").all()
+    .map((item) => ({
+      ...item,
+      signalIds: safeJson(item.signal_ids_json, []),
+      components: safeJson(item.components_json, []),
+      dispositions: safeJson(item.dispositions_json, []),
+      sources: safeJson(item.sources_json, []),
+      limitations: safeJson(item.limitations_json, []),
+      approvalState: item.approval_state
+    }));
+}
+
+function latestApprovedBaseline() {
+  return rowObject(db.prepare("SELECT * FROM repository_index_runs ORDER BY created_at DESC LIMIT 1").get());
+}
+
+function methodologyLearningTrace(release) {
+  const proposal = proposalRecord(release.proposal_id);
+  const signal = feedbackRecord(release.feedback_id);
+  const reviews = methodologyOutcomeReviews(release.proposal_id);
+  const laterUsage = reviews.flatMap((review) => review.evidence || [])
+    .map((snapshotId) => knowledgeSnapshot(snapshotId))
+    .filter(Boolean)
+    .map((snapshot) => ({
+      snapshotId: snapshot.id,
+      baselineVersion: snapshot.baselineVersion,
+      sourceRef: snapshot.indexedSourceRef,
+      indexedAt: snapshot.indexedAt,
+      sourceCount: snapshot.sources.length
+    }));
+  return {
+    releaseId: release.id,
+    feedback: signal ? {
+      id: signal.id,
+      originalWording: signal.original_wording,
+      interpretation: signal.contextual_meaning || signal.ai_interpretation,
+      source: signal.source_reference,
+      boundary: signal.confidentiality_boundary
+    } : null,
+    counterTest: signal?.counter_test || proposal?.counterTests?.[0] || "",
+    synthesis: proposal?.synthesis || null,
+    proposal: proposal ? {
+      id: proposal.id,
+      currentMeaning: proposal.current_wording,
+      proposedMeaning: proposal.proposed_wording,
+      status: proposal.status
+    } : null,
+    decisions: proposal?.decisions || [],
+    implementation: proposal?.implementationJob ? {
+      id: proposal.implementationJob.id,
+      reference: proposal.implementationJob.handoff?.reference,
+      branch: proposal.implementationJob.branchName,
+      commit: proposal.implementationJob.commitSha,
+      pullRequest: proposal.implementationJob.pullRequestUrl,
+      status: proposal.implementationJob.status
+    } : proposal?.receipt ? {
+      id: proposal.receipt.id,
+      branch: proposal.branch_name,
+      commit: proposal.receipt.commit_sha,
+      pullRequest: proposal.receipt.pull_request_url,
+      status: "implemented"
+    } : null,
+    release,
+    laterUsage,
+    outcomeReviews: reviews,
+    approvalState: "released-by-human-decision"
+  };
+}
+
+function methodologyLearningDashboard() {
+  const signals = db.prepare("SELECT id FROM feedback ORDER BY created_at DESC").all().map((item) => feedbackRecord(item.id));
+  const syntheses = methodologySignalSyntheses();
+  const baseline = latestApprovedBaseline();
+  const clusters = groupRelatedMethodologySignals(signals).map((cluster) => {
+    const synthesis = syntheses.find((item) => {
+      const left = [...item.signalIds].sort().join("|");
+      const right = [...cluster.signalIds].sort().join("|");
+      return left === right;
+    }) || null;
+    return {
+      id: cluster.id,
+      components: cluster.components,
+      relationship: cluster.relationship,
+      signalIds: cluster.signalIds,
+      signals: cluster.signals.map((item) => ({
+        id: item.id,
+        originalWording: item.original_wording,
+        source: item.source_reference,
+        visibleDisposition: item.visibleDisposition,
+        status: item.status,
+        createdAt: item.created_at
+      })),
+      synthesis,
+      review: buildMethodologyLearningReview(cluster.signals, {
+        approvedBaseline: baseline,
+        synthesis,
+        trigger: synthesis ? "retained-synthesis" : "multiple-related-feedback-signals"
+      }),
+      approvalState: "not-approved"
+    };
+  });
+  const proposals = db.prepare("SELECT id FROM change_proposals ORDER BY updated_at DESC").all().map((item) => proposalRecord(item.id));
+  const releases = db.prepare("SELECT proposal_id FROM methodology_releases ORDER BY release_date DESC").all()
+    .map((item) => methodologyReleaseForProposal(item.proposal_id));
+  const traces = releases.map(methodologyLearningTrace);
+  const outcomeReviews = proposals.flatMap((proposal) => proposal.outcomeReviews || []);
+  const unresolvedDisposition = new Set([
+    "clarification", "example-or-guidance-need", "more-evidence", "methodology-change-candidate",
+    "product-change-candidate", "separate-project-candidate", "urgent-review"
+  ]);
+  const unresolvedSignals = signals.filter((signal) => {
+    if (["implemented", "rejected", "deferred", "no-change"].includes(signal.status)) return false;
+    if (signal.proposal && ["rejected", "deferred", "implemented"].includes(signal.proposal.status)) return false;
+    return unresolvedDisposition.has(signal.learning_disposition) || signal.status === "awaiting-review";
+  });
+  const rejectedDeferred = proposals.filter((proposal) => ["rejected", "deferred"].includes(proposal.status));
+  const awaitingHumanDecision = proposals.filter((proposal) => ["awaiting-review", "revision-requested", "awaiting-release-approval"].includes(proposal.status));
+  const awaitingEvidence = signals.filter((signal) => signal.learning_disposition === "more-evidence" && !["rejected", "superseded"].includes(signal.status));
+  const clarification = signals.filter((signal) => ["clarification", "example-or-guidance-need"].includes(signal.learning_disposition));
+  const proposedMethodologyChanges = proposals.filter((proposal) => proposal.change_kind === "methodology" && proposal.status !== "implemented");
+  const unprocessedSignals = signals.filter((signal) => !signal.disposition_reason || !signal.learning_disposition);
+  const synthesisInProgress = syntheses.filter((synthesis) =>
+    !proposals.some((proposal) => (proposal.synthesis?.signalIds || []).some((id) => synthesis.signalIds.includes(id)))
+  );
+  return {
+    generatedAt: now(),
+    baseline: baseline ? {
+      version: baseline.baseline_version,
+      sourceRef: baseline.source_ref,
+      indexedAt: baseline.created_at,
+      approvedSourceCount: Number(baseline.approved_count || 0)
+    } : null,
+    counts: {
+      unprocessedSignals: unprocessedSignals.length,
+      relatedClusters: clusters.length,
+      synthesisInProgress: synthesisInProgress.length,
+      proposedClarifications: clarification.length,
+      proposedMethodologyChanges: proposedMethodologyChanges.length,
+      awaitingEvidence: awaitingEvidence.length,
+      awaitingHumanDecision: awaitingHumanDecision.length,
+      approvedChanges: traces.length,
+      rejectedOrDeferred: rejectedDeferred.length,
+      outcomeReviews: outcomeReviews.length
+    },
+    unresolvedQuestion: {
+      question: "What have you learned from me that has not yet been dealt with?",
+      answer: unresolvedSignals.length
+        ? `${unresolvedSignals.length} retained learning signal${unresolvedSignals.length === 1 ? " has" : "s have"} an unresolved evidence, clarification, product, project or Methodology route.`
+        : "Every retained learning signal currently has an explained disposition or completed route.",
+      signals: unresolvedSignals
+    },
+    approvedChangesQuestion: {
+      question: "Which approved Methodology changes came from my feedback?",
+      answer: traces.length
+        ? `${traces.length} human-authorised Methodology release${traces.length === 1 ? "" : "s"} ${traces.length === 1 ? "traces" : "trace"} back to retained founder feedback.`
+        : "No human-authorised Methodology release is yet traced from retained Workbench feedback.",
+      traces
+    },
+    buckets: {
+      unprocessedSignals,
+      relatedClusters: clusters,
+      synthesisInProgress,
+      proposedClarifications: clarification,
+      proposedMethodologyChanges,
+      awaitingEvidence,
+      awaitingHumanDecision,
+      approvedChanges: traces,
+      rejectedOrDeferred: rejectedDeferred,
+      outcomeReviews
+    },
+    dispositionLabels: LEARNING_DISPOSITION_LABELS,
+    boundary: "This surface projects structured Workbench records and the current repository index. It does not infer approval from repetition, classification, synthesis, implementation or publication."
+  };
 }
 
 function recordMethodologyRelease({ proposal, approval, commitSha, version, release = {} }) {
@@ -3606,31 +3960,64 @@ async function api(request, response, url) {
       return json(response, 409, { error: "This Build Job is not waiting for an implementation receipt." });
     }
     const input = await jsonBody(request);
+    const workReference = String(input.workReference || "").trim();
     const branchName = String(input.branchName || "").trim();
     const pullRequestUrl = String(input.pullRequestUrl || "").trim();
     const commitSha = String(input.commitSha || "").trim();
     const filesChanged = Array.isArray(input.filesChanged) ? input.filesChanged.map(String).filter(Boolean) : [];
     const tests = Array.isArray(input.tests) ? input.tests.map(String).filter(Boolean) : [];
     const validation = Array.isArray(input.validation) ? input.validation.map(String).filter(Boolean) : [];
+    const behaviourImplemented = String(input.behaviourImplemented || "").trim();
+    const migrationPerformed = String(input.migrationPerformed || "").trim();
+    const rollbackPath = String(input.rollbackPath || "").trim();
     const unresolvedRisks = Array.isArray(input.unresolvedRisks) ? input.unresolvedRisks.map(String).filter(Boolean) : [];
+    const remainingWork = Array.isArray(input.remainingWork) ? input.remainingWork.map(String).filter(Boolean) : [];
+    const acceptanceCriterionEvidence = Array.isArray(input.acceptanceCriterionEvidence)
+      ? input.acceptanceCriterionEvidence.map((item) => ({
+          criterion: String(item?.criterion || "").trim(),
+          result: String(item?.result || "").trim().toLowerCase(),
+          evidence: String(item?.evidence || "").trim()
+        }))
+      : [];
     const versionImpact = String(input.versionImpact || "").trim();
-    if (!branchName || !/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+\/?$/i.test(pullRequestUrl) ||
+    if (workReference !== job.handoff.reference || !branchName || !/^https:\/\/github\.com\/[^/]+\/[^/]+\/pull\/\d+\/?$/i.test(pullRequestUrl) ||
         !/^[a-f0-9]{7,64}$/i.test(commitSha) || !filesChanged.length || !tests.length ||
-        !validation.length || !versionImpact) {
+        !validation.length || !behaviourImplemented || !migrationPerformed || !rollbackPath || !versionImpact) {
       return json(response, 400, {
-        error: "Record the branch, draft GitHub pull request, commit, changed files, tests, validation and version impact before review."
+        error: "Record the exact work reference, branch, draft GitHub pull request, commit, changed files, implemented behaviour, tests, validation, migration, rollback and version impact before review."
+      });
+    }
+    const missingCriterionEvidence = job.acceptanceCriteria.filter((criterion) =>
+      !acceptanceCriterionEvidence.some((item) => item.criterion === criterion && ["met", "passed"].includes(item.result) && item.evidence)
+    );
+    if (missingCriterionEvidence.length) {
+      audit("implementation-job.receipt-rejected", "implementation-job", job.id, {
+        reason: "acceptance-criteria-incomplete",
+        missingCriteria: missingCriterionEvidence,
+        statusRetained: job.status
+      });
+      return json(response, 422, {
+        error: "The Codex return does not prove every acceptance criterion. The Build Job remains open.",
+        missingCriteria: missingCriterionEvidence,
+        job: implementationJob(job.id)
       });
     }
     const timestamp = now();
     const receipt = {
       schemaVersion: 1,
+      workReference,
       branchName,
       pullRequestUrl,
       commitSha,
       filesChanged,
+      behaviourImplemented,
       tests,
       validation,
+      migrationPerformed,
+      rollbackPath,
       unresolvedRisks,
+      acceptanceCriterionEvidence,
+      remainingWork,
       versionImpact,
       submittedBy: "Codex",
       submittedAt: timestamp
@@ -5085,6 +5472,9 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       usage: { provider, model, inputTokens, outputTokens, estimatedCost: cost, status }
     });
   }
+  if (method === "GET" && url.pathname === "/api/methodology-learning") {
+    return json(response, 200, methodologyLearningDashboard());
+  }
   if (method === "POST" && url.pathname === "/api/feedback") {
     const value = await jsonBody(request);
     const convo = conversation(value.conversationId);
@@ -5143,6 +5533,33 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       JSON.stringify(value.evidence || []), value.evidenceLimitations || "Not independently validated.",
       value.aiInterpretation || value.interpretation || "",
       JSON.stringify(relatedFeedback), learningDisposition, "", value.outcomeReviewTrigger || ""
+    );
+    const contextualMeaning = String(value.contextualMeaning || value.aiInterpretation || value.interpretation || wording).trim();
+    const assessmentChange = String(value.assessmentChange || (
+      learningDisposition === "answer-only-correction"
+        ? "The answer should be corrected; this signal alone does not change the Methodology assessment."
+        : "The assessment now includes this signal within its stated context and evidence limits."
+    )).trim();
+    const uncertainty = String(value.uncertainty || value.evidenceLimitations || "Further evidence or context may change the assessment.").trim();
+    const counterTest = String(value.counterTest ||
+      "Test whether the problem is confined to this answer, practical guidance or Workbench behaviour before changing approved Methodology meaning.").trim();
+    const affectedProduct = String(value.affectedProduct || (
+      classification === "product-change-candidate" ? "AI Workbench" : "Operations Automated Methodology"
+    )).trim();
+    const acceptedCorrection = ["answer-only-correction", "reusable-correction"].includes(learningDisposition)
+      ? String(value.acceptedCorrection || wording).trim()
+      : String(value.acceptedCorrection || "").trim();
+    const contradictions = Array.isArray(value.contradictions) ? value.contradictions.map(String).filter(Boolean) : [];
+    const confidence = String(value.confidence || "provisional").trim();
+    const dispositionReason = String(value.dispositionReason || defaultDispositionReason(classification, learningDisposition)).trim();
+    const reviewTrigger = String(value.reviewTrigger || value.outcomeReviewTrigger || "").trim();
+    db.prepare(`
+      UPDATE feedback SET contextual_meaning=?,assessment_change=?,uncertainty_dispute=?,counter_test=?,
+        affected_product=?,accepted_correction=?,contradictions_json=?,confidence=?,disposition_reason=?,review_trigger=?
+      WHERE id=?
+    `).run(
+      contextualMeaning, assessmentChange, uncertainty, counterTest, affectedProduct, acceptedCorrection,
+      JSON.stringify(contradictions), confidence, dispositionReason, reviewTrigger, id
     );
     audit("feedback.recorded", "feedback", id, {
       disposition,
@@ -5218,8 +5635,10 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
     const status = isChangeCandidate(classification)
       ? "awaiting-review"
       : classification === "no-action-required" ? "no-change" : "retained";
-    db.prepare("UPDATE feedback SET classification=?,learning_disposition=?,status=?,updated_at=? WHERE id=?")
-      .run(classification, learningDisposition, status, now(), feedback.id);
+    const dispositionReason = String(value.dispositionReason || defaultDispositionReason(classification, learningDisposition)).trim();
+    const reviewTrigger = String(value.reviewTrigger || feedback.review_trigger || feedback.outcome_review_trigger || "").trim();
+    db.prepare("UPDATE feedback SET classification=?,learning_disposition=?,status=?,disposition_reason=?,review_trigger=?,updated_at=? WHERE id=?")
+      .run(classification, learningDisposition, status, dispositionReason, reviewTrigger, now(), feedback.id);
     audit("feedback.classified", "feedback", feedback.id, {
       from: feedback.classification,
       to: classification,
@@ -5279,7 +5698,19 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       }
       db.prepare("INSERT INTO change_decisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
         .run(decisionId, proposal.id, proposal.feedback_id, phase, action, actor, reason, proposal.status, nextStatus, "", 0, now());
+      db.prepare("UPDATE feedback SET decision_reference=?,updated_at=? WHERE id=?")
+        .run(`change-decision:${decisionId}`, now(), proposal.feedback_id);
       setProposalStatus(proposal.id, proposal.feedback_id, nextStatus);
+      if (["reject", "defer"].includes(action)) {
+        db.prepare("UPDATE feedback SET learning_disposition=?,disposition_reason=?,review_trigger=?,final_outcome=?,updated_at=? WHERE id=?")
+          .run(
+            action === "reject" ? "rejected" : "deferred",
+            reason || defaultDispositionReason(proposal.classification, action === "reject" ? "rejected" : "deferred"),
+            action === "defer" ? reason : "",
+            `${action}: ${reason || "No further reason recorded."}`,
+            now(), proposal.feedback_id
+          );
+      }
       let implementationJobValue = null;
       if (action === "prepare-change") {
         syncSpecialistQueues();
@@ -5311,8 +5742,20 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
     });
     db.prepare("INSERT INTO change_decisions VALUES(?,?,?,?,?,?,?,?,?,?,?,?)")
       .run(decisionId, proposal.id, proposal.feedback_id, phase, action, actor, reason, proposal.status, provisionalStatus, value.confirmation || "", 0, now());
+    db.prepare("UPDATE feedback SET decision_reference=?,updated_at=? WHERE id=?")
+      .run(`change-decision:${decisionId}`, now(), proposal.feedback_id);
     if (action !== "approve-and-merge") {
       setProposalStatus(proposal.id, proposal.feedback_id, provisionalStatus);
+      if (["reject", "defer"].includes(action)) {
+        db.prepare("UPDATE feedback SET learning_disposition=?,disposition_reason=?,review_trigger=?,final_outcome=?,updated_at=? WHERE id=?")
+          .run(
+            action === "reject" ? "rejected" : "deferred",
+            reason || defaultDispositionReason(proposal.classification, action === "reject" ? "rejected" : "deferred"),
+            action === "defer" ? reason : "",
+            `${action}: ${reason || "No further reason recorded."}`,
+            now(), proposal.feedback_id
+          );
+      }
       audit("release-decision.recorded", "change-proposal", proposal.id, {
         decisionId, action, actor, statusBefore: proposal.status, statusAfter: provisionalStatus, repositoryChanged: false
       });
@@ -5525,6 +5968,8 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       JSON.stringify(value.evidence || []), result, learning, nextDisposition,
       value.reviewer || FOUNDER_NAME, value.reviewDate || timestamp, timestamp
     );
+    db.prepare("UPDATE feedback SET final_outcome=?,learning_disposition=?,updated_at=? WHERE id=?")
+      .run(`${result}: ${learning}`, nextDisposition, timestamp, proposal.feedback_id);
     audit("methodology-release.outcome-reviewed", "methodology-outcome-review", id, {
       proposalId: proposal.id, releaseId: proposal.release.id, result, nextDisposition,
       approvalCreated: false

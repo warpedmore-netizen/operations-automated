@@ -1,1 +1,1 @@
-1.7.0-methodology-contract-draft
+1.8.0-workbench-base-completion-draft

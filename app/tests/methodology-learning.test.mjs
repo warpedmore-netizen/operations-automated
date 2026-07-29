@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-  findRelatedMethodologySignals, synthesiseMethodologySignals,
+  LEARNING_DISPOSITION_LABELS, buildMethodologyLearningReview, defaultDispositionReason,
+  findRelatedMethodologySignals, groupRelatedMethodologySignals, synthesiseMethodologySignals,
   validateApplicationContract, validateChangeContract, validateMethodologyRegistry
 } from "../methodology-learning.mjs";
 import { KNOWLEDGE_MANIFEST, scanWorkingTree } from "../repository-index.mjs";
@@ -101,6 +102,60 @@ test("related corrections can be retrieved and synthesised without becoming appr
   assert.equal(synthesis.status, "proposed");
   assert.equal(synthesis.approvalState, "not-approved");
   assert.match(synthesis.summary, /repetition supports review, not truth or approval/i);
+});
+
+test("the visible Methodology Learning Review preserves source, counter-test, limits and human authority", () => {
+  const signals = [
+    {
+      id: "signal-a",
+      original_wording: "The recommendation hid the decision owner.",
+      source_reference: "conversation-a",
+      confidentiality_boundary: "Non-confidential test fixture",
+      ai_interpretation: "The answer may have applied the method poorly.",
+      assessment_change: "The answer needs correction.",
+      uncertainty_dispute: "One interaction only.",
+      counter_test: "Test whether approved guidance already requires a named owner.",
+      evidence: ["Observed answer"],
+      evidence_limitations: "One interaction only.",
+      accepted_correction: "Show the decision owner.",
+      learning_disposition: "answer-only-correction",
+      affectedComponents: ["human-ai-collaboration"]
+    },
+    {
+      id: "signal-b",
+      original_wording: "The same accountability gap recurred.",
+      source_reference: "conversation-b",
+      confidentiality_boundary: "Non-confidential test fixture",
+      contextual_meaning: "The delivery contract may need clarification.",
+      uncertainty_dispute: "Founder evidence only.",
+      counter_test: "Test a different Work Profile before changing meaning.",
+      evidence: ["Second observed answer"],
+      evidence_limitations: "No independent user evidence.",
+      contradictions: ["The approved output contract already names human authority."],
+      learning_disposition: "methodology-change-candidate",
+      affectedComponents: ["human-ai-collaboration"]
+    }
+  ];
+  const clusters = groupRelatedMethodologySignals(signals);
+  assert.equal(clusters.length, 1);
+  const review = buildMethodologyLearningReview(signals, {
+    approvedBaseline: { baseline_version: "0.7", source_ref: "origin/main", approved_count: 20 }
+  });
+  assert.deepEqual(review.signalIds, ["signal-a", "signal-b"]);
+  assert.equal(review.currentApprovedMethodology.version, "0.7");
+  assert.equal(review.proposedDisposition, "methodology-change-candidate");
+  assert.equal(review.relatedCorrections[0], "Show the decision owner.");
+  assert.ok(review.counterEvidence.length === 2);
+  assert.match(review.strongestNoChangeCase, /answer quality, guidance or product behaviour/i);
+  assert.match(review.exactDecisionOrEvidenceRequired, /Jamie Peppard decides/i);
+  assert.equal(review.approvalState, "not-approved");
+});
+
+test("every visible feedback disposition has an explained label and default reason", () => {
+  for (const [value, label] of Object.entries(LEARNING_DISPOSITION_LABELS)) {
+    assert.ok(label.length > 5, value);
+    assert.ok(defaultDispositionReason("conversation-context", value).length > 10, value);
+  }
 });
 
 test("a change proposal must expose current and proposed meaning and cannot self-approve", () => {

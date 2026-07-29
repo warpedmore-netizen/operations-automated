@@ -4,6 +4,7 @@ import { spawn } from "node:child_process";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { backup, DatabaseSync } from "node:sqlite";
 
 test("local API persists governed conversations and the complete feedback-to-change loop", { timeout: 20_000 }, async () => {
   const port = 43173;
@@ -226,6 +227,13 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(feedback.source_reference, "Founder methodology feedback in the controlled test conversation");
     assert.equal(feedback.source_type, "workbench-conversation");
     assert.deepEqual(feedback.evidence, ["Founder correction", "Related answer-only correction"]);
+    assert.ok(feedback.contextual_meaning);
+    assert.ok(feedback.assessment_change);
+    assert.ok(feedback.uncertainty);
+    assert.ok(feedback.counter_test);
+    assert.equal(feedback.affected_product, "Operations Automated Methodology");
+    assert.ok(feedback.disposition_reason);
+    assert.equal(feedback.visibleDisposition, "Methodology change proposed");
     assert.equal(feedback.approvalState, "not-approved");
     assert.ok(feedback.created_at);
 
@@ -242,6 +250,14 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.deepEqual(synthesisResult.synthesis.signalIds, [answerCorrection.feedback.id, feedback.id]);
     assert.equal(synthesisResult.synthesis.status, "proposed");
     assert.equal(synthesisResult.synthesis.approvalState, "not-approved");
+
+    const learningBeforeChange = await call("/api/methodology-learning");
+    assert.equal(learningBeforeChange.response.ok, true);
+    assert.equal(learningBeforeChange.payload.approvedChangesQuestion.traces.length, 0);
+    assert.ok(learningBeforeChange.payload.unresolvedQuestion.signals.some((item) => item.id === feedback.id));
+    assert.ok(learningBeforeChange.payload.buckets.relatedClusters.some((item) =>
+      item.signalIds.includes(answerCorrection.feedback.id) && item.signalIds.includes(feedback.id)
+    ));
 
     const proposalResult = await ok(`/api/feedback/${feedback.id}/change-proposal`, {});
     const proposal = proposalResult.proposal;
@@ -284,6 +300,10 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.match(prematureRelease.payload.error, /after implementation|preparation approval/i);
 
     const beforePreparation = await readFile(approvedPath, "utf8");
+    const preChangeDatabasePath = join(dataRoot, "pre-change-test-copy.sqlite");
+    const liveDatabase = new DatabaseSync(join(dataRoot, "workbench.sqlite"));
+    await backup(liveDatabase, preChangeDatabasePath);
+    liveDatabase.close();
     const prepared = await ok(`/api/change-proposals/${proposal.id}/decisions`, {
       phase: "preparation",
       action: "prepare-change",
@@ -411,6 +431,25 @@ test("local API persists governed conversations and the complete feedback-to-cha
       releaseId: receipt.proposal.release.id,
       reviewId: outcomeReview.review.id
     });
+
+    const learningAfterOutcome = await call("/api/methodology-learning");
+    assert.equal(learningAfterOutcome.response.ok, true);
+    assert.equal(learningAfterOutcome.payload.approvedChangesQuestion.traces.length, 1);
+    const feedbackTrace = learningAfterOutcome.payload.approvedChangesQuestion.traces[0];
+    assert.equal(feedbackTrace.feedback.id, feedback.id);
+    assert.equal(feedbackTrace.proposal.id, proposal.id);
+    assert.equal(feedbackTrace.release.id, receipt.proposal.release.id);
+    assert.equal(feedbackTrace.laterUsage[0].baselineVersion, "0.5");
+    assert.equal(feedbackTrace.outcomeReviews[0].result, "met");
+
+    const restoredDatabase = new DatabaseSync(preChangeDatabasePath, { readOnly: true });
+    assert.ok(Number(restoredDatabase.prepare("SELECT COUNT(*) AS count FROM conversations").get().count) >= 1);
+    assert.ok(Number(restoredDatabase.prepare("SELECT COUNT(*) AS count FROM feedback").get().count) >= 2);
+    assert.equal(Number(restoredDatabase.prepare("SELECT COUNT(*) AS count FROM methodology_releases").get().count), 0);
+    restoredDatabase.close();
+    const restoredRepositoryCopy = join(repositoryRoot, "restored-pre-change-approved-method.md");
+    await writeFile(restoredRepositoryCopy, beforePreparation, "utf8");
+    assert.equal(await readFile(restoredRepositoryCopy, "utf8"), initialApprovedContent);
 
     const rejectedRecorded = await ok("/api/feedback", {
       conversationId,
