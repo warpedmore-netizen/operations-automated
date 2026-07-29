@@ -1,5 +1,17 @@
 # Changelog
 
+## Workbench 1.9.0 request framing, project routing and Codex handoff - proposed
+
+- Extended **Purpose & steering** from request classification into one complete ordinary-language framing route.
+- Added controlled pre-flight retrieval across Product Purpose, Steering, approved Methodology, prompts, Decisions, Approvals, accepted corrections, feedback, work, Ideas, implementation state, recorded pull-request references, Work Profile and security boundaries.
+- Added explicit interpretation, transparent assumptions, material-question control, A–G readiness, the full work-package hierarchy and a complete A–J implementation package.
+- Added proportionate routing so simple classification stays local, answer-only requests create no Task and Codex is selected only for a complete stage-D source-code change.
+- Added an additive SQLite migration for source context, framing, readiness, knowledge snapshots and linked records while preserving legacy steering intakes.
+- Added **Create the draft route**, which creates only the minimum existing Operations Bible record and creates no approval or Implementation Job.
+- Added a complete Codex handoff format and framing provenance; retained the existing gate that keeps inadequate implementation evidence open.
+- Added the 16 required routing scenarios plus an isolated API route-and-record fixture.
+- Registered the reusable request-framing prompt as Draft. Product Purpose, Steering, implementation prompt, merge and private release remain separate decisions.
+
 ## Workbench 1.8.0 complete governed base journey - proposed
 
 - Added one dedicated **Methodology learning** surface over retained SQLite records and the current repository index, without creating a new canonical work record type.
