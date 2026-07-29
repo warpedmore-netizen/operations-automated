@@ -2,7 +2,7 @@
 id: OA-PRODUCT-011
 title: Operate Internal Workbench Operating Model
 status: proposed
-version: 0.8
+version: 0.9
 owner: Jamie Peppard
 date: 2026-07-26
 ---
@@ -19,7 +19,7 @@ It is not proposed as a universal linear workflow or a replacement for the appro
 
 ## Authority and status
 
-The approved v0.6 repository baseline remains authoritative. The connected-work method provides the approved conceptual foundation. This document, the initial Operations Bible dictionary, priority weights and interface are proposed product behaviour for private internal review.
+The approved v0.7 repository baseline remains authoritative. The connected-work method provides the approved conceptual foundation. This document, the initial Operations Bible dictionary, priority weights and interface are proposed product behaviour for private internal review.
 
 Classification, recommendation, a passing scenario test and technical readiness do not create approval.
 
@@ -53,6 +53,12 @@ The 1.4 proposal makes the existing Workbench parts operate as one system:
 Approved methodology is normative within its scope. Proposed, draft, retained and external material may provide evidence but is labelled and cannot silently replace approved meaning. Each material response, classification, proposal and Build Job can retain the exact source snapshot used.
 
 Conversation requests include recent messages, a rolling summary of older history, the active Case or work record, linked controls and retained corrections. A short reply is therefore interpreted in its current work context rather than as a new isolated instruction.
+
+### Purpose, steering and project boundaries
+
+The proposed 1.6 control increment adds one proportionate **Purpose & steering** surface. It reads the controlled project and prompt registries, shows current purpose and steering versions, records request classifications and project-boundary recommendations, exposes unresolved conflicts and reports the latest recovery test.
+
+Every new Implementation Job must identify the target project, approved purpose source and version, approved Steering contract and Decision, exact approved prompt version and prompt hash. Historical jobs are not rewritten from memory; missing legacy provenance remains visible. While the proposed Steering contract and future Workbench prompt remain unapproved, new material Build Jobs are deliberately blocked. A route decision may be accepted, deferred or rejected and retained without creating Product Purpose approval, repository creation, migration or build authority.
 
 ### Source-backed work and help in place
 
@@ -262,6 +268,9 @@ Implemented in this proposal:
 - separate work-item and dated daily-challenge conversations;
 - Case-closure protection while contained work remains open; and
 - local audit/activity evidence with no delete route.
+- request-intake classification, project-boundary recommendations and retained route decisions;
+- exact purpose, steering and prompt provenance on new Implementation Jobs; and
+- visible Product Purpose proposals, prompt versions, conflicts and tested recovery status.
 
 Represented but not claimed as complete:
 

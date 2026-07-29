@@ -26,6 +26,7 @@ const state = {
   confluenceTest: null,
   confluencePublicationPlan: null,
   brandReview: null,
+  steering: null,
   myWork: null,
   workOrder: "recommended",
   workFilters: { view: "all", search: "", profile: "", recordType: "" },
@@ -1606,7 +1607,63 @@ async function loadBrandReview() {
   }
 }
 
-const validViews = new Set(["my-work", "operate", "conversation", "challenges", "feedback", "decisions", "brand", "usage", "settings", "connections", "guide"]);
+function steeringStatusLabel(value) {
+  return String(value || "unknown").replaceAll("-", " ");
+}
+
+function renderSteering(value) {
+  state.steering = value;
+  $("#steering-version").textContent = `${value.steering?.version || "unavailable"} · ${steeringStatusLabel(value.steering?.status)}`;
+  $("#steering-recovery-status").textContent = value.recovery?.restore_status === "succeeded" ? "Restore proved" : "Recovery blocked";
+  $("#steering-conflict-count").textContent = `${value.conflicts.length} visible`;
+  $("#steering-build-version").textContent = value.buildVersion || "Unknown build";
+
+  $("#steering-projects").innerHTML = value.projects.map((project) => `
+    <article class="steering-item">
+      <div><span>${escapeHtml(project.project_id)}</span><strong>${escapeHtml(project.product_name)}</strong></div>
+      <p>${escapeHtml(project.core_outcome)}</p>
+      <dl><div><dt>Purpose</dt><dd>${escapeHtml(project.purpose_id || "Not approved")} ${project.purpose_version ? `@${escapeHtml(project.purpose_version)}` : ""}</dd></div><div><dt>Status</dt><dd>${escapeHtml(project.current_status)}</dd></div><div><dt>Repository</dt><dd>${escapeHtml(project.repository)}</dd></div></dl>
+      <details><summary>Show information and authority boundaries</summary><p><strong>Information:</strong> ${escapeHtml(project.information_boundary)}</p><p><strong>Authority:</strong> ${escapeHtml(project.authority_boundary)}</p><p><strong>Excluded:</strong> ${escapeHtml((project.excluded_products || []).join(", ") || "None recorded")}</p></details>
+    </article>`).join("");
+
+  const currentPrompts = value.prompts.filter((prompt) => ["approved", "current"].includes(prompt.status));
+  $("#steering-prompts").innerHTML = currentPrompts.length ? currentPrompts.map((prompt) => `
+    <article class="steering-item">
+      <div><span>${escapeHtml(prompt.target_project)} · ${escapeHtml(prompt.target_capability)}</span><strong>${escapeHtml(prompt.prompt_id)}@${escapeHtml(prompt.exact_version)}</strong></div>
+      <p>${escapeHtml(prompt.title)}</p>
+      <dl><div><dt>Status</dt><dd>${escapeHtml(prompt.status)}</dd></div><div><dt>Effective</dt><dd>${escapeHtml(prompt.effective_date)}</dd></div><div><dt>Purpose</dt><dd>${escapeHtml(prompt.purpose_version)}</dd></div><div><dt>Used by</dt><dd>${escapeHtml((prompt.builds_or_pull_requests || []).join(", "))}</dd></div></dl>
+    </article>`).join("") : `<p class="empty-steering">No current approved prompts are registered.</p>`;
+
+  const proposals = [
+    ...value.proposals.purposes.map((item) => ({ title: item.metadata.title || item.path, status: item.metadata.status || "unlabelled", detail: item.path })),
+    ...value.proposals.prompts.map((item) => ({ title: item.title, status: item.status, detail: `${item.prompt_id}@${item.exact_version}` }))
+  ];
+  $("#steering-proposals").innerHTML = proposals.length ? proposals.map((item) => `
+    <article class="steering-item"><div><span>${escapeHtml(item.status)}</span><strong>${escapeHtml(item.title)}</strong></div><p>${escapeHtml(item.detail)}</p><small>Requires an exact human Decision before Approved status.</small></article>`).join("") : `<p class="empty-steering">No unresolved purpose or prompt proposals.</p>`;
+
+  $("#steering-recommendations").innerHTML = value.intakes.length ? value.intakes.map((intake) => `
+    <article class="steering-item steering-recommendation" data-steering-intake-id="${escapeHtml(intake.id)}">
+      <div><span>${escapeHtml(intake.status)}</span><strong>${escapeHtml(intake.boundary.recommendation)}</strong></div>
+      <p>${escapeHtml(intake.sourceText)}</p>
+      <small>${escapeHtml(intake.boundary.rationale)}</small>
+      ${intake.decision?.action ? `<p><strong>Recorded decision:</strong> ${escapeHtml(intake.decision.action)} by ${escapeHtml(intake.decision.actor)}${intake.decision.reason ? ` · ${escapeHtml(intake.decision.reason)}` : ""}</p>` : `
+        <label>Reason when deferring or rejecting<textarea rows="2" data-steering-decision-reason></textarea></label>
+        <div class="steering-decision-actions"><button type="button" data-steering-decision="accept-route">Accept route</button><button type="button" data-steering-decision="defer-route">Defer route</button><button type="button" data-steering-decision="reject-route">Reject route</button></div>`}
+      <p class="control-note">A route decision does not approve purpose, repository creation, migration, build, release or publication.</p>
+    </article>`).join("") : `<p class="empty-steering">No project-boundary recommendations have been recorded.</p>`;
+
+  $("#steering-conflicts").innerHTML = value.conflicts.length ? value.conflicts.map((conflict) => `
+    <article class="steering-item steering-conflict ${escapeHtml(conflict.severity)}"><div><span>${escapeHtml(conflict.severity)} · ${escapeHtml(conflict.status)}</span><strong>${escapeHtml(conflict.summary)}</strong></div><p>${escapeHtml(conflict.decisionRequired)}</p><small>${escapeHtml((conflict.sources || []).join(" · "))}</small></article>`).join("") : `<p class="empty-steering">No control conflicts detected.</p>`;
+
+  $("#steering-builds").innerHTML = value.builds.length ? value.builds.map((build) => `
+    <article class="steering-item"><div><span>${escapeHtml(build.status)}</span><strong>${escapeHtml(build.title)}</strong></div><p>${build.provenanceValid ? "Complete provenance recorded." : `Legacy provenance gap: ${escapeHtml(build.missing.join(", "))}`}</p><small>${escapeHtml(build.provenance.promptId || "No prompt recorded")}${build.provenance.promptVersion ? `@${escapeHtml(build.provenance.promptVersion)}` : ""} · ${escapeHtml(build.provenance.purposeId || "No purpose recorded")}${build.provenance.purposeVersion ? `@${escapeHtml(build.provenance.purposeVersion)}` : ""}</small></article>`).join("") : `<p class="empty-steering">No Implementation Jobs are recorded.</p>`;
+}
+
+async function loadSteering() {
+  renderSteering(await request("/api/steering"));
+}
+
+const validViews = new Set(["my-work", "operate", "conversation", "challenges", "feedback", "decisions", "brand", "steering", "usage", "settings", "connections", "guide"]);
 const viewHeadings = {
   "my-work": ["Operate workbench", "My work"],
   operate: ["Connected work", "Cases & work"],
@@ -1614,6 +1671,7 @@ const viewHeadings = {
   feedback: ["Governed learning", "Saved feedback"],
   decisions: ["Human-controlled change", "Decision inbox"],
   brand: ["Proposed visual system", "Brand review"],
+  steering: ["Product control", "Purpose & steering"],
   usage: ["Local controls", "Cost and usage"],
   settings: ["Local controls", "Settings"],
   connections: ["Controlled sources", "Connections"],
@@ -1644,6 +1702,7 @@ function switchView(name, updateHash = true, refresh = true) {
   if (refresh && name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
   if (refresh && name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
   if (refresh && name === "brand") loadBrandReview().catch((error) => toast(error.message, true));
+  if (refresh && name === "steering") loadSteering().catch((error) => toast(error.message, true));
   if (refresh && name === "connections") loadConnections().catch((error) => toast(error.message, true));
 }
 
@@ -2277,6 +2336,39 @@ $$('[data-new-conversation]').forEach((button) => button.addEventListener("click
     $("#input").focus();
   }).catch((error) => toast(error.message, true));
 }));
+$("#steering-intake-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const intakeForm = event.currentTarget;
+  const form = new FormData(intakeForm);
+  const result = $("#steering-intake-result");
+  result.innerHTML = "<strong>Classifying and checking the project boundary…</strong>";
+  try {
+    const value = await request("/api/steering/intakes", {
+      method: "POST",
+      body: JSON.stringify({ sourceText: form.get("sourceText") })
+    });
+    const intake = value.intake;
+    result.innerHTML = `<strong>${escapeHtml(intake.boundary.recommendation)}</strong><p>${escapeHtml(intake.boundary.rationale)}</p><small>${escapeHtml(intake.classification.candidates.map((item) => item.classification).join(" · "))}</small>`;
+    intakeForm.reset();
+    await loadSteering();
+  } catch (error) {
+    result.innerHTML = `<strong>Classification failed.</strong><p>${escapeHtml(error.message)}</p>`;
+  }
+});
+$("#steering-recommendations").addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-steering-decision]");
+  if (!button) return;
+  const card = button.closest("[data-steering-intake-id]");
+  const reason = card.querySelector("[data-steering-decision-reason]")?.value.trim() || "";
+  try {
+    await request(`/api/steering/intakes/${encodeURIComponent(card.dataset.steeringIntakeId)}/decision`, {
+      method: "POST",
+      body: JSON.stringify({ action: button.dataset.steeringDecision, actor: state.currentUser, reason })
+    });
+    await loadSteering();
+    toast("Project-boundary decision retained. No build or purpose approval was created.");
+  } catch (error) { toast(error.message, true); }
+});
 $$("[data-starter]").forEach((button) => button.addEventListener("click", () => {
   $("#input").value = button.dataset.starter;
   $("#input").focus();

@@ -30,6 +30,7 @@
         <button class="nav-item" data-view="feedback"><span class="nav-icon" aria-hidden="true">F</span><span>Saved feedback</span></button>
         <button class="nav-item" data-view="decisions"><span class="nav-icon" aria-hidden="true">D</span><span>Decision inbox</span></button>
         <button class="nav-item" data-view="brand"><span class="nav-icon" aria-hidden="true">OA</span><span>Brand review</span></button>
+        <button class="nav-item" data-view="steering"><span class="nav-icon" aria-hidden="true">P</span><span>Purpose &amp; steering</span></button>
         <button class="nav-item" data-view="usage"><span class="nav-icon" aria-hidden="true">U</span><span>Cost and usage</span></button>
         <button class="nav-item" data-view="settings"><span class="nav-icon" aria-hidden="true">S</span><span>Settings</span></button>
         <button class="nav-item" data-view="connections"><span class="nav-icon" aria-hidden="true">↗</span><span>Connections</span></button>
@@ -279,6 +280,37 @@
 
       <section class="view utility-view" id="usage-view" hidden><div class="utility-card"><p class="eyebrow">Ledger</p><h2>Cost and usage</h2><div id="usage-summary"></div></div></section>
       <section class="view utility-view" id="settings-view" hidden><form class="utility-card settings-form" id="settings-form"><p class="eyebrow">Local controls</p><h2>Settings</h2><div class="mode-explainer" id="mode-explainer"></div><div class="budget-explainer"><strong>How budgets behave</strong><p>The soft budget warns and asks you to confirm. The hard budget blocks further paid requests for that monthly period until you raise the limit. Local retrieval remains available. Per-request thresholds work the same way for one request. Values are estimated API cost in USD.</p></div><div class="settings-grid"><label>Monthly soft budget (USD)<input name="monthlySoftBudget" type="number" min="0" step=".01"></label><label>Monthly hard budget (USD)<input name="monthlyHardBudget" type="number" min="0" step=".01"></label><label>Request warning (USD)<input name="perRequestWarningThreshold" type="number" min="0" step=".01"></label><label>Request ceiling (USD)<input name="perRequestHardCeiling" type="number" min="0" step=".01"></label><label>Maximum context characters<input name="maximumRetrievedContext" type="number" min="1000" step="1000"></label><label class="toggle"><input name="advancedReasoningEnabled" type="checkbox"> Enable advanced reasoning when a provider is configured</label></div><button class="primary" type="submit">Save controls</button></form></section>
+      <section class="view utility-view" id="steering-view" hidden>
+        <div class="utility-card steering-card">
+          <div class="steering-heading">
+            <div><p class="eyebrow">Product boundaries and build control</p><h2>Purpose &amp; steering</h2><p>See which product a request belongs to, the purpose and prompt versions controlling it, unresolved conflicts and whether recovery has been proved.</p></div>
+            <span class="status-pill status-awaiting-review">Proposed control · approval not inferred</span>
+          </div>
+          <div class="plain-explainer"><strong>Purpose says why; steering controls how work is interpreted and delivered.</strong><p>Classification, a recommendation and technical completion do not change Product Purpose or approve implementation. Merge, release and publication remain separate decisions.</p></div>
+          <div class="steering-summary" aria-live="polite">
+            <article><span>Steering</span><strong id="steering-version">Loading…</strong><p>Current contract version and governance status.</p></article>
+            <article><span>Recovery</span><strong id="steering-recovery-status">Loading…</strong><p>Latest tested database restoration route.</p></article>
+            <article><span>Conflicts</span><strong id="steering-conflict-count">Loading…</strong><p>Visible control gaps; none are settled silently.</p></article>
+            <article><span>Build</span><strong id="steering-build-version">Loading…</strong><p>Workbench build using the registered control set.</p></article>
+          </div>
+          <form class="steering-intake-form" id="steering-intake-form">
+            <div><p class="eyebrow">Request-intake check</p><h3>Classify before committing work</h3><p>Paste one substantive request. The Workbench records its candidates, target project and boundary recommendation without approving anything.</p></div>
+            <label for="steering-request">Request
+              <textarea id="steering-request" name="sourceText" rows="4" required placeholder="For example: Add a recovery-status panel to the private Workbench."></textarea>
+            </label>
+            <button class="primary" type="submit">Classify and record</button>
+          </form>
+          <div id="steering-intake-result" class="steering-intake-result" aria-live="polite"></div>
+          <div class="steering-layout">
+            <section><div class="section-heading"><p class="eyebrow">Registry</p><h3>Products and boundaries</h3></div><div id="steering-projects" class="steering-list"><p>Loading products…</p></div></section>
+            <section><div class="section-heading"><p class="eyebrow">Exact versions</p><h3>Current prompts</h3></div><div id="steering-prompts" class="steering-list"><p>Loading prompts…</p></div></section>
+            <section><div class="section-heading"><p class="eyebrow">Human decision required</p><h3>Purpose and prompt proposals</h3></div><div id="steering-proposals" class="steering-list"><p>Loading proposals…</p></div></section>
+            <section><div class="section-heading"><p class="eyebrow">Recorded intake</p><h3>Boundary recommendations</h3></div><div id="steering-recommendations" class="steering-list"><p>No recommendations recorded yet.</p></div></section>
+            <section><div class="section-heading"><p class="eyebrow">Visible inconsistencies</p><h3>Conflicts</h3></div><div id="steering-conflicts" class="steering-list"><p>Loading conflict checks…</p></div></section>
+            <section><div class="section-heading"><p class="eyebrow">Build trace</p><h3>Purpose and prompt provenance</h3></div><div id="steering-builds" class="steering-list"><p>Loading build provenance…</p></div></section>
+          </div>
+        </div>
+      </section>
       <section class="view utility-view" id="connections-view" hidden>
         <div class="utility-card connection-card">
           <div class="connection-heading">

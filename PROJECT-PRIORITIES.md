@@ -2,9 +2,9 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.7
+version: 0.8
 owner: Jamie Peppard
-last_updated: 2026-07-26
+last_updated: 2026-07-29
 ---
 
 # Current MoSCoW priorities and outstanding work
@@ -17,6 +17,7 @@ last_updated: 2026-07-26
 - **Proposed v0.8:** one consolidated Draft now covers the unresolved Human-AI Collaboration, accountability, manual-work, delivery-collaboration, capability-transfer and plain-language action themes. It does not change the approved baseline.
 - **Older PR disposition:** PR #3's unique pilot evidence is preserved exactly. PR #8 is recorded as superseded by the later Connected Governance branch and its obsolete Workbench implementation is not replayed.
 - **Application position:** the integrated Workbench provides one proposed operating surface for feedback, decisions, implementation receipts and Confluence Draft publication. No production deployment, external release or commercial offer is approved.
+- **Steering-control position:** the proposed Steering contract and project, prompt and recovery registries now make Product Purpose, project routing, prompt provenance and recovery gates explicit. The Methodology and Workbench remain one core project; Dynamic Governance requires a separate later repository and non-destructive migration decision; the RPG and Player Lab remain outside this project. None of these proposed controls is approved merely because it is implemented.
 - **Confluence position:** the private connection, lifecycle-first controlled mirror and human-first publication model are approved, and the first 108-page publication reconciled successfully. AI may publish committed proposed material beneath controlled Draft parents without another approval touchpoint. The managed ten-page reading tree now carries the proposed v0.8 Draft. Live promotion, migration, automatic interaction retrieval, scheduled publication, deletion and external use remain unapproved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
@@ -46,6 +47,7 @@ These are required to preserve the intended method or unblock the next justified
 19. **Use minimum adaptable structure and receiver-centred feedback.** Make purpose, work, authority, evidence, recovery and improvement understandable without unnecessary bureaucracy, and make feedback easy in a form and channel that work for the person.
 20. **Move from the journey into the operational value system.** Once the need and point of investigation are understood, start with the first operational event, map what must happen to deliver and sustain the outcome, and add proportionate interfaces without claiming control over whole specialist functions.
 21. **Select and combine methods for the situation.** Use tools such as journey mapping, Lean techniques, MoSCoW and specialist practices where they add clarity or control; explain the choice and do not treat any framework as a competing identity or universal answer.
+22. **Control product boundaries and material build provenance.** Classify requests before commitment, keep Product Purpose separate from steering, select only exact current approved prompts, surface conflicts and require a proved restore route before material Workbench implementation.
 
 ## Should
 
@@ -70,6 +72,7 @@ These materially improve usefulness, validation or control but do not all block 
 17. Add materially different examples, including an individual workflow, a physical or non-service operation and a low-volume, high-consequence activity.
 18. Test outside-in journey mapping and operational injection points across materially different contexts.
 19. Test whether automated feedback capture and routing reduce effort without hiding provenance, authority, response status or minority signals.
+20. Test the proposed project-boundary recommendations and exact-prompt build gate against real non-confidential work, including a retained human rejection or deferral and a recovery exercise after a later schema change.
 
 ## Could
 

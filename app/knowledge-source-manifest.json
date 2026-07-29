@@ -72,6 +72,12 @@
         "PROJECT-PRIORITIES.md",
         "CHANGELOG.md",
         "AGENTS.md",
+        "STEERING.md",
+        "docs/purpose/**/*.md",
+        "docs/steering/**/*.md",
+        "projects/*.yml",
+        "prompts/*.yml",
+        "prompts/**/*.md",
         "product/**/*.md"
       ],
       "normativeStatuses": [
@@ -87,6 +93,8 @@
       "paths": [
         "decisions/**/*.md",
         "feedback/**/*.md",
+        "docs/recovery/**/*.md",
+        "docs/recovery/*.yml",
         "pilots/**/*.md"
       ],
       "normativeStatuses": []

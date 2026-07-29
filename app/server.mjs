@@ -36,6 +36,10 @@ import {
   recommendWorkProfile, sortWorkItems, suggestOperateLinks, suggestOperateTitle, summariseOperateNetwork,
   validateOperateRecord
 } from "./operate-model.mjs";
+import {
+  acceptanceCriteriaAlign, buildProvenanceFor, classifyRequest, collateCurrentPrompts, formatPromptCollation,
+  loadSteeringControls, steeringOverview, validateBuildProvenance
+} from "./steering-control.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
@@ -315,6 +319,16 @@ db.exec(`
     version_impact TEXT NOT NULL DEFAULT '', release_approval_id TEXT,
     knowledge_snapshot_id TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL
   );
+  CREATE TABLE IF NOT EXISTS steering_intakes (
+    id TEXT PRIMARY KEY, source_text TEXT NOT NULL, source_type TEXT NOT NULL,
+    source_authority TEXT NOT NULL, target_project TEXT NOT NULL,
+    classification_json TEXT NOT NULL DEFAULT '{}', boundary_json TEXT NOT NULL DEFAULT '{}',
+    purpose_change_allowed INTEGER NOT NULL DEFAULT 0,
+    purpose_id TEXT NOT NULL DEFAULT '', purpose_version TEXT NOT NULL DEFAULT '',
+    steering_id TEXT NOT NULL DEFAULT '', steering_version TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'classified', decision_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+  );
   CREATE INDEX IF NOT EXISTS change_proposals_status_idx ON change_proposals(status);
   CREATE INDEX IF NOT EXISTS change_decisions_proposal_idx ON change_decisions(proposal_id, created_at);
   CREATE INDEX IF NOT EXISTS confluence_publication_queue_status_idx ON confluence_publication_queue(status, created_at);
@@ -329,6 +343,7 @@ db.exec(`
   CREATE INDEX IF NOT EXISTS governed_decisions_result_idx ON governed_decisions(result, updated_at);
   CREATE INDEX IF NOT EXISTS governed_approvals_result_idx ON governed_approvals(result, updated_at);
   CREATE INDEX IF NOT EXISTS implementation_jobs_status_idx ON implementation_jobs(status, updated_at);
+  CREATE INDEX IF NOT EXISTS steering_intakes_status_idx ON steering_intakes(status, updated_at);
 `);
 
 function ensureColumn(table, name, definition) {
@@ -362,6 +377,14 @@ ensureColumn("operate_links", "rationale", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("operate_links", "confidence", "INTEGER NOT NULL DEFAULT 3");
 ensureColumn("operate_links", "state", "TEXT NOT NULL DEFAULT 'confirmed'");
 ensureColumn("operate_links", "confirmed_by", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
+ensureColumn("implementation_jobs", "target_project", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "purpose_id", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "purpose_version", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "steering_id", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "steering_version", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "prompt_id", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "prompt_version", "TEXT NOT NULL DEFAULT ''");
+ensureColumn("implementation_jobs", "prompt_sha256", "TEXT NOT NULL DEFAULT ''");
 
 function recordSchemaMigration(version, name) {
   if (!db.prepare("SELECT version FROM schema_migrations WHERE version=?").get(version)) {
@@ -375,6 +398,7 @@ recordSchemaMigration(2, "Add governed repository chunks and exact knowledge sna
 recordSchemaMigration(3, "Add conversation continuity and active work context");
 recordSchemaMigration(4, "Add configurable work profiles and retained corrections");
 recordSchemaMigration(5, "Add universal decisions, approvals and implementation jobs");
+recordSchemaMigration(7, "Add steering intake and exact implementation provenance");
 
 ensureColumn("confluence_publication_runs", "publication_kind", "TEXT NOT NULL DEFAULT 'controlled-mirror'");
 db.exec(`
@@ -402,6 +426,43 @@ if (!db.prepare("SELECT id FROM settings WHERE id=1").get()) {
 
 const now = () => new Date().toISOString();
 const rowObject = (row) => row ? { ...row } : null;
+const currentSteeringControls = () => loadSteeringControls(repositoryRoot);
+
+function steeringIntakeRecord(id) {
+  const item = rowObject(db.prepare("SELECT * FROM steering_intakes WHERE id=?").get(id));
+  if (!item) return null;
+  return {
+    id: item.id,
+    sourceText: item.source_text,
+    sourceType: item.source_type,
+    sourceAuthority: item.source_authority,
+    targetProject: item.target_project,
+    classification: safeJson(item.classification_json, {}),
+    boundary: safeJson(item.boundary_json, {}),
+    purposeChangeAllowed: Boolean(item.purpose_change_allowed),
+    purposeId: item.purpose_id,
+    purposeVersion: item.purpose_version,
+    steeringId: item.steering_id,
+    steeringVersion: item.steering_version,
+    status: item.status,
+    decision: safeJson(item.decision_json, {}),
+    createdAt: item.created_at,
+    updatedAt: item.updated_at
+  };
+}
+
+function steeringIntakeRecords() {
+  return db.prepare("SELECT id FROM steering_intakes ORDER BY updated_at DESC").all()
+    .map((item) => steeringIntakeRecord(item.id));
+}
+
+function steeringImplementationRows() {
+  return db.prepare(`
+    SELECT id,title,status,target_project,purpose_id,purpose_version,steering_id,
+      steering_version,prompt_id,prompt_version,prompt_sha256
+    FROM implementation_jobs ORDER BY updated_at DESC
+  `).all();
+}
 const audit = (action, entityType, entityId, detail = {}) =>
   db.prepare("INSERT INTO audit_events VALUES(?,?,?,?,?,?)")
     .run(randomUUID(), action, entityType, entityId ?? null, JSON.stringify(detail), now());
@@ -1898,6 +1959,14 @@ function implementationJob(id) {
     pullRequestUrl: item.pull_request_url,
     commitSha: item.commit_sha,
     versionImpact: item.version_impact,
+    targetProject: item.target_project,
+    purposeId: item.purpose_id,
+    purposeVersion: item.purpose_version,
+    steeringId: item.steering_id,
+    steeringVersion: item.steering_version,
+    promptId: item.prompt_id,
+    promptVersion: item.prompt_version,
+    promptSha256: item.prompt_sha256,
     createdAt: item.created_at,
     updatedAt: item.updated_at,
     affectedComponents: safeJson(item.affected_components_json, []),
@@ -2074,7 +2143,7 @@ function buildAiOwnerQueue() {
   };
 }
 
-function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, sources }) {
+function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, sources, provenance }) {
   const approvedRequirement = String(input.approvedRequirement || sourceRecord.summary || sourceRecord.title).trim();
   const affectedComponents = Array.isArray(input.affectedComponents) && input.affectedComponents.length
     ? input.affectedComponents.map(String)
@@ -2108,6 +2177,7 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
   const brief = {
     schemaVersion: 1,
     jobId,
+    provenance,
     approvedRequirement,
     requirementAuthority: "Approved for preparation in the source work; this does not approve release.",
     currentContext: context,
@@ -2129,6 +2199,14 @@ function buildImplementationBrief({ jobId, sourceRecord, changeRecord, input, so
   };
   const text = [
     `# Codex implementation brief — ${sourceRecord.title}`,
+    "",
+    "## Prompt provenance",
+    `- Target project: ${provenance.targetProject}`,
+    `- Product Purpose: ${provenance.purposeId}@${provenance.purposeVersion}`,
+    `- Steering: ${provenance.steeringId}@${provenance.steeringVersion} (${provenance.steeringStatus})`,
+    `- Prompt: ${provenance.promptId}@${provenance.promptVersion} (${provenance.promptStatus})`,
+    `- Exact prompt SHA-256: ${provenance.promptSha256}`,
+    `- Approving Decision: ${provenance.approvingDecision}`,
     "",
     "## Approved-for-preparation requirement",
     approvedRequirement,
@@ -2164,12 +2242,30 @@ async function createImplementationJob(input) {
     throw Object.assign(new Error("A Build Job can be prepared only after the source Change has an explicit approved-for-preparation decision."), { status: 409 });
   }
   const changeRecord = sourceRecord;
+  const outcomeAlignment = acceptanceCriteriaAlign(input.approvedRequirement, input.acceptanceCriteria);
+  if (!outcomeAlignment.valid) {
+    throw Object.assign(new Error("Build blocked by an outcome conflict: the supplied acceptance criteria do not reference the intended approved outcome."), { status: 409 });
+  }
   const existing = db.prepare(`
     SELECT id FROM implementation_jobs
     WHERE change_id=? AND status NOT IN ('merged','rejected','cancelled')
     ORDER BY updated_at DESC LIMIT 1
   `).get(changeRecord.id);
   if (existing) return implementationJob(existing.id);
+  const controls = currentSteeringControls();
+  let provenance;
+  try {
+    provenance = buildProvenanceFor(controls, {
+      targetProject: "ai-workbench",
+      targetCapability: "product-application-build"
+    });
+  } catch (error) {
+    throw Object.assign(new Error(`Build blocked by prompt control: ${error.message}`), { status: 409 });
+  }
+  const provenanceCheck = validateBuildProvenance(controls, provenance);
+  if (!provenanceCheck.valid) {
+    throw Object.assign(new Error(`Build blocked until provenance is complete: ${provenanceCheck.missing.join(", ")}.`), { status: 409 });
+  }
   const id = randomUUID();
   const linkedRequest = changeRecord.parent?.recordType === "request"
     ? changeRecord.parent
@@ -2184,7 +2280,7 @@ async function createImplementationJob(input) {
       `).get(changeRecord.id, changeRecord.id, changeRecord.id);
   const query = `${sourceRecord.title}\n${sourceRecord.summary}\n${changeRecord.title}\n${String(input.approvedRequirement || "")}`;
   const sources = await repositorySections(query, getSettings().maximumRetrievedContext);
-  const prepared = buildImplementationBrief({ jobId: id, sourceRecord, changeRecord, input, sources });
+  const prepared = buildImplementationBrief({ jobId: id, sourceRecord, changeRecord, input, sources, provenance });
   const snapshotId = createKnowledgeSnapshot({
     purpose: "codex-implementation-brief",
     entityType: "implementation-job",
@@ -2214,6 +2310,16 @@ async function createImplementationJob(input) {
     prepared.brief.authorityBoundary, prepared.text, JSON.stringify(prepared.brief), "{}",
     null, null, null, "[]", "[]", "[]", "[]", "", null, snapshotId, timestamp, timestamp
   );
+  db.prepare(`
+    UPDATE implementation_jobs
+    SET target_project=?,purpose_id=?,purpose_version=?,steering_id=?,steering_version=?,
+      prompt_id=?,prompt_version=?,prompt_sha256=?
+    WHERE id=?
+  `).run(
+    provenance.targetProject, provenance.purposeId, provenance.purposeVersion,
+    provenance.steeringId, provenance.steeringVersion, provenance.promptId,
+    provenance.promptVersion, provenance.promptSha256, id
+  );
   db.prepare("UPDATE operate_records SET automation_mode='external-codex',updated_at=? WHERE id=?")
     .run(timestamp, changeRecord.id);
   if (changeRecord.status === "scheduled") {
@@ -2232,6 +2338,7 @@ async function createImplementationJob(input) {
   audit("implementation-job.prepared", "implementation-job", id, {
     changeId: changeRecord.id,
     knowledgeSnapshotId: snapshotId,
+    provenance,
     status: "waiting-on-codex",
     mergeAuthorised: false
   });
@@ -3098,6 +3205,81 @@ async function api(request, response, url) {
     requireLocalJsonAction(request, "Codex task return review");
     const result = reviewCodexTaskReturn(operateCodexReviewMatch[1], await jsonBody(request));
     return json(response, result.status, result.value);
+  }
+  if (method === "GET" && url.pathname === "/api/steering") {
+    const controls = currentSteeringControls();
+    return json(response, 200, steeringOverview(controls, {
+      buildVersion,
+      implementationJobs: steeringImplementationRows(),
+      intakes: steeringIntakeRecords()
+    }));
+  }
+  if (method === "GET" && url.pathname === "/api/steering/prompts") {
+    const controls = currentSteeringControls();
+    const project = String(url.searchParams.get("project") || "operations-automated-core");
+    const includeDrafts = String(url.searchParams.get("includeDrafts") || "false") === "true";
+    return json(response, 200, collateCurrentPrompts(controls, project, { includeDrafts }));
+  }
+  if (method === "POST" && url.pathname === "/api/steering/intakes") {
+    requireLocalJsonAction(request, "Steering request intake");
+    const input = await jsonBody(request);
+    const sourceText = String(input.sourceText || "").trim();
+    if (sourceText.length < 3) return json(response, 400, { error: "Describe the request to classify." });
+    const controls = currentSteeringControls();
+    const classification = classifyRequest(sourceText, controls);
+    const project = controls.projects.find((item) => item.project_id === classification.primaryTarget);
+    const id = randomUUID();
+    const timestamp = now();
+    db.prepare(`
+      INSERT INTO steering_intakes(
+        id,source_text,source_type,source_authority,target_project,classification_json,boundary_json,
+        purpose_change_allowed,purpose_id,purpose_version,steering_id,steering_version,status,
+        decision_json,created_at,updated_at
+      ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).run(
+      id, sourceText, String(input.sourceType || "founder-request"),
+      String(input.sourceAuthority || "explicit-current-authorised-human-instruction"),
+      classification.primaryTarget, JSON.stringify(classification), JSON.stringify(classification.boundary),
+      classification.purposeChangeAllowed ? 1 : 0, project?.purpose_id || "", project?.purpose_version || "",
+      controls.steering.id || "", controls.steering.version || "", "classified", "{}", timestamp, timestamp
+    );
+    audit("steering.intake-classified", "steering-intake", id, {
+      targetProject: classification.primaryTarget,
+      classifications: classification.candidates.map((item) => item.classification),
+      recommendation: classification.boundary.recommendation,
+      purposeChangeAllowed: classification.purposeChangeAllowed,
+      approvalCreated: false
+    });
+    return json(response, 201, { intake: steeringIntakeRecord(id), approvalState: "not-approved-by-classification" });
+  }
+  const steeringDecisionMatch = url.pathname.match(/^\/api\/steering\/intakes\/([^/]+)\/decision$/);
+  if (method === "POST" && steeringDecisionMatch) {
+    requireLocalJsonAction(request, "Project-boundary recommendation decision");
+    const existing = steeringIntakeRecord(steeringDecisionMatch[1]);
+    if (!existing) return json(response, 404, { error: "Steering intake not found." });
+    const input = await jsonBody(request);
+    const action = String(input.action || "");
+    if (!new Set(["accept-route", "reject-route", "defer-route"]).has(action)) {
+      return json(response, 400, { error: "Choose accept-route, reject-route or defer-route." });
+    }
+    const actor = String(input.actor || "").trim();
+    if (actor !== FOUNDER_NAME) return json(response, 403, { error: `Only ${FOUNDER_NAME} may decide a project-boundary recommendation.` });
+    const reason = String(input.reason || "").trim();
+    if (action !== "accept-route" && reason.length < 5) return json(response, 400, { error: "Record why the route is rejected or deferred." });
+    const timestamp = now();
+    const decision = {
+      action,
+      actor,
+      reason,
+      decidedAt: timestamp,
+      recommendation: existing.boundary.recommendation,
+      authorityBoundary: "This records the routing decision only. It does not approve Product Purpose, repository creation, migration, build, release or publication."
+    };
+    const status = action === "accept-route" ? "route-accepted" : action === "reject-route" ? "route-rejected" : "route-deferred";
+    db.prepare("UPDATE steering_intakes SET status=?,decision_json=?,updated_at=? WHERE id=?")
+      .run(status, JSON.stringify(decision), timestamp, existing.id);
+    audit("steering.boundary-decision-recorded", "steering-intake", existing.id, decision);
+    return json(response, 200, { intake: steeringIntakeRecord(existing.id), approvalCreated: false });
   }
   if (method === "GET" && url.pathname === "/api/ai-work") {
     return json(response, 200, buildAiOwnerQueue());
@@ -4610,6 +4792,11 @@ async function api(request, response, url) {
   if (method === "POST" && url.pathname === "/api/respond") {
     const value = await jsonBody(request); const settings = getSettings();
     if (!conversation(value.conversationId)) return json(response, 404, { error: "Conversation not found." });
+    const controls = currentSteeringControls();
+    const steeringAssessment = classifyRequest(value.text, controls);
+    const promptCollation = /\bcollate my current prompts\b/i.test(String(value.text || ""))
+      ? collateCurrentPrompts(controls, steeringAssessment.primaryTarget || "operations-automated-core")
+      : null;
     const route = chooseRoute(value, settings);
     const attachmentText = String(value.attachmentText || "");
     const continuity = conversationContinuity(value.conversationId, value.text);
@@ -4629,7 +4816,7 @@ async function api(request, response, url) {
     if (route.confirmationRequired && !value.confirmed) return json(response, 409, { confirmationRequired: true, route, estimated, lowerCostAlternative: "Use standard analysis with a shorter response." });
     let result; let status = "offline"; let provider = "local"; let model = null; let usage = {};
     try {
-      result = await openAiResponse({
+      if (!promptCollation) result = await openAiResponse({
         input: modelInput, outputType: value.outputType || "answer", route, sources,
         instructions: `Write for Jamie as a non-technical decision-maker. Lead with the direct answer or the single question Jamie needs to answer. Use plain English, short paragraphs and no more than four useful sections. Never repeat or paraphrase the full request back to Jamie.
 
@@ -4637,7 +4824,9 @@ Use the supplied context silently. Do not mention repositories, source files, pa
 
 When Jamie is correcting the system, respond to the meaning of the correction and state the revised position clearly. AI may carry out authorised work and make recommendations, but a named human remains accountable for decisions and consequences. Challenge weak evidence or a risky direction plainly when it matters.
 
-Never claim to approve, publish, merge or edit methodology.`
+Never claim to approve, publish, merge or edit methodology.
+
+Steering classification: ${steeringAssessment.candidates.map((item) => item.classification).join(", ")}. Target project: ${steeringAssessment.primaryTarget}. Boundary recommendation: ${steeringAssessment.boundary.recommendation}. Classification is not approval and a feature request cannot change Product Purpose.`
       });
       if (result) { status = "completed"; provider = "openai"; model = result.model; usage = result.usage; }
     } catch (error) {
@@ -4647,7 +4836,7 @@ Never claim to approve, publish, merge or edit methodology.`
     const localInput = continuity.followUpReference
       ? `${String(value.text || "")}\n\n${continuity.followUpReference}`
       : String(value.text || "");
-    const text = result?.text || localActiveWorkAnswer(value.text, continuity) || buildLocalSynthesis({
+    const text = promptCollation ? formatPromptCollation(promptCollation) : result?.text || localActiveWorkAnswer(value.text, continuity) || buildLocalSynthesis({
       input: localInput,
       sources,
       outputType: value.outputType || "answer",
@@ -4684,6 +4873,13 @@ Never claim to approve, publish, merge or edit methodology.`
         } : null,
         generated: Boolean(result),
         localSynthesis: !result,
+        steeringClassification: steeringAssessment,
+        promptRegistryCollation: promptCollation ? {
+          targetProject: promptCollation.targetProject,
+          registryVersion: promptCollation.registryVersion,
+          currentPromptVersions: promptCollation.current.map((prompt) => `${prompt.prompt_id}@${prompt.exact_version}`),
+          supersededExcluded: promptCollation.supersededExcluded
+        } : null,
         approvalState: "not-approved",
         attachments: value.attachmentIds || []
       }), now());
@@ -4693,7 +4889,12 @@ Never claim to approve, publish, merge or edit methodology.`
     const cost = result ? estimateCost(inputTokens, outputTokens, settings) : 0;
     db.prepare("INSERT INTO usage_records VALUES(?,?,?,?,?,?,?,?,?,?)")
       .run(randomUUID(), value.conversationId, provider, model, inputTokens, outputTokens, cost, result?.latency || 0, status, now());
-    audit("response.created", "message", id, { provider, tier: route.tier, approvalState: "not-approved" });
+    audit("response.created", "message", id, {
+      provider, tier: route.tier, approvalState: "not-approved",
+      targetProject: steeringAssessment.primaryTarget,
+      classifications: steeringAssessment.candidates.map((item) => item.classification),
+      promptRegistryCollation: Boolean(promptCollation)
+    });
     return json(response, 200, {
       message: messagesFor(value.conversationId).at(-1),
       route,

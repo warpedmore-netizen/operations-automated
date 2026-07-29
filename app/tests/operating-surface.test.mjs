@@ -10,6 +10,10 @@ async function fixtureRepository() {
   const root = await mkdtemp(join(tmpdir(), "oa-surface-repository-"));
   await mkdir(join(root, "methodology"), { recursive: true });
   await mkdir(join(root, "product"), { recursive: true });
+  await mkdir(join(root, "projects"), { recursive: true });
+  await mkdir(join(root, "prompts", "approved"), { recursive: true });
+  await mkdir(join(root, "decisions"), { recursive: true });
+  await mkdir(join(root, "docs", "recovery"), { recursive: true });
   await writeFile(
     join(root, "methodology", "baseline.md"),
     "---\nid: OA-METHOD-TEST\nstatus: approved\nversion: 0.6\n---\n# Approved baseline\n\n## Human authority\nJamie decides release and risk acceptance. Classification never creates approval.\n",
@@ -21,6 +25,12 @@ async function fixtureRepository() {
     "utf8"
   );
   await writeFile(join(root, "CHANGELOG.md"), "---\nstatus: proposed\n---\n# Changelog\n\n## 0.6 - Baseline\n", "utf8");
+  await writeFile(join(root, "STEERING.md"), "---\nid: OA-STEERING-TEST\nstatus: approved\nversion: 0.1\napproving_decision: OA-DECISION-TEST\n---\n# Test steering\n", "utf8");
+  await writeFile(join(root, "projects", "project-registry.yml"), JSON.stringify({ version: "0.1", projects: [{ project_id: "ai-workbench", product_name: "Test Workbench", purpose_document: "product/proposal.md", purpose_id: "OA-PRODUCT-TEST", purpose_version: "0.1", repository: "test", product_owner: "Jamie Peppard", current_status: "test", intended_users: ["Jamie"], core_outcome: "Test Workbench builds", information_boundary: "test data", authority_boundary: "Jamie decides", connected_products: [], excluded_products: [], release_lifecycle: "test", prompt_registry_location: "prompts/prompt-registry.yml" }] }, null, 2), "utf8");
+  await writeFile(join(root, "prompts", "approved", "build.md"), "PROMPT PROVENANCE\nComplete the bounded test build.", "utf8");
+  await writeFile(join(root, "prompts", "prompt-registry.yml"), JSON.stringify({ version: "0.1", prompts: [{ prompt_id: "OA-PROMPT-TEST", title: "Test build", target_project: "ai-workbench", target_capability: "product-application-build", exact_version: "1.0", status: "approved", exact_text_path: "prompts/approved/build.md", purpose_version: "OA-PRODUCT-TEST@0.1", steering_version: "OA-STEERING-TEST@0.1", effective_date: "2026-07-29", superseded_prompt: null, reason_for_change: "Test fixture", approving_decision: "OA-DECISION-TEST", builds_or_pull_requests: [], migration_impact: "None" }] }, null, 2), "utf8");
+  await writeFile(join(root, "decisions", "test.md"), "---\nid: OA-DECISION-TEST\nstatus: recorded\n---\n# Test decision\n", "utf8");
+  await writeFile(join(root, "docs", "recovery", "recovery-registry.yml"), JSON.stringify({ latest: { restore_status: "succeeded" } }), "utf8");
   return root;
 }
 

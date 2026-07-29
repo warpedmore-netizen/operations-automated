@@ -851,6 +851,42 @@ main { min-width: 0; }
 .section-heading .eyebrow { margin-bottom: 0.15rem; }
 .section-heading h3 { margin: 0; color: var(--ink); font: 750 1.22rem/1.15 var(--display-font); }
 .section-heading > span { color: var(--muted); font-size: 0.62rem; font-weight: 750; }
+.steering-card { max-width: 1240px; }
+.steering-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.steering-heading h2 { margin-bottom: 0.55rem; }
+.steering-heading p { max-width: 760px; margin: 0; color: var(--muted); line-height: 1.55; }
+.steering-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+.steering-summary article { padding: 1rem; background: var(--blue-pale); border: 1px solid var(--line); border-radius: 9px; }
+.steering-summary span, .steering-item span { display: block; color: #56708e; font-size: 0.62rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+.steering-summary strong { display: block; margin: 0.3rem 0; font-size: 0.95rem; }
+.steering-summary p { margin: 0; color: var(--muted); font-size: 0.69rem; line-height: 1.45; }
+.steering-intake-form { display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(280px, 1fr) auto; gap: 1rem; align-items: end; margin: 1.15rem 0; padding: 1rem; background: #f7fbfe; border: 1px solid #bcd9eb; border-radius: 10px; }
+.steering-intake-form h3 { margin: 0 0 0.3rem; font: 750 1.1rem/1.2 var(--display-font); }
+.steering-intake-form p { margin: 0; color: var(--muted); font-size: 0.73rem; line-height: 1.5; }
+.steering-intake-form label, .steering-recommendation label { color: var(--ink); font-size: 0.7rem; font-weight: 750; }
+.steering-intake-form textarea, .steering-recommendation textarea { width: 100%; margin-top: 0.35rem; padding: 0.65rem; border: 1px solid var(--line); border-radius: 7px; resize: vertical; }
+.steering-intake-result:not(:empty) { margin-bottom: 1rem; padding: 0.85rem 1rem; background: var(--green-soft); border-left: 4px solid var(--green); border-radius: 7px; }
+.steering-intake-result p { margin: 0.35rem 0; }
+.steering-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; }
+.steering-layout > section { min-width: 0; padding: 1rem; background: #fbfdff; border: 1px solid var(--line); border-radius: 10px; }
+.steering-list { display: grid; gap: 0.65rem; }
+.steering-item { min-width: 0; padding: 0.85rem; background: white; border: 1px solid var(--line); border-radius: 8px; overflow-wrap: anywhere; }
+.steering-item > div:first-child { display: grid; gap: 0.25rem; }
+.steering-item strong { color: var(--ink); font-size: 0.82rem; }
+.steering-item p { margin: 0.5rem 0; color: var(--muted); font-size: 0.7rem; line-height: 1.5; }
+.steering-item small { display: block; color: var(--muted); font-size: 0.63rem; line-height: 1.45; }
+.steering-item dl { display: grid; gap: 0.35rem; margin: 0.65rem 0 0; }
+.steering-item dl div { display: grid; grid-template-columns: 72px minmax(0, 1fr); gap: 0.45rem; }
+.steering-item dt, .steering-item dd { margin: 0; font-size: 0.64rem; line-height: 1.4; }
+.steering-item dt { color: #56708e; font-weight: 800; }
+.steering-item details { margin-top: 0.65rem; }
+.steering-item summary { color: var(--blue-strong); font-size: 0.66rem; font-weight: 750; cursor: pointer; }
+.steering-conflict.blocking { border-left: 4px solid var(--red); }
+.steering-conflict.warning { border-left: 4px solid var(--amber); }
+.steering-decision-actions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.steering-decision-actions button { min-height: 42px; padding: 0.45rem 0.65rem; color: var(--blue-strong); background: white; border: 1px solid #a9c7dc; border-radius: 7px; font-size: 0.68rem; font-weight: 750; }
+.control-note { padding-top: 0.5rem; border-top: 1px solid var(--line); }
+.empty-steering { margin: 0; color: var(--muted); font-size: 0.7rem; }
 .compact-action { min-height: 38px; padding: 0.55rem 0.75rem; }
 .do-next { padding: 1.05rem; background: linear-gradient(135deg, #edf8fe, #f8fbfd); border: 1px solid #bddff2; border-radius: 10px; }
 .do-next-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 0.65rem; }
@@ -1175,6 +1211,9 @@ dialog form { padding: 1.4rem; }
   .work-summary { grid-template-columns: 1fr 1fr; }
 }
 @media (max-width: 700px) {
+  .steering-heading { display: grid; }
+  .steering-summary, .steering-layout { grid-template-columns: 1fr; }
+  .steering-intake-form { grid-template-columns: 1fr; }
   html, body { min-width: 0; overflow-x: hidden; }
   .shell { display: block; }
   .rail {
