@@ -3,7 +3,7 @@
   "id": "OA-KNOWLEDGE-001",
   "title": "Governed Workbench Knowledge Source Manifest",
   "status": "proposed",
-  "version": "0.1",
+  "version": "0.2",
   "owner": "Jamie Peppard",
   "authorityRule": "The source artefact status is authoritative. Only approved or published methodology may provide normative instructions. Recorded decisions provide authority only for their exact bounded decision. Proposed, draft and external material may inform analysis but cannot override approved meaning.",
   "statusAuthority": {
@@ -36,6 +36,10 @@
       "normative": false
     },
     "rejected": {
+      "effectiveState": "retained-history",
+      "normative": false
+    },
+    "retired": {
       "effectiveState": "retained-history",
       "normative": false
     },
@@ -111,6 +115,7 @@
         "app/knowledge-source-manifest.json",
         "app/operations-bible.v0.1.json",
         "app/work-profiles.v0.1.json",
+        "knowledge/**/*.json",
         "templates/**/*.md"
       ],
       "normativeStatuses": []

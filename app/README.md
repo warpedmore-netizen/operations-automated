@@ -8,6 +8,8 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed purpose-and-steering control:** Workbench build `1.6.0-steering-control-draft` adds a visible Product Purpose, project-boundary, prompt-provenance, conflict and recovery surface. It classifies and retains substantive request-intake recommendations, blocks new Build Jobs without an approved purpose, approved Steering contract and exact approved prompt, and preserves rejected or deferred routes. The Steering contract, purpose reconciliations and future Workbench build prompt remain proposed or Draft; this surface cannot approve them or migrate the separate Dynamic Governance Tool.
 
+> **Proposed Methodology application-and-learning contract:** Workbench build `1.7.0-methodology-contract-draft` adds complete signal fields, related-signal detection and retained synthesis, full change-proposal fields, versioned Methodology releases, outcome reviews and an application envelope containing the exact baseline and knowledge snapshot. It rejects uncontracted RPG and Player Lab data and keeps Dynamic Governance findings as signals. These mechanics remain proposed, cannot approve themselves and do not change v0.7.
+
 > **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
 > **Proposed Operate pilot:** Workbench build `1.3.0-operate-action-loop-draft` adds a unified **My Work** inbox, explainable **Do Next** order, the initial Operations Bible and a governed action loop. Every open item exposes a working next action. Oppa Mate suggests names and safe defaults; ordinary approvals use explicit labelled choices, material decisions require an outcome and higher-consequence Risk acceptance retains its stronger confirmation. This is prepared product behaviour, not an approved methodology or release.
@@ -210,6 +212,9 @@ Oppa Mate is presented as the primary Operations Automated service-account user 
 - Markdown export, usage ledger and audit records
 - Push-to-record browser capture with editable review surface
 - No approval from classification, no direct edits to main and no AI-authorised merge
+- Exact Methodology application envelopes covering version, components, knowledge snapshot, context, evidence, assumptions, uncertainty, result, options, recommendation, authority, case test and feedback route
+- Complete learning-signal boundaries, related-signal synthesis, proposed change fields, versioned release records, later-conversation version proof and linked outcome reviews
+- Separate-product signal protection: Dynamic Governance findings remain evidence-only signals and RPG or Player Lab data is rejected without an approved signal contract
 
 Retained image analysis and explicit image generation remain later increments and are not shown as available controls.
 

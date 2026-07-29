@@ -177,12 +177,40 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(responseResult.message.metadata.approvalState, "not-approved");
     assert.doesNotMatch(responseResult.message.working_text, /methodology\/approved-method\.md|repository status|source hash/i);
     assert.equal(responseResult.message.metadata.activeWorkDetails, null);
+    assert.equal(responseResult.methodologyApplication.methodology_version, "0.4");
+    assert.equal(responseResult.methodologyApplication.knowledge_snapshot.baseline_version, "0.4");
+    assert.equal(responseResult.methodologyApplication.approval_state, "not-approved");
+
+    const answerCorrection = await ok("/api/feedback", {
+      conversationId,
+      messageId: responseResult.message.id,
+      disposition: "needs-clarification",
+      wording: "The answer hid the human accountability decision.",
+      affectedComponents: ["human-ai-collaboration"],
+      sourceReference: "Founder correction in the controlled test conversation",
+      permissionBoundary: "Authorised non-confidential test fixture",
+      confidentialityBoundary: "No external or confidential data",
+      evidence: ["Observed answer in this conversation"],
+      evidenceLimitations: "One simulated interaction",
+      aiInterpretation: "The immediate answer needs correction before considering methodology meaning."
+    });
+    assert.equal(answerCorrection.feedback.learning_disposition, "answer-only-correction");
+    assert.equal(answerCorrection.feedback.status, "retained");
+    assert.equal(answerCorrection.proposal, null);
 
     const recorded = await ok("/api/feedback", {
       conversationId,
       messageId: responseResult.message.id,
       disposition: "record-methodology-feedback",
-      wording: "Clarify the methodology wording so human accountability is explicit."
+      wording: "Clarify the methodology wording so human accountability is explicit.",
+      affectedComponents: ["human-ai-collaboration"],
+      sourceReference: "Founder methodology feedback in the controlled test conversation",
+      permissionBoundary: "Authorised non-confidential test fixture",
+      confidentialityBoundary: "No external or confidential data",
+      evidence: ["Founder correction", "Related answer-only correction"],
+      evidenceLimitations: "Founder evidence only; not independently validated",
+      aiInterpretation: "The repeated issue may justify a bounded clarification after a counter-test.",
+      outcomeReviewTrigger: "Review after a later conversation uses the released wording."
     });
     const feedback = recorded.feedback;
     assert.equal(feedback.conversation_id, conversationId);
@@ -193,6 +221,11 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(feedback.status, "awaiting-review");
     assert.equal(feedback.affected_workspace, "living-methodology");
     assert.equal(feedback.submitting_user, "Jamie Peppard");
+    assert.equal(feedback.learning_disposition, "methodology-change-candidate");
+    assert.ok(feedback.relatedFeedback.some((item) => item.id === answerCorrection.feedback.id));
+    assert.equal(feedback.source_reference, "Founder methodology feedback in the controlled test conversation");
+    assert.equal(feedback.source_type, "workbench-conversation");
+    assert.deepEqual(feedback.evidence, ["Founder correction", "Related answer-only correction"]);
     assert.equal(feedback.approvalState, "not-approved");
     assert.ok(feedback.created_at);
 
@@ -202,6 +235,13 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(classified.approvalCreated, false);
     assert.equal(classified.feedback.status, "awaiting-review");
     assert.equal(classified.feedback.approvalState, "not-approved");
+
+    const synthesisResult = await ok("/api/feedback/synthesis", {
+      feedbackIds: [answerCorrection.feedback.id, feedback.id]
+    });
+    assert.deepEqual(synthesisResult.synthesis.signalIds, [answerCorrection.feedback.id, feedback.id]);
+    assert.equal(synthesisResult.synthesis.status, "proposed");
+    assert.equal(synthesisResult.synthesis.approvalState, "not-approved");
 
     const proposalResult = await ok(`/api/feedback/${feedback.id}/change-proposal`, {});
     const proposal = proposalResult.proposal;
@@ -218,6 +258,16 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.ok(proposal.alternatives.length);
     assert.ok(proposal.risks.length);
     assert.ok(proposal.validationRequirements.length);
+    assert.ok(proposal.relatedFeedback.some((item) => item.id === answerCorrection.feedback.id));
+    assert.ok(proposal.synthesis.signalIds.includes(answerCorrection.feedback.id));
+    assert.match(proposal.evidence_strength, /related retained signals/i);
+    assert.ok(proposal.counterTests.length);
+    assert.ok(proposal.disagreements.length);
+    assert.deepEqual(proposal.affectedComponents, ["human-ai-collaboration"]);
+    assert.ok(proposal.affectedProductsAndPrompts.some((item) => /Workbench/i.test(item)));
+    assert.ok(proposal.migration);
+    assert.ok(proposal.recommendation);
+    assert.ok(proposal.exact_decision_required);
     assert.equal(typeof proposal.expected_cost, "number");
     assert.equal(typeof proposal.modelRoute.tier, "number");
 
@@ -322,10 +372,45 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(receipt.proposal.feedback_status, "implemented");
     assert.equal(receipt.proposal.receipt.commit_sha, "fedcba7654321");
     assert.equal(receipt.proposal.receipt.baseline_version, "0.5");
+    assert.ok(receipt.releaseId);
+    assert.equal(receipt.proposal.release.approver, "Jamie Peppard");
+    assert.equal(receipt.proposal.release.version, "0.5");
+    assert.ok(receipt.proposal.release.effectiveContent.includes("methodology/approved-method.md"));
+    assert.ok(receipt.proposal.release.distributionDestinations.includes("Workbench repository index"));
 
     const approvedContext = await call("/api/repository/context?query=omega%20merged&approvedOnly=true");
     assert.equal(approvedContext.response.ok, true);
     assert.ok(approvedContext.payload.sources.some((source) => source.path === "methodology/approved-method.md" && source.status === "approved" && /Omega merged/.test(source.excerpt)));
+
+    const laterConversation = await ok("/api/conversations", { workspace: "living-methodology", title: "Later-version proof" });
+    const laterResponse = await ok("/api/respond", {
+      conversationId: laterConversation.conversation.id,
+      text: "What does the approved accountability wording require?",
+      outputType: "answer",
+      confirmed: true
+    });
+    assert.equal(laterResponse.methodologyApplication.methodology_version, "0.5");
+    assert.equal(laterResponse.methodologyApplication.knowledge_snapshot.baseline_version, "0.5");
+    assert.ok(laterResponse.methodologyApplication.knowledge_snapshot.sources.some((source) =>
+      source.path === "methodology/approved-method.md" && source.version === "0.5" && source.status === "approved"
+    ));
+
+    const outcomeReview = await ok(`/api/change-proposals/${proposal.id}/outcome-review`, {
+      expectedOutcome: "A later answer uses the released accountability meaning and exposes the human decision owner.",
+      observedOutcome: "The later conversation used baseline 0.5 and retrieved the approved 0.5 source.",
+      evidence: [laterResponse.knowledgeSnapshotId],
+      result: "met",
+      learning: "The release-to-reindex-to-later-use trace is working in the controlled fixture.",
+      nextDisposition: "no-action",
+      reviewer: "Jamie Peppard"
+    });
+    assert.equal(outcomeReview.review.result, "met");
+    assert.deepEqual(outcomeReview.trace, {
+      feedbackId: feedback.id,
+      proposalId: proposal.id,
+      releaseId: receipt.proposal.release.id,
+      reviewId: outcomeReview.review.id
+    });
 
     const rejectedRecorded = await ok("/api/feedback", {
       conversationId,
@@ -341,9 +426,39 @@ test("local API persists governed conversations and the complete feedback-to-cha
       reason: "Context-specific and unsupported."
     });
     assert.equal(rejected.proposal.status, "rejected");
+    assert.equal(rejected.proposal.feedback_wording, "Rejected zebra wording must never become approved retrieval evidence.");
     const rejectedContext = await call("/api/repository/context?query=rejected%20zebra&approvedOnly=true");
     assert.equal(rejectedContext.response.ok, true);
     assert.equal(rejectedContext.payload.sources.some((source) => /Rejected zebra/i.test(source.excerpt)), false);
+
+    const governanceSignal = await ok("/api/feedback", {
+      conversationId,
+      messageId: responseResult.message.id,
+      disposition: "add-evidence",
+      wording: "A Dynamic Governance finding may indicate a control-design gap.",
+      sourceReference: "dynamic-governance://finding/test-1",
+      permissionBoundary: "Authorised non-confidential test finding",
+      confidentialityBoundary: "Finding summary only",
+      evidence: ["Controlled fixture finding"],
+      evidenceLimitations: "A finding is a signal, not automatic methodology evidence."
+    });
+    assert.equal(governanceSignal.feedback.classification, "evidence-submission");
+    assert.equal(governanceSignal.feedback.learning_disposition, "more-evidence");
+    assert.equal(governanceSignal.feedback.approvalState, "not-approved");
+    assert.equal(governanceSignal.proposal, null);
+
+    const blockedRpgSignal = await call("/api/feedback", {
+      method: "POST",
+      body: {
+        conversationId,
+        messageId: responseResult.message.id,
+        disposition: "add-evidence",
+        wording: "Import this scenario result.",
+        sourceReference: "incident-management-rpg://scenario/secret-1"
+      }
+    });
+    assert.equal(blockedRpgSignal.response.status, 403);
+    assert.match(blockedRpgSignal.payload.error, /approved signal contract/i);
 
     const auditResult = await call("/api/audit");
     assert.equal(auditResult.response.ok, true);
@@ -351,6 +466,7 @@ test("local API persists governed conversations and the complete feedback-to-cha
     for (const action of [
       "feedback.recorded",
       "feedback.classified",
+      "methodology-signals.synthesised",
       "change-proposal.created",
       "change-decision.recorded",
       "implementation-handoff.created",
@@ -358,6 +474,8 @@ test("local API persists governed conversations and the complete feedback-to-cha
       "release-merge.authorised",
       "repository.reindexed",
       "change.implemented",
+      "methodology-release.recorded",
+      "methodology-release.outcome-reviewed",
       "brand-review.recorded",
       "brand-review.response-recorded"
     ]) assert.ok(auditEvents.some((event) => event.action === action), `${action} should remain auditable`);

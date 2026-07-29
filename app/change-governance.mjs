@@ -1,3 +1,5 @@
+import { synthesiseMethodologySignals } from "./methodology-learning.mjs";
+
 export const FOUNDER_NAME = "Jamie Peppard";
 
 export const FEEDBACK_CLASSIFICATIONS = Object.freeze([
@@ -58,11 +60,14 @@ export function proposalKind(classification) {
   throw Object.assign(new Error("Only methodology or product change candidates can become proposals."), { status: 409 });
 }
 
-export function buildStructuredProposal({ feedback, conversation, sources, route, expectedCost = 0 }) {
+export function buildStructuredProposal({
+  feedback, conversation, sources, route, expectedCost = 0, relatedFeedback = []
+}) {
   const kind = proposalKind(feedback.classification);
   const approvedSources = sources.filter((source) => source.status === "approved");
   const connectedSources = sources.filter((source) => source.status === "external-evidence");
-  const assistant = conversation.messages.find((message) => message.id === feedback.message_id);
+  const synthesisSignals = [feedback, ...relatedFeedback];
+  const synthesis = synthesisSignals.length >= 2 ? synthesiseMethodologySignals(synthesisSignals) : null;
   const affectedFiles = [...new Set([
     ...sources.filter((source) => !source.path.includes("://")).map((source) => source.path),
     ...(kind === "product" ? ["app/index.html", "app/app.js", "app/server.mjs", "app/styles.css"] : [])
@@ -73,8 +78,10 @@ export function buildStructuredProposal({ feedback, conversation, sources, route
     problemLearning: feedback.original_wording || feedback.wording,
     approvedSources: approvedSources.map(({ path, status, version, hash, excerpt }) => ({ path, status, version, hash, excerpt })),
     affectedFiles,
-    currentWording: assistant?.working_text || "Current wording must be confirmed during preparation.",
-    proposedWording: `Prepare a bounded ${kind} change that addresses: ${feedback.original_wording || feedback.wording}`,
+    currentWording: approvedSources.length
+      ? approvedSources.slice(0, 4).map((source) => `[${source.path}@${source.version}] ${source.excerpt}`).join("\n\n")
+      : "Current approved meaning must be retrieved and confirmed before preparation.",
+    proposedWording: `Candidate proposed meaning, not approved: ${feedback.original_wording || feedback.wording}`,
     rationale: `This proposal is traceable to feedback ${feedback.id}. Classification identifies a candidate for human review; it does not approve the change.`,
     evidence: [
       { type: "feedback", reference: feedback.id, wording: feedback.original_wording || feedback.wording },
@@ -104,6 +111,31 @@ export function buildStructuredProposal({ feedback, conversation, sources, route
       "Confirm the draft remains reversible and does not edit main directly.",
       "Obtain a separate release decision after implementation."
     ],
+    relatedFeedback: relatedFeedback.map((item) => ({
+      id: item.id,
+      classification: item.classification,
+      disposition: item.learning_disposition || item.disposition || "untriaged",
+      originalWording: item.original_wording || item.wording || ""
+    })),
+    synthesis,
+    evidenceStrength: relatedFeedback.length
+      ? `${relatedFeedback.length + 1} related retained signals; no independent validation is implied.`
+      : "One direct retained signal; no independent validation is implied.",
+    counterTests: [
+      "Test whether the approved method already covers the point and the failure is delivery or explanation.",
+      "Test a materially different user, scale, consequence and failure case before generalising the change.",
+      "Test the no-change alternative and whether a product correction would solve the problem without changing methodology meaning."
+    ],
+    disagreements: feedback.disagreement
+      ? [feedback.disagreement]
+      : ["No explicit disagreement is recorded; absence of disagreement is not convergence."],
+    affectedComponents: feedback.affectedComponents || feedback.affected_components || [],
+    affectedProductsAndPrompts: kind === "methodology"
+      ? ["Operations Automated Methodology", "AI Workbench delivery behaviour", "registered methodology-application prompts"]
+      : ["AI Workbench", "registered Workbench implementation prompts"],
+    migration: "No approved meaning or live delivery behaviour changes until an explicit release decision records the effective version, affected products, prompts and distribution destinations.",
+    recommendation: "Prepare or revise only the smallest bounded proposal supported by the retained evidence; keep release and approval separate.",
+    exactDecisionRequired: "Prepare this candidate for controlled implementation, request revision, defer it for more evidence, or reject it. This decision cannot approve release.",
     expectedCost: Number(expectedCost || 0),
     modelRoute: {
       tier: route?.tier ?? 0,
