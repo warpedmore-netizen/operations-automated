@@ -17,6 +17,8 @@ date: 2026-07-31
 
 This is not a decision to approve a Methodology change, merge automatically, release the private Workbench, add image generation, connect public research or publish externally.
 
+Prepared implementation: [draft pull request #34](https://github.com/warpedmore-netizen/operations-automated/pull/34).
+
 ## Trigger and founder intent
 
 **What Jamie said:** Recent daily challenges are too similar in scenario, route and format. They appear not to carry forward learning, and they are not testing enough of the complete methodology. Keep the useful current practice, but introduce more topical variation and different challenge experiences such as a document, workflow or image.

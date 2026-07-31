@@ -23,6 +23,7 @@ This authorises bounded analysis, additive implementation, tests, branch creatio
 - Approved Methodology baseline: v0.7 for internal validation.
 - Source branch: `codex/request-framing-routing-handoff`.
 - Preparation branch: `codex/daily-challenge-variety`.
+- Draft pull request: [#34](https://github.com/warpedmore-netizen/operations-automated/pull/34).
 - Target product: the private AI Workbench daily methodology challenge and Methodology-learning route.
 - Human action after preparation: review the assurance pack and decide whether the implementation and Draft prompt should be revised, deferred, rejected or approved through their applicable boundaries.
 

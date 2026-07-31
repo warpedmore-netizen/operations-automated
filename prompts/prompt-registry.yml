@@ -52,7 +52,7 @@
       "superseded_prompt": null,
       "reason_for_change": "Prevents cosmetic repetition by combining retained challenge memory with controlled variation across methodology territory, challenge mode and response artefact.",
       "approving_decision": null,
-      "builds_or_pull_requests": ["codex/daily-challenge-variety proposal only"],
+      "builds_or_pull_requests": ["PR #34 draft; codex/daily-challenge-variety proposal only"],
       "migration_impact": "No schema migration. Existing conversations remain intact; eligible earlier and later challenge responses gain one additive unapproved Methodology-learning signal per conversation."
     },
     {
