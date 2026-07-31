@@ -466,7 +466,9 @@ function renderWorkDetail(item, record = null) {
       <span>${item.nextAction?.authority === "ai-owner" ? "Being handled" : "Your next step"}</span>
       <h4>${escapeHtml(item.nextAction?.label || "Start today's challenge")}</h4>
       <p>${escapeHtml(item.nextAction?.outcome || item.summary)}</p>
-      <dl><div><dt>Owner now</dt><dd>${escapeHtml(item.owner)}</dd></div><div><dt>Done when</dt><dd>Jamie has answered the one primary question, or deliberately skipped today's challenge.</dd></div></dl>
+      <dl><div><dt>Owner now</dt><dd>${escapeHtml(item.owner)}</dd></div>
+      ${item.nextAction?.challengePlan ? `<div><dt>Territory</dt><dd>${escapeHtml(item.nextAction.challengePlan.territory)}</dd></div><div><dt>Challenge mode</dt><dd>${escapeHtml(item.nextAction.challengePlan.mode)}</dd></div><div><dt>Artefact</dt><dd>${escapeHtml(item.nextAction.challengePlan.format)}</dd></div>` : ""}
+      <div><dt>Done when</dt><dd>Jamie's answer is retained as an unapproved learning signal, or Jamie deliberately skips today's challenge.</dd></div></dl>
     </section>${sourceAction}<p class="work-action-authority">This challenge stays in its own Workbench conversation. It does not create methodology approval or a repository change.</p>`
     : `<div class="record-boundary"><strong>Underlying source: ${escapeHtml(item.source)}</strong><p>This inbox item remains governed in its existing workflow. Opening it here does not approve, reject or complete it.</p></div>${sourceAction}`;
   $("#work-detail").innerHTML = `
@@ -885,7 +887,7 @@ const feedbackOptions = [
 ];
 
 const challengePrompts = {
-  balanced: "Prepare today's 10-minute Operations Automated methodology challenge inside this Workbench. Choose the unresolved tension with the greatest decision value. Give me a concrete situation, the strongest provisional Operations Automated response, the reverse or boundary case most likely to change it, and one primary plain-language question. Separate recorded evidence, Jamie's judgement, AI inference and assumptions. Use only evidence actually supplied to this Workbench; if current public evidence is not connected, state that limitation and do not invent a public signal. Explain that my answer becomes feedback rather than approval, and ask what is wrong, missing, impractical or inconsistent. Do not give me a questionnaire.",
+  balanced: "Prepare a 10-minute Operations Automated methodology challenge inside this Workbench. First use the retained daily challenge memory to reject topics or conclusions Jamie has already covered unless materially new evidence or a genuine transfer failure changes them. Choose the highest-value unresolved issue from an under-tested methodology territory, then deliberately vary both the challenge mode and the artefact Jamie receives: for example a document critique, workflow, decision memo, red-team finding, after-action review, stakeholder exchange, scorecard or case file. Use the artefact itself as the challenge instead of defaulting to the same scenario structure. Give the strongest provisional response, the weakness most likely to change it and one primary plain-language question. Use only evidence actually supplied to this Workbench; if current public evidence is not connected, state that limitation and do not invent it. Treat Jamie's answer as retained feedback rather than approval, and ask what is wrong, missing, impractical or inconsistent. Do not give a questionnaire.",
   principles: "Challenge one Operations Automated principle with a concrete situation where two reasonable principles, values or stakeholder needs conflict. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Do not give me a questionnaire. Treat my answer as evidence, not approval.",
   "ai-suitability": "Challenge whether the Operations Automated methodology is genuinely suitable for AI to interpret and apply. Use a concrete situation where machine-readable guidance, human-readable meaning, evidence, judgement and authority could diverge. Briefly give the strongest provisional response, identify what remains uncertain, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
   "manual-work": "Challenge how Operations Automated decides that work should remain manual. Use a concrete situation involving human judgement, facilitation, empathy, tacit knowledge or physical work that cannot responsibly be automated yet. Briefly give the strongest provisional response, identify what further thinking is needed, and ask me one primary plain-language question. Treat my answer as evidence, not approval.",
@@ -1063,8 +1065,8 @@ async function previewAndSend(text, origin = null) {
   }
 }
 
-async function sendChallenge(focus = "balanced", { title = "Methodology challenge", conversationId = null } = {}) {
-  const prompt = challengePrompts[focus] || challengePrompts.balanced;
+async function sendChallenge(focus = "balanced", { title = "Methodology challenge", conversationId = null, promptOverride = "" } = {}) {
+  const prompt = promptOverride || challengePrompts[focus] || challengePrompts.balanced;
   if (conversationId) {
     state.conversation = (await request(`/api/conversations/${encodeURIComponent(conversationId)}`)).conversation;
   } else {
@@ -1088,7 +1090,8 @@ async function startDailyChallenge(item) {
   const date = item?.nextAction?.challengeDate || new Date().toISOString().slice(0, 10);
   await sendChallenge("balanced", {
     title: `Daily methodology challenge — ${date}`,
-    conversationId
+    conversationId,
+    promptOverride: item?.nextAction?.prompt || ""
   });
 }
 
@@ -1207,6 +1210,7 @@ async function loadFeedback() {
     "challenge-conclusion": ["You disagree", "You challenged the answer's conclusion."],
     "add-evidence": ["More information", "You added information the answer should consider."],
     "needs-clarification": ["You were misunderstood", "You said the answer did not explain things clearly."],
+    "daily-challenge-response": ["Methodology challenge response", "Your challenge response was retained for governed learning; it did not approve a change."],
     "record-methodology-feedback": ["Suggested method change", "You suggested a change to the Operations Automated method."],
     "proposal-requested": ["Change requested", "You asked to prepare a possible methodology change."]
   };
