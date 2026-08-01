@@ -198,8 +198,9 @@ main { min-width: 0; }
   border-radius: 7px;
   font-weight: 700;
 }
-.primary { color: white; background: var(--blue); border-color: var(--blue); }
-.primary:hover { background: var(--blue-strong); }
+.oa-base .primary { color: white; background: var(--blue); border-color: var(--blue); }
+.oa-base .primary:hover { color: white; background: var(--blue-strong); }
+.oa-base a.primary { text-decoration: none; }
 
 .conversation-view { height: calc(100vh - 82px); display: grid; grid-template-columns: minmax(0, 1fr); }
 .conversation-view.show-context { grid-template-columns: minmax(0, 1fr) 355px; }

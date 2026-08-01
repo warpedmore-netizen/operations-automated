@@ -11,6 +11,7 @@
 - Added a complete Codex handoff format and framing provenance; retained the existing gate that keeps inadequate implementation evidence open.
 - Added the 16 required routing scenarios plus an isolated API route-and-record fixture.
 - Registered the reusable request-framing prompt as Draft. Product Purpose, Steering, implementation prompt, merge and private release remain separate decisions.
+- Corrected the Windows launcher so a linked `app` directory cannot silently redirect repository indexing to an older physical checkout; the launched repository path now remains the authoritative Workbench source and the local server runs without a persistent terminal window.
 
 ## Workbench 1.8.0 complete governed base journey - proposed
 

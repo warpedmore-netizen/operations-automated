@@ -36,7 +36,7 @@ Use either one-click entry point:
 - Double-click `Launch-Workbench.cmd` in the repository.
 - Double-click `Launch-Brand-Review.cmd` to open the Workbench directly at the proposed Brand Review area.
 
-The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. Keep the server window open while using the Workbench.
+The launcher locates an available Node.js runtime, starts the local server quietly in the background, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. The background Workbench remains available until its process stops or the computer restarts.
 
 The page and server compare a controlled build marker. A persistent restart warning replaces misleading partial or indefinitely loading Brand Review content if their versions ever differ.
 
@@ -58,7 +58,7 @@ The proportionate founder pilot is Tailscale Serve, not a public tunnel:
 6. Allow microphone access, complete one spoken challenge and confirm that an unauthorised identity cannot connect.
 7. Record and test the Serve-disable and device-removal route.
 
-The computer and Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut and keep the server window open. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
+The computer and background Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut again. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
 
 ## Mobile voice and transcription recovery
 
@@ -91,7 +91,7 @@ Voice transcription, translation and model reasoning require an OpenAI API key w
 1. Create an API key in the OpenAI API dashboard.
 2. From the repository root, run `.\Configure-Workbench.ps1`.
 3. Paste the key into that secure PowerShell prompt, not into the browser or chat.
-4. Close any existing window titled **Operations Automated Workbench - keep open**.
+4. Restart the computer if an older hidden Workbench process cannot be stopped safely.
 5. Run `.\Start-Workbench.ps1`.
 6. Open `http://127.0.0.1:4173`. The header should say **Provider connected**.
 7. Select **Record**, check the live sound-level bar, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**. If transcription fails, use the retained-recording retry panel before recording again.

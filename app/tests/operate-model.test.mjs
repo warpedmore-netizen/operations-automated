@@ -116,6 +116,7 @@ test("a Case cannot close while contained work remains open", () => {
   const close = actions.find((item) => item.id === "close-case");
   assert.equal(close.disabled, true);
   assert.match(close.unavailableReason, /2 contained records remain open/i);
+  assert.match(close.suggestedNote, /outcome has been reviewed/i);
   assert.equal(actions.find((item) => item.id === "reopen-case").disabled, false);
 });
 
