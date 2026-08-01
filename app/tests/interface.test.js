@@ -240,3 +240,14 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(cssSource, /\.inline-work-help/);
   assert.match(cssSource, /min-height:\s*42px/);
 });
+
+test("Methodology learning is inspectable through structured founder questions and a full trace", () => {
+  assert.match(html, /Methodology learning/i);
+  assert.match(html, /What have you learned from me that has not yet been dealt with\?/i);
+  assert.match(html, /Which approved Methodology changes came from my feedback\?/i);
+  assert.match(html, /Signal clusters and reviews/i);
+  assert.match(html, /Human-authorised Methodology change traces/i);
+  assert.match(appSource, /\/api\/methodology-learning/);
+  assert.match(appSource, /Retain this synthesis/);
+  assert.match(appSource, /Strongest no-change case/);
+});

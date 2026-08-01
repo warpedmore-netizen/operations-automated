@@ -1,5 +1,40 @@
 # Changelog
 
+## Workbench 1.9.0 request framing, project routing and Codex handoff - proposed
+
+- Extended **Purpose & steering** from request classification into one complete ordinary-language framing route.
+- Added controlled pre-flight retrieval across Product Purpose, Steering, approved Methodology, prompts, Decisions, Approvals, accepted corrections, feedback, work, Ideas, implementation state, recorded pull-request references, Work Profile and security boundaries.
+- Added explicit interpretation, transparent assumptions, material-question control, A–G readiness, the full work-package hierarchy and a complete A–J implementation package.
+- Added proportionate routing so simple classification stays local, answer-only requests create no Task and Codex is selected only for a complete stage-D source-code change.
+- Added an additive SQLite migration for source context, framing, readiness, knowledge snapshots and linked records while preserving legacy steering intakes.
+- Added **Create the draft route**, which creates only the minimum existing Operations Bible record and creates no approval or Implementation Job.
+- Added a complete Codex handoff format and framing provenance; retained the existing gate that keeps inadequate implementation evidence open.
+- Added the 16 required routing scenarios plus an isolated API route-and-record fixture.
+- Registered the reusable request-framing prompt as Draft. Product Purpose, Steering, implementation prompt, merge and private release remain separate decisions.
+
+## Workbench 1.8.0 complete governed base journey - proposed
+
+- Added one dedicated **Methodology learning** surface over retained SQLite records and the current repository index, without creating a new canonical work record type.
+- Added direct structured answers to **What have you learned from me that has not yet been dealt with?** and **Which approved Methodology changes came from my feedback?**
+- Made every material feedback signal expose its source wording, contextual interpretation, assessment change, uncertainty, counter-test, affected product and Methodology components, accepted correction, contradictions, confidence, reason, review trigger, Decision link, implementation link and final outcome.
+- Added visible related-signal clusters and Methodology Learning Reviews covering approved baseline, sources, corrections, what is covered or unclear, possible gaps, contradictions, evidence strength, counter-evidence, limits, proposed disposition, strongest no-change case, recommendation and exact human Decision or evidence required.
+- Expanded the Codex Implementation Job with the complete target, provenance, problem, behaviour, scope, exclusion, security, architecture, migration, rollback, documentation, question, acceptance and structured-return fields.
+- Kept a failed or incomplete Codex return open and required evidence against every acceptance criterion before a separate release Decision can be offered.
+- Extended the additive SQLite migration and proved that existing records, the pre-change database state and the pre-change repository artefact can be restored in a test copy.
+- Added the complete non-confidential vertical-journey evidence and full regression coverage; 100 Workbench tests pass and the desktop and 390-pixel live layouts have no browser errors or horizontal overflow.
+- Preserved Git authority, SQLite operational memory, Oppa Mate identity, separate preparation and release Decisions, controlled Confluence Draft/Live separation and all specialist histories. No Methodology meaning, merge, product release, Live publication or external use is approved.
+
+## Workbench 1.7.0 Methodology purpose, learning and delivery contract - proposed
+
+- Reconciled the proposed Operations Automated Methodology Product Purpose and Boundaries without changing the approved v0.7 baseline.
+- Added a proposed learning-system extension, Methodology–Workbench contract, machine-readable component registry and record schema linked back to human-readable authority.
+- Expanded retained feedback with source, permission, confidentiality, context, evidence, limitations, AI interpretation, affected components, related signals, controlled disposition and outcome trigger.
+- Added related-signal synthesis that remains proposed and cannot turn repetition into truth or approval.
+- Expanded change proposals with related feedback, current and proposed meaning, evidence strength, counter-tests, disagreement, product and prompt impact, migration, recommendation and the exact decision required.
+- Added Methodology application envelopes with exact baseline and knowledge snapshot, complete release records, later-conversation version proof and outcome reviews linked from signal to release.
+- Kept Dynamic Governance findings as controlled signals and rejected RPG or Player Lab data without an approved signal contract.
+- Preserved separate preparation, merge, release, publication, Product Purpose and Methodology-meaning decisions. No proposed record can approve itself.
+
 ## Workbench 1.6.0 steering, boundary, prompt and recovery control - proposed
 
 - Added a proposed Steering and Collaboration Contract, reconciled Product Purpose proposals and machine-readable project, prompt and recovery registries without changing the approved v0.7 methodology baseline.

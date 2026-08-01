@@ -22,6 +22,23 @@
       "migration_impact": "Adds control metadata and additive Workbench schema only; does not migrate Governance implementation or product data."
     },
     {
+      "prompt_id": "OA-PROMPT-REQUEST-FRAMING-001",
+      "title": "Frame and route an ordinary-language Workbench request",
+      "target_project": "ai-workbench",
+      "target_capability": "request-framing-and-project-routing",
+      "exact_version": "1.0",
+      "status": "draft",
+      "exact_text_path": "prompts/drafts/OA-PROMPT-REQUEST-FRAMING-001-v1.0.md",
+      "purpose_version": "OA-PRODUCT-001@0.1",
+      "steering_version": "OA-STEERING-001@0.1",
+      "effective_date": "2026-07-29",
+      "superseded_prompt": null,
+      "reason_for_change": "Creates a reusable exact framing contract for natural-language interpretation, project routing, readiness, minimum record creation and controlled Codex selection.",
+      "approving_decision": null,
+      "builds_or_pull_requests": ["codex/request-framing-routing-handoff proposal only"],
+      "migration_impact": "Adds framing provenance to steering intakes; it does not approve the prompt, Product Purpose, build, merge or release."
+    },
+    {
       "prompt_id": "OA-PROMPT-WORKBENCH-BUILD-001",
       "title": "Governed Workbench implementation job",
       "target_project": "ai-workbench",

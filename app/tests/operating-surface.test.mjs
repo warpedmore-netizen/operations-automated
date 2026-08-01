@@ -435,6 +435,16 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     const job = preparation.payload.implementationJob;
     assert.match(job.briefText, /Approved-for-preparation requirement/);
     assert.match(job.authorityBoundary, /remain unauthorised/i);
+    for (const field of [
+      "workReference", "targetRepository", "targetBranch", "productPurposeVersion", "steeringVersion",
+      "approvedPromptVersion", "sourceRequest", "intendedOutcome", "userProblem", "relevantEvidence",
+      "currentBehaviour", "requiredBehaviour", "inScopeRequirements", "explicitExclusions",
+      "dataSecurityBoundaries", "architectureConstraints", "affectedComponents", "acceptanceCriteria",
+      "testScenarios", "migrationRequirements", "rollbackRequirements", "documentationRequirements",
+      "unresolvedQuestions", "authorityBoundary", "structuredReturnFormat"
+    ]) assert.notEqual(job.brief[field], undefined, `Codex brief should contain ${field}`);
+    assert.equal(job.brief.workReference, job.handoff.reference);
+    assert.match(job.brief.targetBranch, /^codex\//);
     const jobId = job.id;
     const buildQueue = await call("/api/ai-work");
     const queuedBuild = buildQueue.payload.items.find((item) => item.kind === "implementation-job" && item.id === jobId);
@@ -450,22 +460,56 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(buildInProgressItem.owner, "Codex");
     assert.equal(buildInProgressItem.humanActionRequired, false);
     assert.equal(buildInProgress.payload.doNext.some((item) => item.sourceId === buildInProgressItem.sourceId), false);
+    const failedReceipt = await call(`/api/implementation-jobs/${jobId}/receipt`, {
+      method: "POST",
+      body: {
+        workReference: job.handoff.reference,
+        branchName: "codex/release-evidence",
+        pullRequestUrl: "https://github.com/example/operations-automated/pull/123",
+        commitSha: "abcdef1234567890",
+        filesChanged: ["app/app.js"],
+        behaviourImplemented: "Only part of the requested journey was implemented.",
+        tests: ["node --test: incomplete"],
+        validation: ["One journey checked"],
+        migrationPerformed: "Additive migration ran on a test copy.",
+        rollbackPath: "Restore the retained test database copy.",
+        acceptanceCriterionEvidence: [],
+        unresolvedRisks: ["Acceptance evidence is incomplete."],
+        remainingWork: ["Complete the missing acceptance criteria."],
+        versionImpact: "No release-ready version impact."
+      }
+    });
+    assert.equal(failedReceipt.response.status, 422);
+    assert.equal(failedReceipt.payload.job.status, "waiting-on-codex");
     const receipt = await call(`/api/implementation-jobs/${jobId}/receipt`, {
       method: "POST",
       body: {
+        workReference: job.handoff.reference,
         branchName: "codex/release-evidence",
         pullRequestUrl: "https://github.com/example/operations-automated/pull/123",
         commitSha: "abcdef1234567890",
         filesChanged: ["app/app.js", "app/server.mjs"],
+        behaviourImplemented: "The complete governed Workbench journey is available and reviewable.",
         tests: ["node --test: passed"],
         validation: ["Desktop journey: passed", "Phone-width journey: passed"],
+        migrationPerformed: "The additive migration preserved the existing database fixture.",
+        rollbackPath: "Restore the tested pre-change SQLite copy and previous application commit.",
+        acceptanceCriterionEvidence: job.acceptanceCriteria.map((criterion) => ({
+          criterion,
+          result: "met",
+          evidence: "Automated and interface checks passed."
+        })),
         unresolvedRisks: [],
+        remainingWork: [],
         versionImpact: "Proposed Workbench 0.3; methodology unchanged."
       }
     });
     assert.equal(receipt.response.status, 200, JSON.stringify(receipt.payload));
     assert.equal(receipt.payload.job.status, "waiting-for-review");
     assert.equal(receipt.payload.job.releaseApproval.result, "pending");
+    assert.equal(receipt.payload.job.receipt.workReference, job.handoff.reference);
+    assert.equal(receipt.payload.job.receipt.acceptanceCriterionEvidence.length, job.acceptanceCriteria.length);
+    assert.match(receipt.payload.job.receipt.rollbackPath, /restore/i);
     const releaseWork = await call(`/api/my-work?search=${encodeURIComponent(proposal.payload.proposal.title)}`);
     const releaseItem = releaseWork.payload.items.find((item) => item.sourceType === "implementation-job");
     assert.equal(releaseItem.owner, "Jamie Peppard");

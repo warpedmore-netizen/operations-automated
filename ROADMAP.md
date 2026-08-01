@@ -2,14 +2,14 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 1.0
+version: 1.1
 owner: Jamie Peppard
 last_updated: 2026-07-29
 ---
 
 # Operations Automated Roadmap
 
-## North star
+## Product direction
 
 Create a practical, AI-led and human-controlled methodology that helps an individual, team or organisation understand, govern and improve operations as connected systems and become ready for justified automation, AI assistance and bounded agentic operation.
 
@@ -72,6 +72,14 @@ Founder testing then exposed a deeper ownership failure: labelling an item as AI
 
 The proposed Workbench 1.6.0 control increment separates Product Purpose from steering, registers each product boundary and exact material prompt, proves a recoverable SQLite baseline and exposes request classification, prompt provenance and unresolved conflicts in one private surface. The Methodology and Workbench remain one core project. Dynamic Governance is treated as a separate product but its retained implementation is not moved until Jamie approves a target repository and non-destructive migration plan. The RPG and Player Lab remain outside this project.
 
+The proposed Methodology purpose-and-learning contract now completes the missing connection between product identity, approved human-readable authority, machine-usable components, Workbench application records, structured learning signals, related-signal synthesis, human-approved release and later outcome review. Workbench 1.7.0 records the exact baseline and knowledge snapshot used by a material answer and can trace a simulated bounded change from feedback through release, later-use proof and outcome review. The proposal does not approve new Methodology meaning or change v0.7.
+
+The proposed Workbench 1.8.0 base-completion increment turns those mechanics into one inspectable founder journey. A dedicated Methodology Learning area answers the unresolved-learning and feedback-led-release questions from structured records, shows related-signal reviews and visible dispositions, and traces feedback through counter-test, proposal, Decisions, implementation, release, later use and outcome. Codex handoffs now contain the complete governed implementation contract, and incomplete acceptance evidence leaves the Job open. The vertical fixture proves a pre-change database and repository copy can be restored. Real non-confidential founder use, implementation merge and a separate private-product release Decision remain outstanding.
+
+The proposed Workbench 1.9.0 request-framing increment now connects an ordinary-language need to that controlled delivery system. It enriches the existing steering intake with pre-flight retrieval, contextual interpretation, project routing, A–G readiness, a complete work package, minimum linked-record creation and exact prompt provenance. The live proposal keeps Codex blocked because Steering and the Workbench implementation prompt remain unapproved; an approved-state fixture proves that a complete stage-D feature can generate the full handoff. Founder comprehension testing, dependency reconciliation, merge and private release remain outstanding.
+
+The proposed Workbench 1.9.0 request-framing increment now connects an ordinary-language need to that controlled delivery system. It enriches the existing steering intake with pre-flight retrieval, contextual interpretation, project routing, A–G readiness, a complete work package, minimum linked-record creation and exact prompt provenance. The live proposal keeps Codex blocked because Steering and the Workbench implementation prompt remain unapproved; an approved-state fixture proves that a complete stage-D feature can generate the full handoff. Founder comprehension testing, dependency reconciliation, merge and private release remain outstanding.
+
 ## Three workstreams developed in tandem
 
 | Workstream | Purpose | Immediate evidence |
@@ -112,10 +120,11 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 8. Review the published Methodology Lab Draft as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
 9. Review the proposed Workbench 1.5.1 operating surface as one bounded whole: clear ownership and completion, governed knowledge, separate conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff and receipt loop.
 10. Review the proposed Steering contract, three Product Purpose reconciliations and Workbench 1.6.0 control increment using the [steering-control assurance pack](proposals/steering-control-assurance-pack.md); keep merge, purpose approval and the Dynamic Governance migration decision separate.
-11. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
-12. Prepare a new assurance pack before any later material methodology release.
-13. Define the smallest justified product only after repeatable method outputs create value.
-14. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
+11. Review the proposed Methodology Product Purpose, learning-system extension, machine form and Workbench contract using the [purpose-and-learning assurance pack](proposals/methodology-purpose-learning-contract-assurance-pack.md); keep each meaning, implementation merge and release decision separate.
+12. Validate the Connected Governance dogfooding route and prepare its controlled Internal Draft hand-off while retaining product and methodology findings separately.
+13. Prepare a new assurance pack before any later material methodology release.
+14. Define the smallest justified product only after repeatable method outputs create value.
+15. Validate the proposed [commercial strategy](product/commercial-validation-strategy.md) through a narrow buyer, problem and paid outcome before external release.
 
 ## Application decision
 

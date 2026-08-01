@@ -19,6 +19,7 @@ const state = {
   pendingRecording: null,
   proposals: [],
   selectedProposalId: null,
+  methodologyLearning: null,
   currentUser: "Jamie Peppard",
   repositoryMode: "manual",
   capture: null,
@@ -509,7 +510,7 @@ function implementationReceiptMarkup(job) {
       <dl class="handoff-outcome">
         <div><dt>Ticket</dt><dd>${escapeHtml(job.handoff?.reference || "Build reference unavailable")}</dd></div>
         <div><dt>Outcome</dt><dd>${escapeHtml(mergePhase ? `Merge only the approved commit ${job.commitSha}.` : job.approvedRequirement)}</dd></div>
-        <div><dt>Done when</dt><dd>${escapeHtml(mergePhase ? "The exact merge receipt is returned and the repository is re-indexed." : "A draft PR, commit, changed-file list, tests, validation, risks and version impact are returned.")}</dd></div>
+        <div><dt>Done when</dt><dd>${escapeHtml(mergePhase ? "The exact merge receipt is returned and the repository is re-indexed." : "The structured return proves every acceptance criterion, implemented behaviour, migration, rollback, risks, remaining work and version impact.")}</dd></div>
       </dl>
       ${queued ? `<details><summary>Manual fallback if the scheduled worker is unavailable</summary><label class="codex-prompt">Ready-to-copy Codex task<textarea readonly rows="20" data-build-handoff-prompt>${escapeHtml(job.handoff?.prompt || job.briefText)}</textarea></label>
       <button class="primary" type="button" data-copy-build-handoff>Copy Codex task</button>
@@ -577,9 +578,14 @@ function renderImplementationJobDetail(item, job) {
     ${job.pullRequestUrl ? `<p class="build-pr-link"><a class="primary text-link" href="${escapeHtml(job.pullRequestUrl)}" target="_blank" rel="noreferrer">Open and review the pull request</a><small>This is the exact PR linked to this Build Job.</small></p>` : ""}
     ${job.filesChanged?.length ? `<details class="build-evidence" open><summary>Implementation receipt</summary>
       <h4>Files changed</h4><ul>${linesMarkup(job.filesChanged)}</ul>
+      <h4>Behaviour implemented</h4><p>${escapeHtml(job.receipt?.behaviourImplemented || "Not recorded")}</p>
       <h4>Tests</h4><ul>${linesMarkup(job.tests)}</ul>
       <h4>Validation</h4><ul>${linesMarkup(job.validation)}</ul>
+      <h4>Acceptance-criterion evidence</h4>${job.receipt?.acceptanceCriterionEvidence?.length ? `<ul>${job.receipt.acceptanceCriterionEvidence.map((item) => `<li><strong>${escapeHtml(item.criterion)}</strong>: ${escapeHtml(item.result)} &mdash; ${escapeHtml(item.evidence)}</li>`).join("")}</ul>` : "<p>Not recorded.</p>"}
+      <h4>Migration performed</h4><p>${escapeHtml(job.receipt?.migrationPerformed || "Not recorded")}</p>
+      <h4>Rollback path</h4><p>${escapeHtml(job.receipt?.rollbackPath || "Not recorded")}</p>
       <h4>Unresolved risks</h4>${job.unresolvedRisks.length ? `<ul>${linesMarkup(job.unresolvedRisks)}</ul>` : "<p>None recorded.</p>"}
+      <h4>Remaining work</h4>${job.receipt?.remainingWork?.length ? `<ul>${linesMarkup(job.receipt.remainingWork)}</ul>` : "<p>None recorded.</p>"}
       <h4>Version impact</h4><p>${escapeHtml(job.versionImpact)}</p>
     </details>` : ""}
     ${approval ? `<details class="universal-control" open><summary>Universal approval record</summary>
@@ -1218,6 +1224,7 @@ async function loadFeedback() {
           <div><dt>Workspace</dt><dd>${escapeHtml(item.affected_workspace || "General project")}</dd></div>
           <div><dt>Created</dt><dd>${escapeHtml(formatDate(item.created_at))}</dd></div>
           <div><dt>Conversation</dt><dd>${escapeHtml(item.conversation_title || "Conversation")}</dd></div>
+          <div><dt>Current disposition</dt><dd>${escapeHtml(item.visibleDisposition || item.learning_disposition || "More evidence required")}</dd></div>
         </dl>
         <label class="classification-field">How should this feedback be used?
           <select data-feedback-classification="${item.id}">
@@ -1225,6 +1232,15 @@ async function loadFeedback() {
           </select>
         </label>
         <p class="classification-note" data-classification-outcome="${item.id}">${escapeHtml(outcome)}</p>
+        <label class="classification-field">Visible learning disposition
+          <select data-feedback-learning-disposition="${item.id}">${learningDispositionOptions(item.learning_disposition)}</select>
+        </label>
+        <label class="classification-field">Why this disposition applies
+          <textarea rows="2" data-feedback-disposition-reason="${item.id}">${escapeHtml(item.disposition_reason || "")}</textarea>
+        </label>
+        <label class="classification-field">Named review trigger, if deferred or awaiting evidence
+          <input data-feedback-review-trigger="${item.id}" value="${escapeHtml(item.review_trigger || "")}" placeholder="For example: after the next related case">
+        </label>
         <div class="feedback-action-preview"><strong>What happens when you choose</strong><p><strong>Open conversation</strong> returns to the original answer. <strong>Save this use</strong> completes the feedback step. Ordinary corrections, context and evidence leave My Work but remain traceable. ${canPropose ? "A change review is created or opened automatically; it does not edit, approve or implement anything." : "Choosing a methodology or product change creates the separate review automatically when saved."}</p></div>
         <div class="record-actions">
           <button data-open-conversation="${item.conversation_id}" class="ghost">Open conversation</button>
@@ -1607,8 +1623,199 @@ async function loadBrandReview() {
   }
 }
 
+const learningDispositions = [
+  ["answer-only-correction", "Used to correct this answer only"],
+  ["conversation-context", "Retained as conversation context"],
+  ["reusable-correction", "Retained as a reusable correction"],
+  ["already-covered", "Current Methodology already covers it"],
+  ["clarification", "Clarification required"],
+  ["example-or-guidance-need", "Example or guidance required"],
+  ["more-evidence", "More evidence required"],
+  ["methodology-change-candidate", "Methodology change proposed"],
+  ["product-change-candidate", "Product change proposed"],
+  ["separate-project-candidate", "Separate-project candidate"],
+  ["deferred", "Deferred until a named trigger"],
+  ["rejected", "Rejected with reasoning"],
+  ["superseded", "Superseded by later learning"],
+  ["urgent-review", "Urgent review"],
+  ["no-action", "No further action"]
+];
+
+function learningDispositionOptions(selected) {
+  return learningDispositions.map(([value, label]) =>
+    `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`
+  ).join("");
+}
+
+function learningSignalMarkup(item) {
+  return `<article class="learning-signal-card">
+    <div><span class="status-pill status-${escapeHtml(item.status)}">${escapeHtml(item.visibleDisposition || item.learning_disposition || statusLabel(item.status))}</span><small>${escapeHtml(formatDate(item.created_at || item.createdAt))}</small></div>
+    <blockquote>${escapeHtml(item.original_wording || item.originalWording || item.wording || "No wording retained")}</blockquote>
+    <p>${escapeHtml(item.disposition_reason || item.source || "The reason and source remain available in the retained signal.")}</p>
+    <div class="record-actions">
+      ${item.conversation_id ? `<button class="ghost" type="button" data-open-conversation="${escapeHtml(item.conversation_id)}">Open conversation</button>` : ""}
+      ${item.proposal?.id ? `<button class="ghost" type="button" data-learning-proposal="${escapeHtml(item.proposal.id)}">Open change review</button>` : ""}
+    </div>
+  </article>`;
+}
+
+function learningReviewMarkup(review) {
+  if (!review) return "";
+  return `<details class="learning-review">
+    <summary>Read the Methodology Learning Review</summary>
+    <dl>
+      <div><dt>Approved baseline</dt><dd>${escapeHtml(review.currentApprovedMethodology?.version || "Unknown")}</dd></div>
+      <div><dt>Evidence strength</dt><dd>${escapeHtml(review.evidenceStrength)}</dd></div>
+      <div><dt>Proposed disposition</dt><dd>${escapeHtml(review.proposedDispositionLabel)}</dd></div>
+      <div><dt>Strongest no-change case</dt><dd>${escapeHtml(review.strongestNoChangeCase)}</dd></div>
+      <div><dt>Recommendation</dt><dd>${escapeHtml(review.recommendation)}</dd></div>
+      <div><dt>Decision or evidence required</dt><dd>${escapeHtml(review.exactDecisionOrEvidenceRequired)}</dd></div>
+    </dl>
+    ${review.contradictions?.length ? `<h4>Contradictions</h4><ul>${linesMarkup(review.contradictions)}</ul>` : ""}
+    ${review.counterEvidence?.length ? `<h4>Counter-tests</h4><ul>${linesMarkup(review.counterEvidence)}</ul>` : ""}
+    ${review.contextualLimits?.length ? `<h4>Contextual limits</h4><ul>${linesMarkup(review.contextualLimits)}</ul>` : ""}
+    <p class="approval-boundary">This review is proposed analysis. It cannot approve Methodology meaning.</p>
+  </details>`;
+}
+
+function learningTraceMarkup(trace) {
+  const feedback = trace.feedback;
+  const proposal = trace.proposal;
+  const release = trace.release;
+  return `<article class="learning-trace-card">
+    <div class="learning-trace-heading"><div><span>Released by human Decision</span><strong>${escapeHtml(release?.scope || proposal?.proposedMeaning || "Methodology change")}</strong></div><span class="status-pill status-implemented">v${escapeHtml(release?.version || "unknown")}</span></div>
+    <ol class="learning-trace">
+      <li><span>Feedback</span><p>${escapeHtml(feedback?.originalWording || "Feedback record unavailable")}</p></li>
+      <li><span>Interpretation and counter-test</span><p>${escapeHtml(feedback?.interpretation || "No separate interpretation retained")} ${escapeHtml(trace.counterTest || "")}</p></li>
+      <li><span>Synthesis and proposal</span><p>${escapeHtml(trace.synthesis?.summary || "No multi-signal synthesis was required.")} ${escapeHtml(proposal?.proposedMeaning || "")}</p></li>
+      <li><span>Decision and implementation</span><p>${escapeHtml(`${trace.decisions?.length || 0} retained Decision records`)}${trace.implementation?.reference ? `; ${escapeHtml(trace.implementation.reference)}` : ""}</p></li>
+      <li><span>Release and later usage</span><p>${escapeHtml(`${release?.source_commit_sha || "Commit unavailable"}; ${trace.laterUsage?.length || 0} later knowledge snapshot proof(s)`)}</p></li>
+      <li><span>Outcome review</span><p>${escapeHtml(trace.outcomeReviews?.[0]?.learning || "Outcome review not yet recorded")}</p></li>
+    </ol>
+    ${proposal?.id ? `<button class="ghost" type="button" data-learning-proposal="${escapeHtml(proposal.id)}">Open full governed change</button>` : ""}
+  </article>`;
+}
+
+function renderLearningAnswer(kind) {
+  const value = state.methodologyLearning;
+  if (!value) return;
+  const answer = kind === "approved" ? value.approvedChangesQuestion : value.unresolvedQuestion;
+  const records = kind === "approved" ? answer.traces : answer.signals;
+  $("#learning-answer").innerHTML = `<strong>${escapeHtml(answer.question)}</strong><p>${escapeHtml(answer.answer)}</p>
+    <div class="learning-answer-records">${records.length
+      ? records.map((item) => kind === "approved" ? learningTraceMarkup(item) : learningSignalMarkup(item)).join("")
+      : '<p class="empty-steering">No matching structured records.</p>'}</div>`;
+}
+
+function renderMethodologyLearning(value) {
+  state.methodologyLearning = value;
+  $("#learning-baseline").textContent = value.baseline
+    ? `Approved baseline ${value.baseline.version}`
+    : "No approved baseline indexed";
+  $("#learning-boundary").textContent = value.boundary;
+  const summaryItems = [
+    ["Unresolved", value.unresolvedQuestion.signals.length],
+    ["Related clusters", value.counts.relatedClusters],
+    ["Awaiting evidence", value.counts.awaitingEvidence],
+    ["Awaiting Decision", value.counts.awaitingHumanDecision],
+    ["Human-authorised releases", value.counts.approvedChanges],
+    ["Outcome reviews", value.counts.outcomeReviews]
+  ];
+  $("#learning-summary").innerHTML = summaryItems.map(([label, count]) => `<div><span>${escapeHtml(label)}</span><strong>${count}</strong></div>`).join("");
+  const unresolved = value.unresolvedQuestion.signals;
+  $("#learning-signal-count").textContent = String(unresolved.length);
+  $("#learning-unresolved-list").innerHTML = unresolved.length
+    ? unresolved.map(learningSignalMarkup).join("")
+    : '<div class="empty-records"><strong>No unexplained learning remains.</strong><p>Every retained signal has a completed or named next route.</p></div>';
+  const clusters = value.buckets.relatedClusters;
+  $("#learning-cluster-count").textContent = String(clusters.length);
+  $("#learning-clusters").innerHTML = clusters.length ? clusters.map((cluster) => `<article class="learning-cluster-card">
+    <div><span>${escapeHtml(cluster.relationship)}</span><strong>${cluster.signalIds.length} signals</strong></div>
+    <ul>${cluster.signals.map((signal) => `<li><strong>${escapeHtml(signal.visibleDisposition)}</strong><span>${escapeHtml(signal.originalWording)}</span></li>`).join("")}</ul>
+    ${learningReviewMarkup(cluster.review)}
+    ${cluster.synthesis ? `<p class="learning-synthesis-state">Synthesis retained ${escapeHtml(formatDate(cluster.synthesis.created_at))}; no approval created.</p>` : `<button class="ghost" type="button" data-synthesise-cluster="${escapeHtml(cluster.signalIds.join(","))}">Retain this synthesis</button>`}
+  </article>`).join("") : '<div class="empty-records"><strong>No related-signal cluster yet.</strong><p>Clusters appear when structured records share a Methodology component.</p></div>';
+  const pipeline = [
+    ["Unprocessed signals", value.counts.unprocessedSignals],
+    ["Synthesis in progress", value.counts.synthesisInProgress],
+    ["Clarifications or guidance", value.counts.proposedClarifications],
+    ["Methodology changes proposed", value.counts.proposedMethodologyChanges],
+    ["Awaiting evidence", value.counts.awaitingEvidence],
+    ["Awaiting human Decision", value.counts.awaitingHumanDecision],
+    ["Approved changes", value.counts.approvedChanges],
+    ["Rejected or deferred", value.counts.rejectedOrDeferred],
+    ["Outcome reviews", value.counts.outcomeReviews]
+  ];
+  $("#learning-status-grid").innerHTML = pipeline.map(([label, count]) => `<article><span>${escapeHtml(label)}</span><strong>${count}</strong></article>`).join("");
+  const traces = value.approvedChangesQuestion.traces;
+  $("#learning-trace-count").textContent = String(traces.length);
+  $("#learning-traces").innerHTML = traces.length
+    ? traces.map(learningTraceMarkup).join("")
+    : '<div class="empty-records"><strong>No feedback-led Methodology release yet.</strong><p>A trace appears only after a separate human release Decision, implementation, merge receipt and repository reindex.</p></div>';
+}
+
+async function loadMethodologyLearning() {
+  renderMethodologyLearning(await request("/api/methodology-learning"));
+}
+
 function steeringStatusLabel(value) {
   return String(value || "unknown").replaceAll("-", " ");
+}
+
+function framingList(values, empty = "None recorded.") {
+  return Array.isArray(values) && values.length
+    ? `<ul>${values.map((item) => `<li>${escapeHtml(typeof item === "string" ? item : item.title || item.question || item.reason || JSON.stringify(item))}</li>`).join("")}</ul>`
+    : `<p>${escapeHtml(empty)}</p>`;
+}
+
+function framingResultMarkup(intake, { compact = false } = {}) {
+  const framing = intake.framing || {};
+  if (!framing.reference) {
+    return `<article class="steering-item steering-recommendation" data-steering-intake-id="${escapeHtml(intake.id)}">
+      <div><span>${escapeHtml(intake.status)}</span><strong>${escapeHtml(intake.boundary?.recommendation || "Legacy classification")}</strong></div>
+      <p>${escapeHtml(intake.sourceText)}</p>
+      <small>This retained intake predates the complete framing engine. Its original classification remains unchanged.</small>
+    </article>`;
+  }
+  const questions = framing.materialQuestions || [];
+  const linked = intake.linkedRecords || [];
+  const planned = framing.recordPlan?.createWhenConfirmed || [];
+  const canCreateRoute = !linked.length && !questions.length && planned.length;
+  const classificationLabels = (framing.classifications || []).map((item) => item.label).join(" · ");
+  const sourceCount = framing.preflight?.sources?.length || 0;
+  const recordSummary = linked.length
+    ? linked.map((item) => `${item.reference || item.id} · ${item.type}`).join(" · ")
+    : planned.length
+      ? planned.map((item) => `${item.type} (${item.timing.replaceAll("-", " ")})`).join(" · ")
+      : "No extra record is needed.";
+  return `<article class="framing-result ${compact ? "framing-result-compact" : ""}" data-steering-intake-id="${escapeHtml(intake.id)}">
+    <div class="framing-result-heading">
+      <div><span>${escapeHtml(framing.reference)}</span><h3>${escapeHtml(framing.title)}</h3></div>
+      <em>Stage ${escapeHtml(framing.readiness?.stage || "A")} · ${escapeHtml(framing.readiness?.label || "Capture")}</em>
+    </div>
+    <p class="framing-outcome">${escapeHtml(framing.interpretation?.apparentOutcome || intake.sourceText)}</p>
+    <div class="framing-route-grid">
+      <div><span>Product route</span><strong>${escapeHtml(framing.workPackage?.identity?.targetProduct || intake.targetProject)}</strong><small>${escapeHtml(framing.projectBoundary?.recommendation || intake.boundary?.recommendation)}</small></div>
+      <div><span>Classification</span><strong>${escapeHtml(classificationLabels || "Unclassified")}</strong><small>${escapeHtml(framing.projectBoundary?.rationale || "")}</small></div>
+      <div><span>AI and tool route</span><strong>${escapeHtml(framing.modelToolRoute?.route || "local-framing-engine")}</strong><small>${escapeHtml(framing.modelToolRoute?.reason || "")}</small></div>
+      <div><span>Records</span><strong>${escapeHtml(recordSummary)}</strong><small>${linked.length ? "Created and linked without approval." : "The proposed minimum route; no approval is inferred."}</small></div>
+    </div>
+    ${questions.length ? `<section class="framing-question"><span>One material question</span><strong>${escapeHtml(questions[0].question)}</strong><p>${escapeHtml(questions[0].whyMaterial)}</p><label>Your answer<textarea rows="2" data-framing-answer placeholder="Add only the information that changes this route."></textarea></label><button type="button" class="primary" data-answer-framing-question="${escapeHtml(intake.id)}" data-question-id="${escapeHtml(questions[0].id)}">Continue with this answer</button></section>` : `<section class="framing-next"><span>Next governed action</span><strong>${escapeHtml(framing.nextGovernedAction)}</strong></section>`}
+    ${canCreateRoute ? `<button type="button" class="primary" data-create-framing-route="${escapeHtml(intake.id)}">Create the draft route</button>` : ""}
+    ${linked.length ? `<div class="framing-created"><strong>Created</strong><p>${escapeHtml(recordSummary)}</p></div>` : ""}
+    <details class="preview-details">
+      <summary>Review assumptions, scope and control trace</summary>
+      <div class="framing-detail-grid">
+        <section><h4>Assumptions you can correct</h4>${framingList(framing.assumptions)}</section>
+        <section><h4>Explicitly out of scope</h4>${framingList(framing.workPackage?.purposeAndScope?.explicitlyOutOfScope)}</section>
+        <section><h4>Acceptance and evidence</h4>${framingList(framing.workPackage?.acceptanceAndValidation?.acceptanceCriteria)}</section>
+        <section><h4>Readiness blockers</h4>${framingList(framing.readiness?.blockers, "No stage blocker is recorded.")}</section>
+      </div>
+      <p><strong>Controlled context:</strong> ${sourceCount} relevant source or memory reference${sourceCount === 1 ? "" : "s"} retrieved before framing. <strong>Purpose:</strong> ${escapeHtml(framing.preflight?.purpose || "unavailable")}. <strong>Steering:</strong> ${escapeHtml(framing.preflight?.steering || "unavailable")}.</p>
+      <p><strong>Codex:</strong> ${escapeHtml(framing.codex?.reason || "Not selected.")}</p>
+      <p class="control-note">${escapeHtml(framing.authorityBoundary)}</p>
+    </details>
+  </article>`;
 }
 
 function renderSteering(value) {
@@ -1642,15 +1849,13 @@ function renderSteering(value) {
     <article class="steering-item"><div><span>${escapeHtml(item.status)}</span><strong>${escapeHtml(item.title)}</strong></div><p>${escapeHtml(item.detail)}</p><small>Requires an exact human Decision before Approved status.</small></article>`).join("") : `<p class="empty-steering">No unresolved purpose or prompt proposals.</p>`;
 
   $("#steering-recommendations").innerHTML = value.intakes.length ? value.intakes.map((intake) => `
-    <article class="steering-item steering-recommendation" data-steering-intake-id="${escapeHtml(intake.id)}">
-      <div><span>${escapeHtml(intake.status)}</span><strong>${escapeHtml(intake.boundary.recommendation)}</strong></div>
-      <p>${escapeHtml(intake.sourceText)}</p>
-      <small>${escapeHtml(intake.boundary.rationale)}</small>
-      ${intake.decision?.action ? `<p><strong>Recorded decision:</strong> ${escapeHtml(intake.decision.action)} by ${escapeHtml(intake.decision.actor)}${intake.decision.reason ? ` · ${escapeHtml(intake.decision.reason)}` : ""}</p>` : `
+    ${framingResultMarkup(intake, { compact: true })}
+    <div class="steering-route-decision" data-steering-intake-id="${escapeHtml(intake.id)}">
+      ${intake.decision?.action ? `<p><strong>Recorded route decision:</strong> ${escapeHtml(intake.decision.action)} by ${escapeHtml(intake.decision.actor)}${intake.decision.reason ? ` · ${escapeHtml(intake.decision.reason)}` : ""}</p>` : `
         <label>Reason when deferring or rejecting<textarea rows="2" data-steering-decision-reason></textarea></label>
         <div class="steering-decision-actions"><button type="button" data-steering-decision="accept-route">Accept route</button><button type="button" data-steering-decision="defer-route">Defer route</button><button type="button" data-steering-decision="reject-route">Reject route</button></div>`}
       <p class="control-note">A route decision does not approve purpose, repository creation, migration, build, release or publication.</p>
-    </article>`).join("") : `<p class="empty-steering">No project-boundary recommendations have been recorded.</p>`;
+    </div>`).join("") : `<p class="empty-steering">No request routes have been recorded.</p>`;
 
   $("#steering-conflicts").innerHTML = value.conflicts.length ? value.conflicts.map((conflict) => `
     <article class="steering-item steering-conflict ${escapeHtml(conflict.severity)}"><div><span>${escapeHtml(conflict.severity)} · ${escapeHtml(conflict.status)}</span><strong>${escapeHtml(conflict.summary)}</strong></div><p>${escapeHtml(conflict.decisionRequired)}</p><small>${escapeHtml((conflict.sources || []).join(" · "))}</small></article>`).join("") : `<p class="empty-steering">No control conflicts detected.</p>`;
@@ -1663,12 +1868,13 @@ async function loadSteering() {
   renderSteering(await request("/api/steering"));
 }
 
-const validViews = new Set(["my-work", "operate", "conversation", "challenges", "feedback", "decisions", "brand", "steering", "usage", "settings", "connections", "guide"]);
+const validViews = new Set(["my-work", "operate", "conversation", "challenges", "feedback", "learning", "decisions", "brand", "steering", "usage", "settings", "connections", "guide"]);
 const viewHeadings = {
   "my-work": ["Operate workbench", "My work"],
   operate: ["Connected work", "Cases & work"],
   challenges: ["Knowledge workbench", "Challenge studio"],
   feedback: ["Governed learning", "Saved feedback"],
+  learning: ["Structured learning", "Methodology learning"],
   decisions: ["Human-controlled change", "Decision inbox"],
   brand: ["Proposed visual system", "Brand review"],
   steering: ["Product control", "Purpose & steering"],
@@ -1700,6 +1906,7 @@ function switchView(name, updateHash = true, refresh = true) {
   if (refresh && name === "operate") loadOperate().catch((error) => toast(error.message, true));
   if (refresh && name === "usage") loadUsage().catch((error) => toast(error.message, true));
   if (refresh && name === "feedback") loadFeedback().catch((error) => toast(error.message, true));
+  if (refresh && name === "learning") loadMethodologyLearning().catch((error) => toast(error.message, true));
   if (refresh && name === "decisions") loadDecisionInbox().catch((error) => toast(error.message, true));
   if (refresh && name === "brand") loadBrandReview().catch((error) => toast(error.message, true));
   if (refresh && name === "steering") loadSteering().catch((error) => toast(error.message, true));
@@ -2197,7 +2404,12 @@ $("#feedback-list").addEventListener("click", async (event) => {
     try {
       const result = await request(`/api/feedback/${id}/classification`, {
         method: "PATCH",
-        body: JSON.stringify({ classification: select.value })
+        body: JSON.stringify({
+          classification: select.value,
+          learningDisposition: $(`[data-feedback-learning-disposition="${id}"]`)?.value,
+          dispositionReason: $(`[data-feedback-disposition-reason="${id}"]`)?.value,
+          reviewTrigger: $(`[data-feedback-review-trigger="${id}"]`)?.value
+        })
       });
       await Promise.all([loadFeedback(), loadMyWork()]);
       if (result.proposal) {
@@ -2220,6 +2432,40 @@ $("#feedback-list").addEventListener("click", async (event) => {
       await loadDecisionInbox(result.proposal.id);
       toast("Change review created. It has not edited the method, started implementation or created approval.");
     } catch (error) { toast(error.message, true); }
+  }
+});
+$("#learning-view").addEventListener("click", async (event) => {
+  const question = event.target.closest("[data-learning-question]");
+  if (question) {
+    renderLearningAnswer(question.dataset.learningQuestion);
+    return;
+  }
+  const conversation = event.target.closest("[data-open-conversation]");
+  if (conversation) {
+    await loadConversation(conversation.dataset.openConversation);
+    return;
+  }
+  const proposal = event.target.closest("[data-learning-proposal]");
+  if (proposal) {
+    state.selectedProposalId = proposal.dataset.learningProposal;
+    switchView("decisions", true, false);
+    await loadDecisionInbox(state.selectedProposalId);
+    return;
+  }
+  const synthesis = event.target.closest("[data-synthesise-cluster]");
+  if (synthesis) {
+    synthesis.disabled = true;
+    try {
+      await request("/api/feedback/synthesis", {
+        method: "POST",
+        body: JSON.stringify({ feedbackIds: synthesis.dataset.synthesiseCluster.split(",").filter(Boolean) })
+      });
+      await loadMethodologyLearning();
+      toast("Methodology Learning Review retained. It remains proposed analysis and created no approval.");
+    } catch (error) {
+      synthesis.disabled = false;
+      toast(error.message, true);
+    }
   }
 });
 $("#decision-status-board").addEventListener("click", (event) => {
@@ -2341,21 +2587,91 @@ $("#steering-intake-form").addEventListener("submit", async (event) => {
   const intakeForm = event.currentTarget;
   const form = new FormData(intakeForm);
   const result = $("#steering-intake-result");
-  result.innerHTML = "<strong>Classifying and checking the project boundary…</strong>";
+  result.innerHTML = "<strong>Retrieving controlled context and framing the smallest safe route…</strong>";
   try {
     const value = await request("/api/steering/intakes", {
       method: "POST",
-      body: JSON.stringify({ sourceText: form.get("sourceText") })
+      body: JSON.stringify({
+        sourceText: form.get("sourceText"),
+        originatingConversation: state.conversation?.id || null,
+        activeWorkContext: state.currentOperateRecord?.id || null
+      })
     });
     const intake = value.intake;
-    result.innerHTML = `<strong>${escapeHtml(intake.boundary.recommendation)}</strong><p>${escapeHtml(intake.boundary.rationale)}</p><small>${escapeHtml(intake.classification.candidates.map((item) => item.classification).join(" · "))}</small>`;
+    result.innerHTML = framingResultMarkup(intake);
     intakeForm.reset();
     await loadSteering();
   } catch (error) {
-    result.innerHTML = `<strong>Classification failed.</strong><p>${escapeHtml(error.message)}</p>`;
+    result.innerHTML = `<strong>Framing stopped safely.</strong><p>${escapeHtml(error.message)}</p>`;
   }
 });
+
+async function createFramingRoute(id, resultContainer = null) {
+  const value = await request(`/api/steering/intakes/${encodeURIComponent(id)}/create-route`, {
+    method: "POST",
+    body: "{}"
+  });
+  if (resultContainer) resultContainer.innerHTML = framingResultMarkup(value.intake);
+  await loadSteering();
+  toast(value.message);
+}
+
+async function answerFramingQuestion(button, resultContainer = null) {
+  const card = button.closest(".framing-result");
+  const answer = card?.querySelector("[data-framing-answer]")?.value.trim() || "";
+  const value = await request(`/api/steering/intakes/${encodeURIComponent(button.dataset.answerFramingQuestion)}/answer`, {
+    method: "POST",
+    body: JSON.stringify({ questionId: button.dataset.questionId, answer })
+  });
+  if (resultContainer) resultContainer.innerHTML = framingResultMarkup(value.intake);
+  await loadSteering();
+  toast(value.message);
+}
+
+$("#steering-intake-result").addEventListener("click", (event) => {
+  const answerButton = event.target.closest("[data-answer-framing-question]");
+  if (answerButton) {
+    answerButton.disabled = true;
+    answerFramingQuestion(answerButton, $("#steering-intake-result"))
+      .catch((error) => {
+        answerButton.disabled = false;
+        toast(error.message, true);
+      });
+    return;
+  }
+  const button = event.target.closest("[data-create-framing-route]");
+  if (!button) return;
+  button.disabled = true;
+  createFramingRoute(button.dataset.createFramingRoute, $("#steering-intake-result"))
+    .catch((error) => {
+      button.disabled = false;
+      toast(error.message, true);
+    });
+});
+
 $("#steering-recommendations").addEventListener("click", async (event) => {
+  const answerButton = event.target.closest("[data-answer-framing-question]");
+  if (answerButton) {
+    answerButton.disabled = true;
+    try {
+      await answerFramingQuestion(answerButton);
+    } catch (error) {
+      answerButton.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
+  const createRoute = event.target.closest("[data-create-framing-route]");
+  if (createRoute) {
+    createRoute.disabled = true;
+    try {
+      await createFramingRoute(createRoute.dataset.createFramingRoute);
+    } catch (error) {
+      createRoute.disabled = false;
+      toast(error.message, true);
+    }
+    return;
+  }
   const button = event.target.closest("[data-steering-decision]");
   if (!button) return;
   const card = button.closest("[data-steering-intake-id]");
