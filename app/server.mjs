@@ -46,6 +46,9 @@ import {
   loadSteeringControls, steeringOverview, validateBuildProvenance
 } from "./steering-control.mjs";
 import { frameRequest } from "./request-framing.mjs";
+import {
+  buildDailyChallengePrompt, dailyChallengePlan, summariseDailyChallengeHistory
+} from "./daily-challenge.mjs";
 
 const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
@@ -2867,6 +2870,7 @@ function dailyChallengeWorkItem() {
   }).format(new Date()));
   if (londonHour < challengeHour) return null;
   const date = londonDateKey();
+  const challengePlan = dailyChallengePlan(date);
   const title = `Daily methodology challenge — ${date}`;
   const convo = rowObject(db.prepare("SELECT * FROM conversations WHERE title=? ORDER BY updated_at DESC LIMIT 1").get(title));
   const messages = convo ? messagesFor(convo.id) : [];
@@ -2889,7 +2893,13 @@ function dailyChallengeWorkItem() {
     decision: false,
     routeView: "conversation",
     conversationId: convo?.id || null,
-    challengeDate: date
+    challengeDate: date,
+    prompt: buildDailyChallengePrompt(date),
+    challengePlan: {
+      territory: challengePlan.territory.label,
+      mode: challengePlan.mode.label,
+      format: challengePlan.format.label
+    }
   };
   return {
     id: `daily-challenge:${date}`,
@@ -2900,7 +2910,7 @@ function dailyChallengeWorkItem() {
     recordType: "scenario-test",
     typeLabel: "Daily challenge",
     title: status === "awaiting-response" ? "Today's methodology challenge is ready" : "Prepare today's methodology challenge",
-    summary: "One focused 10-minute challenge, kept in its own Workbench conversation instead of a separate Codex task.",
+    summary: `One focused 10-minute challenge using ${challengePlan.mode.label.toLowerCase()} through a ${challengePlan.format.label.toLowerCase()}, kept in its own Workbench conversation.`,
     status,
     owner,
     dueAt: null,
@@ -3129,6 +3139,23 @@ function relevantGovernedControls(activeRecord) {
   };
 }
 
+function retainedDailyChallengeMemory(conversationId) {
+  const conversations = db.prepare(`
+    SELECT id,title,created_at
+    FROM conversations
+    WHERE id<>? AND lower(title) LIKE ?
+    ORDER BY created_at DESC
+    LIMIT 12
+  `).all(conversationId, "%methodology challenge%").map((item) => ({
+    ...item,
+    messages: messagesFor(item.id),
+    feedback: db.prepare("SELECT id FROM feedback WHERE conversation_id=? ORDER BY created_at").all(item.id)
+      .map((row) => feedbackRecord(row.id))
+      .filter(Boolean)
+  }));
+  return summariseDailyChallengeHistory(conversations);
+}
+
 function conversationContinuity(conversationId, currentText = "") {
   const item = conversation(conversationId);
   if (!item) return {
@@ -3139,6 +3166,7 @@ function conversationContinuity(conversationId, currentText = "") {
     decisions: [],
     approvals: [],
     corrections: [],
+    dailyChallengeMemory: "",
     followUpReference: ""
   };
   const duplicateCurrent = (message) =>
@@ -3166,6 +3194,9 @@ function conversationContinuity(conversationId, currentText = "") {
     decisions: controls.decisions,
     approvals: controls.approvals,
     corrections,
+    dailyChallengeMemory: /methodology challenge/i.test(item.title)
+      ? retainedDailyChallengeMemory(item.id)
+      : "",
     followUpReference: shortFollowUp && previousAssistant
       ? `The current input is a short follow-up to Oppa Mate's previous response: ${previousAssistant.text.slice(0, 1000)}`
       : ""
@@ -3237,6 +3268,9 @@ function modelInputWithContinuity(currentInput, continuity) {
       ? continuity.corrections.map((item) => `${item.kind}: ${item.original_value} -> ${item.corrected_value}; ${item.reason}`).join("\n")
       : "No linked correction.",
     "",
+    "RETAINED DAILY CHALLENGE MEMORY",
+    continuity.dailyChallengeMemory || "No earlier methodology challenges were found.",
+    "",
     "EVIDENCE BOUNDARY",
     "Approved methodology appears separately as normative evidence. Proposed, draft, retained and external material may inform analysis but must remain visibly non-normative. Any synthesis beyond recorded sources is AI inference."
   ].join("\n");
@@ -3289,6 +3323,157 @@ function feedbackRecord(id) {
     decisions,
     approvalState: "not-approved"
   };
+}
+
+function retainMethodologyChallengeResponse({ conversationId, assistantMessageId, wording, interpretation }) {
+  const convo = conversation(conversationId);
+  if (!convo || !/methodology challenge/i.test(convo.title)) return null;
+  const currentUserIndex = convo.messages.findLastIndex((message) =>
+    message.role === "user" && String(message.working_text || "").trim() === String(wording || "").trim()
+  );
+  const firstAssistantIndex = convo.messages.findIndex((message) => message.role === "assistant");
+  if (currentUserIndex < 0 || firstAssistantIndex < 0 || currentUserIndex < firstAssistantIndex) return null;
+
+  const currentUserMessage = convo.messages[currentUserIndex];
+  const timestamp = now();
+  const sourceType = "methodology-challenge-response";
+  const existing = rowObject(db.prepare(
+    "SELECT * FROM feedback WHERE conversation_id=? AND source_type=? ORDER BY created_at LIMIT 1"
+  ).get(conversationId, sourceType));
+  const evidenceItem = {
+    type: "founder-challenge-response",
+    messageId: currentUserMessage.id,
+    recordedAt: timestamp
+  };
+  const evidence = existing
+    ? safeJson(existing.evidence_json, [])
+    : [];
+  if (evidence.some((item) => item?.messageId === currentUserMessage.id)) return feedbackRecord(existing.id);
+  evidence.push(evidenceItem);
+
+  const combinedWording = existing
+    ? `${existing.original_wording}\n\nFollow-up (${timestamp}):\n${String(wording || "").trim()}`
+    : String(wording || "").trim();
+  const signalId = existing?.id || randomUUID();
+  const signalDraft = {
+    id: signalId,
+    original_wording: combinedWording,
+    interpretation,
+    classification: "conversation-context",
+    learning_disposition: "more-evidence",
+    affectedComponents: []
+  };
+  const relatedFeedback = findRelatedMethodologySignals([
+    ...db.prepare("SELECT id FROM feedback WHERE id<>? ORDER BY created_at DESC").all(signalId)
+      .map((item) => feedbackRecord(item.id))
+      .filter(Boolean),
+    signalDraft
+  ], signalDraft);
+  const reviewTrigger = "Review with related signals and recent challenge coverage before another challenge reuses this theme or a change is finalised.";
+  const evidenceLimitations = "Jamie's judgement is retained in context; transferability and any external evidence have not been independently validated.";
+  const dispositionReason = "Retained automatically for governed review. No methodology change, product release or approval is inferred.";
+
+  if (existing) {
+    db.prepare(`
+      UPDATE feedback
+      SET message_id=?,wording=?,interpretation=?,original_wording=?,updated_at=?,evidence_json=?,
+        evidence_limitations=?,ai_interpretation=?,related_feedback_json=?,contextual_meaning=?,
+        assessment_change=?,uncertainty_dispute=?,counter_test=?,disposition_reason=?,review_trigger=?
+      WHERE id=?
+    `).run(
+      assistantMessageId, combinedWording, interpretation, combinedWording, timestamp,
+      JSON.stringify(evidence), evidenceLimitations, interpretation, JSON.stringify(relatedFeedback),
+      interpretation,
+      "The latest founder response has been added to the retained challenge signal; its final disposition remains unapproved.",
+      evidenceLimitations,
+      "Compare the complete conversation with related challenges, an under-tested methodology territory and the strongest no-change case.",
+      dispositionReason, reviewTrigger, existing.id
+    );
+    audit("feedback.methodology-challenge-updated", "feedback", existing.id, {
+      conversationId,
+      messageId: currentUserMessage.id,
+      explicitlyNotApproval: true
+    });
+    return feedbackRecord(existing.id);
+  }
+
+  db.prepare(`
+    INSERT INTO feedback(
+      id,conversation_id,message_id,disposition,wording,interpretation,affected_components,status,created_at,
+      original_wording,feedback_type,classification,affected_workspace,submitting_user,updated_at,
+      source_reference,source_type,source_date,permission_boundary,confidentiality_boundary,operating_context,
+      evidence_json,evidence_limitations,ai_interpretation,related_feedback_json,learning_disposition,
+      resulting_proposal,outcome_review_trigger
+    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+  `).run(
+    signalId, conversationId, assistantMessageId, "daily-challenge-response", combinedWording,
+    interpretation, "[]", "retained", timestamp,
+    combinedWording, "daily-challenge-response", "conversation-context", convo.workspace,
+    FOUNDER_NAME, timestamp, `Workbench ${convo.title}`, sourceType, timestamp,
+    "Authorised project use", "Non-confidential project context only", convo.title,
+    JSON.stringify(evidence), evidenceLimitations, interpretation, JSON.stringify(relatedFeedback),
+    "more-evidence", "", reviewTrigger
+  );
+  db.prepare(`
+    UPDATE feedback
+    SET contextual_meaning=?,assessment_change=?,uncertainty_dispute=?,counter_test=?,
+      affected_product=?,accepted_correction=?,contradictions_json=?,confidence=?,
+      disposition_reason=?,review_trigger=?
+    WHERE id=?
+  `).run(
+    interpretation,
+    "The founder response has entered Methodology learning; its final disposition remains unapproved.",
+    evidenceLimitations,
+    "Compare the complete conversation with related challenges, an under-tested methodology territory and the strongest no-change case.",
+    "Operations Automated system", "", "[]", "provisional",
+    dispositionReason, reviewTrigger, signalId
+  );
+  audit("feedback.methodology-challenge-recorded", "feedback", signalId, {
+    conversationId,
+    messageId: currentUserMessage.id,
+    explicitlyNotApproval: true
+  });
+  return feedbackRecord(signalId);
+}
+
+function backfillMethodologyChallengeResponses() {
+  let retainedResponses = 0;
+  const conversations = db.prepare(`
+    SELECT id,title
+    FROM conversations
+    WHERE lower(title) LIKE ?
+    ORDER BY created_at
+  `).all("%methodology challenge%");
+  for (const convo of conversations) {
+    const messages = messagesFor(convo.id);
+    const firstAssistantIndex = messages.findIndex((message) => message.role === "assistant");
+    if (firstAssistantIndex < 0) continue;
+    for (let index = firstAssistantIndex + 1; index < messages.length; index += 1) {
+      const founderMessage = messages[index];
+      if (founderMessage.role !== "user") continue;
+      const interpretation = messages.slice(index + 1).find((message) => message.role === "assistant");
+      if (!interpretation) continue;
+      const before = rowObject(db.prepare(
+        "SELECT evidence_json FROM feedback WHERE conversation_id=? AND source_type=? ORDER BY created_at LIMIT 1"
+      ).get(convo.id, "methodology-challenge-response"));
+      const beforeCount = safeJson(before?.evidence_json, []).length;
+      const retained = retainMethodologyChallengeResponse({
+        conversationId: convo.id,
+        assistantMessageId: interpretation.id,
+        wording: founderMessage.working_text,
+        interpretation: interpretation.working_text
+      });
+      if (retained && retained.evidence.length > beforeCount) retainedResponses += 1;
+    }
+  }
+  if (retainedResponses) {
+    audit("feedback.methodology-challenge-backfilled", "feedback", null, {
+      retainedResponses,
+      conversationsReviewed: conversations.length,
+      explicitlyNotApproval: true
+    });
+  }
+  return retainedResponses;
 }
 
 function methodologyReleaseForProposal(proposalId) {
@@ -5668,6 +5853,7 @@ async function api(request, response, url) {
       linkedDecisions: continuity.decisions.length,
       linkedApprovals: continuity.approvals.length,
       retainedCorrections: continuity.corrections.length,
+      dailyChallengeMemoryAvailable: Boolean(continuity.dailyChallengeMemory),
       followUpReference: continuity.followUpReference
     };
     const available = providerConfigured(route.tier);
@@ -5794,6 +5980,7 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
           rollingSummaryUsed: Boolean(continuity.rollingSummary),
           activeRecordId: continuity.activeRecord?.id || null,
           activeCaseId: continuity.activeCase?.id || null,
+          dailyChallengeMemoryUsed: Boolean(continuity.dailyChallengeMemory),
           followUpReference: continuity.followUpReference
         },
         activeWorkDetails: continuity.activeRecord ? {
@@ -5816,6 +6003,20 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
         approvalState: "not-approved",
         attachments: value.attachmentIds || []
       }), now());
+    let challengeLearningSignal = null;
+    try {
+      challengeLearningSignal = retainMethodologyChallengeResponse({
+        conversationId: value.conversationId,
+        assistantMessageId: id,
+        wording: value.text,
+        interpretation: text
+      });
+    } catch (error) {
+      audit("feedback.methodology-challenge-retention-failed", "conversation", value.conversationId, {
+        message: error.message,
+        assistantMessageId: id
+      });
+    }
     updateRollingSummary(value.conversationId);
     const inputTokens = usage.input_tokens || Math.ceil((modelInput.length + sources.reduce((n, s) => n + s.excerpt.length, 0)) / 4);
     const outputTokens = usage.output_tokens || Math.ceil(text.length / 4);
@@ -5826,7 +6027,8 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       provider, tier: route.tier, approvalState: "not-approved",
       targetProject: steeringAssessment.primaryTarget,
       classifications: steeringAssessment.candidates.map((item) => item.classification),
-      promptRegistryCollation: Boolean(promptCollation)
+      promptRegistryCollation: Boolean(promptCollation),
+      challengeLearningSignalId: challengeLearningSignal?.id || null
     });
     return json(response, 200, {
       message: messagesFor(value.conversationId).at(-1),
@@ -5834,11 +6036,17 @@ Steering classification: ${steeringAssessment.candidates.map((item) => item.clas
       sources,
       knowledgeSnapshotId,
       methodologyApplication,
+      challengeLearningSignal: challengeLearningSignal ? {
+        id: challengeLearningSignal.id,
+        disposition: challengeLearningSignal.learning_disposition,
+        approvalState: challengeLearningSignal.approvalState
+      } : null,
       continuity: {
         rollingSummaryUsed: Boolean(continuity.rollingSummary),
         recentMessageCount: continuity.recentMessages.length,
         activeRecordId: continuity.activeRecord?.id || null,
         activeCaseId: continuity.activeCase?.id || null,
+        dailyChallengeMemoryUsed: Boolean(continuity.dailyChallengeMemory),
         followUpReference: continuity.followUpReference
       },
       usage: { provider, model, inputTokens, outputTokens, estimatedCost: cost, status }
@@ -6428,6 +6636,8 @@ const contentTypes = {
   ".svg": "image/svg+xml",
   ".png": "image/png"
 };
+
+backfillMethodologyChallengeResponses();
 
 createServer(async (request, response) => {
   try {

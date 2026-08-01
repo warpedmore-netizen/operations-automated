@@ -81,6 +81,8 @@ The Workbench places one methodology challenge in **My Work** each day after 08:
 
 The challenge cycle has no planned end date. Seven completed responses are the first quality and synthesis review, not the end of the cycle. Jamie may answer later or ask for another challenge at any time.
 
+The proposed [daily challenge variety and learning correction](product/daily-methodology-challenge-variety.md) responds to retained evidence that separate dated conversations were repeating human-review, authority and risk themes without carrying earlier founder judgement into the next challenge or into structured Methodology learning. It adds controlled variation across methodology territory, challenge mode and response artefact, compact challenge memory and automatic unapproved learning-signal retention. The implementation and its [Draft prompt](prompts/drafts/OA-PROMPT-DAILY-METHODOLOGY-CHALLENGE-001-v1.0.md) remain proposed; they do not change the approved v0.7 Methodology or authorise Workbench release.
+
 The Workbench prompt itself is read-only. Jamie's answer enters the controlled [founder challenge and feedback loop](evolution/founder-challenge-loop.md); it does not approve or automatically edit the methodology. The previous Codex scheduled automation has been removed so there is one visible route rather than two competing queues.
 
 Jamie may also start the same loop at any time by asking an operational question or explaining what the methodology has missed.
