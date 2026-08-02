@@ -9,9 +9,15 @@ research_period: 2022-12-14 to 2026-08-01
 methodology_baseline: Operations Automated v0.7, approved 2026-07-24 for internal validation
 approval_required: true
 decision_required: review, revise, defer or authorise bounded follow-on design and validation
+last_reviewed: 2026-08-02
+preparation_decision: approved-for-preparation; evidence remains proposed
 ---
 
 # Agentic AI, AI value and critical dependency research challenge pack
+
+## 2026-08-02 controlled disposition
+
+Jamie Peppard authorised this pack to be retained as **proposed evidence** and authorised bounded preparation of RP-01 and RP-02 for one non-confidential facilitated case. This is preparation authority only. The pack's conclusions, either proposed guide, methodology meaning, v0.8, product build, merge, publication, spending, connection and risk acceptance remain unapproved.
 
 ## Control record and evidence boundary
 
