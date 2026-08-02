@@ -88,9 +88,9 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(requestResult.record.caseId, caseResult.record.id);
     assert.equal(requestResult.approvalCreated, false);
     assert.equal(taskResult.record.recordType, "task");
-    assert.match(caseResult.record.reference, /^CASE-\d{3,}$/);
-    assert.match(requestResult.record.reference, /^REQ-\d{3,}$/);
-    assert.match(taskResult.record.reference, /^TASK-\d{3,}$/);
+    assert.match(caseResult.record.reference, /^OA-CASE-[A-F0-9]{8}$/);
+    assert.match(requestResult.record.reference, /^OA-REQUEST-[A-F0-9]{8}$/);
+    assert.match(taskResult.record.reference, /^OA-TASK-[A-F0-9]{8}$/);
     assert.equal(new Set([caseResult.record.reference, requestResult.record.reference, taskResult.record.reference]).size, 3);
 
     const pullRequestWork = await create({

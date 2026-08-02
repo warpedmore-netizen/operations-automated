@@ -2,8 +2,8 @@
 
 ## Workbench 1.9.2 delivery and action clarity corrections - proposed
 
-- Added stable type-specific operational references such as `CASE-001`, `TASK-001`, `INC-001` and `APP-001` without replacing internal UUID relationships.
-- Backfilled existing records additively and exposed references in My Work, details, Cases & Work and relationship selectors.
+- Exposed the current stable type-specific `OA-<TYPE>-<ID>` operational references without replacing internal UUID relationships.
+- Added those references to My Work, details, Cases & Work and relationship selectors without introducing a competing numbering migration.
 - Corrected terminal records so completed work no longer claims Jamie has another action, and added a suggested Case-closure record.
 - Corrected the Windows launcher so the repository Jamie opened remains authoritative and the local server runs without a persistent terminal window.
 - Kept primary action links readable while retaining the current controlled brand styling.

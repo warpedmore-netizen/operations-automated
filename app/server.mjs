@@ -54,11 +54,6 @@ const appRoot = resolve(fileURLToPath(new URL(".", import.meta.url)));
 const repoRoot = resolve(appRoot, "..");
 const brandRoot = resolve(repoRoot, "brand");
 const buildVersion = readFileSync(resolve(appRoot, "build-version.txt"), "utf8").trim();
-const OPERATE_REFERENCE_PREFIXES = Object.freeze({
-  case: "CASE", request: "REQ", task: "TASK", incident: "INC", problem: "PRB",
-  change: "CHG", risk: "RISK", finding: "FIND", decision: "DEC", approval: "APP",
-  improvement: "IMP", "scenario-test": "TEST"
-});
 
 function loadLocalEnvironment() {
   const path = resolve(repoRoot, ".env");
@@ -249,7 +244,6 @@ db.exec(`
   );
   CREATE TABLE IF NOT EXISTS operate_records (
     id TEXT PRIMARY KEY,
-    reference TEXT UNIQUE,
     record_type TEXT NOT NULL,
     case_id TEXT REFERENCES operate_records(id) ON DELETE SET NULL,
     parent_id TEXT REFERENCES operate_records(id) ON DELETE SET NULL,
@@ -447,7 +441,6 @@ ensureColumn("change_proposals", "recommendation", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("change_proposals", "exact_decision_required", "TEXT NOT NULL DEFAULT ''");
 ensureColumn("operate_records", "work_profile", "TEXT NOT NULL DEFAULT 'general-administration'");
 ensureColumn("operate_records", "knowledge_snapshot_id", "TEXT");
-ensureColumn("operate_records", "reference", "TEXT");
 ensureColumn("operate_links", "proposed_by", `TEXT NOT NULL DEFAULT '${FOUNDER_NAME.replaceAll("'", "''")}'`);
 ensureColumn("operate_links", "proposed_via", "TEXT NOT NULL DEFAULT 'human'");
 ensureColumn("operate_links", "rationale", "TEXT NOT NULL DEFAULT ''");
@@ -481,31 +474,6 @@ recordSchemaMigration(2, "Add governed repository chunks and exact knowledge sna
 recordSchemaMigration(3, "Add conversation continuity and active work context");
 recordSchemaMigration(4, "Add configurable work profiles and retained corrections");
 recordSchemaMigration(5, "Add universal decisions, approvals and implementation jobs");
-recordSchemaMigration(6, "Add stable human-readable operational record references");
-
-function nextOperateReference(recordType) {
-  const prefix = OPERATE_REFERENCE_PREFIXES[recordType] || "WORK";
-  const nextNumber = Number(db.prepare(`
-    SELECT COALESCE(MAX(CAST(SUBSTR(reference, ?) AS INTEGER)), 0) + 1 AS value
-    FROM operate_records WHERE reference LIKE ?
-  `).get(prefix.length + 2, `${prefix}-%`).value);
-  return `${prefix}-${String(nextNumber).padStart(3, "0")}`;
-}
-
-function ensureOperateReference(row) {
-  if (!row) return "";
-  if (row.reference) return row.reference;
-  const reference = nextOperateReference(row.record_type);
-  db.prepare("UPDATE operate_records SET reference=? WHERE id=? AND reference IS NULL")
-    .run(reference, row.id);
-  return reference;
-}
-
-for (const row of db.prepare("SELECT id,record_type,reference FROM operate_records ORDER BY created_at,id").all()) {
-  ensureOperateReference(row);
-}
-db.exec("CREATE UNIQUE INDEX IF NOT EXISTS operate_record_reference_idx ON operate_records(reference)");
-
 recordSchemaMigration(7, "Add steering intake and exact implementation provenance");
 recordSchemaMigration(8, "Add complete methodology learning, synthesis, release and outcome trace");
 recordSchemaMigration(9, "Add inspectable challenge reasoning, visible dispositions and completion links");
@@ -1509,10 +1477,8 @@ function activeImplementationJobForChange(changeId) {
 function operateRow(row, { includeRelations = false } = {}) {
   if (!row) return null;
   const bible = BIBLE_BY_TYPE.get(row.record_type);
-  const reference = ensureOperateReference(row);
   const baseValue = {
     ...row,
-    reference,
     recordType: row.record_type,
     caseId: row.case_id,
     parentId: row.parent_id,

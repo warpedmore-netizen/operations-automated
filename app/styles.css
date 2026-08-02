@@ -943,7 +943,6 @@ main { min-width: 0; }
 .work-type-task, .work-type-request { color: #176350; background: var(--green-soft); }
 .work-type-problem, .work-type-finding { color: #65408d; background: #f0e9f8; }
 .record-reference { display: inline-block; align-self: start; margin-left: 0.35rem; color: #52677c; font: 850 0.55rem/1.2 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: 0.03em; white-space: nowrap; }
-.work-item > .record-reference { position: absolute; top: 0.78rem; left: 5.15rem; margin: 0; }
 .work-detail-heading .record-reference { margin-top: 0.2rem; vertical-align: middle; }
 .work-now-complete { background: linear-gradient(145deg, #eef9f3, #ffffff); border-color: #b9dfca; border-left-color: #278363; }
 .work-now-complete > span { color: #176350; }

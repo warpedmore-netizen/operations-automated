@@ -253,7 +253,6 @@ function workItemMarkup(item, compact = false) {
   const aiOwned = item.humanActionRequired === false;
   return `<article class="work-item-wrap ${compact ? "work-item-wrap-compact" : ""}"><button class="work-item ${compact ? "work-item-compact" : ""} ${state.selectedWorkItemId === item.id ? "current" : ""}" data-work-item-id="${escapeHtml(item.id)}">
     <span class="work-type work-type-${workTypeClass(item.recordType || item.sourceType)}">${escapeHtml(item.typeLabel)}</span>
-    ${item.reference ? `<span class="record-reference">${escapeHtml(item.reference)}</span>` : ""}
     <span class="work-item-copy">
       <strong>${escapeHtml(item.title)}</strong>
       ${item.reference ? `<small class="work-reference">${escapeHtml(item.reference)}</small>` : ""}

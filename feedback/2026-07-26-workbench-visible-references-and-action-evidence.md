@@ -43,3 +43,7 @@ Add stable references such as `CASE-001`, `TASK-001`, `INC-001` and `APP-001` to
 ## Remaining uncertainty
 
 The prefixes and three-digit starting width are suitable for the current private pilot but need real-use confirmation before becoming an external or multi-organisation numbering convention.
+
+## 2026-08-02 reconciliation
+
+The later Workbench proposal already generates a stable type-specific reference from each record's retained UUID, in the form `OA-<TYPE>-<ID>`. The proposed correction therefore preserves the founder-facing outcome from this feedback—short visible references and unambiguous completed states—without adding a competing sequential database identity or migration. The UUID remains the relational key, and the exact display format remains proposed private-product behaviour requiring real-use confirmation before any broader convention is approved.
