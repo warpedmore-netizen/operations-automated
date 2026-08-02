@@ -40,7 +40,7 @@ try {
         $listenerProcessId = Get-ListeningProcessId -PortNumber $Port
         $listenerProcess = if ($listenerProcessId) { Get-Process -Id $listenerProcessId -ErrorAction SilentlyContinue } else { $null }
         if (-not $listenerProcess -or $listenerProcess.ProcessName -ne "node") {
-            throw "An outdated Workbench is responding on port $Port, but its server process could not be verified safely. Close the existing Workbench server window and run the launcher again."
+            throw "An outdated Workbench is responding on port $Port, but its server process could not be verified safely. Stop the existing Operations Automated Workbench process and run the launcher again."
         }
         Write-Host "Refreshing outdated Workbench server $($existingSettings.buildVersion) to $expectedBuildVersion..."
         Stop-Process -Id $listenerProcessId -ErrorAction Stop
@@ -69,10 +69,11 @@ if ($nodeCommand) {
     throw "Node.js was not found. Install Node.js 24 or start the Workbench from Codex Desktop."
 }
 
-$serverCommand = "Set-Location -LiteralPath '$repositoryRoot'; `$env:PORT='$Port'; `$Host.UI.RawUI.WindowTitle='Operations Automated Workbench - keep open'; Write-Host 'Keep this window open while using the Workbench.'; & '$nodeExecutable' 'app\server.mjs'"
+$serverCommand = "Set-Location -LiteralPath '$repositoryRoot'; `$env:PORT='$Port'; `$env:WORKBENCH_REPOSITORY_ROOT='$repositoryRoot'; & '$nodeExecutable' 'app\server.mjs'"
 $workbenchProcess = Start-Process `
     -FilePath "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe" `
-    -ArgumentList @("-NoExit", "-Command", $serverCommand) `
+    -ArgumentList @("-NoProfile", "-Command", $serverCommand) `
+    -WindowStyle Hidden `
     -PassThru
 
 for ($attempt = 0; $attempt -lt 20; $attempt++) {

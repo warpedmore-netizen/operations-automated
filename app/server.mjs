@@ -1611,7 +1611,7 @@ function operateRow(row, { includeRelations = false } = {}) {
     specialistRoute: specialistAction?.routeView || null,
     buildReady: workApprovedForPreparation(baseValue) && !activeJob,
     implementationJob: activeJob,
-    humanActionRequired: nextAction?.authority !== "ai-owner" && !isAiOwner(effectiveOwner),
+    humanActionRequired: Boolean(nextAction) && nextAction.authority !== "ai-owner" && !isAiOwner(effectiveOwner),
     priority,
     openChildren
   };
@@ -2209,6 +2209,7 @@ function operateInboxItem(record) {
     source: "Operate",
     sourceType: "operate-record",
     sourceId: record.id,
+    reference: record.reference,
     routeView: "operate",
     recordType: record.recordType,
     typeLabel: record.bible?.label || record.recordType,

@@ -88,6 +88,10 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(requestResult.record.caseId, caseResult.record.id);
     assert.equal(requestResult.approvalCreated, false);
     assert.equal(taskResult.record.recordType, "task");
+    assert.match(caseResult.record.reference, /^OA-CASE-[A-F0-9]{8}$/);
+    assert.match(requestResult.record.reference, /^OA-REQUEST-[A-F0-9]{8}$/);
+    assert.match(taskResult.record.reference, /^OA-TASK-[A-F0-9]{8}$/);
+    assert.equal(new Set([caseResult.record.reference, requestResult.record.reference, taskResult.record.reference]).size, 3);
 
     const pullRequestWork = await create({
       title: "Review PR #22 before the private pilot",
@@ -243,6 +247,8 @@ test("Operate persists linked work and returns one governed priority inbox", { t
     assert.equal(explicitApproval.response.ok, true);
     assert.equal(explicitApproval.payload.record.approvalState, "human-confirmed");
     assert.equal(explicitApproval.payload.decisionRecorded, true);
+    assert.equal(explicitApproval.payload.record.humanActionRequired, false);
+    assert.equal(explicitApproval.payload.record.nextAction, null);
 
     const decisionResult = await create({ title: "Decide the bounded pilot route", recordType: "decision" });
     await call(`/api/operate/records/${decisionResult.record.id}/actions`, {

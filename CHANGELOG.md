@@ -1,5 +1,14 @@
 # Changelog
 
+## Workbench 1.9.2 delivery and action clarity corrections - proposed
+
+- Exposed the current stable type-specific `OA-<TYPE>-<ID>` operational references without replacing internal UUID relationships.
+- Added those references to My Work, details, Cases & Work and relationship selectors without introducing a competing numbering migration.
+- Corrected terminal records so completed work no longer claims Jamie has another action, and added a suggested Case-closure record.
+- Corrected the Windows launcher so the repository Jamie opened remains authoritative and the local server runs without a persistent terminal window.
+- Kept primary action links readable while retaining the current controlled brand styling.
+- Preserved the founder feedback and updated assurance boundary; no methodology meaning, prompt, merge or release is approved.
+
 ## Workbench 1.9.0 request framing, project routing and Codex handoff - proposed
 
 - Extended **Purpose & steering** from request classification into one complete ordinary-language framing route.
@@ -11,6 +20,7 @@
 - Added a complete Codex handoff format and framing provenance; retained the existing gate that keeps inadequate implementation evidence open.
 - Added the 16 required routing scenarios plus an isolated API route-and-record fixture.
 - Registered the reusable request-framing prompt as Draft. Product Purpose, Steering, implementation prompt, merge and private release remain separate decisions.
+- Corrected the Windows launcher so a linked `app` directory cannot silently redirect repository indexing to an older physical checkout; the launched repository path now remains the authoritative Workbench source and the local server runs without a persistent terminal window.
 
 ## Workbench 1.8.0 complete governed base journey - proposed
 
@@ -54,7 +64,6 @@
 - Made completed AI work visibly terminal, with the returned outcome, evidence and scheduled-worker provenance retained in the ticket.
 - Preserved the founder gates: the worker cannot infer approval, release, merge authority, publication, risk acceptance, spending, access changes or wider delegated authority from assignment.
 - This is proposed private-product behaviour. The configured local schedule does not approve product release, external connection or customer use.
-
 ## Workbench 1.5.1 complete founder workflows - proposed
 
 - Reframed **My Work** around human action: **Do Next** now excludes work owned by Codex or Oppa Mate, while a separate **Being handled** count keeps that work visible.
