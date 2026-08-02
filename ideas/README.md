@@ -5,7 +5,7 @@ status: proposed
 version: 0.1
 owner: Jamie Peppard
 date: 2026-07-25
-last_reviewed: 2026-07-25
+last_reviewed: 2026-08-02
 ---
 
 # Operations Automated Ideas Space
@@ -24,7 +24,7 @@ This capability is **proposed**. Individual records may be captured under the ex
 
 | Idea | Idea status | Relates to | Added | Last reviewed | Next review |
 |---|---|---|---|---|---|
-| [Incident Management Simulation Game](incident-management-simulation-game.md) | Raw idea | Commercial product; incident management methodology; operational resilience tooling | 2026-07-25 | 2026-07-25 | When a named resurfacing trigger occurs |
+| [Incident Management Simulation Game](incident-management-simulation-game.md) | Raw idea | Commercial product; incident management methodology; operational resilience tooling | 2026-07-25 | 2026-08-02 | After a facilitated resilience exercise or new customer evidence |
 
 ## Two different statuses
 

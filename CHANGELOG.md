@@ -1,5 +1,12 @@
 # Changelog
 
+## Agentic AI assurance and value validation - proposed
+
+- Retained OA-RESEARCH-001 as proposed evidence with Jamie's bounded preparation decision.
+- Added proposed C2 agent-delegation/runtime-assurance and AI work/cost/value guides without changing approved v0.7 meaning.
+- Added one draft, non-confidential facilitated case route with explicit acceptance, failure, recovery and evidence boundaries.
+- Reassessed OA-IDEA-001: a facilitated resilience exercise remains the next evidence route; no simulation-platform scope or build is authorised.
+
 ## Workbench 1.9.0 request framing, project routing and Codex handoff - proposed
 
 - Extended **Purpose & steering** from request classification into one complete ordinary-language framing route.

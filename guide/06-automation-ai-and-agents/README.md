@@ -82,13 +82,16 @@ Automation, AI adoption or agentic capability is not an outcome by itself. The p
 | [Human-AI Collaboration Method](../../methodology/human-ai-collaboration.md) | Approved for internal validation | Understanding, analysis, representation, challenge and learning |
 | [User-defined value](../../principles/user-defined-value.md) | Approved | Value before technology ambition |
 | [Activation and first use](../../methodology/activation-and-first-use.md) | Approved for internal validation | Working handover and recovery |
+| [Agent Delegation and Runtime Assurance Profile](agent-delegation-and-runtime-assurance-profile.md) | Proposed C2 | Case-ready lifecycle, authority, runtime-event and recovery profile |
+| [AI Work, Cost and Value Ledger](ai-work-cost-and-value-ledger.md) | Proposed C2 | Case-ready inventory, full-cost, outcome and scale/change/stop review |
 
 ## Known gaps
 
 - No complete conventional automation delivery and operations guide exists.
 - Model and agent evaluation need practical measures, test sets and acceptance patterns.
 - Monitoring, drift, AI incidents, security events and model or supplier change need lifecycle guidance.
-- Agent identity, delegated authority and multi-agent boundaries need case validation.
+- The proposed agent identity and delegated-authority profile needs case validation; multi-agent boundaries remain incomplete.
+- The proposed AI cost-and-value ledger needs real baseline, attribution and maintainability evidence.
 - Workforce transition, assurance independence and silent harm need deeper treatment.
 - Build, buy, integrate and exit decisions have no complete guide.
 
