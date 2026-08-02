@@ -22,6 +22,7 @@ The current Workbench already derives a stable `OA-<TYPE>-<ID>` reference from e
 
 - Dependency branch and draft PR: `codex/daily-challenge-variety`, PR #34.
 - Preparation branch: `codex/workbench-delivery-corrections`.
+- Replacement draft pull request: [#36](https://github.com/warpedmore-netizen/operations-automated/pull/36).
 - Pull-request target: `codex/daily-challenge-variety` while PR #34 remains open.
 - PR #27 disposition: close only after the replacement draft is published and linked; retain its branch and history.
 - Approved Methodology baseline: v0.7 for internal validation.

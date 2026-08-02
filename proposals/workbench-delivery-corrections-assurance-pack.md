@@ -13,6 +13,8 @@ date: 2026-08-02
 
 Review whether this correction proposal is a suitable replacement for PR #27 and may remain stacked after draft PR #34 for later consideration.
 
+Prepared implementation: draft [PR #36](https://github.com/warpedmore-netizen/operations-automated/pull/36), targeting PR #34's branch.
+
 No merge or release decision is requested now. This proposal does not approve PR #34's Draft prompt, Methodology v0.8, a broader record-numbering convention or any external use.
 
 ## Current and proposed behaviour
