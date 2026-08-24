@@ -2,9 +2,9 @@
 id: OA-PLAN-001
 title: Current MoSCoW Priorities and Outstanding Work
 status: proposed
-version: 0.9
+version: 1.0
 owner: Jamie Peppard
-last_updated: 2026-07-29
+last_updated: 2026-08-24
 ---
 
 # Current MoSCoW priorities and outstanding work
@@ -23,6 +23,7 @@ last_updated: 2026-07-29
 - **Request-framing position:** the proposed 1.9.0 increment turns one ordinary-language request into a controlled interpretation, project route, A–G readiness result, complete work package and minimum existing-record route. Answer-only work creates no Task; related Ideas do not enter scope; previously rejected work needs new evidence; Codex remains behind stage D, preparation authority, recovery and exact Purpose, Steering and prompt provenance. The implementation, prompt and product release remain proposed.
 - **Request-framing position:** the proposed 1.9.0 increment turns one ordinary-language request into a controlled interpretation, project route, A–G readiness result, complete work package and minimum existing-record route. Answer-only work creates no Task; related Ideas do not enter scope; previously rejected work needs new evidence; Codex remains behind stage D, preparation authority, recovery and exact Purpose, Steering and prompt provenance. The implementation, prompt and product release remain proposed.
 - **Confluence position:** the private connection, lifecycle-first controlled mirror and human-first publication model are approved, and the first 108-page publication reconciled successfully. AI may publish committed proposed material beneath controlled Draft parents without another approval touchpoint. The managed ten-page reading tree now carries the proposed v0.8 Draft. Live promotion, migration, automatic interaction retrieval, scheduled publication, deletion and external use remain unapproved.
+- **Facilitated-case position:** the draft AI and agent assurance/value case has now applied the proposed RP-01 and RP-02 guides to the real, non-confidential methodology-development loop. The provisional assessment recommends bounded continuation, less decision work in progress, short first-use aids and accepted-outcome measures. Jamie's critique and independent first use remain outstanding; neither guide nor a product correction is approved.
 
 This register states the shared working priorities. It does not itself approve proposed methodology, product or commercial changes.
 
@@ -115,14 +116,14 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Area | Outstanding work | Current state | Next control point |
 |---|---|---|---|
 | Case 1 output | Replace the comprehensive first-use workbook with a short guide or lightweight worksheet; retain the workbook as optional depth | Not implemented; workbook judged too comprehensive | Jamie reviews the simplified version only when capacity permits |
-| Case 2 | Run a materially different non-confidential operational case and select the appropriate output form | Not started | Founder critique after AI produces the case output |
+| Case 2 | Run a materially different non-confidential operational case and select the appropriate output form | Internal methodology-development loop selected; provisional AI-facilitated assessment complete in OA-PILOT-004 | Jamie critiques the case before either proposed guide is decided |
 | v0.7 methodology | Validate the approved working guidance and review it against observed outcomes | Approved for internal validation with conditions | Two outside-in cases, independent-reader, activation and collaboration evidence |
 | Independent usability | Test whether another person can use a simplified aid without facilitation | Not started | Permissioned, non-confidential internal test |
-| Daily evolution | Continue whole-system methodology challenges and retain material learning | Approved and active locally; dependent on desktop availability and capacity | Jamie may pause, resume or change cadence |
+| Daily evolution | Continue whole-system methodology challenges and retain material learning | The Workbench produced a due challenge item on 2026-08-24; the separate Codex daily automation has been removed | Jamie may start the Workbench challenge or request one ad hoc; missed days have no approval meaning |
 | Old Pilot 1 | Preserve the unique plain-language change-workflow evidence without replaying stale project summaries | Four source files carried forward exactly; historical branch reconciled | Use as retained evidence; no further merge decision required |
 | Governance as code | Test and decide which living-documentation, traceability, approval and publication features belong in the future product | Old PR #8 recorded as superseded; later Connected Governance branch retained | Product-fit and deployment decisions remain separate |
 | Methodology breadth | Maintain a complete operational coverage catalogue and show current depth without claiming unfinished guidance is complete | Approved for internal validation in v0.7; detailed practice coverage remains incomplete | Test, revise or retain after the v0.7 validation conditions |
-| Detailed practice guides | Expand priority areas into usable instructions, roles, workflows, measures, controls, examples and tools | Most capabilities remain Identified or Outlined | Prioritise after applying the coverage map to materially different cases |
+| Detailed practice guides | Expand priority areas into usable instructions, roles, workflows, measures, controls, examples and tools | The first two proposed C2 AI/agent guides were revised after one founder-led case; most other capabilities remain Identified or Outlined | Test the short first-use cards with an independent practitioner before any C3 claim |
 | Cross-functional interfaces | Validate how Operations works with strategy, finance, people, legal, risk, technology, product, procurement and other enabling or assurance capabilities | Approved for internal validation in v0.7; not yet case-tested | Test in two cases and revise before claiming general applicability |
 | Outside-in journeys | Validate that beginning with the primary person's journey reveals the right operational injection points without hiding other stakeholders or obligations | Approved for internal validation in v0.7; not yet case-tested | Test in one ordinary and one high-consequence journey |
 | Feedback loops | Define and validate receiver-centred capture, acknowledgement, routing, response and outcome review, with bounded automation | Approved for internal validation in v0.7; no multi-channel evidence | Test with different users, forms, channels and consequences |
@@ -140,7 +141,7 @@ These are outside the current approved boundary, not necessarily permanent rejec
 | Knowledge products | Produce and test a focused guide, examples and practitioner toolkit | Discussed; not produced | Select content from validated cases |
 | External publication | Define IP, release, versioning, disclaimers, distribution and update model | Not started and not approved | Jamie's separate publication decision |
 | Deployment and payments | Select hosting, AI provider, database, payment service and support model | Not started and not approved | Security, cost and commercial evidence first |
-| Success evidence | Define and collect measures for user value, outcome improvement, repeat use, support burden and failure | Measures proposed; no live evidence system | Include in future cases and product specification |
+| Success evidence | Define and collect measures for user value, outcome improvement, repeat use, support burden and failure | The case defines an accepted learning-outcome unit but exposes missing founder-effort, provider/lifecycle-cost and outcome-review evidence | Capture end-to-end time, founder effort, accepted result and later outcome in the next two cases |
 | Activation and first use | Validate reach, activation, understanding, first useful action, progress visibility and recovery | Approved for internal validation; evidence currently comes from one local delivery failure | Test one executable and one workflow-dependent non-executable output |
 | Confluence human publication | Add a reader-first methodology book and internal handbook, preserve the lifecycle mirror, and route document interactions into governed challenges | Model and three bounded pilots merged through PR #17; AI-managed Draft publication authorised; managed ten-page v0.8 Draft prepared | Publish and review the v0.8 Draft; keep methodology approval and Live promotion separate |
 | Human-AI collaboration | Pilot contextual reconstruction, representation, mutual challenge, memory restraint and failure recovery | Approved for internal validation in v0.6; founder evidence only | Review after seven materially different interactions or an earlier material failure |
@@ -150,16 +151,15 @@ These are outside the current approved boundary, not necessarily permanent rejec
 
 ## Next sequence when work resumes
 
-1. Publish the committed proposed v0.8 reading copy beneath Confluence Draft and review its meaning and usability.
-2. Begin the approved v0.7 validation conditions with an independent-reader navigation test.
-3. Apply the coverage-and-interface map to two materially different cases.
-4. Test one deliberately manual design and one consequential AI recommendation with meaningful human challenge.
-5. Select and develop the first detailed practice guide from the resulting evidence.
-6. Test the guide routes, simplified aid, activation path and capability transfer with someone who did not design them.
-7. Continue observing the approved Human-AI Collaboration Method during internal validation.
-8. Ask Jamie to approve, revise, defer or reject v0.8 only after the draft and evidence have been reviewed.
-9. Define the smallest product only from the outputs that repeatedly created value.
+1. Jamie critiques OA-PILOT-004's provisional assessment; AI corrects the case without treating critique as guide approval.
+2. Prepare and test the bounded Workbench completion-semantics correction so unresolved decision work cannot be reported as dealt with.
+3. Test the RP-01 short delegation card and RP-02 observation floor with an independent practitioner using a permissioned, non-confidential case.
+4. Capture end-to-end time, founder effort, accepted outcome, rework and later outcome rather than feature or pull-request volume alone.
+5. Review the proposed v0.8 reading copy against the case evidence and an independent-reader navigation test.
+6. Apply the coverage-and-interface map to a second materially different outside-in journey, including one ordinary or physical operation.
+7. Define the smallest people-facing facilitated pilot only from outputs that created repeatable value.
+8. Ask Jamie to approve, revise, defer or reject each material proposal only after its evidence and boundary are understandable.
 
 ## Cadence note
 
-The local daily automation remains active unless Jamie explicitly pauses or changes it. Missed or unanswered check-ins have no approval, rejection or performance meaning.
+The Workbench makes the daily challenge available in My Work after 08:00 UK time when the local service is used. The previous separate Codex daily automation has been removed. Missed or unanswered check-ins have no approval, rejection or performance meaning.

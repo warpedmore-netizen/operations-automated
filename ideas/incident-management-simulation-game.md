@@ -5,8 +5,8 @@ status: idea
 idea_status: raw idea
 owner: Jamie Peppard
 date_added: 2026-07-25
-last_reviewed: 2026-07-25
-next_review: When a named resurfacing trigger occurs
+last_reviewed: 2026-08-24
+next_review: After the founder-led case critique and an authorised independent first-use test
 relates_to:
   - type: product
     reference: First commercial product
@@ -105,6 +105,33 @@ When resurfaced, do not rely only on this initial view. Reassess current viabili
 - The concept can be differentiated from existing exercise and simulation offerings.
 
 ## Review history
+
+### 2026-08-24 — Methodology-velocity and people-pilot review
+
+- **Context:** Jamie authorised continued evidence-first methodology development and asked that the work converge on use by people soon.
+- **Viability:** A facilitated tabletop remains feasible with low technology. A secure multiplayer adaptive platform remains materially larger and would add identity, scenario control, evaluation, data, support and commercial dependencies.
+- **Impact:** A facilitated exercise could provide a materially different outside-in case and test cross-functional readiness, failure, recovery and team learning. Product value remains unvalidated.
+- **Speed and effort:** The facilitated form could follow the current independent first-use test; a platform build would slow the nearer methodology and people-validation route.
+- **Relevance:** Relevant as a later people-facing case, not as the current methodology-development case or product scope.
+- **Relationships:** Supports RP-01 failure testing, RP-02 outcome evidence, learning through failure and operational resilience; depends on a validated scenario, participant boundary and outcome measure.
+- **Timing:** Retain until the current founder-led case is critiqued and one independent first-use test is authorised.
+- **Evidence:** The 2026-08-24 internal case reinforces service-first testing and shows that more product mechanics are not the present constraint. No new buyer or participant evidence exists.
+- **Next action:** Defer the platform. Reconsider one facilitated scenario as a later independent case, subject to separate participant and information authority.
+- **Status after review:** Raw idea; needs exploration.
+- **Authority:** No product scope, external contact, build, connection, spending, risk acceptance or publication is authorised.
+
+### 2026-08-02 — Resurfaced during agentic AI and critical-dependency validation design
+
+- **Context:** OA-RESEARCH-001 strengthened the case for joint resilience practice and Jamie authorised RP-01/RP-02 preparation for a non-confidential facilitated case.
+- **Viability:** A 60- to 90-minute facilitated tabletop remains viable; a secure multiplayer adaptive-AI platform remains materially larger and untested.
+- **Impact:** Current public evidence strengthens the potential value of observable cross-functional response, communication and recovery practice.
+- **Speed and effort:** A facilitated exercise can produce evidence before product discovery; platform scoping would add avoidable cost and dependency.
+- **Relevance:** Related to later RP-04 and commercial discovery, but not required to validate RP-01/RP-02.
+- **Relationships:** Supports learning through failure and supplier/agent recovery testing; it must not become a substitute for real technical or supplier assurance.
+- **Timing:** Retain until a facilitated resilience exercise or credible customer evidence provides a new trigger.
+- **Evidence:** OA-RESEARCH-001 public-source synthesis; no customer demand, willingness-to-pay or platform evidence.
+- **Next action:** Keep Raw idea. Consider a facilitated low-technology exercise after the first suitable case; do not scope or build a multiplayer product.
+- **Authority:** Reassessment only. No product scope, build, contact, spending, connection, publication or risk acceptance is authorised.
 
 ### 2026-07-25 — Initial capture
 

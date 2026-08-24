@@ -18,6 +18,8 @@ This repository is the controlled source for the methodology, its principles, go
 >
 > **Current validation:** v0.7 retains the v0.6 delivery guidance and adds an outside-in operating rule, a journey-to-operational-value-system sequence, adaptable method selection, receiver-centred feedback, a [reader-first guide](guide/README.md), [operational coverage model](methodology/operational-coverage-model.md) and [cross-functional interface model](methodology/cross-functional-interfaces.md).
 >
+> **Current facilitated case:** the draft [AI and agent operational assurance and value case](pilots/ai-agent-assurance-and-value-case-001.md) applies the proposed RP-01 and RP-02 guides to the real, non-confidential methodology-development loop. Its provisional assessment recommends bounded continuation, less decision work in progress, short first-use aids and accepted-outcome measures. Jamie's critique, independent use, guide decisions, product correction, merge and release remain separate.
+>
 > **Approval boundary:** The [v0.7 assurance pack](proposals/v0.7-assurance-pack.md) records the conditions and unapproved areas. Approval does not make the outlined practice areas complete, independently validated or externally publishable.
 
 Start with the [numbered reader guide](guide/README.md) for the approved internal-validation reading order, operational coverage, use cases and known gaps.
