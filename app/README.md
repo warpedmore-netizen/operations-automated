@@ -14,6 +14,8 @@ This is a private, local-first application prototype for applying and improving 
 
 > **Proposed request-framing and routing engine:** Workbench build `1.9.0-request-framing-routing-draft` extends **Purpose & steering** so one ordinary-language request produces the intended outcome, project boundary, material question, transparent assumptions, A–G readiness, complete work package, minimum existing-record route and exact next action. The [request-framing proposal](../product/ai-workbench-request-framing-routing.md) preserves answer-only and Ideas routes without unnecessary delivery work and selects Codex only when a complete stage-D package passes Purpose, Steering, prompt, recovery and preparation-authority gates. The reusable framing and implementation prompts remain Draft and no merge or release is approved.
 
+> **Proposed daily-challenge and delivery follow-on:** Workbench build `1.9.2-workbench-delivery-and-learning-closure-draft` combines controlled challenge variety and retained learning with visible operational references, terminal-action clarity, launcher repository authority and explicit learning closure. Completed clusters remain inspectable without reopening implemented decisions, while active reviews use only unresolved signals. The combined branch is tested for review through stacked draft PRs #34 and #36; it does not approve their prompt, merge or private release.
+
 > **Proposed mobile knowledge pilot:** Workbench build `1.1.2-mobile-voice-recovery-draft` corrects the local reading, phone layout and failed-transcription recovery path. A tailnet-only Tailscale Serve route was observed running between Jamie's computer and phone, with Funnel disabled. Operational activation is recorded as evidence; it does not create or replace the still-required governance decision or approve this product release.
 
 > **Proposed Operate pilot:** Workbench build `1.3.0-operate-action-loop-draft` adds a unified **My Work** inbox, explainable **Do Next** order, the initial Operations Bible and a governed action loop. Every open item exposes a working next action. Oppa Mate suggests names and safe defaults; ordinary approvals use explicit labelled choices, material decisions require an outcome and higher-consequence Risk acceptance retains its stronger confirmation. This is prepared product behaviour, not an approved methodology or release.
@@ -36,7 +38,7 @@ Use either one-click entry point:
 - Double-click `Launch-Workbench.cmd` in the repository.
 - Double-click `Launch-Brand-Review.cmd` to open the Workbench directly at the proposed Brand Review area.
 
-The launcher locates an available Node.js runtime, opens a clearly labelled server window, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. Keep the server window open while using the Workbench.
+The launcher locates an available Node.js runtime, starts the local server quietly in the background, verifies the local API and opens `http://127.0.0.1:4173` in the browser. If a recognised older Workbench is already using that address, it safely replaces that exact local Node.js process with the current build. It will not stop an unrecognised service. The background Workbench remains available until its process stops or the computer restarts.
 
 The page and server compare a controlled build marker. A persistent restart warning replaces misleading partial or indefinitely loading Brand Review content if their versions ever differ.
 
@@ -58,7 +60,7 @@ The proportionate founder pilot is Tailscale Serve, not a public tunnel:
 6. Allow microphone access, complete one spoken challenge and confirm that an unauthorised identity cannot connect.
 7. Record and test the Serve-disable and device-removal route.
 
-The computer and Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut and keep the server window open. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
+The computer and background Workbench still need to be running. If the phone reports **Bad Gateway**, start the desktop **Operations Automated Workbench** shortcut again. Tailscale Funnel, router port-forwarding and a public URL are not part of the proposed pilot. Documentation of the observed route does not approve it.
 
 ## Mobile voice and transcription recovery
 
@@ -91,7 +93,7 @@ Voice transcription, translation and model reasoning require an OpenAI API key w
 1. Create an API key in the OpenAI API dashboard.
 2. From the repository root, run `.\Configure-Workbench.ps1`.
 3. Paste the key into that secure PowerShell prompt, not into the browser or chat.
-4. Close any existing window titled **Operations Automated Workbench - keep open**.
+4. Restart the computer if an older hidden Workbench process cannot be stopped safely.
 5. Run `.\Start-Workbench.ps1`.
 6. Open `http://127.0.0.1:4173`. The header should say **Provider connected**.
 7. Select **Record**, check the live sound-level bar, speak, select **Stop**, review the transcript, optionally translate it, then choose **Use reviewed text**. If transcription fails, use the retained-recording retry panel before recording again.

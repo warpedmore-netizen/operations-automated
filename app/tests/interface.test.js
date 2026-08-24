@@ -9,6 +9,7 @@ const repoRoot = resolve(appRoot, "..");
 const html = readFileSync(resolve(appRoot, "index.html"), "utf8");
 const appSource = readFileSync(resolve(appRoot, "app.js"), "utf8");
 const cssSource = readFileSync(resolve(appRoot, "styles.css"), "utf8");
+const launcherSource = readFileSync(resolve(process.cwd(), "Start-Workbench.ps1"), "utf8");
 const brandReview = JSON.parse(readFileSync(resolve(repoRoot, "brand/review-items.json"), "utf8"));
 const brandAdoption = JSON.parse(readFileSync(resolve(repoRoot, "brand/adoption.json"), "utf8"));
 
@@ -52,6 +53,17 @@ test("local interface assets exist and no external resources are loaded", () => 
     "Launch-Brand-Review.cmd"
   ]) assert.equal(existsSync(resolve(repoRoot, asset)), true, `${asset} should exist`);
   assert.doesNotMatch(html, /(?:src|href)="https?:\/\//i);
+});
+
+test("primary actions remain readable when rendered as links", () => {
+  assert.match(cssSource, /\.oa-base \.primary\s*\{[^}]*color:\s*white;/s);
+  assert.match(cssSource, /\.oa-base a\.primary\s*\{[^}]*text-decoration:\s*none;/s);
+});
+
+test("the launcher keeps repository authority on the path Jamie opened", () => {
+  assert.match(launcherSource, /WORKBENCH_REPOSITORY_ROOT='\$repositoryRoot'/);
+  assert.match(launcherSource, /-WindowStyle Hidden/);
+  assert.doesNotMatch(launcherSource, /-NoExit|keep open/i);
 });
 
 test("essential controls and accessibility landmarks are present", () => {
@@ -212,6 +224,9 @@ test("Operate starts with a unified, explainable My Work journey", () => {
   assert.match(appSource, /\/api\/operate\/records\/\$\{encodeURIComponent\(record\.id\)\}\/actions/);
   assert.match(appSource, /workflow\.action-completed/);
   assert.match(appSource, /Record the evidence, outcome or reason/);
+  assert.match(appSource, /record-reference/);
+  assert.match(appSource, /Completed record/);
+  assert.match(appSource, /You do not need to confirm or enter anything else/);
   assert.match(appSource, /Suggested by Oppa Mate/);
   assert.match(appSource, /Relationship rejected and retained in activity history/);
   assert.match(appSource, /Linked source/);
