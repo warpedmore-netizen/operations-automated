@@ -16,9 +16,10 @@ import {
   validateRepositoryReference
 } from "./change-governance.mjs";
 import {
-  LEARNING_DISPOSITION_LABELS, buildMethodologyLearningReview, defaultDispositionReason,
+  LEARNING_DISPOSITION_LABELS, buildMethodologyClusterReview, buildMethodologyLearningReview, defaultDispositionReason,
   defaultLearningDisposition, findRelatedMethodologySignals, groupRelatedMethodologySignals,
-  synthesiseMethodologySignals, validateApplicationContract, validateLearningDisposition
+  isUnresolvedMethodologySignal, synthesiseMethodologySignals, validateApplicationContract,
+  validateLearningDisposition
 } from "./methodology-learning.mjs";
 import {
   KNOWLEDGE_MANIFEST, changelogVersion, chunkDocument, readGitRefFile,
@@ -3574,11 +3575,18 @@ function methodologyLearningDashboard() {
       const right = [...cluster.signalIds].sort().join("|");
       return left === right;
     }) || null;
+    const clusterReview = buildMethodologyClusterReview(cluster.signals, {
+      approvedBaseline: baseline,
+      synthesis,
+      trigger: synthesis ? "retained-synthesis" : "multiple-related-feedback-signals"
+    });
     return {
       id: cluster.id,
       components: cluster.components,
       relationship: cluster.relationship,
       signalIds: cluster.signalIds,
+      activeSignalIds: clusterReview.activeSignalIds,
+      state: clusterReview.state,
       signals: cluster.signals.map((item) => ({
         id: item.id,
         originalWording: item.original_wording,
@@ -3588,11 +3596,7 @@ function methodologyLearningDashboard() {
         createdAt: item.created_at
       })),
       synthesis,
-      review: buildMethodologyLearningReview(cluster.signals, {
-        approvedBaseline: baseline,
-        synthesis,
-        trigger: synthesis ? "retained-synthesis" : "multiple-related-feedback-signals"
-      }),
+      review: clusterReview.review,
       approvalState: "not-approved"
     };
   });
@@ -3601,15 +3605,7 @@ function methodologyLearningDashboard() {
     .map((item) => methodologyReleaseForProposal(item.proposal_id));
   const traces = releases.map(methodologyLearningTrace);
   const outcomeReviews = proposals.flatMap((proposal) => proposal.outcomeReviews || []);
-  const unresolvedDisposition = new Set([
-    "clarification", "example-or-guidance-need", "more-evidence", "methodology-change-candidate",
-    "product-change-candidate", "separate-project-candidate", "urgent-review"
-  ]);
-  const unresolvedSignals = signals.filter((signal) => {
-    if (["implemented", "rejected", "deferred", "no-change"].includes(signal.status)) return false;
-    if (signal.proposal && ["rejected", "deferred", "implemented"].includes(signal.proposal.status)) return false;
-    return unresolvedDisposition.has(signal.learning_disposition) || signal.status === "awaiting-review";
-  });
+  const unresolvedSignals = signals.filter(isUnresolvedMethodologySignal);
   const rejectedDeferred = proposals.filter((proposal) => ["rejected", "deferred"].includes(proposal.status));
   const awaitingHumanDecision = proposals.filter((proposal) => ["awaiting-review", "revision-requested", "awaiting-release-approval"].includes(proposal.status));
   const awaitingEvidence = signals.filter((signal) => signal.learning_disposition === "more-evidence" && !["rejected", "superseded"].includes(signal.status));

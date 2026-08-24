@@ -441,6 +441,13 @@ test("local API persists governed conversations and the complete feedback-to-cha
     assert.equal(feedbackTrace.release.id, receipt.proposal.release.id);
     assert.equal(feedbackTrace.laterUsage[0].baselineVersion, "0.5");
     assert.equal(feedbackTrace.outcomeReviews[0].result, "met");
+    const completedCluster = learningAfterOutcome.payload.buckets.relatedClusters.find((item) =>
+      item.signalIds.includes(answerCorrection.feedback.id) && item.signalIds.includes(feedback.id)
+    );
+    assert.equal(completedCluster.state, "historical");
+    assert.deepEqual(completedCluster.activeSignalIds, []);
+    assert.equal(completedCluster.review.proposedDisposition, "no-action");
+    assert.match(completedCluster.review.exactDecisionOrEvidenceRequired, /No new decision is required/i);
 
     const restoredDatabase = new DatabaseSync(preChangeDatabasePath, { readOnly: true });
     assert.ok(Number(restoredDatabase.prepare("SELECT COUNT(*) AS count FROM conversations").get().count) >= 1);

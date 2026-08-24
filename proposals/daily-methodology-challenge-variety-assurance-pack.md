@@ -2,9 +2,9 @@
 id: OA-PROPOSAL-DAILY-CHALLENGE-VARIETY-001
 title: Daily Methodology Challenge Variety and Learning Assurance Pack
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
-date: 2026-07-31
+date: 2026-08-24
 ---
 
 # Daily methodology challenge variety and learning assurance pack
@@ -25,7 +25,9 @@ Prepared implementation: [draft pull request #34](https://github.com/warpedmore-
 
 **What AI inferred:** A different prompt is necessary but insufficient. The product must also supply earlier challenge memory and retain Jamie's response in Methodology learning.
 
-**What remains uncertain:** Whether Jamie wants actual generated image and downloadable-document support in a later increment. The present proposal does not infer that authority or claim the capability exists.
+**Later assurance evidence:** The first facilitated AI-agent assurance case on 24 August found that an 11-signal historical learning cluster could reopen an already implemented Methodology-change candidate even while the summary correctly reported no unresolved signals.
+
+**What remains uncertain:** Whether Jamie wants actual generated image and downloadable-document support in a later increment, and whether the controlled variety improves decisions over seven completed real-use challenges. The present proposal does not infer either outcome or claim the later media capability exists.
 
 ## Current and proposed meaning
 
@@ -34,6 +36,7 @@ Prepared implementation: [draft pull request #34](https://github.com/warpedmore-
 | Challenge selection | One fixed prompt asks for the highest-value unresolved tension | Decision value remains primary, with controlled variation across under-tested territory, mode and artefact |
 | Memory | Each dated conversation sees only its own continuity | Up to 12 earlier challenge conversations are compacted into the new challenge context |
 | Learning | Daily replies remain in conversation messages unless Jamie separately classifies feedback | One unapproved learning signal is created or updated automatically after a reply |
+| Learning closure | Historical and unresolved signals can be grouped into one review that reopens a completed disposition | Historical clusters remain inspectable but request no new decision; active reviews use only unresolved signals |
 | Presentation | The model usually returns a scenario, provisional response and boundary question | The challenge may arrive as a case file, document critique, workflow, red-team finding, review, dialogue, memo, observation, scorecard, journey critique, comparison or assumption map |
 | Authority | A reply is feedback, not approval | Unchanged |
 
@@ -41,7 +44,7 @@ Approved v0.7 Methodology meaning is unchanged. The proposal makes the existing 
 
 ## Evidence and challenge
 
-- **Evidence supporting change:** Retained daily conversations from 26, 27, 29 and 31 July; Jamie's explicit memory concern on 29 July; the repeated batch-authority framing on 31 July; zero structured feedback records for those conversations; and Jamie's current direction.
+- **Evidence supporting change:** Retained daily conversations from 26, 27, 29 and 31 July; Jamie's explicit memory concern on 29 July; the repeated batch-authority framing on 31 July; zero structured feedback records for those conversations; the contradictory historical-cluster state observed in a copied operational database on 24 August; and Jamie's current direction.
 - **Source strength:** Strong evidence of the local product failure and founder experience; no independent-user evidence.
 - **Strongest credible alternative:** Keep the existing challenge and add only a manual “choose another format” control.
 - **Why the alternative is weaker:** It makes Jamie manage variety and does not correct memory or learning retention.
@@ -52,7 +55,7 @@ Approved v0.7 Methodology meaning is unchanged. The proposal makes the existing 
 
 - **Approved Methodology:** No meaning change.
 - **Evolution loop:** Existing approved response-to-feedback behaviour is implemented more faithfully.
-- **Workbench:** Daily prompt, challenge context, My Work description and automatic feedback retention.
+- **Workbench:** Daily prompt, challenge context, My Work description, automatic feedback retention and terminal-state interpretation for related learning clusters.
 - **Prompt control:** New Draft prompt `OA-PROMPT-DAILY-METHODOLOGY-CHALLENGE-001@1.0`.
 - **Data:** Additive rows and updates in the existing feedback table; no schema migration or deletion.
 - **Connections:** None.
@@ -67,6 +70,7 @@ Approved v0.7 Methodology meaning is unchanged. The proposal makes the existing 
 | Duplication and contradiction review | Pass | Uses the existing challenge, conversation and feedback stores |
 | Cross-method dependency review | Pass | Aligns with approved founder challenge and evolution loops |
 | Human authority review | Pass | Learning signal is explicitly not approval; no proposal is created automatically |
+| Learning closure | Pass | Terminal signals stay visible as history but cannot create a new synthesis action or founder Decision |
 | Privacy and confidentiality | Pass | Only methodology-challenge conversations are compacted; no new data source |
 | Public-evidence boundary | Pass | No public-research connection is claimed or added |
 | Accessibility and plain language | Pass provisionally | My Work shows territory, challenge mode, artefact and learning boundary in plain language; wider real use is still required |
@@ -77,11 +81,13 @@ Approved v0.7 Methodology meaning is unchanged. The proposal makes the existing 
 
 - Focused selector, prompt, memory and learning-retention tests: 5 passed.
 - Complete Workbench regression suite: 123 passed.
+- Focused terminal-state checks: 2 passed; an active review excludes completed signals and an all-terminal cluster becomes historical with no new decision.
 - Consecutive-date test: all 12 territories and all 12 artefacts appeared once across a 12-day cycle; eight of nine challenge modes appeared within the same window.
 - Existing-database migration, retained-conversation survival and earlier-challenge backfill regression: passed.
 - Local browser validation: selected territory, challenge mode, artefact and unapproved learning boundary were visible in My Work.
 - Phone-width check: no horizontal overflow at a 390-pixel viewport and the complete challenge detail remained present in the page flow.
 - Browser console: no errors.
+- Copied operational-state validation: the existing 11-signal cluster displayed **historical**, reported zero active signals, returned `no-action`, requested no new Decision and exposed no synthesis control.
 - `git diff --check`: passed before packaging and will be repeated on the staged proposal.
 
 ## Trade-offs and residual risk

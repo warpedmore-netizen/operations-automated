@@ -2,9 +2,9 @@
 id: OA-PRODUCT-013
 title: Daily Methodology Challenge Variety and Learning Correction
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
-date: 2026-07-31
+date: 2026-08-24
 approval_required: true
 depends_on:
   - OA-EVOLUTION-001@0.2 approved
@@ -31,6 +31,7 @@ The correction keeps the existing daily Workbench route. It does not replace it 
 - On 31 July the next challenge again approached the same settled area through batch approval.
 - The dated conversations were separate, and each new challenge received only its own conversation continuity.
 - No retained daily challenge had a structured record in the Workbench `feedback` store. The Methodology-learning view therefore could not use or disposition those answers.
+- The first facilitated assurance case on 24 August used a copied operational database and found the inverse completion failure: the summary correctly said all retained signals were dealt with, while an 11-signal historical cluster reopened an already implemented Methodology-change candidate and offered a new synthesis action.
 
 ### Jamie's current judgement
 
@@ -99,6 +100,18 @@ The initial learning state is **more evidence required**. The Workbench does not
 
 On first start, eligible earlier methodology-challenge conversations are backfilled additively from their retained founder response and following AI interpretation. The original messages remain unchanged. A conversation produces one learning signal regardless of how many follow-up replies it contains.
 
+### Learning closure
+
+Related clusters remain visible after their signals are completed so earlier evidence and reasoning can still be inspected. The Workbench separates that historical context from current work:
+
+- a cluster with one or more unresolved signals is active and its review uses only those unresolved signals;
+- completed, rejected, deferred, no-change or superseded routes cannot manufacture a fresh decision through an older disposition;
+- a cluster with no unresolved signals is labelled historical;
+- a historical cluster states that no new decision is required without material new evidence or a named review trigger; and
+- the Workbench does not offer a new synthesis action for a historical cluster.
+
+This changes product-state interpretation only. It does not alter or delete the retained signals, proposals, decisions or implementation evidence.
+
 ## Topicality and public evidence
 
 The Workbench may use:
@@ -139,6 +152,8 @@ The implementation should prove:
 - earlier challenge content appears in the new challenge context;
 - Jamie's reply creates or updates one unapproved learning signal;
 - no proposal or approval is created automatically;
+- historical signal clusters do not reopen completed decisions or offer a new synthesis action;
+- active cluster reviews exclude completed signals while retaining them as visible history;
 - existing conversations and feedback survive unchanged; and
 - the complete Workbench regression suite passes.
 
