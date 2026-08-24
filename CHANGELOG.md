@@ -9,6 +9,15 @@
 - Kept primary action links readable while retaining the current controlled brand styling.
 - Preserved the founder feedback and updated assurance boundary; no methodology meaning, prompt, merge or release is approved.
 
+## Workbench 1.9.1 daily challenge variety and learning closure - proposed
+
+- Added controlled variation across methodology territory, challenge mode and response artefact while keeping decision value ahead of novelty.
+- Added compact earlier-challenge memory and one unapproved learning signal per challenge conversation.
+- Corrected Methodology-learning clusters so completed signals remain visible as historical evidence without reopening an implemented change or requesting another founder Decision.
+- Limited active cluster reviews and synthesis actions to genuinely unresolved signals.
+- Proved the closure behaviour against the copied operational state that exposed the defect: 11 signals remained visible, zero remained active, the review returned no action and the interface offered no synthesis control.
+- Passed all 123 Workbench regression tests and the local browser check with no console errors.
+
 ## Workbench 1.9.0 request framing, project routing and Codex handoff - proposed
 
 - Extended **Purpose & steering** from request classification into one complete ordinary-language framing route.

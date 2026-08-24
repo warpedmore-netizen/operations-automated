@@ -1748,10 +1748,14 @@ function renderMethodologyLearning(value) {
   const clusters = value.buckets.relatedClusters;
   $("#learning-cluster-count").textContent = String(clusters.length);
   $("#learning-clusters").innerHTML = clusters.length ? clusters.map((cluster) => `<article class="learning-cluster-card">
-    <div><span>${escapeHtml(cluster.relationship)}</span><strong>${cluster.signalIds.length} signals</strong></div>
+    <div><span>${escapeHtml(cluster.relationship)}</span><strong>${cluster.signalIds.length} signals · ${cluster.state === "historical" ? "historical" : `${cluster.activeSignalIds.length} active`}</strong></div>
     <ul>${cluster.signals.map((signal) => `<li><strong>${escapeHtml(signal.visibleDisposition)}</strong><span>${escapeHtml(signal.originalWording)}</span></li>`).join("")}</ul>
     ${learningReviewMarkup(cluster.review)}
-    ${cluster.synthesis ? `<p class="learning-synthesis-state">Synthesis retained ${escapeHtml(formatDate(cluster.synthesis.created_at))}; no approval created.</p>` : `<button class="ghost" type="button" data-synthesise-cluster="${escapeHtml(cluster.signalIds.join(","))}">Retain this synthesis</button>`}
+    ${cluster.state === "historical"
+      ? '<p class="learning-synthesis-state">Historical context only; no new synthesis or Decision is required without material new evidence.</p>'
+      : cluster.synthesis
+        ? `<p class="learning-synthesis-state">Synthesis retained ${escapeHtml(formatDate(cluster.synthesis.created_at))}; no approval created.</p>`
+        : `<button class="ghost" type="button" data-synthesise-cluster="${escapeHtml(cluster.activeSignalIds.join(","))}">Retain this synthesis</button>`}
   </article>`).join("") : '<div class="empty-records"><strong>No related-signal cluster yet.</strong><p>Clusters appear when structured records share a Methodology component.</p></div>';
   const pipeline = [
     ["Unprocessed signals", value.counts.unprocessedSignals],

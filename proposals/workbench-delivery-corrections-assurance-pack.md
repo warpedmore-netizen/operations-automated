@@ -2,9 +2,9 @@
 id: OA-PROPOSAL-WORKBENCH-DELIVERY-CORRECTIONS-001
 title: Workbench Delivery Corrections Assurance Pack
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
-date: 2026-08-02
+date: 2026-08-24
 ---
 
 # Workbench delivery corrections assurance pack
@@ -36,12 +36,13 @@ The replacement therefore preserves PR #27's unique display, relationship-select
 
 ## Evidence and checks
 
-- Full explicit Workbench suite: **123 passed, 0 failed**.
+- Full explicit integrated Workbench suite: **125 passed, 0 failed**.
 - Stable Case, Request and Task reference formats and uniqueness are covered through the local API regression.
 - A terminal Approval with no next action is covered as `humanActionRequired: false`.
 - Interface checks cover visible references, launcher repository authority and primary-link readability.
 - A live isolated desktop journey confirmed the reference in My Work, Cases & Work and record detail, and confirmed the completed workflow and retained-evidence route. It also identified and removed a redundant card badge that overlapped a title before publication.
 - Existing database upgrade and clean-database journeys pass without a reference-schema migration.
+- The updated PR #34 base was merged into the stacked branch after its learning-closure correction. The combined 1.9.2 build preserves delivery clarity and now proves that completed learning clusters do not reopen an implemented Methodology decision.
 - The local Brand Review queue could not be reached during final preparation. Retained brand guidance was followed; this does not claim that no pending founder feedback exists.
 - Ideas Space review produced only a text-search match to the Incident Management Simulation Game. Its actions-and-delivery wording is not relevant to this bounded private Workbench correction, so its Raw idea status and scope are unchanged.
 
@@ -53,6 +54,7 @@ The replacement therefore preserves PR #27's unique display, relationship-select
 | The current display format becomes an unexamined public convention | Keep it proposed and validate through bounded private use before any wider decision |
 | Hidden server startup obscures a launch failure | The launcher retains its bounded error path and the server health/version check |
 | A completed-state treatment hides retained evidence | Direct the user to Recent activity and retain the record, relationships and audit history |
+| A downstream delivery branch silently loses the dependency's learning-closure fix | Integrate the updated PR #34 base, retain both changelog entries and run the complete 125-test suite on the combined build |
 | Stacked work is reviewed without its dependency | Target the replacement draft at PR #34's branch and keep merge and release decisions separate |
 
 ## Exact decision required later
