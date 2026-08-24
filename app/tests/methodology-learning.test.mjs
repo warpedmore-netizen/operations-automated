@@ -3,9 +3,11 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import {
-  LEARNING_DISPOSITION_LABELS, buildMethodologyLearningReview, defaultDispositionReason,
+  LEARNING_DISPOSITION_LABELS, buildMethodologyClusterReview, buildMethodologyLearningReview,
+  defaultDispositionReason,
   findRelatedMethodologySignals, groupRelatedMethodologySignals, synthesiseMethodologySignals,
-  validateApplicationContract, validateChangeContract, validateMethodologyRegistry
+  isUnresolvedMethodologySignal, validateApplicationContract, validateChangeContract,
+  validateMethodologyRegistry
 } from "../methodology-learning.mjs";
 import { KNOWLEDGE_MANIFEST, scanWorkingTree } from "../repository-index.mjs";
 
@@ -149,6 +151,59 @@ test("the visible Methodology Learning Review preserves source, counter-test, li
   assert.match(review.strongestNoChangeCase, /answer quality, guidance or product behaviour/i);
   assert.match(review.exactDecisionOrEvidenceRequired, /Jamie Peppard decides/i);
   assert.equal(review.approvalState, "not-approved");
+});
+
+test("historical clusters do not reopen completed Methodology decisions", () => {
+  const signals = [
+    {
+      id: "implemented-change",
+      original_wording: "Prepare the bounded Methodology change.",
+      learning_disposition: "methodology-change-candidate",
+      status: "implemented",
+      affectedComponents: ["human-ai-collaboration"]
+    },
+    {
+      id: "recorded-context",
+      original_wording: "Keep this point as conversation context.",
+      learning_disposition: "conversation-context",
+      status: "retained",
+      affectedComponents: ["human-ai-collaboration"]
+    }
+  ];
+  assert.equal(isUnresolvedMethodologySignal(signals[0]), false);
+  assert.equal(isUnresolvedMethodologySignal(signals[1]), false);
+  const cluster = buildMethodologyClusterReview(signals, {
+    approvedBaseline: { baseline_version: "0.7", source_ref: "origin/main", approved_count: 20 }
+  });
+  assert.equal(cluster.state, "historical");
+  assert.deepEqual(cluster.activeSignalIds, []);
+  assert.equal(cluster.review.proposedDisposition, "no-action");
+  assert.match(cluster.review.recommendation, /historical context/i);
+  assert.match(cluster.review.exactDecisionOrEvidenceRequired, /No new decision is required/i);
+});
+
+test("active cluster reviews use only unresolved signals for their next decision", () => {
+  const signals = [
+    {
+      id: "implemented-change",
+      original_wording: "An earlier change has already been implemented.",
+      learning_disposition: "methodology-change-candidate",
+      status: "implemented",
+      affectedComponents: ["human-ai-collaboration"]
+    },
+    {
+      id: "new-product-signal",
+      original_wording: "The Workbench surface needs a bounded correction.",
+      learning_disposition: "product-change-candidate",
+      status: "awaiting-review",
+      affectedComponents: ["human-ai-collaboration"]
+    }
+  ];
+  const cluster = buildMethodologyClusterReview(signals);
+  assert.equal(cluster.state, "active");
+  assert.deepEqual(cluster.activeSignalIds, ["new-product-signal"]);
+  assert.deepEqual(cluster.review.signalIds, ["new-product-signal"]);
+  assert.equal(cluster.review.proposedDisposition, "product-change-candidate");
 });
 
 test("every visible feedback disposition has an explained label and default reason", () => {

@@ -39,6 +39,23 @@
       "migration_impact": "Adds framing provenance to steering intakes; it does not approve the prompt, Product Purpose, build, merge or release."
     },
     {
+      "prompt_id": "OA-PROMPT-DAILY-METHODOLOGY-CHALLENGE-001",
+      "title": "Prepare a varied, learning-aware daily methodology challenge",
+      "target_project": "ai-workbench",
+      "target_capability": "daily-methodology-challenge",
+      "exact_version": "1.0",
+      "status": "draft",
+      "exact_text_path": "prompts/drafts/OA-PROMPT-DAILY-METHODOLOGY-CHALLENGE-001-v1.0.md",
+      "purpose_version": "OA-PRODUCT-001@0.1",
+      "steering_version": "OA-STEERING-001@0.1",
+      "effective_date": "2026-07-31",
+      "superseded_prompt": null,
+      "reason_for_change": "Prevents cosmetic repetition by combining retained challenge memory with controlled variation across methodology territory, challenge mode and response artefact.",
+      "approving_decision": null,
+      "builds_or_pull_requests": ["PR #34 draft; codex/daily-challenge-variety proposal only"],
+      "migration_impact": "No schema migration. Existing conversations remain intact; eligible earlier and later challenge responses gain one additive unapproved Methodology-learning signal per conversation."
+    },
+    {
       "prompt_id": "OA-PROMPT-WORKBENCH-BUILD-001",
       "title": "Governed Workbench implementation job",
       "target_project": "ai-workbench",

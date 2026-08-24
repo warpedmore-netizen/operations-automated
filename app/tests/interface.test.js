@@ -249,5 +249,8 @@ test("Methodology learning is inspectable through structured founder questions a
   assert.match(html, /Human-authorised Methodology change traces/i);
   assert.match(appSource, /\/api\/methodology-learning/);
   assert.match(appSource, /Retain this synthesis/);
+  assert.match(appSource, /cluster\.state === "historical"/);
+  assert.match(appSource, /Historical context only; no new synthesis or Decision is required/);
+  assert.match(appSource, /cluster\.activeSignalIds\.join/);
   assert.match(appSource, /Strongest no-change case/);
 });

@@ -103,6 +103,71 @@ test("ten governed Workbench journeys operate as one continuous surface", { time
     assert.equal(dailyChallenge.owner, "Jamie Peppard");
     assert.equal(dailyChallenge.humanActionRequired, true);
     assert.match(dailyChallenge.summary, /own Workbench conversation/i);
+    assert.match(dailyChallenge.nextAction.prompt, /RETAINED DAILY CHALLENGE MEMORY/);
+    assert.ok(dailyChallenge.nextAction.challengePlan.territory);
+    assert.ok(dailyChallenge.nextAction.challengePlan.mode);
+    assert.ok(dailyChallenge.nextAction.challengePlan.format);
+
+    const challengeConversation = await call("/api/conversations", {
+      method: "POST",
+      body: { title: "Methodology challenge — retention test", workspace: "living-methodology" }
+    });
+    const challengeConversationId = challengeConversation.payload.conversation.id;
+    await call(`/api/conversations/${challengeConversationId}/messages`, {
+      method: "POST",
+      body: { role: "user", workingText: "Prepare one methodology challenge.", originalText: "Prepare one methodology challenge." }
+    });
+    await call("/api/respond", {
+      method: "POST",
+      body: { conversationId: challengeConversationId, text: "Prepare one methodology challenge.", outputType: "analysis", confirmed: true }
+    });
+    await call(`/api/conversations/${challengeConversationId}/messages`, {
+      method: "POST",
+      body: {
+        role: "user",
+        workingText: "This conclusion was already covered; test a different methodology territory.",
+        originalText: "This conclusion was already covered; test a different methodology territory."
+      }
+    });
+    const retainedChallengeResponse = await call("/api/respond", {
+      method: "POST",
+      body: {
+        conversationId: challengeConversationId,
+        text: "This conclusion was already covered; test a different methodology territory.",
+        outputType: "analysis",
+        confirmed: true
+      }
+    });
+    assert.equal(retainedChallengeResponse.payload.challengeLearningSignal.disposition, "more-evidence");
+    assert.equal(retainedChallengeResponse.payload.challengeLearningSignal.approvalState, "not-approved");
+    const retainedFeedback = await call("/api/feedback");
+    const challengeSignal = retainedFeedback.payload.feedback.find((item) => item.conversation_id === challengeConversationId);
+    assert.equal(challengeSignal.feedback_type, "daily-challenge-response");
+    assert.equal(challengeSignal.source_type, "methodology-challenge-response");
+    assert.equal(challengeSignal.status, "retained");
+    await call(`/api/conversations/${challengeConversationId}/messages`, {
+      method: "POST",
+      body: {
+        role: "user",
+        workingText: "The follow-up should remain part of the same challenge signal.",
+        originalText: "The follow-up should remain part of the same challenge signal."
+      }
+    });
+    const updatedChallengeResponse = await call("/api/respond", {
+      method: "POST",
+      body: {
+        conversationId: challengeConversationId,
+        text: "The follow-up should remain part of the same challenge signal.",
+        outputType: "analysis",
+        confirmed: true
+      }
+    });
+    assert.equal(updatedChallengeResponse.payload.challengeLearningSignal.id, challengeSignal.id);
+    const updatedFeedback = await call("/api/feedback");
+    const challengeSignals = updatedFeedback.payload.feedback.filter((item) => item.conversation_id === challengeConversationId);
+    assert.equal(challengeSignals.length, 1);
+    assert.equal(challengeSignals[0].evidence.length, 2);
+    assert.match(challengeSignals[0].original_wording, /same challenge signal/);
 
     // 1. Governed knowledge: approved meaning is normative; proposed material is evidence only.
     const manifest = await call("/api/knowledge/manifest");
@@ -585,6 +650,29 @@ test("an existing pre-migration database upgrades without losing retained conver
       'retained-conversation','living-methodology','Retained before migration',
       'active','', '2026-07-01T09:00:00.000Z','2026-07-01T09:00:00.000Z'
     );
+    INSERT INTO conversations VALUES(
+      'retained-challenge','living-methodology','Daily methodology challenge — 2026-07-02',
+      'active','', '2026-07-02T09:00:00.000Z','2026-07-02T09:10:00.000Z'
+    );
+    CREATE TABLE messages (
+      id TEXT PRIMARY KEY, conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+      role TEXT NOT NULL, input_type TEXT NOT NULL DEFAULT 'text', original_text TEXT NOT NULL DEFAULT '',
+      working_text TEXT NOT NULL DEFAULT '', language TEXT NOT NULL DEFAULT 'en',
+      edited_after_capture INTEGER NOT NULL DEFAULT 0, route_json TEXT, metadata_json TEXT,
+      created_at TEXT NOT NULL
+    );
+    INSERT INTO messages VALUES(
+      'challenge-prompt','retained-challenge','user','text','Prepare a challenge.','Prepare a challenge.','en',0,NULL,'{}','2026-07-02T09:00:00.000Z'
+    );
+    INSERT INTO messages VALUES(
+      'challenge-opening','retained-challenge','assistant','text','','Test a methodology assumption.','en',0,NULL,'{}','2026-07-02T09:01:00.000Z'
+    );
+    INSERT INTO messages VALUES(
+      'challenge-answer','retained-challenge','user','text','Carry earlier learning forward.','Carry earlier learning forward.','en',0,NULL,'{}','2026-07-02T09:05:00.000Z'
+    );
+    INSERT INTO messages VALUES(
+      'challenge-interpretation','retained-challenge','assistant','text','','Earlier learning must affect the next challenge.','en',0,NULL,'{}','2026-07-02T09:06:00.000Z'
+    );
   `);
   database.close();
   const running = await startWorkbench({ port, dataRoot, repositoryRoot });
@@ -593,6 +681,12 @@ test("an existing pre-migration database upgrades without losing retained conver
     assert.equal(retained.response.status, 200);
     assert.equal(retained.payload.conversation.title, "Retained before migration");
     assert.equal(retained.payload.conversation.activeRecord, null);
+    const backfilled = await running.call("/api/feedback");
+    const retainedSignal = backfilled.payload.feedback.find((item) => item.conversation_id === "retained-challenge");
+    assert.equal(retainedSignal.feedback_type, "daily-challenge-response");
+    assert.equal(retainedSignal.learning_disposition, "more-evidence");
+    assert.equal(retainedSignal.approvalState, "not-approved");
+    assert.equal(retainedSignal.evidence.length, 1);
     const settings = await running.call("/api/settings");
     assert.ok(settings.payload.approvedBaseline.document_count >= 2);
     const profiles = await running.call("/api/work-profiles");

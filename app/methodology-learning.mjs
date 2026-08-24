@@ -34,6 +34,30 @@ export const LEARNING_DISPOSITION_LABELS = Object.freeze({
   "no-action": "No further action"
 });
 
+const UNRESOLVED_LEARNING_DISPOSITIONS = new Set([
+  "clarification",
+  "example-or-guidance-need",
+  "more-evidence",
+  "methodology-change-candidate",
+  "product-change-candidate",
+  "separate-project-candidate",
+  "urgent-review"
+]);
+
+const TERMINAL_LEARNING_STATUSES = new Set([
+  "implemented",
+  "rejected",
+  "deferred",
+  "no-change",
+  "superseded"
+]);
+
+const TERMINAL_PROPOSAL_STATUSES = new Set([
+  "implemented",
+  "rejected",
+  "deferred"
+]);
+
 const REQUIRED_COMPONENT_FIELDS = Object.freeze([
   "component_id",
   "title",
@@ -252,6 +276,13 @@ export function groupRelatedMethodologySignals(signals) {
     .sort((left, right) => right.signalIds.length - left.signalIds.length || left.id.localeCompare(right.id));
 }
 
+export function isUnresolvedMethodologySignal(signal) {
+  if (!signal || TERMINAL_LEARNING_STATUSES.has(signal.status)) return false;
+  if (signal.proposal && TERMINAL_PROPOSAL_STATUSES.has(signal.proposal.status)) return false;
+  return signal.status === "awaiting-review"
+    || UNRESOLVED_LEARNING_DISPOSITIONS.has(signal.learning_disposition);
+}
+
 export function buildMethodologyLearningReview(signals, {
   approvedBaseline = null,
   trigger = "related-signal-cluster",
@@ -281,10 +312,7 @@ export function buildMethodologyLearningReview(signals, {
     .map((item) => item.accepted_correction || item.original_wording || item.wording)
     .filter(Boolean);
   const evidence = signals.flatMap((item) => item.evidence || []);
-  const unresolved = signals.filter((item) => [
-    "clarification", "example-or-guidance-need", "more-evidence", "methodology-change-candidate",
-    "product-change-candidate", "separate-project-candidate", "urgent-review"
-  ].includes(item.learning_disposition));
+  const unresolved = signals.filter((item) => UNRESOLVED_LEARNING_DISPOSITIONS.has(item.learning_disposition));
   const proposedDisposition = unresolved.find((item) => item.learning_disposition === "urgent-review")?.learning_disposition
     || unresolved.find((item) => item.learning_disposition === "methodology-change-candidate")?.learning_disposition
     || unresolved[0]?.learning_disposition
@@ -328,6 +356,40 @@ export function buildMethodologyLearningReview(signals, {
         ? "Jamie Peppard reviews the possible legal, safety, security, ethical or authority failure and decides the bounded response."
         : "Name the next evidence or review trigger, or record why the signal is dealt with without Methodology change.",
     approvalState: "not-approved"
+  };
+}
+
+export function buildMethodologyClusterReview(signals, options = {}) {
+  if (!Array.isArray(signals) || !signals.length) {
+    throw new Error("A Methodology cluster review requires at least one retained signal.");
+  }
+  const activeSignals = signals.filter(isUnresolvedMethodologySignal);
+  if (activeSignals.length) {
+    const activeIds = new Set(activeSignals.map((signal) => signal.id));
+    const synthesisIds = new Set(options.synthesis?.signalIds || []);
+    const synthesisMatchesActiveSignals = synthesisIds.size === activeIds.size
+      && [...activeIds].every((id) => synthesisIds.has(id));
+    const review = buildMethodologyLearningReview(activeSignals, {
+      ...options,
+      synthesis: synthesisMatchesActiveSignals ? options.synthesis : null
+    });
+    return {
+      state: "active",
+      activeSignalIds: [...activeIds],
+      review
+    };
+  }
+  const review = buildMethodologyLearningReview(signals, options);
+  return {
+    state: "historical",
+    activeSignalIds: [],
+    review: {
+      ...review,
+      proposedDisposition: "no-action",
+      proposedDispositionLabel: LEARNING_DISPOSITION_LABELS["no-action"],
+      recommendation: "Retain this cluster as historical context. Its signals already have completed or explained routes.",
+      exactDecisionOrEvidenceRequired: "No new decision is required unless material new evidence or a named review trigger reopens the issue."
+    }
   };
 }
 
