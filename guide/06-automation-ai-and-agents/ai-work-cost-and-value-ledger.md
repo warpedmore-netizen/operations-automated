@@ -2,11 +2,12 @@
 id: OA-PRACTICE-072
 title: AI Work, Cost and Value Ledger
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-08-02
+last_updated: 2026-08-24
 methodology_baseline: Operations Automated v0.7, approved for internal validation
-completeness: C2 outlined; prepared for bounded case validation
+completeness: C2 outlined; revised after one founder-led bounded case, independent first use outstanding
 source: RP-02 in OA-RESEARCH-001
 ---
 
@@ -18,7 +19,24 @@ This proposed ledger joins operational purpose, ownership, technology, lifecycle
 
 ## 1. Status and applicability
 
-Use the ledger for material work, not every experiment. It is C2 until one non-confidential case shows that an owner can maintain it and make a decision that adoption or token totals alone would miss.
+Use the ledger for material work, not every experiment. It remains C2 until an independent owner can maintain it and make a decision that adoption or token totals alone would miss. The first founder-led case showed that comprehensive cost evidence may not exist at entry; use the observation floor below before expanding the ledger.
+
+### Short observation floor
+
+Start with one decision and the minimum evidence needed to learn. Unknown values remain explicit rather than blocking the whole assessment or being replaced with false precision.
+
+| Field | Minimum record |
+|---|---|
+| Workflow, person and owner | Named operation, primary journey and accountable owner |
+| Outcome unit | The smallest accepted result that represents value rather than activity |
+| Non-AI comparison | Current or credible alternative route, with known limitations |
+| Work in progress and completed outcomes | Volume entering, waiting, accepted, rejected and terminally resolved |
+| Human effort and transferred work | User, reviewer, engineering, support and recovery effort where material |
+| Direct and lifecycle cost | Available provider, infrastructure, build, assurance, support, failure and exit evidence; otherwise `unknown` with source gap |
+| Quality, harm and failure | Acceptance, correction, exceptions, affected people, incidents and safe fallback |
+| Decision and review | Scale, change, replace, experiment or stop; authority, conditions and next evidence date |
+
+Expand into the full ledger only where the short observation changes a decision, exposes material uncertainty or justifies the additional measurement effort.
 
 ## 2. Purpose and intended outcomes
 
@@ -65,7 +83,7 @@ Include approved, experimental, embedded and discovered shadow use without imply
 
 ## 8. Inputs, evidence and entry criteria
 
-Use authorised, proportionate sources. Where relevant reconcile at least four source types: procurement or expense, identity/access, technology/network/API evidence and practitioner declaration. A source may reveal use without proving legitimacy, value or risk acceptance.
+Use authorised, proportionate sources. Where relevant reconcile procurement or expense, identity/access, technology/network/API evidence and practitioner declaration. Four source types are not a quota: use only the sources that materially affect the decision and record what remains unavailable. A source may reveal use without proving legitimacy, value or risk acceptance.
 
 ## 9. Demand, work types and variation
 
@@ -175,8 +193,12 @@ Test provider or model unavailability, unexpected cost growth, quality deteriora
 
 ## 20. Tailoring, implementation, example and known gaps
 
-Use a single-page ledger for one low-volume workflow; add detailed finance, supplier or lifecycle evidence only where consequence warrants it. The first case should use real but non-confidential figures or defensible ranges. Known gaps include shared-cost allocation, long-term outcome attribution, provider comparability and standard AI unit economics.
+Use the short observation floor or a single-page ledger for one low-volume workflow; add detailed finance, supplier or lifecycle evidence only where consequence warrants it. Real but non-confidential figures, defensible ranges and explicit unknowns are all valid evidence positions.
+
+The first founder-led case showed that the ledger can expose a decision-flow constraint even when full cost is unavailable: four open proposals, no traced release/outcome review and contradictory completion semantics made scaling unattended work less defensible than improving the workflow. It also showed that no cost-per-outcome claim is possible without accepted outcomes, human effort and provider/lifecycle cost. These are case findings, not general validation.
+
+Known gaps include independent maintainability, shared-cost allocation, long-term outcome attribution, provider comparability, standard AI unit economics and a proportionate way to capture human decision effort.
 
 ## Governed next action
 
-Apply this proposed ledger through [the first facilitated assurance and value case](../../pilots/ai-agent-assurance-and-value-case-001.md). Accept, revise or reject RP-02 only after it changes a real decision and remains maintainable by the owner.
+Review the [first facilitated assurance and value case](../../pilots/ai-agent-assurance-and-value-case-001.md), then test the observation floor with an independent owner. Accept, revise or reject RP-02 only after it changes a real decision and remains maintainable without the author's tacit knowledge.

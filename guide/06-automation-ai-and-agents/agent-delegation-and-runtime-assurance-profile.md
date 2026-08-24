@@ -2,11 +2,12 @@
 id: OA-PRACTICE-071
 title: Agent Delegation and Runtime Assurance Profile
 status: proposed
-version: 0.1
+version: 0.2
 owner: Jamie Peppard
 date: 2026-08-02
+last_updated: 2026-08-24
 methodology_baseline: Operations Automated v0.7, approved for internal validation
-completeness: C2 outlined; prepared for bounded case validation
+completeness: C2 outlined; revised after one founder-led bounded case, independent first use outstanding
 source: RP-01 in OA-RESEARCH-001
 ---
 
@@ -20,7 +21,24 @@ This proposed guide turns the approved Agentic-ready requirements into one case-
 
 Use the profile for a named capability in a named environment. Start with the lowest-complexity option and stop if ordinary human work, conventional automation or bounded AI assistance creates the required value.
 
-The guide is C2 because it has not yet been used by an independent practitioner. Case validation must show whether it can reach C3 without ceremonial record keeping.
+The guide is C2 because it has not yet been used by an independent practitioner. The first founder-led case found that the full profile exposed useful authority and runtime gaps but was too large for first use. Start with the short card below and expand only where consequence or missing evidence requires it.
+
+### Short first-use card
+
+Use this card before completing the deeper sections. A low-consequence preparation capability may need no more if the card supports a clear decision and safe non-use.
+
+| Field | Minimum evidence |
+|---|---|
+| Capability and environment | Stable name, purpose, version or build and where it operates |
+| Outcome and owner | Person or journey served, minimum outcome and named accountable owner |
+| Operating mode | Advice, preparation, reversible execution, consequential execution or prohibited action |
+| Identity and represented authority | What acts, whose authority it represents and who owns its credentials or access |
+| Permitted, gated and prohibited actions | Plain-language boundaries, including information, communication, money and persistence |
+| Runtime evidence | Minimum event or trace that lets a competent outsider reconstruct material action |
+| Stop, fallback and recovery | An external stop, minimum service, recovery owner and evidence that recovery works |
+| Decision and review trigger | Continue, change, test, stop or no-agent; decision authority and next review |
+
+If any field is unknown, record the gap and choose the more controlled operating mode. Do not complete the full profile merely to make the record appear comprehensive.
 
 ## 2. Purpose and intended outcomes
 
@@ -80,7 +98,7 @@ The minimum outcome must include a safe route when the agent is unavailable, sto
 
 ## 8. Inputs, evidence and entry criteria
 
-Entry requires a named outcome owner, an understood work type, a bounded environment, available design and runtime evidence, a credible non-agent comparison, and an authorised test route. Missing evidence is recorded as a gap; it must not be replaced by supplier claims or AI inference.
+Entry requires a named outcome owner, an understood work type, a bounded environment, available design and runtime evidence, a credible non-agent comparison, and an authorised test route. Missing evidence is recorded as a gap; it must not be replaced by supplier claims or AI inference. If the short card cannot identify the owner, operating mode, boundary, stop or review decision, do not progress to execution while completing a larger profile.
 
 ## 9. Demand, work types and variation
 
@@ -184,10 +202,12 @@ The bounded case must test:
 
 ## 20. Tailoring, implementation, example and known gaps
 
-For low-consequence preparation, use only the fields that establish ownership, boundaries, evaluation and safe non-use. For consequential execution, complete every material section and seek specialist review. The first case should use one non-confidential capability and record actual evidence rather than an ideal design.
+For low-consequence preparation, use the short first-use card and only the deeper fields that establish ownership, boundaries, evaluation and safe non-use. For consequential execution, complete every material section and seek specialist review.
 
-Known gaps include multi-agent hand-offs, independent assurance patterns, provider-specific telemetry and legal/sector mappings. These remain validation or specialist-interface work.
+The first founder-led case found that the card exposed fragmented cross-system runtime evidence and unproved technical enforcement for consequential gates. It also showed that an external stop and isolated recovery route can be tested without granting wider authority. These are case findings, not general validation.
+
+Known gaps include independent first use, multi-agent hand-offs, independent assurance patterns, provider-specific telemetry, technical enforcement evidence, owner offboarding and legal/sector mappings. These remain validation or specialist-interface work.
 
 ## Governed next action
 
-Apply this proposed profile through [the first facilitated assurance and value case](../../pilots/ai-agent-assurance-and-value-case-001.md). Accept, revise or reject RP-01 only after the case shows whether another practitioner can identify authority, reconstruct material action and intervene or recover without the designer's tacit knowledge.
+Review the [first facilitated assurance and value case](../../pilots/ai-agent-assurance-and-value-case-001.md), then test the short card with an independent practitioner. Accept, revise or reject RP-01 only after that person can identify authority, reconstruct material action and intervene or recover without the designer's tacit knowledge.

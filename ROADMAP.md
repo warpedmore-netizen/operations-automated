@@ -2,9 +2,9 @@
 id: OA-ROADMAP-001
 title: Operations Automated Roadmap
 status: proposed
-version: 1.1
+version: 1.2
 owner: Jamie Peppard
-last_updated: 2026-07-29
+last_updated: 2026-08-24
 ---
 
 # Operations Automated Roadmap
@@ -78,6 +78,8 @@ The proposed Workbench 1.8.0 base-completion increment turns those mechanics int
 
 The proposed Workbench 1.9.0 request-framing increment now connects an ordinary-language need to that controlled delivery system. It enriches the existing steering intake with pre-flight retrieval, contextual interpretation, project routing, A–G readiness, a complete work package, minimum linked-record creation and exact prompt provenance. The live proposal keeps Codex blocked because Steering and the Workbench implementation prompt remain unapproved; an approved-state fixture proves that a complete stage-D feature can generate the full handoff. Founder comprehension testing, dependency reconciliation, merge and private release remain outstanding.
 
+The first founder-led AI and agent assurance/value case now applies the proposed RP-01 and RP-02 guides to Operations Automated's own methodology-development loop. It finds that bounded AI preparation remains useful, but accumulated decision work, contradictory learning-completion semantics, missing accepted-outcome measures and fragmented runtime evidence make unattended scaling unjustified. The case adds short first-use aids and retains both guides as Proposed C2 pending Jamie's critique and independent use. It does not change v0.7 or approve a Workbench correction.
+
 The proposed Workbench 1.9.0 request-framing increment now connects an ordinary-language need to that controlled delivery system. It enriches the existing steering intake with pre-flight retrieval, contextual interpretation, project routing, A–G readiness, a complete work package, minimum linked-record creation and exact prompt provenance. The live proposal keeps Codex blocked because Steering and the Workbench implementation prompt remain unapproved; an approved-state fixture proves that a complete stage-D feature can generate the full handoff. Founder comprehension testing, dependency reconciliation, merge and private release remain outstanding.
 
 ## Three workstreams developed in tandem
@@ -110,13 +112,14 @@ Milestone 0 was approved for internal validation by Jamie Peppard on 2026-07-20 
 
 ## Immediate plan
 
-1. Apply the approved v0.7 coverage, interfaces and reader-guide architecture using the conditions in the [plain-English assurance pack](proposals/v0.7-assurance-pack.md).
-2. Apply the draft coverage-and-interface map outside-in to two materially different, non-confidential journeys, including one outside a conventional service-management setting.
-3. Use those cases and Jamie's priorities to select the first practice families that should move from Outlined to Usable.
-4. Develop and test the first detailed practice guide using the common authoring standard.
-5. Test whether an independent reader can find and use the quick-question, full-assessment, implementation, and governance-and-review routes, and can give or receive feedback through a suitable route.
-6. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet and validate activation.
-7. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
+1. Obtain Jamie's critique of the provisional [AI and agent assurance/value case](pilots/ai-agent-assurance-and-value-case-001.md) without treating feedback as approval.
+2. Prepare and validate the bounded Workbench completion-semantics correction exposed by the case.
+3. Test the short RP-01 delegation card and RP-02 observation floor with an independent practitioner on authorised, non-confidential work.
+4. Apply the approved v0.7 coverage and interfaces outside-in to a second materially different journey, including one outside a conventional service-management setting.
+5. Use the cases and Jamie's priorities to move only evidence-supported practice families from Outlined towards Usable.
+6. Test whether an independent reader can find and use the quick-question, full-assessment, implementation and governance-and-review routes.
+7. Replace the comprehensive first-use workbook with the shortest useful guide or worksheet and validate activation.
+8. Continue the approved Human-AI Collaboration Method and retain material failures or corrections.
 8. Review the published Methodology Lab Draft as a reader and route the findings into the governed challenge loop. Keep Live promotion, deletion, movement and changes to the current controlled pages separately governed.
 9. Review the proposed Workbench 1.5.1 operating surface as one bounded whole: clear ownership and completion, governed knowledge, separate conversation continuity, configurable definitions, unified work and approvals, and the external-Codex handoff and receipt loop.
 10. Review the proposed Steering contract, three Product Purpose reconciliations and Workbench 1.6.0 control increment using the [steering-control assurance pack](proposals/steering-control-assurance-pack.md); keep merge, purpose approval and the Dynamic Governance migration decision separate.
